@@ -1,0 +1,28 @@
+.scroll-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px; /* الأساس: على التليفون وأي شاشة صغيرة */
+  background-color: #117c9f;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 9999;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease-in-out;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* لو حابة تخلّيه يرجع للمعادلة دي للشاشات الكبيرة جداً (مثلاً من 1400px وطالع) */
+@media (min-width: 1400px) {
+  .scroll-to-top {
+    right: calc((100vw - 1400px) / 2 - 200px);
+  }
+}

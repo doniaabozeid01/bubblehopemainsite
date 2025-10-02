@@ -1,0 +1,50 @@
+<div class="third pt-2">
+  <section class="contact-section py-5">
+    <div class="container contact-form-container">
+      <div class="text-center ">
+        <h1 class="second-color fw-bold mb-0">{{'home.contactus' | translate}}</h1>
+        <!-- <p class=" fs-3 ">{{'home.contactslogan' | translate}}</p> -->
+        <p class="px-1 mb-5 text-center m-auto fs-5 text-secondary">
+          {{ 'home.contactslogan' | translate }}
+        </p>
+      </div>
+
+      <div class="contact-box mx-auto p-4 rounded-4 shadow-sm">
+        <form [formGroup]="contactForm" (ngSubmit)="submit()">
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <input formControlName="fullName" type="text" class="form-control border-blue"
+                placeholder="{{'auth.FullName' | translate}}" />
+            </div>
+            <div class="col-md-6">
+              <input formControlName="email" type="email" class="form-control border-blue"
+                placeholder="{{'auth.email' | translate}}" />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <textarea formControlName="message" class="form-control border-blue" rows="5"
+              placeholder="{{'home.contactMsg' | translate}}"></textarea>
+          </div>
+
+          <div class="text-center">
+
+            <button type="submit" class="btn btn-bg-secondcolor2 px-5 py-2"
+              [disabled]="contactForm.invalid || isLoading">
+              <span class="fs-4 ">{{'home.send' | translate}}</span>
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm mx-2" role="status"></span>
+            </button>
+
+
+
+
+          </div>
+        </form>
+
+      </div>
+    </div>
+    
+  </section>
+
+
+</div>

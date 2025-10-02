@@ -1,0 +1,75 @@
+<div class="mobile-advertise row justify-content-center align-items-center  m-auto px-md-5 pt-md-3 pt-4 my-5">
+
+
+
+  <div class="col-md-6 text-center  ">
+
+    <img src="../../../assets/Untitled-2.png" class="w-50-100 mb-3 " alt="">
+
+    <!-- <h1 class="done-easy main-color">{{ 'appAdvertise.doneEasy' | translate }}</h1> -->
+    <p class="second-color">{{ 'appAdvertise.doneEasyDesc' | translate }}</p>
+
+    <ul class="main-color fs-5" [ngClass]="(languageService.languageChanged$ | async) === 'ar' ? 'text-end' : 'text-start'">
+      <li>{{ 'appAdvertise.doneEasyPoints.point1' | translate }}</li>
+      <li>{{ 'appAdvertise.doneEasyPoints.point2' | translate }}</li>
+      <li>{{ 'appAdvertise.doneEasyPoints.point3' | translate }}</li>
+    </ul>
+
+    <div class="download-buttons d-flex justify-content-center flex-column flex-md-row gap-3 mt-4 mb-md-3">
+      <!-- Google Play -->
+      <a class="bg-black text-white p-md-2 p-0 px-3 rounded-3 border border-1 border-white appLinks"
+        href="https://play.google.com" target="_blank" aria-label="Download on Google Play">
+        <div class="d-flex justify-content-start align-items-center">
+          <div>
+            <img src="../../../assets/google_play1-removebg-preview.png" style="width: 38px;" alt="">
+          </div>
+          <div class="px-2">
+            <h5 class="fs-7 mb-0 "
+              [ngClass]="(languageService.languageChanged$ | async) === 'ar' ? 'text-end' : 'text-start'">{{
+              'appAdvertise.googlePlay.small' | translate }}</h5>
+            <h5 class=" mb-0"
+              [ngClass]="(languageService.languageChanged$ | async) === 'ar' ? 'text-end' : 'text-start'">{{
+              'appAdvertise.googlePlay.big' | translate }}</h5>
+          </div>
+        </div>
+      </a>
+
+      <!-- App Store -->
+      <a class="bg-black text-white p-md-2 p-0 px-3 rounded-3 border border-1 border-white appLinks"
+        href="https://apps.apple.com" target="_blank" aria-label="Download on App Store">
+        <div class="d-flex justify-content-start align-items-center">
+          <div>
+            <img src="../../../assets/apple.png" style="width: 38px;" alt="">
+          </div>
+          <div class="px-2">
+            <h5 class="fs-7 mb-0 "
+              [ngClass]="(languageService.languageChanged$ | async) === 'ar' ? 'text-end' : 'text-start'">{{
+              'appAdvertise.appStore.small' | translate }}</h5>
+            <h5 class=" mb-0"
+              [ngClass]="(languageService.languageChanged$ | async) === 'ar' ? 'text-end' : 'text-start'">{{
+              'appAdvertise.appStore.big' | translate }}</h5>
+          </div>
+        </div>
+      </a>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+  <div class="col-md-6  d-flex justify-content-end phone-template">
+    <!-- <img src="../../../assets/02_app_mobile_screen_mockup.png" class="w-100" alt=""> -->
+    <img src="../../../../assets/8376504.png" class="w-100" alt="">
+  </div>
+
+
+
+</div>
+

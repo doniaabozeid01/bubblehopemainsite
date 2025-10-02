@@ -1,0 +1,254 @@
+<div class="parent">
+    <div class="container py-3">
+        <h2 class="fw-bold second-color">{{"delivery.deliveryInformation" | translate}}</h2>
+
+        <div class="row gy-4">
+
+            <!-- Address Form -->
+            <div class="col-md-8 rounded p-4">
+                <form [formGroup]="orderForm" (ngSubmit)="submitOrder()">
+                    <div class="mb-3">
+                        <label class="form-label d-flex align-items-center gap-1 ">
+                            {{"delivery.fullName" | translate}} <span class="text-danger fs-4">*</span>
+                            <span
+                                *ngIf="(orderForm.get('fullName')?.touched || submitted) && orderForm.get('fullName')?.hasError('required')"
+                                class="text-danger"></span>
+                            <span
+                                *ngIf="(orderForm.get('fullName')?.touched || submitted) && orderForm.get('fullName')?.hasError('required')"
+                                class="text-danger" style="font-size: 15px;">
+                                {{ "auth.required" | translate }}
+                            </span>
+                        </label>
+
+                        <input type="text" formControlName="fullName" class="form-control" />
+                    </div>
+
+
+                    <div class="mb-3 ">
+                        <label class="form-label">{{"delivery.phone" | translate}} <span
+                                class="text-danger fs-4">*</span>
+                            <span
+                                *ngIf="(orderForm.get('phone')?.touched || submitted) && orderForm.get('phone')?.hasError('required')"
+                                class="text-danger"></span>
+                            <span
+                                *ngIf="(orderForm.get('phone')?.touched || submitted) && orderForm.get('phone')?.hasError('required')"
+                                class="text-danger" style="font-size: 15px;">
+                                {{ "auth.required" | translate }}
+                            </span>
+                        </label>
+                        <input type="text" formControlName="phone" class="form-control" />
+                    </div>
+
+                    <div class="mb-3 ">
+                        <label class="form-label">{{"delivery.country" | translate}}<span
+                                class="text-danger fs-4 mx-2">*</span>
+                            <span
+                                *ngIf="(orderForm.get('countryId')?.touched || submitted) && orderForm.get('countryId')?.hasError('required')"
+                                class="text-danger"></span>
+                            <span
+                                *ngIf="(orderForm.get('countryId')?.touched || submitted) && orderForm.get('countryId')?.hasError('required')"
+                                class="text-danger" style="font-size: 15px;">
+                                {{ "auth.required" | translate }}
+                            </span>
+                        </label>
+                        <select class="form-control" formControlName="countryId">
+                            <option [ngValue]="null">{{"delivery.selectCountry" | translate}}</option>
+                            <option *ngFor="let c of countries" [ngValue]="c.id">{{ (languageService.languageChanged$ |
+                                async) === 'ar'
+                                ? c.country_name_ar : c.country_name }}</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            {{"delivery.governorate" | translate}} <span class="text-danger fs-4 mx-1">*</span>
+                            <span
+                                *ngIf="(orderForm.get('governorateId')?.touched || submitted) && orderForm.get('governorateId')?.hasError('required')"
+                                class="text-danger"></span>
+                            <span
+                                *ngIf="(orderForm.get('governorateId')?.touched || submitted) && orderForm.get('governorateId')?.hasError('required')"
+                                class="text-danger" style="font-size: 15px;">
+                                {{ "auth.required" | translate }}
+                            </span>
+                        </label>
+
+                        <select class="form-control" formControlName="governorateId">
+                            <option [ngValue]="null">{{"delivery.selectGovernorate" | translate}}</option>
+                            <option *ngFor="let g of governorates" [ngValue]="g.id">
+                                {{ (languageService.languageChanged$ | async) === 'ar'
+                                ? g.governorate_name_ar
+                                : g.governorate_name }}
+                            </option>
+                        </select>
+                    </div>
+
+
+
+                    <div class="mb-3 ">
+                        <label class="form-label"> {{"delivery.city" | translate}} <span
+                                class="text-danger fs-4 mx-1">*</span>
+                            <span
+                                *ngIf="(orderForm.get('cityId')?.touched || submitted) && orderForm.get('cityId')?.hasError('required')"
+                                class="text-danger"></span>
+                            <span
+                                *ngIf="(orderForm.get('cityId')?.touched || submitted) && orderForm.get('cityId')?.hasError('required')"
+                                class="text-danger" style="font-size: 15px;">
+                                {{ "auth.required" | translate }}
+                            </span></label>
+                        <select class="form-control" formControlName="cityId">
+                            <option [ngValue]="null">{{"delivery.selectCity" | translate}} </option>
+                            <option *ngFor="let c of cities" [ngValue]="c.id">{{ (languageService.languageChanged$ |
+                                async) === 'ar' ?
+                                c.city_name_ar : c.city_name }}</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3 ">
+                        <label class="form-label">{{"delivery.district" | translate}} <span
+                                class="text-danger fs-4 mx-1">*</span><span
+                                *ngIf="(orderForm.get('districtId')?.touched || submitted) && orderForm.get('districtId')?.hasError('required')"
+                                class="text-danger"></span>
+                            <span
+                                *ngIf="(orderForm.get('districtId')?.touched || submitted) && orderForm.get('districtId')?.hasError('required')"
+                                class="text-danger" style="font-size: 15px;">
+                                {{ "auth.required" | translate }}
+                            </span> </label>
+                        <select class="form-control" formControlName="districtId">
+                            <option [ngValue]="null">{{"delivery.selectDistrict" | translate}}</option>
+                            <option *ngFor="let d of districts" [ngValue]="d.id">{{ (languageService.languageChanged$ |
+                                async) === 'ar'
+                                ? d.district_name_ar : d.district_name }}</option>
+                        </select>
+                    </div>
+
+
+
+
+                    <div class="mb-3 ">
+                        <label class="form-label">{{"delivery.street" | translate}}</label>
+                        <input type="text" formControlName="street" class="form-control" />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3 ">
+                            <label class="form-label">{{"delivery.buildingNumber" | translate}}
+
+                            </label>
+                            <input type="text" formControlName="buildingNumber" class="form-control" />
+                        </div>
+                        <div class="col-md-3 mb-3 ">
+                            <label class="form-label">{{"delivery.floor" | translate}}
+                            </label>
+                            <input type="text" formControlName="floor" class="form-control" />
+                        </div>
+                        <div class="col-md-3 mb-3 ">
+                            <label class="form-label">{{"delivery.apartment" | translate}}</label>
+                            <input type="text" formControlName="apartment" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3 ">
+                        <label class="form-label">{{"delivery.nearestlandmark" | translate}}
+                        </label>
+                        <input type="text" formControlName="landmark" class="form-control" />
+                    </div>
+
+                    <div class="mb-3 ">
+                        <label class="form-label">{{"delivery.paymentMethod" | translate}} <span
+                                class="text-danger fs-4 mx-1">*</span><span
+                                *ngIf="(orderForm.get('paymentMethodId')?.touched || submitted) && orderForm.get('paymentMethodId')?.hasError('required')"
+                                class="text-danger"></span>
+                            <span
+                                *ngIf="(orderForm.get('paymentMethodId')?.touched || submitted) && orderForm.get('paymentMethodId')?.hasError('required')"
+                                class="text-danger" style="font-size: 15px;">
+                                {{ "auth.required" | translate }}
+                            </span> </label>
+                        <select class="form-control" formControlName="paymentMethodId">
+                            <option [ngValue]="method.id" *ngFor="let method of paymentMethods">{{ method.name }}</option>
+                        </select>
+                    </div>
+
+                    <!-- <small class="text-muted d-block mt-1" *ngIf="isOnline">
+                        {{ 'checkout.redirectToPaymob' | translate:{'default':'سيتم تحويلك إلى صفحة الدفع الآمنة'} }}
+                    </small> -->
+
+
+
+
+
+                    <div class="mb-3 ">
+
+                        <label class="form-label">{{"delivery.code" | translate}}</label>
+                        <div class="d-flex justify-content-between align-items-center gap-2">
+
+                            <div class="w-60 ">
+                                <input type="text" formControlName="code" class="form-control fs-5"
+                                    [placeholder]="'delivery.code' | translate" />
+                            </div>
+
+
+                            <button type="button" class="btn btn-bg-secondcolor2 text-white w-40 fs-5"
+                                (click)="checkDiscountCode()">
+                                <p class=" mb-0 fs-5">Apply Code</p>
+                            </button>
+                        </div>
+                        <p *ngIf="discountError != null" class="fs-6 text-danger px-2">{{discountError}}</p>
+                    </div>
+
+
+
+                    <!-- <button type="submit"
+            class="btn btn-bg-color w-100 fs-4 fw-bold text-white d-flex justify-content-center align-items-center"
+            [disabled]="loading">
+            <p class="text-white mb-0 fw-normal">{{"delivery.confirmOrder" | translate}}</p>
+            <span class="spinner-border spinner-border-sm mx-2 text-white" role="status" aria-hidden="true"
+              *ngIf="loading"></span>
+          </button> -->
+
+
+
+
+                    <button type="submit"
+                        class="btn btn-bg-secondcolor2 w-100 fs-4 fw-bold d-flex justify-content-center align-items-center"
+                        [disabled]="loading">
+                        <span class="mb-0 fw-normal ">{{ 'delivery.confirmOrder' | translate }}</span>
+                        <span class="spinner-border spinner-border-sm mx-2 second-color" role="status" *ngIf="loading"></span>
+                    </button>
+
+
+
+                </form>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-md-4">
+                <div class="order-summary p-4 bg-light-green rounded-4 ">
+                    <h5 class="fw-bold mb-4 text-center second-color fs-2">{{"delivery.orderSummary" | translate}}</h5>
+
+                    <div class="d-flex flex-column gap-3 dataToReview">
+                        <div class="border-bottom pb-2" *ngFor="let item of cartItems">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="">{{ (languageService.languageChanged$ | async) === 'ar' ? item.name_ar :
+                                    item.name
+                                    }}</span>
+                                <span class="">{{item.totalPrice}} <span>{{ (languageService.languageChanged$ | async)
+                                        === 'ar' ?
+                                        item.currency_ar : item.currency }}</span> </span>
+                            </div>
+                            <div class=" ">{{"delivery.quantity" | translate}}: {{item.quantity}}</div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between fw-bold fs-5 mt-3">
+                        <span class="fs-3">{{"delivery.totalAmount" | translate}}</span>
+                        <span class="fs-3">{{totalamount}} <span>{{ (languageService.languageChanged$ |
+                                async) === 'ar' ?
+                                cartItems[0]?.currency_ar : cartItems[0]?.currency }}</span> </span>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>

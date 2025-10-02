@@ -1,0 +1,12 @@
+<div class="container mt-5 text-center">
+  <div *ngIf="success" class="alert alert-success">
+    {{ message }}
+  </div>
+  <div *ngIf="!success" class="alert alert-danger">
+    {{ message }}
+  </div>
+
+  <button class="btn btn-primary mt-3" routerLink="/auth/login">
+    الذهاب لصفحة تسجيل الدخول
+  </button>
+</div>

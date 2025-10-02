@@ -1,0 +1,108 @@
+<div class="auth-bg">
+  <img src="../../../assets/sloga website-02.png" class="overlay-text-image" alt="Register Title" />
+
+  <div class="card register-card shadow-lg">
+    <h2 class="text-center fw-bolder mb-4">{{ 'auth.register' | translate }}</h2>
+
+    <!-- Success -->
+    <div *ngIf="successMessage" class="alert alert-success text-center" role="alert" aria-live="polite">
+      {{ successMessage }}
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="errorMessage" class="alert alert-danger text-center" role="alert" aria-live="assertive">
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+      <!-- Full name -->
+      <div class="mb-3">
+        <label class="form-label fw-normal" for="fullName">{{ 'auth.FullName' | translate }}</label>
+        <input id="fullName" type="text" class="form-control" formControlName="fullName" placeholder="Enter your name" />
+        <div *ngIf="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.invalid"
+             class="text-danger small mt-1">
+          Full name is required
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label class="form-label fw-normal" for="email">{{ 'auth.email' | translate }}</label>
+        <input id="email" type="email" class="form-control" formControlName="email" placeholder="example@email.com" />
+        <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.errors as errors"
+             class="text-danger small mt-1" aria-live="polite">
+          <div *ngIf="errors['gmailOnly']">Only Gmail accounts are allowed</div>
+          <div *ngIf="errors['required']">Email is required</div>
+          <div *ngIf="errors['email']">Invalid email format</div>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <label class="form-label fw-normal" for="password">{{ 'auth.Password' | translate }}</label>
+
+        <div class="position-relative">
+          <input id="password" [type]="showPwd ? 'text' : 'password'"
+                 class="form-control pe-5" formControlName="password" placeholder="********" aria-describedby="pwdHelp" />
+          <!-- toggle visibility (اختياري) -->
+          <button type="button" class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2"
+                  (click)="showPwd = !showPwd" aria-label="Toggle password visibility">
+            <span *ngIf="!showPwd">Show</span>
+            <span *ngIf="showPwd">Hide</span>
+          </button>
+        </div>
+
+        <!-- Error موحّد لأن الـ checklist بتشرح التفاصيل -->
+        <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid"
+             class="text-danger small mt-2">
+          Password doesn't meet the policy below
+        </div>
+
+        <!-- Checklist ديناميكي -->
+        <ul id="pwdHelp" class="list-unstyled small mt-2" aria-live="polite">
+          <li [class.text-success]="rule_hasMinLength"
+              [class.text-muted]="!rule_hasMinLength"
+              [class.text-decoration-line-through]="rule_hasMinLength">
+            • At least 8 characters
+          </li>
+          <li [class.text-success]="rule_hasDigit"
+              [class.text-muted]="!rule_hasDigit"
+              [class.text-decoration-line-through]="rule_hasDigit">
+            • At least one number (0–9)
+          </li>
+          <li [class.text-success]="rule_hasLower"
+              [class.text-muted]="!rule_hasLower"
+              [class.text-decoration-line-through]="rule_hasLower">
+            • At least one lowercase letter (a–z)
+          </li>
+          <li [class.text-success]="rule_hasUpper"
+              [class.text-muted]="!rule_hasUpper"
+              [class.text-decoration-line-through]="rule_hasUpper">
+            • At least one uppercase letter (A–Z)
+          </li>
+          <li [class.text-success]="rule_hasNonAlnum"
+              [class.text-muted]="!rule_hasNonAlnum"
+              [class.text-decoration-line-through]="rule_hasNonAlnum">
+            • At least one symbol (! @ # $ % …)
+          </li>
+        </ul>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn btn-coffee" [disabled]="registerForm.invalid || loading">
+        <span class="text-white fw-normal">
+          <ng-container *ngIf="!loading; else loadingTpl">{{ 'auth.register' | translate }}</ng-container>
+        </span>
+      </button>
+      <ng-template #loadingTpl>Registering...</ng-template>
+
+      <!-- Login link -->
+      <div class="text-center mt-3">
+        <span class="mx-1">{{ 'auth.Alreadyhaveanaccount' | translate }}</span>
+        <a routerLink="/auth/login" class="fw-bold link-light">
+          <span>{{ 'auth.login' | translate }}</span>
+        </a>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,166 @@
+<div class="parent d-md-block d-none">
+    <!-- <div class="d-md-flex d-block justify-content-center text-center "> -->
+    <h1 *ngIf="cart?.cartItems?.length > 0" class="text-center second-color">{{"cart.yourcart" | translate}}
+        ({{cart?.cartItems?.length }} {{"cart.itemcounter" | translate}})</h1>
+    <!-- <h1 class="m-0 p-0 ">({{cart?.cartItems?.length }} item)</h1> -->
+    <!-- </div> -->
+
+    <div class="cart-header " *ngIf="cart?.cartItems?.length > 0">
+        <p class="mb-0">{{"cart.item" | translate}}</p>
+        <p class="mb-0"></p>
+        <p class="mb-0">{{"cart.price" | translate}}</p>
+        <p class="mb-0">{{"cart.quantity" | translate}}</p>
+        <p class="mb-0">{{"cart.total" | translate}}</p>
+    </div>
+
+    <div class="cart-items-wrapper color " *ngIf="cart?.cartItems?.length > 0">
+        <div class="cart-item " *ngFor="let item of cart?.cartItems">
+            <img class="product-img w-100" [src]="item.imagePath" alt="Iced Espresso" />
+            <h2 class="product-name w-100">{{ (languageService.languageChanged$ | async) === 'ar' ? item.name_ar :
+                item.name }}</h2>
+            <p class="mb-0">{{( item.price) - (( item.price)* (( item.discount)/100)) }} <span> {{
+                    (languageService.languageChanged$ | async) === 'ar' ? item.currency_ar : item.currency }} </span>
+            </p>
+            <div class="quantity-control">
+                <button class="" (click)="updateQuantity(item, item.quantity - 1)"><span>-</span></button>
+                <span class=" d-flex align-items-center mt-md-3 ">{{ item.quantity }}</span>
+                <button class="" (click)="updateQuantity(item, item.quantity + 1)"><span>+</span></button>
+            </div>
+            <div class="d-flex align-items-center ">
+                <p class="mb-0">{{ item.totalPrice }} <span>{{ (languageService.languageChanged$ | async) === 'ar' ?
+                        item.currency_ar : item.currency }}</span> </p>
+                <span class="remove-btn second-bg-color  mx-3" (click)="deleteItem(item.id)"><i
+                        class="fa-solid fa-xmark mb-0 text-white"></i></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="ms-auto checkout p-2 " *ngIf="cart?.cartItems?.length > 0">
+        <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+            <span class="fs-2 total ">{{"cart.subtotal" | translate}}: </span>
+            <!-- <span class="fs-4 total main-color">{{ getSubtotal() }} <span>{{cart?.cartItems[0].currency}}</span> -->
+            <span class="fs-2 total ">{{ getSubtotal() }} <span>{{ (languageService.languageChanged$ | async)
+                    === 'ar' ? cart?.cartItems[0].currency_ar : cart?.cartItems[0].currency }}</span>
+            </span>
+
+        </div>
+
+        <button (click)="goToCheckout()" class="btn my-3 checkout-btn btn-bg-secondcolor2 total fs-4">{{"cart.checkout" |
+            translate}}</button>
+    </div>
+
+
+    <!-- <div *ngIf="(cart?.cartItems?.length || 0) === 0" class="cart-empty text-center main-color mt-5">
+        <h2 class="text-color ">{{'cart.slogan' | translate}}</h2>
+        <button class="btn goToProduct btn-bg-color fs-4" (click)="goToProducts()"><span
+                class="text-white">{{'wishlist.ExploreProducts' | translate}}</span></button>
+    </div> -->
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="cart-page d-md-none d-block" *ngIf="cart?.cartItems?.length  >= 0">
+    <h1 *ngIf="cart?.cartItems?.length > 0" class="text-center second-color">{{"cart.yourcart" | translate}}
+        ({{cart?.cartItems?.length }} {{"cart.itemcounter" | translate}})</h1>
+    <!-- Header -->
+    <div class="wl-list" *ngIf="cart?.cartItems?.length > 0">
+        <!-- Rows -->
+        <div class="row justify-content-between mb-3 border rounded shadow-sm py-1"
+            *ngFor="let item of cart?.cartItems; let i = index; trackBy: trackById">
+            <!-- Item cell -->
+            <div class="col-3">
+
+                <img class="thumb w-100" [src]="item.imagePath" alt="product" />
+
+            </div>
+
+
+            <div class="name col-6">
+                <p class="m-0 p-0 ">{{ (languageService.languageChanged$ | async) === 'ar' ? item.name_ar : item.name }}
+                </p>
+
+                <p class="mb-0 ">{{ item.totalPrice }} <span>{{ (languageService.languageChanged$ | async) === 'ar' ?
+                        item.currency_ar : item.currency }}</span> </p>
+
+
+
+
+            </div>
+
+            <!-- Price cell -->
+
+
+            <!-- Actions -->
+            <div class="col-actions col-3 text-start d-flex flex-column justify-content-between px-1 ">
+
+
+                <button class="x-remove-sm btn " [class.ms-auto]="!isRtl" [class.me-auto]="isRtl" aria-label="remove"
+                    (click)="deleteItem(item.id)">
+                    <i class="fa-solid fa-xmark "></i>
+                </button>
+
+
+
+                <div class="d-flex justify-content-between align-items-center pb-0">
+                    <button class=" btn pb-0"
+                        (click)="updateQuantity(item, item.quantity - 1)"><span>-</span></button>
+                    <span class=" d-flex align-items-center justify-content-center mt-md-3 pb-0 fs-5">{{ item.quantity
+                        }}</span>
+                    <button class=" btn pb-0"
+                        (click)="updateQuantity(item, item.quantity + 1)"><span>+</span></button>
+                </div>
+
+
+
+
+
+            </div>
+
+
+
+
+        </div>
+    </div>
+
+
+
+    <div class="ms-auto w-100 p-2" *ngIf="cart?.cartItems?.length > 0">
+        <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+            <span class="fs-2 total ">{{"cart.subtotal" | translate}}: </span>
+            <!-- <span class="fs-4 total main-color">{{ getSubtotal() }} <span>{{cart?.cartItems[0].currency}}</span> -->
+            <span class="fs-2 total ">{{ getSubtotal() }} <span>{{ (languageService.languageChanged$ | async)
+                    === 'ar' ? cart?.cartItems[0].currency_ar : cart?.cartItems[0].currency }}</span>
+            </span>
+
+        </div>
+
+        <button (click)="goToCheckout()" class="btn my-2 checkout-btn btn-bg-secondcolor2 total fs-5">{{"cart.checkout" |
+            translate}}</button>
+    </div>
+
+
+
+</div>
+
+
+
+    <div *ngIf="(cart?.cartItems?.length || 0) === 0" class="cart-empty text-center mt-0 mb-5">
+        <h2 class="">{{'cart.slogan' | translate}}</h2>
+        <button class="btn  btn-bg-secondcolor2 fs-4" (click)="goToProducts()"><span
+                class="">{{'wishlist.ExploreProducts' | translate}}</span></button>
+    </div>

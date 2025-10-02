@@ -1,0 +1,86 @@
+<div class="second py-3 bg-babyblue mb-0 mt-0" *ngIf="bestSellerProducts.length > 0">
+  <section class="categories-section">
+    <div class="categories-wrapper ">
+      <h1 class="text-center mb-0 second-color">
+        {{ 'home.bestSellers' | translate }}
+        <span style=" font-size:60px;" class="main-color">
+          {{ 'home.bestSellers-complete' | translate }}
+        </span>
+      </h1>
+      <p class="text-center mb-2 fs-4">{{ 'home.recomendedSlogan' | translate }}</p>
+
+      <div class="position-relative px-5 my-5">
+        <!-- سهم يسار -->
+        <button class="slider-arrow left" (click)="bestCarousel.prev()">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+
+        <owl-carousel-o
+          *ngIf="bestSellerProducts?.length"
+          #bestCarousel
+          class="mt-2"
+          [options]="bestOptions"
+          (drag)="dragging = true"
+          (dragged)="dragging = false">
+
+          <ng-template carouselSlide *ngFor="let product of bestSellerProducts; trackBy: trackById">
+            <div class="product-card h-100 d-flex flex-column justify-content-between pointer"
+                 (click)="onProductClick(product, $event)">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="discount-badge second-bg-color" *ngIf="product.discount > 0 && product.stock > 0">
+                  {{ product.discount }}%
+                </div>
+
+                <div class="icons second-color">
+                  <i *ngIf="!product.isFavorite"
+                     class="fa-regular fa-heart fs-5 pointer"
+                     (click)="addToFavourite(product); $event.stopPropagation()"></i>
+
+                  <i *ngIf="product.isFavorite"
+                     class="fa-solid fa-heart fs-5 pointer"
+                     (click)="removeFromFavourite(product); $event.stopPropagation()"></i>
+
+                  <i *ngIf="product.stock > 0"
+                     class="fa-solid fa-cart-shopping fs-5 pointer"
+                     (click)="addToCart(product); $event.stopPropagation()"></i>
+                </div>
+
+                <p class="outOfStock px-1 rounded" *ngIf="product.stock <= 0">
+                  {{ 'outOfStock' | translate }}
+                </p>
+              </div>
+
+              <div class="image-wrapper">
+                <img [src]="product.productImages[0]"
+                     class="product-image"
+                     [attr.draggable]="false"
+                     (dragstart)="$event.preventDefault()" />
+              </div>
+
+              <p class="product-name main-color">
+                {{ (languageService.languageChanged$ | async) === 'ar'
+                    ? product.productName_ar
+                    : product.productName }}
+              </p>
+
+              <div class="price second-color">
+                <span>{{ product.oldPrice }}
+                  <span>
+                    {{ (languageService.languageChanged$ | async) === 'ar'
+                        ? product.currency_ar
+                        : product.currency }}
+                  </span>
+                </span>
+              </div>
+            </div>
+          </ng-template>
+        </owl-carousel-o>
+
+        <!-- سهم يمين -->
+        <button class="slider-arrow right" (click)="bestCarousel.next()">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+</div>

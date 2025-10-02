@@ -1,0 +1,24 @@
+.parent {
+  max-width: 1350px;
+  margin: auto;
+}
+
+img {
+  height: 85vh;
+}
+
+p {
+  text-align: justify;
+}
+
+@media (max-width: 768px) {
+  img {
+    height: 50vh;
+  }
+
+  .about-text{
+    margin-top: 25px;
+    margin-bottom: 25px;
+  }
+  
+}

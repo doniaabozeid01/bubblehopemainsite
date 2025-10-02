@@ -1,0 +1,136 @@
+.scroller {
+    --gap: 3px;
+    --speed: 20s;
+    /* زوّدي/قلّلي للسرعة */
+    overflow: hidden;
+    width: 100%;
+    background: #ffffff;
+    /* اختياري */
+    padding-block: 12px;
+    /* اختياري */
+      border-top: 1px solid #dd820b;
+    // margin-top: 2px;
+}
+
+.scroller__track {
+    display: flex;
+    gap: var(--gap);
+    width: max-content;
+    /* خليه على قد المحتوى */
+    align-items: center;
+    animation: scroll var(--speed) linear infinite;
+}
+
+/* صور موحّدة الحجم نسبياً */
+.scroller__track img {
+    display: block;
+    object-fit: contain;
+    pointer-events: none;
+    user-select: none;
+}
+
+
+.scroller__track .img1 {
+    height: 300px;
+    /* عدّلي المقاس المناسب */
+    min-width: 200px;
+    /* عدّلي المقاس المناسب */
+}
+
+
+.scroller__track .img2 {
+    height: 400px;
+    /* عدّلي المقاس المناسب */
+    min-width: 200px;
+    /* عدّلي المقاس المناسب */
+}
+
+li {
+    list-style: none;
+    /* يشيل النقاط */
+}
+
+/* الإتجاه LTR: من اليمين لليسار بصرياً */
+@keyframes scroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+
+    /* -50% لأننا مكررين الصف */
+}
+
+/* لو عايزة الإتجاه العكسي (يعني تمشي يمين) */
+.scroller[data-reverse="true"] .scroller__track {
+    animation-name: scroll-reverse;
+}
+
+@keyframes scroll-reverse {
+    from {
+        transform: translateX(-50%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+/* إيقاف الحركة عند الـhover (اختياري) */
+.scroller:hover .scroller__track {
+    animation-play-state: paused;
+}
+
+/* احترام تفضيل تقليل الحركة */
+@media (prefers-reduced-motion: reduce) {
+    .scroller__track {
+        animation: none;
+    }
+}
+
+/* موبايل: صغّري الارتفاع والـgap */
+@media (max-width: 576px) {
+    .scroller {
+        --gap: 12px;
+    }
+
+    .scroller__track img {
+        height: 140px;
+    }
+
+
+    .scroller__track .img1 {
+    height: 200px;
+    /* عدّلي المقاس المناسب */
+    min-width: 100px;
+    /* عدّلي المقاس المناسب */
+}
+
+
+.scroller__track .img2 {
+    height: 300px;
+    /* عدّلي المقاس المناسب */
+    min-width: 100px;
+    /* عدّلي المقاس المناسب */
+}
+}
+
+
+img {
+    transform: rotateZ(-20deg);
+}
+
+
+
+.soda {
+    background-image: url('../../../../assets/image carousel/ara.png.png');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100px;
+    // height: 580px;
+    width: 1950px;
+    margin: auto;
+}

@@ -1,0 +1,54 @@
+<div class="categoriesSwiperCustom my-5 position-relative ">
+  <h2 class="mb-0 raw-material text-center main-color d-flex justify-content-center">
+    {{'home.rawMaterial.raw'|translate}} <h2 class="second-color px-1">{{'home.rawMaterial.material'|translate}}</h2>
+  </h2>
+  <p class="w-100 px-1 mb-3 text-center m-auto fs-5 text-secondary">
+    {{ 'home.rawmaterialsSlogan' | translate }}
+  </p>
+
+  <!-- <owl-carousel-o *ngIf="RawMaterialcategories?.length" #rawCarousel [options]="rawOptions" (drag)="dragging = true"
+    (dragged)="dragging = false" class="mt-5 ">
+
+    <ng-template carouselSlide *ngFor="let cat of RawMaterialcategories; trackBy: trackById">
+      <div class="feature-item pointer " (pointerdown)="onPtrDown($event)" (pointermove)="onPtrMove($event)"
+        (pointerup)="onPtrUp()" (pointercancel)="onPtrCancel()" (pointerleave)="onPtrCancel()"
+        (click)="onCardClick(cat.id, $event)">
+
+        <div class="circle  text-center "
+          [attr.data-text]="(languageService.languageChanged$ | async) === 'ar' ? 'عرض التفاصيل' : 'See Details'">
+          <img [src]="cat.imageUrl" class="w-30 " alt="">
+          <p class="fs-5 p-0 m-0 category-name main-color">
+            {{ (languageService.languageChanged$ | async) === 'ar' ? cat.name_ar : cat.name }}
+          </p>
+        </div>
+      </div>
+    </ng-template>
+  </owl-carousel-o>
+
+  <button class="slider-arrow left" (click)="rawCarousel.prev()">
+    <i class="bi bi-chevron-left"></i>
+  </button>
+  <button class="slider-arrow right" (click)="rawCarousel.next()">
+    <i class="bi bi-chevron-right"></i>
+  </button> -->
+
+
+
+
+  <div>
+
+    <div class="row  m-auto justify-content-center align-items-center">
+      <div class="col-6 col-sm-6 col-md-4 col-lg-3 text-center my-2" *ngFor="let cat of RawMaterialcategories">
+        <div class="cover">
+          <p class="fs-4 p-0 m-0 category-name">
+            {{ (languageService.languageChanged$ | async) === 'ar' ? cat.name_ar : cat.name }}
+          </p>
+
+          <img [src]="cat.imageUrl" class="img-fluid" alt="">
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</div>

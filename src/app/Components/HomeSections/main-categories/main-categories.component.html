@@ -1,0 +1,37 @@
+<div class="categoriesSwiperCustom my-5 position-relative  px-5">
+  <h1 class="text-center second-color">{{ 'home.catergories' | translate }}</h1>
+  <p class="px-1 mb-5 text-center m-auto fs-5 text-secondary">
+    {{ 'home.categoriesSlogan' | translate }}
+  </p>
+
+
+
+
+  <owl-carousel-o *ngIf="categories?.length" #catCarousel [options]="catOptions" (drag)="dragging = true"
+    (dragged)="dragging = false">
+
+    <ng-template carouselSlide *ngFor="let cat of categories; trackBy: trackById" >
+      <div class="category-card text-center d-flex  justify-content-center align-items-center  flex-column p-0 mb-0"
+        (pointerdown)="onPtrDown($event)" (pointermove)="onPtrMove($event)" (pointerup)="onPtrUp()"
+        (pointercancel)="onPtrCancel()" (pointerleave)="onPtrCancel()" (click)="onCardClick(cat.id, $event)">
+        <img [src]="cat.imageUrl" [alt]="cat.name" class="img-fluid mb-0" />
+      </div>
+      <p class="cat-name second-color text-center">
+        {{ (languageService.languageChanged$ | async) === 'ar' ? cat.name_ar : cat.name }}
+      </p>
+    </ng-template>
+  </owl-carousel-o>
+
+
+
+
+
+
+  <!-- arrows خارجية -->
+  <button class="slider-arrow left" (click)="catCarousel.prev()">
+    <i class="bi bi-chevron-left"></i>
+  </button>
+  <button class="slider-arrow right" (click)="catCarousel.next()">
+    <i class="bi bi-chevron-right"></i>
+  </button>
+</div>

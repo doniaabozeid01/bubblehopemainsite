@@ -1,0 +1,152 @@
+<div class="wishlist-page d-md-block d-none" *ngIf="wishlist.length > 0">
+    <h1 *ngIf="wishlist.length > 0" class="text-center second-color">{{ 'wishlist.WishListTitle' | translate : {} : 'My
+        Wishlist' }}</h1>
+    <!-- <h1 class="text-center second-color">{{"cart.yourcart" | translate}}</h1>    -->
+    <div class="wl-list" *ngIf="wishlist.length > 0; else wlEmpty">
+        <div class="wl-head ">
+            <div class="col-item">
+                <h2 class="fs-1">{{ 'wishlist.item' | translate : {} : 'Item' }}</h2>
+            </div>
+            <div class="col-price">
+                <h2 class="fs-1">{{ 'wishlist.price' | translate : {} : 'Price' }}</h2>
+            </div>
+            <div class="col-actions"></div>
+        </div>
+
+        <!-- Rows -->
+        <div class="wl-row" *ngFor="let item of wishlist; let i = index; trackBy: trackById">
+            <!-- Item cell -->
+            <div class="col-item">
+
+                <img class="thumb w-15" [src]="item.imagePath" alt="product" />
+                <div class="name">
+                    <p class="m-0 p-0">{{ (languageService.languageChanged$ | async) === 'ar' ? item.name_ar : item.name
+                        }}</p>
+                </div>
+            </div>
+
+            <!-- Price cell -->
+            <div class="col-price">
+                <span class="new">
+                    <p class="m-0 p-0">{{
+                        (item.newPrice || getDiscountedPrice?.(item) || item.oldPrice) | number:'1.0-2'
+                        }}
+                        {{ (languageService.languageChanged$ | async) === 'ar' ? item.currency_ar : item.currency }}</p>
+                </span>
+                <span *ngIf="item.discount > 0" class="old">
+                    {{ item.oldPrice | number:'1.0-2' }}
+                    {{ (languageService.languageChanged$ | async) === 'ar' ? item.currency_ar : item.currency }}
+                </span>
+            </div>
+
+            <!-- Actions -->
+            <div class="col-actions">
+
+                <button class="btn btn-bg-secondcolor2 my-5" (click)="addToCart(item)">{{ 'cart.addToCart' | translate : {} :'Add to cart'}}</button>
+
+                <button class="x-remove" aria-label="remove" (click)="removeFromFavourite(item)">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <!-- <ng-template #wlEmpty>
+        <div class="wishlist-empty text-center">
+            <h2 class="empty-title main-color">{{ 'wishlist.slogan' | translate }}</h2>
+            <button class="btn-go btn-bg-color" (click)="goToProducts()">
+                {{ 'wishlist.ExploreProducts' | translate }}
+            </button>
+        </div>
+    </ng-template> -->
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="wishlist-page d-md-none d-block" *ngIf="wishlist.length >= 0">
+    <h1 *ngIf="wishlist.length > 0" class="text-center second-color">{{ 'wishlist.WishListTitle' | translate : {} : 'My
+        Wishlist' }}</h1>
+
+    <!-- Header -->
+    <div class="wl-list" *ngIf="wishlist.length > 0; else wlEmpty">
+
+
+        <!-- Rows -->
+        <div class="row justify-content-between mb-3 border rounded shadow-sm py-1"
+            *ngFor="let item of wishlist; let i = index; trackBy: trackById">
+            <!-- Item cell -->
+            <div class="col-3">
+
+                <img class="thumb w-100" [src]="item.imagePath" alt="product" />
+
+            </div>
+
+
+            <div class="name col-6 ">
+                <p class="m-0 p-0">{{ (languageService.languageChanged$ | async) === 'ar' ? item.name_ar : item.name }}
+                </p>
+
+                <div class="col-price ">
+                    <span class="new">
+                        <p class="m-0 p-0">{{
+                            (item.newPrice || getDiscountedPrice?.(item) || item.oldPrice) | number:'1.0-2'
+                            }}
+                            {{ (languageService.languageChanged$ | async) === 'ar' ? item.currency_ar : item.currency }}
+                        </p>
+                    </span>
+                    <del *ngIf="item.discount > 0" class="old">
+                        {{ item.oldPrice | number:'1.0-2' }}
+                        {{ (languageService.languageChanged$ | async) === 'ar' ? item.currency_ar : item.currency }}
+                    </del>
+                </div>
+
+            </div>
+
+            <!-- Price cell -->
+
+
+            <!-- Actions -->
+            <div class="col-actions col-3 text-start d-flex flex-column justify-content-between px-1 ">
+
+
+                <button class="x-remove btn ms-auto" aria-label="remove" (click)="removeFromFavourite(item)">
+                    <i class="fa-solid fa-xmark "></i>
+                </button>
+
+
+                <button class=" btn btn-bg-secondcolor2 ms-auto" (click)="addToCart(item)"> <i
+                        class="fa-solid fa-cart-shopping "></i></button>
+
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+
+</div>
+
+
+
+<ng-template #wlEmpty>
+    <div class="wishlist-empty text-center">
+        <h2 class="empty-title ">{{ 'wishlist.slogan' | translate }}</h2>
+        <button class="btn btn-bg-secondcolor2" (click)="goToProducts()">
+            {{ 'wishlist.ExploreProducts' | translate }}
+        </button>
+    </div>
+</ng-template>

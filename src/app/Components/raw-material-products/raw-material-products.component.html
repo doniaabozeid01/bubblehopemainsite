@@ -1,0 +1,83 @@
+<div class="parent">
+  <div>
+
+    <!-- Tabs -->
+    <div class="category-tabs text-center m-auto my-3"
+         #tabs
+         (wheel)="onTabsWheel($event, tabs)"
+         (pointerdown)="dragStart($event, tabs)"
+         (pointermove)="dragMove($event, tabs)"
+         (pointerup)="dragEnd($event, tabs)"
+         (pointerleave)="dragEnd($event, tabs)">
+      <div class="cat-rail m-auto">
+        <button *ngFor="let category of categories"
+                class="category-tab fs-5"
+                [ngClass]="{ 'active-tab': selectedCategoryId === category.id }"
+                (click)="!moved && selectCategory(category)">
+          <h4 class="category-slide">
+            {{ (languageService.languageChanged$ | async) === 'ar' ? category.name_ar : category.name }}
+          </h4>
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loadState === 'loading'" class="py-5 text-center">Loading…</div>
+
+    <!-- Grid -->
+    <div class="row justify-content-start m-auto p-0 container"
+         *ngIf="loadState === 'success' && products.length > 0">
+      <div class="col-6 col-sm-6 col-md-4 col-lg-3 col px-2 pointer"
+           *ngFor="let product of products"
+           (click)="gotodetails(product)">
+        <div class="product-card h-100 d-flex flex-column justify-content-between">
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="discount-badge" *ngIf="product.discount > 0 && product.stock > 0">
+              {{ product.discount }}%
+            </div>
+            <div class="icons second-color">
+              <i *ngIf="!product.isFavorite" class="fa-regular fa-heart fs-5 pointer mb-0 pb-0"
+                 (click)="addToFavourite(product); $event.stopPropagation()"></i>
+              <i *ngIf="product.isFavorite" class="fa-solid fa-heart fs-5 pointer mb-0 pb-0"
+                 (click)="removeFromFavourite(product); $event.stopPropagation()"></i>
+              <i *ngIf="product.stock > 0" class="fa-solid fa-cart-shopping fs-5 pointer mb-0 pb-0"
+                 (click)="addToCart(product); $event.stopPropagation()"></i>
+            </div>
+            <p class="outOfStock px-1 mb-0 rounded" *ngIf="product.stock <= 0">
+              {{ 'outOfStock' | translate }}
+            </p>
+          </div>
+
+          <div class="image-wrapper">
+            <img [src]="product.imagePath" class="product-image w-25" />
+          </div>
+
+          <p class="product-name arial main-color">
+            {{ (languageService.languageChanged$ | async) === 'ar' ? product.name_ar : product.name }}
+          </p>
+
+          <div class="price ">
+            <h3 class="arial second-color fs-4 fw-bold">
+              {{ product.newPrice }}
+              <span class="arial second-color fs-4 fw-bold">
+                {{ (languageService.languageChanged$ | async) === 'ar' ? product.currency_ar : product.currency }}
+              </span>
+            </h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No products -->
+    <h1 class="text-center main-color my-3 py-5"
+        *ngIf="loadState === 'success' && products?.length === 0">
+      {{ 'Products.NoProductsFound' | translate }}
+    </h1>
+
+    <!-- Error -->
+    <div *ngIf="loadState === 'error'" class="py-5 text-center main-color">
+      {{ 'common.somethingWentWrong' | translate }}
+    </div>
+
+  </div>
+</div>

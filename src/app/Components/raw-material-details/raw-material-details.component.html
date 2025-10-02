@@ -1,0 +1,63 @@
+<ng-container [ngSwitch]="loadState">
+  <div *ngSwitchCase="'loading'" class="container my-5 text-center">Loading…</div>
+
+  <div *ngSwitchCase="'notfound'" class="container my-5 text-center">
+    Product not found in this branch.
+  </div>
+
+  <div *ngSwitchCase="'error'" class="container my-5 text-center">
+    Something went wrong. Please try again.
+  </div>
+
+  <div *ngSwitchCase="'success'" class="product-details d-flex justify-content-center p-0 m-0 mb-5">
+    <div class="row w-100 justify-content-between align-items-center">
+
+      <!-- Left: image -->
+      <div class="col-md-6 p-0 m-0 text-center d-flex flex-column justify-content-center position-relative left">
+        <div class="py-5">
+          <img
+            [src]="getImageSrc(product)"
+            (error)="onImgError($event)"
+            [alt]="(languageService.languageChanged$ | async) === 'ar' ? product?.name_ar : product?.name" />
+        </div>
+      </div>
+
+      <!-- Right: info -->
+      <div class="product-info col-md-6 me-0 d-flex flex-column justify-content-center">
+        <h1>
+          {{ (languageService.languageChanged$ | async) === 'ar'
+              ? product?.category?.name_ar
+              : product?.category?.name }}
+        </h1>
+
+        <h2 class="fs-2">
+          {{ (languageService.languageChanged$ | async) === 'ar'
+              ? product?.name_ar
+              : product?.name }}
+        </h2>
+
+        <p class="description fs-5">
+          {{ (languageService.languageChanged$ | async) === 'ar'
+              ? product?.ingredients_ar
+              : product?.ingredients }}
+        </p>
+
+        <div class="price-cart d-flex justify-content-between align-items-center">
+          <p class="price mb-0">
+            {{ product?.newPrice }}
+            <span class="price">
+              {{ (languageService.languageChanged$ | async) === 'ar'
+                  ? product?.currency_ar
+                  : product?.currency }}
+            </span>
+          </p>
+
+          <button class="add-btn" (click)="addToCart(product)">
+            {{ 'cart.addToCart' | translate }}
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ng-container>

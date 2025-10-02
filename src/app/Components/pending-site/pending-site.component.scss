@@ -1,0 +1,32 @@
+.preloader {
+  position: fixed; inset: 0; z-index: 2000;
+  display: grid; place-items: center;
+  background: #fff;  /* غطي المحتوى */
+}
+
+.box {
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+  transition: opacity .35s ease, transform .35s ease;
+}
+
+.box.fadeout { opacity: 0; transform: translateY(-6px) scale(.98); }
+
+.logo {
+  width: 120px; height: auto; user-select: none;
+//   animation: float 2.2s ease-in-out infinite;
+}
+
+.spinner {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 4px solid rgba(0,0,0,.12);
+  border-top-color: #ff7a00;        /* غيّري اللون للبرانـد */
+  animation: spin 1s linear infinite;
+}
+
+.hidden { display: none; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes float {
+  0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); }
+}

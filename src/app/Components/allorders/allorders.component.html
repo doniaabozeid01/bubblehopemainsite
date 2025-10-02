@@ -1,0 +1,98 @@
+<div class="parent">
+    <div class="orders-page container ">
+
+
+        <ng-container *ngIf="isLoggedIn; else notLoggedIn">
+
+
+            <h2 class="text-center fw-bold my-lg-4 my-5  second-color" *ngIf="orders?.length > 0">{{"orders.prevorder" | translate}}</h2>
+
+            <!-- ✅ قائمة الطلبات -->
+            <div class="d-flex flex-column gap-4 ">
+                <!-- عنصر طلب -->
+                <div class="card rounded-4 border-0 " *ngFor="let order of orders">
+                    <div class="card-body">
+                        <!-- رأس الطلب -->
+                        <div class="d-flex justify-content-between align-items-start mb-2 main-color">
+                            <div>
+                                <p class="fw-bold mb-0 pb-0 second-color">{{"orders.OrderNo" | translate}}: {{ order.orderId }}</p>
+                                <small class="fs-5 my-0 py-0 text-black">{{"orders.Date" | translate}} : {{ order.createdAt | date:'shortDate'
+                                    }}</small>
+                            </div>
+                            <span class="badge text-dark px-3 py-2 fs-5" [ngClass]="getStatusClass(order.status)">
+                                {{ order.status }}
+                            </span>
+                        </div>
+                        <hr />
+
+
+
+
+                        <!-- المنتجات داخل الطلب -->
+                        <div class="d-flex flex-column gap-3">
+                            <div *ngFor="let item of order.orderItems"
+                                class="d-flex align-items-center justify-content-between p-2 rounded bg-light main-color">
+                                <div class="d-flex align-items-center gap-3">
+                                    <!-- <img [src]="item.imageUrl" alt="product" class="rounded"
+                  style=" object-fit: cover;" /> -->
+                                    <img [src]="item.imageUrl" alt="product" class="rounded w-20"
+                                        style=" object-fit: cover;" />
+                                    <div class="">
+                                        <p class=" fs-1 mb-0 text-black">{{ (languageService.languageChanged$ | async) === 'ar' ?
+                                            item.productName_ar : item.productName }}</p>
+                                        <p class="mb-0 text-black">{{"orders.count" | translate}}: {{ item.quantity }}
+                                        </p>
+                                        <p class="mb-0 text-black">
+                                            {{"orders.price" | translate}}: {{ item.unitPrice }} <span>{{
+                                                (languageService.languageChanged$ | async) === 'ar' ? item.currency_ar :
+                                                item.currency }}</span>
+                                        </p>
+                                        <!-- اختياري: عرض الإجمالي للمنتج -->
+                                        <!-- <div class="small fw-bold mt-1">
+                                            الإجمالي: {{ item.price * item.quantity }} EGP
+                                        </div> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr />
+
+                        <!-- إجمالي الطلب -->
+                        <div class="d-flex justify-content-between align-items-center mt-2 second-color">
+                            <span class="fw-bold fs-2">{{"orders.totalAmount" | translate}}:</span>
+                            <span class="fw-bold fs-2"> {{ order.totalAmount }}
+                                <span>{{(languageService.languageChanged$ | async) === 'ar' ?
+                                    order?.orderItems[0]?.currency_ar : order?.orderItems[0]?.currency }}</span></span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ⛔️ حالة لا يوجد طلبات -->
+            <div *ngIf="orders?.length === 0" class="text-center main-color py-5">
+                <!-- <i class="fa fa-box-open fa-3x mb-3"></i> -->
+                <h2 class="main-color ">{{'order.slogan' | translate}}</h2>
+                <button class="btn goToProduct fs-4" (click)="goToProducts()">{{'wishlist.ExploreProducts' |
+                    translate}}</button>
+            </div>
+        </ng-container>
+
+
+        <ng-template #notLoggedIn>
+            <div class="text-center py-5">
+                <h2 class="fw-bold main-color">يرجى تسجيل الدخول لعرض الطلبات</h2>
+                <button class="btn btn-bg-color fs-4 mt-3" (click)="goToLogin()">تسجيل الدخول</button>
+            </div>
+        </ng-template>
+    </div>
+<button
+  class="scroll-to-top main-bg-color"
+  *ngIf="showScrollButton"
+  (click)="scrollToTop()"
+>
+<i class="fa-solid fa-arrow-up "></i>
+</button>
+
+</div>

@@ -1,0 +1,51 @@
+.mobile-advertise {
+  max-width: 1600px;
+  /* padding: 50px 0; */
+  // background-color: #fdf6e3;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.download-buttons svg {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.download-buttons svg:hover {
+  transform: scale(1.05);
+}
+
+.text-white3 {
+  color: white !important;
+}
+
+a {
+  text-decoration: none;
+}
+
+.fs-7 {
+  font-size: 12px;
+}
+
+.done-easy {
+  font-size: 60px;
+}
+
+.w-50-100 {
+  width: 30%;
+}
+
+.appLinks {
+  min-width: 200px;
+}
+
+
+@media (max-width:768px) {
+  .phone-template {
+    padding-top: 45px;
+  }
+}

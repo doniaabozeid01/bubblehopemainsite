@@ -1,0 +1,68 @@
+<!-- <owl-carousel-o *ngIf="advertisements?.length" [options]="customOptions">
+  <ng-template carouselSlide *ngFor="let item of advertisements; trackBy: trackById" >
+        <img [src]="item.imageUrl" [alt]="item.title" class="d-block w-100" loading="lazy" />
+  </ng-template>
+</owl-carousel-o> -->
+
+
+
+
+
+
+<!-- 
+<owl-carousel-o *ngIf="advertisements?.length" [options]="customOptions">
+  <ng-template carouselSlide *ngFor="let item of advertisements; trackBy: trackById">
+    <div class="m-1 m-sm-0 rounded-3 overflow-hidden img-cover">  
+      <img [src]="item.imageUrl" [alt]="item.title" class="d-block w-100" loading="lazy" />
+    </div>
+  </ng-template>
+</owl-carousel-o> -->
+
+
+
+
+
+
+
+
+
+<div class="hero-carousel">
+  <owl-carousel-o *ngIf="advertisements?.length" [options]="customOptions">
+    <ng-template carouselSlide *ngFor="let item of advertisements; trackBy: trackById">
+      <div class="m-1 m-sm-0   overflow-hidden img-cover">
+        <img [src]="item.imageUrl" [alt]="item.title" class="h-100 w-100 " loading="lazy" />
+      </div>
+    </ng-template>
+  </owl-carousel-o>
+</div>
+
+
+<!-- <p class="moving-text-ar pb-0 mb-0 text-end ">بتلابنلاتر ةيبللاة تيسنبللاب تلقنبلا </p> -->
+
+<!-- <div class="second-bg-color text-white overflow-hidden">
+
+  <p class="moving-text-ar pb-0 mb-0 text-end ">بتلابنلاتر ةيبللاة تيسنبللاب تلقنبلا </p>
+  <p class="moving-text pb-0 mb-0 text-end ">Lorem ipsum dolor sit amet, consectetur adipisicing.</p>
+
+</div> -->
+
+
+
+
+
+
+<div class="second-bg-color text-white overflow-hidden">
+
+  <!-- النص العربي -->
+  <p  *ngIf="(languageService.languageChanged$ | async) === 'ar'"
+     class="moving-text-ar pb-0 mb-0 text-end fs-2">
+    {{'slide-advertise.adv1' | translate}}
+  </p>
+
+  <!-- النص الإنجليزي -->
+  <p *ngIf="(languageService.languageChanged$ | async) !== 'ar'"
+     class="moving-text pb-0 mb-0 text-start fs-2">
+    {{'slide-advertise.adv1' | translate}}
+  </p>
+
+</div>

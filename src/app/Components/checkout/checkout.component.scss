@@ -1,0 +1,90 @@
+.checkout-page {
+  direction: rtl;
+
+}
+
+
+.bg-light-green {
+  background-color: #ffffff;
+    box-shadow: 0 10px 20px rgba(0,0,0.1,0.2);
+
+}
+
+.col-md-8 {
+  border: 1px solid #532601;
+}
+
+@media (max-width: 768px) {
+  .col-md-8 {
+    width: 95%;
+    margin: auto;
+    margin-top: 20px;
+  }
+}
+
+.dataToReview {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+
+
+.checkout-page, .parent {
+  // color: #117C9F;
+}
+
+.checkout-page *, .parent * {
+  // color: #117C9F ;
+}
+
+::placeholder {
+  // color: #117C9F; 
+  opacity: 1;   /* عشان يكون اللون واضح */
+}
+
+
+
+
+.w-60{
+  width: 60%;
+}
+
+
+
+.w-40{
+  width: 40%;
+}
+
+
+/* زر مخصص متوافق تمامًا مع Bootstrap 5 */
+// .btn-bg-color {
+//   /* الحالة العادية */
+//   --bs-btn-bg: #117c9f;
+//   --bs-btn-border-color: #117c9f;
+//   --bs-btn-color: #ffffff;
+
+//   /* hover / focus */
+//   --bs-btn-hover-bg: #0f6c8a;
+//   --bs-btn-hover-border-color: #0f6c8a;
+//   --bs-btn-hover-color: #ffffff;
+//   --bs-btn-focus-shadow-rgb: 17,124,159;
+
+//   /* active (وقت الضغط) */
+//   --bs-btn-active-bg: #0d607a;
+//   --bs-btn-active-border-color: #0d607a;
+//   --bs-btn-active-color: #ffffff;
+
+//   /* disabled */
+//   --bs-btn-disabled-bg: #117c9f;
+//   --bs-btn-disabled-border-color: rgba(17,124,159,.4);
+//   --bs-btn-disabled-color: #117c9f;
+
+//   transition: background-color .2s, color .2s, border-color .2s;
+// }
+
+
+
+.checkout-page .btn-bg-color, 
+.checkout-page .btn-bg-color * { color: #fff !important; }
+.checkout-page .btn-bg-color:disabled,
+.checkout-page .btn-bg-color:disabled * { color: #117c9f !important; }

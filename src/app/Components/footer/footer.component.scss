@@ -1,0 +1,130 @@
+.footer {
+  max-width: 1950px;
+  // height: 500px;
+  direction: ltr;
+
+  /* الصورة فوق، الجريدينت تحت */
+  background-image:
+    url('../../../assets/Untitled-3-01 (2).png'),
+    linear-gradient(180deg, #ffffff, #f47524);
+  // linear-gradient(180deg, #ffffff, #F7E8D3);
+
+  /* لكل طبقة قيمة */
+  background-position: right;
+  background-repeat: no-repeat, no-repeat;
+
+  /* حجم الصورة ثابت/مرن + الجريدينت يغطي كله */
+  background-size: contain;
+}
+
+
+.pointer {
+  cursor: pointer;
+}
+
+
+.row {
+  padding: 48px 0;
+}
+
+  .t-c{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;  
+  }
+
+
+
+@media (max-width:992px) {
+  .w-50 {
+    width: 70% !important;
+    margin-bottom: 20px;
+    
+  }
+
+  .t-c{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    // text-align: center;
+    // margin: auto;
+    // background-color: #f47524;
+  }
+
+  i {
+    margin: 0;
+    padding: 0;
+  }
+
+  .row {
+    padding: 0;
+  }
+
+
+
+  .footer {
+    
+    background-position: bottom right;
+
+  }
+
+}
+
+
+.footer-dal {
+  font-size: 14px;
+  letter-spacing: 1px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+
+
+
+
+/* احذفي أو علّقي السطر ده لأنه هو سبب البلوكات الزرقا */
+/* a { background-color: #2496f4; } */
+
+/* شكل الأيقونة */
+.cover-icon {
+  background-color: #fff;
+  width: 50px;
+  height: 50px;
+  border-radius: 20px;
+  /* بيضاوي صغير */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 6px;
+  text-decoration: none;
+  line-height: 1;
+  /* يمنع تمدّد الخط */
+}
+
+.cover-icon i {
+  color: #f47524;
+  /* لون الأيقونة */
+  font-size: 22px;
+  /* حجم موحّد */
+}
+
+/* Hover بسيط (اختياري) */
+.cover-icon:hover {
+  box-shadow: 0 6px 14px rgba(0, 0, 0, .12);
+  transform: translateY(-1px);
+  transition: .2s ease;
+}
+
+/* لو بتحبيهم دواير تمامًا بدّلي: border-radius:50%; */
+
+/* إلغاء التسطير لكل الروابط لو لسه ظاهر */
+a,
+a:hover,
+a:focus {
+  text-decoration: none;
+}
+
+// .w-30{
+//   width: 40%;
+// }

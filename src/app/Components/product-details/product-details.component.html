@@ -1,0 +1,64 @@
+<div class="product-details d-flex justify-content-center p-0 m-0 my-5 pb-5 mb-5" *ngIf="product as p; else loading">
+  <div class="row cart-data w-100 justify-content-between align-items-center">
+
+    <!-- Left: image + heart -->
+    <div class="col-md-3 p-0 m-0 text-center d-flex flex-column justify-content-center position-relative">
+      <div class="py-5">
+        <div class="heart-icon fs-4 border-0 d-flex justify-content-center align-items-end second-color">
+          <i
+            [class.fa-solid]="p?.isFavourite"
+            [class.fa-regular]="!p?.isFavourite"
+            class="fa-heart pointer"
+            (click)="toggleFavourite(p)">
+          </i>
+        </div>
+
+        <img
+          [src]="p?.images?.length ? p.images[0]?.imagePath : 'assets/placeholder.png'"
+          class=""
+          [alt]="(languageService.languageChanged$ | async) === 'ar' ? p?.name_ar : p?.name" />
+      </div>
+    </div>
+
+    <!-- Right: info -->
+    <div class="product-info col-md-9 me-0 d-flex flex-column justify-content-center ">
+      <h1 class="second-color">
+        {{ (languageService.languageChanged$ | async) === 'ar'
+            ? p?.category?.name_ar
+            : p?.category?.name }}
+      </h1>
+
+      <h2 class="fs-2 main-color">
+        {{ (languageService.languageChanged$ | async) === 'ar'
+            ? p?.name_ar
+            : p?.name }}
+      </h2>
+
+      <p class="description fs-5 main-color">
+        {{ (languageService.languageChanged$ | async) === 'ar'
+            ? p?.ingredients_ar
+            : p?.ingredients }}
+      </p>
+
+      <div class="price-cart d-flex justify-content-between align-items-center second-color">
+          <p class="price mb-0">
+            {{ p?.newPrice }}
+          <span class="price">
+            {{ (languageService.languageChanged$ | async) === 'ar'
+                ? p?.currency_ar
+                : p?.currency }}
+          </span>
+          </p>
+
+        <button class="add-btn btn-bg-color2" (click)="addToCart(p)">
+          {{ 'cart.addToCart' | translate }}
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="container my-5 text-center">Loading…</div>
+</ng-template>

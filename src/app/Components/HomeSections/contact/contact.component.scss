@@ -1,0 +1,40 @@
+
+.contact-box {
+  border: 1px solid rgba(231, 142, 59, 0.2);
+  transition: box-shadow 0.3s ease;
+  width: 100%;
+}
+
+.border-blue {
+  border: 1px solid rgba(231, 142, 59, 0.2);
+  background-color: white;
+}
+
+.contact-box:hover {
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.05);
+}
+
+input,
+textarea {
+  background-color: #f9f9f9;
+}
+
+.contact-img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+
+
+@media (max-width: 768px) {
+
+  .contact-form-container {
+    width: 95% !important;
+  }
+
+}
+
+.contact-form-container {
+  width: 45%;
+}

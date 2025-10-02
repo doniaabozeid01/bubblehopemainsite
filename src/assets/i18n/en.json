@@ -1,0 +1,154 @@
+{
+    "auth": {
+        "FullName": "Full Name",
+        "email": "Email",
+        "Password": "Pasword",
+        "oldPassword": "Old Pasword",
+        "newPassword": "New Pasword",
+        "login": "LOG IN",
+        "CreateNewAccount": "Create New Account",
+        "register": "Register",
+        "forgetpassword": "forget Password?",
+        "changepassword": "Change Password",
+        "Donthaveanaccount": "Don't have an account?",
+        "CreateAccount": "Create Account",
+        "Alreadyhaveanaccount": "Already have an account?",
+        "sendresetlink": "Send Reset Link",
+        "ResetYourPassword": "Reset Your Password",
+        "newpassword": "New Password",
+        "resetPassword": "Reset Password",
+        "required": "This field is required",
+        "Invalidemail": "Invalid email format",
+        "minLength": "Password must be at least 6 characters long",
+        "gmailOnly": "Only Gmail addresses are allowed",
+        "requireDigit": "The password must contain at least one digit.",
+        "requireLowercase": "The password must contain at least one lowercase letter.",
+        "requireUniqueChars": "The password must contain at least one unique character.",
+        "optional": "This field is optional"
+    },
+    "home": {
+        "catergories": "Beverages",
+        "categoriesSlogan": "Explore our wide range of drinks and find your perfect flavor today.",
+        "rawMaterial": {
+            "raw": "Raw",
+            "material" : "Material"
+        },
+        "rawmaterialsSlogan": "As Bubblehope, you can consume our products we offer to our valued customers as you wish. Which one did you choose?",
+        "contactus": "Contact US",
+        "contactslogan": "Get in touch with one of our dedicated sales team members to help you with your needs.",
+        "contactMsg": "Your Message",
+        "send": "Send",
+        "followus": "Follow Us",
+        "bestSellers": "Recomended For",
+        "bestSellers-complete": "  You!",
+        "recomendedSlogan": "Discover our handpicked favorites, crafted to delight your taste buds."
+    },
+    "navbar": {
+        "home": "Home",
+        "menu": "Menu",
+        "branch": "Branch",
+        "orders": "Orders",
+        "about": "AboutUS",
+        "fullMenu": "Full Menu",
+        "login": "Login",
+        "register": "Register",
+        "logout": "Logout",
+        "changepassword": "Change Password",
+        "hello":"Hello"
+    },
+    "aboutus": {
+        "aboutusDescribtion": "At Bubble Hope, we don’t just serve delicious bubble tea  we create  joyful moments in every cup! We started with passion to deliver a unique experience that combines rich flavors, high quality, and friendly service.From the heart of the city, we founded Bubble Hope as a place for people who love discovering new flavors and enjoying cheerful moments throughout their day.We use the finest natural ingredients and prepare every drink with care and love."
+    },
+    "wishlist": {
+        "slogan": "Everything you crave… saved at Bubble Hope!",
+        "ExploreProducts": "Explore Products",
+        "WishListTitle": "WishList",
+        "item": "Item",
+        "price": "Price"
+    },
+    "cart": {
+        "slogan": "Ready to check out? The flavor’s calling!",
+        "addToCart": "Add To Cart",
+        "checkout": "Checkout",
+        "item": "Item",
+        "itemcounter": "Item",
+        "price": "Price",
+        "quantity": "Quantity",
+        "total": "Total",
+        "subtotal": "Subtotal",
+        "fees": "Fees",
+        "yourcart": "Your Cart"
+    },
+    "order": {
+        "slogan": "Pick it, tap it, sip the refreshment!"
+    },
+    "Products": {
+        "NoProductsFound": "No Products Were Found In This Branch Or Category"
+    },
+    "orders": {
+        "prevorder": "My Previous Orders",
+        "OrderNo": "Order No.",
+        "Date": "Date",
+        "price": "Price",
+        "count": "Count",
+        "totalAmount": "Total Amount"
+    },
+    "delivery": {
+        "deliveryInformation": "Delivery Information",
+        "fullName": "Full Name",
+        "phone": "Phone Number",
+        "country": "Country",
+        "governorate": "Governorate",
+        "city": "City",
+        "district": "District",
+        "street": "Street",
+        "apartment": "Apartment",
+        "floor": "Floor",
+        "buildingNumber": "Building Number",
+        "nearestlandmark": "Nearest Landmark",
+        "paymentMethod": "Payment Method",
+        "orderSummary": "Order Summary",
+        "totalAmount": "Total Amount",
+        "quantity": "Quantity",
+        "selectCountry": "Select Country",
+        "selectGovernorate": "Select Governorate",
+        "selectCity": "Select City",
+        "selectDistrict": "Select District",
+        "confirmOrder": "Confirm Order",
+        "code": "Discount Code"
+    },
+    "appAdvertise": {
+        "doneEasy": "DONE EASY",
+        "doneEasyDesc": "Find a store, place your order and get on your way with the bubble hope App",
+        "doneEasyPoints": {
+            "point1": "Order ahead and pay from your phone",
+            "point2": "Join bubble hope Rewards and earn points towards free food and beverages",
+            "point3": "Earn exclusive offers and rewards"
+        },
+        "googlePlay": {
+            "small": "Get it On",
+            "big": "Google Play"
+        },
+        "appStore": {
+            "small": "Available on the",
+            "big": "App Store"
+        }
+    },
+    "outOfStock": "Out Of Stock",
+    "footer": {
+        "data": "At Bubble Hope, we don’t just serve delicious bubble tea. we create joyful moments in every cup! We started with passion to deliver a unique experience that combines rich flavors, high quality, and friendly service.From the heart of the city, we founded Bubble Hope as a place for people who love discovering new flavors and enjoying cheerful moments throughout their day.We use the finest natural ingredients and prepare every drink with care and love.",
+        "findUsOn": "Find Us On",
+        "weAreAlsoIn": "We are also in",
+        "kuwaitTurkiye": "kuwait & Turkiye",
+        "privacypolicy":"Privacy Policy",
+        "termsofcondition":"Terms & Condition"
+    },
+    "training":{
+        "title":"Master One Skill, Work Anywhere",
+        "desc":"Love coffee? One skill can open job opportunities everywhere.With our barista training, you’ll learn the secrets of coffee, brewing techniques, and customer service skills for cafés.Start today… your future begins with a cup of coffee."
+    },
+    "slide-advertise":{
+        "adv1":"Sip the flavor . . feel the joy . . share the moment"
+    }
+
+}

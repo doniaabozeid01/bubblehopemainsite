@@ -1,0 +1,23 @@
+.nav-link:hover,
+.nav-link:focus {
+  color: #F47421 !important; /* برتقالي */
+}
+
+.navbar .dropdown-menu {
+  background-color: #ffffff;
+  border: none;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.dropdown-menu a {
+  color: #0F7C9E;
+}
+
+.dropdown-menu a:hover {
+  background-color: #F47421;
+  color: #fff;
+}
+
+.navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.3);
+}
