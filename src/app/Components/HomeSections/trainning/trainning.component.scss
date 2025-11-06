@@ -11,14 +11,16 @@
     // height: 100vh;
     max-width: 1950px;
     margin: auto;
-    background-image: url('../../../../assets/texture-01.png');
+    // background-image: url('../../../../assets/texture-01.png');
     background-position: top;
     background-repeat: no-repeat;
     background-size: contain;
     overflow: hidden;
 }
 
-
+.cov-img{
+    background-color: #F47421;
+}
 
 @keyframes upDown {
 
@@ -29,7 +31,7 @@
     }
 
     50% {
-        transform: translateY(-15px);
+        transform: translateY(-20px);
         /* تطلع لفوق مسافة صغيرة */
     }
 }
@@ -71,7 +73,7 @@ img {
 
 /* ≥993px: الافتراضي 100vh */
 @media (min-width:993px) {
-  .training { height: 100vh !important; }
+//   .training { height: 100vh !important; }
 }
 
 /* ≤992px: موبايل */

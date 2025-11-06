@@ -200,7 +200,8 @@
 
 .cover {
   border-radius: 20px;
-  border: 8px solid #F9D3C0;
+  // border: 8px solid #F9D3C0;
+  background-color: #F47421;
   padding: 20px;
   min-width: 120px;
   min-height: 350px;
@@ -220,20 +221,34 @@
   max-width: 50%;
   /* تحكم في حجم الصورة */
   object-fit: contain;
-      }
+}
 
 @media (max-width:768px) {
   .cover {
     min-width: 120px;
-    height: 200px;
-    // max-height: 250px;
+    min-height: 230px;
+    // height: 150px;
+    // height: 150px!important;
   }
 
   .cover img {
-    max-height: 200px;
+    height: 150px;
   }
 
   .col-6 {
     padding: 6px 0;
   }
+}
+
+
+
+
+// .items-wrapper {
+//   background: linear-gradient(to bottom, #F47421, #ffffff);
+//   padding: 10px;
+// }
+
+.items-wrapper .cover {
+  background: linear-gradient(to bottom, #F47421, #F9D3C0);
+  padding: 10px;
 }

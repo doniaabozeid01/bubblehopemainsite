@@ -19,7 +19,7 @@ export class FavouritsComponent {
   usreId!: string;
   cartId!: number;
   branchId!: any;
-trackById = (_: number, x: any) => x.id;
+  trackById = (_: number, x: any) => x.id;
 
   ngOnInit() {
 
@@ -46,13 +46,13 @@ trackById = (_: number, x: any) => x.id;
           const initialBranchId = Number(this.branchService.getCurrentBranch());
           if (initialBranchId) {
             this.branchId = initialBranchId;
-            this.GetProductFavouriteByUserId(this.usreId , this.branchId);
+            this.GetProductFavouriteByUserId(this.usreId, this.branchId);
           }
 
           this.branchService.currentBranch$.subscribe(branchId => {
             if (branchId && branchId !== this.branchId) {
               this.branchId = branchId;
-              this.GetProductFavouriteByUserId(this.usreId , branchId);
+              this.GetProductFavouriteByUserId(this.usreId, branchId);
             }
           });
 
@@ -62,13 +62,13 @@ trackById = (_: number, x: any) => x.id;
           const initialBranchId = Number(this.branchService.getCurrentBranch());
           if (initialBranchId) {
             this.branchId = initialBranchId;
-            this.GetProductFavouriteByUserId(this.usreId , this.branchId);
+            this.GetProductFavouriteByUserId(this.usreId, this.branchId);
           }
 
           this.branchService.currentBranch$.subscribe(branchId => {
             if (branchId && branchId !== this.branchId) {
               this.branchId = branchId;
-              this.GetProductFavouriteByUserId(this.usreId , branchId);
+              this.GetProductFavouriteByUserId(this.usreId, branchId);
             }
           });
           console.log(err);
@@ -104,38 +104,38 @@ trackById = (_: number, x: any) => x.id;
 
   }
 
-  addToCart(data: any) {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      this.router.navigate(['/auth/login'], {
-        queryParams: { returnUrl: this.router.url }
-      });
-      return;
-    }
+  // addToCart(data: any) {
+  //   const token = localStorage.getItem('token');
+  //   if (!token) {
+  //     this.router.navigate(['/auth/login'], {
+  //       queryParams: { returnUrl: this.router.url }
+  //     });
+  //     return;
+  //   }
 
-    const dataToAdded = {
-      quantity: 1,
-      productId: data.productId,
-      branchId: this.branchId,
-      userId: this.usreId,
-    };
+  //   const dataToAdded = {
+  //     quantity: 1,
+  //     productId: data.productId,
+  //     branchId: this.branchId,
+  //     userId: this.usreId,
+  //   };
 
-    this.apiService.addToCart(dataToAdded).subscribe({
-      next: (res) => {
-        this.cartId = res.id
-        this.toastr.success("Great choice! It's now in your cart.");
-      },
+  //   this.apiService.addToCart(dataToAdded).subscribe({
+  //     next: (res) => {
+  //       this.cartId = res.id
+  //       this.toastr.success("Great choice! It's now in your cart.");
+  //     },
 
-      error: (err) => {
-        this.toastr.warning(err.error.message);
+  //     error: (err) => {
+  //       this.toastr.warning(err.error.message);
 
-        console.log(err);
-      }
-    });
+  //       console.log(err);
+  //     }
+  //   });
 
 
 
-  }
+  // }
 
 
 

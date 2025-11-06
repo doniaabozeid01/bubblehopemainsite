@@ -14,7 +14,6 @@
 
 
                         <div class="icons second-color">
-
                             <i *ngIf="!item.isFavorite" class="fa-regular fa-heart fs-5 pointer"
                                 (click)="addToFavourite(item); $event.stopPropagation()">
                             </i>
@@ -22,9 +21,8 @@
                             <i *ngIf="item.isFavorite" class="fa-solid fa-heart fs-5 pointer"
                                 (click)="removeFromFavourite(item); $event.stopPropagation()">
                             </i>
-
-                            <i *ngIf="item.stock > 0" class="fa-solid fa-cart-shopping fs-5 pointer"
-                                (click)="addToCart(item); $event.stopPropagation()"></i>
+                            <!-- <i *ngIf="item.stock > 0" class="fa-solid fa-cart-shopping fs-5 pointer"
+                                (click)="addToCart(item); $event.stopPropagation()"></i> -->
                         </div>
 
                         <div class="discount-badge second-bg-color" *ngIf="item.discount > 0 && item.stock > 0">{{item.discount}}%
@@ -80,8 +78,8 @@
                                     (click)="removeFromFavourite(product); $event.stopPropagation()">
                                 </i>
 
-                                <i *ngIf="product.stock > 0" class="fa-solid fa-cart-shopping fs-5 pointer mb-0 pb-0"
-                                    (click)="addToCart(product); $event.stopPropagation()"></i>
+                                <!-- <i *ngIf="product.stock > 0" class="fa-solid fa-cart-shopping fs-5 pointer mb-0 pb-0"
+                                    (click)="addToCart(product); $event.stopPropagation()"></i> -->
                             </div>
 
                             <div class="discount-badge second-bg-color" *ngIf="product.discount > 0 && product.stock > 0">

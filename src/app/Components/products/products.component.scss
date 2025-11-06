@@ -62,10 +62,12 @@
 }
 
 .product-name {
-  /* font-size: 20px; */
+  font-size: 20px;
   margin-top: 5px;
   margin-bottom: 0px;
-  font-weight: bold;
+  font-weight: normal;
+  letter-spacing: 0px;
+
   /* font-weight: 750; */
 }
 
@@ -73,7 +75,7 @@
   /* margin-top: 0px; */
   font-size: 18px;
   // color: #e36d11;
-  font-weight: bold;
+  font-weight: normal;
 }
 
 

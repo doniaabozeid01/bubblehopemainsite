@@ -92,19 +92,60 @@
   padding: 0 !important;
 }
 
+
+.w-30 {
+  width: 35% !important;
+}
+
+
+.scroll {
+  max-height: 450px;
+  overflow-y: auto;
+    overflow-x: hidden;
+
+}
+
+
+
+
+.row{
+  min-width: 850px;
+}
+
+
+
+
 @media (max-width: 768px) {
   .product-details {
     /* background-size: contain; */
     background-repeat: no-repeat;
-    width: 95%;
+    width: 100%;
     margin: auto !important;
-    margin-top: 10px !important;
+    padding: 0;
+    margin-top: 2px !important;
   }
 
+  span{
+    font-size: 16px!important;
+  }
+  .scroll {
+    max-height: none;
+    overflow-y: visible;
+    // overflow: hidden;
+  }
+  .row{
+  min-width: 100%;
+}
+
+.w-80{
+  width: auto;
+}
+
   img {
-    width: 250px;
+    // width: 250px;
     height: auto;
   }
+
 
   .product-info {
     margin: 0px 0;
@@ -114,6 +155,14 @@
   .col-md-6 {
     height: auto !important;
   }
+
+  button{
+    font-size: 14px;
+  }
+}
+
+.w-80{
+  width: 85%;
 }
 
 @media (max-width: 1200px) {
@@ -130,6 +179,10 @@
   .product-info {
     margin: 30px 0;
   }
+
+//   .w-80{
+//   width: auto;
+// }
 }
 
 .row {
@@ -141,7 +194,220 @@
   /* border: 1px solid red; */
 }
 
-.col-md-3 {
-  /* background-color: #B40000; */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+// .col-md-3 {
+//   /* background-color: #B40000; */
+//   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.size {
+  border-radius: 10px;
+  background-color: #eeedec;
+  text-align: center;
+  cursor: pointer;
+  // transition: 0.3s;
+  user-select: none;
+  /* 👈 تمنع تحديد النص والمؤشر */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
+  p {
+    font-size: 14px;
+    color: black;
+    margin-bottom: 0;
+  }
+
+  &.active {
+    background-color: #f9d3c0; // اللون اللي انتي عايزاه وقت التحديد
+
+    p {
+      color: white;
+    }
+
+    // transform: scale(1.05);
+  }
+
+  &:hover {
+    opacity: 0.9;
+  }
 }
+
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  /* يخليهم ينزلوا سطر */
+  gap: 12px;
+  /* مسافة بين الـ chips */
+}
+
+.chip {
+  display: inline-flex;
+  /* العرض على قدّ المحتوى */
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: #eeeeee;
+  border: 1px solid #dcdcdc;
+  cursor: pointer;
+  user-select: none;
+  /* منع تحديد النص */
+  white-space: nowrap;
+  /* يخليها ما تتكسرش جوه نفسها */
+  transition: background .2s, border-color .2s, transform .05s;
+
+  .label {
+    font-weight: 600;
+  }
+
+  .count {
+    opacity: .7;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  /* إحساس الضغط */
+  &:hover {
+    background: #f3f3f3;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #ffbe9e;
+    outline-offset: 2px;
+  }
+}
+
+.chip.active {
+  background: #f9d3c0;
+  /* نفس روح اللون اللي عندك */
+  border-color: #f9d3c0;
+  color: #ffffff;
+  position: relative;
+
+  /* علامة الصح الهادية */
+  &::before {
+    content: "✓";
+    font-weight: 700;
+    margin-right: 6px;
+  }
+}
+
+
+
+
+
+
+
+
+
+/* الكونتينر اللي فيه الزرار */
+.price-cart {
+  margin-top: 20px;
+  position: sticky;
+  bottom: 0;
+  /* يثبت عند قاع الـ viewport */
+  background: #fff;
+  /* خلفية عشان ما يتداخلش مع المحتوى */
+  padding: 0px 0;
+  /* مسافة لطيفة حوالين الزرار */
+  z-index: 50;
+  /* فوق المحتوى */
+  box-shadow: 0 -6px 14px rgba(0, 0, 0, .06);
+  /* ظل خفيف من فوق */
+  border-start-start-radius: 20px;
+  border-start-end-radius: 20px;
+}
+
+/* زرار بعرض كامل */
+.add-btn {
+  width: 80%;
+  font-weight: 600;
+  color: #fff;
+}
+
+
+
+
+
+
+
+.image {
+  overflow: hidden;
+
+  img {
+    width: 190px;
+    height: 270px !important;
+  }
+}
+
+
+
+h4.error,
+.req {
+  color: #e53935;
+}
+
+.req-hint {
+  color: #e53935;
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+.group-block {
+  scroll-margin-top: 80px;
+}
+
+/* عشان ما يستخباش تحت الهيدر */

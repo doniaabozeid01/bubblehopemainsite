@@ -107,7 +107,7 @@ export class RawMaterialDetailsComponent implements OnDestroy {
 
 
                 this.api
-                  .GetProductFavouriteByUserIdAndProductId(this.usreId, this.product.id)
+                  .GetProductFavouriteByUserIdAndProductId(this.usreId, this.product.id,this.branchId)
                   .pipe(
                     catchError((err) => {
                       if (err?.status === 404) return of(null);
@@ -181,7 +181,7 @@ export class RawMaterialDetailsComponent implements OnDestroy {
 
     if (product.isFavourite) {
       this.api
-        .GetProductFavouriteByUserIdAndProductId(this.usreId, product.id)
+        .GetProductFavouriteByUserIdAndProductId(this.usreId, product.id,this.branchId)
         .pipe(catchError(() => of(null)))
         .subscribe((fav: any) => {
           if (!fav?.id) {

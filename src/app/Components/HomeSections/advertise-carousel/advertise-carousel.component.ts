@@ -20,7 +20,6 @@ export class AdvertiseCarouselComponent {
     rtl: true,
     items: 1,
     autoHeight: false
-
   };
 
 

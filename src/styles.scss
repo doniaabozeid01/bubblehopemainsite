@@ -106,7 +106,8 @@ h2,
 p,
 span,
 .total {
-  font-family: "AraHamahHoms", sans-serif;
+  // font-family: "AraHamahHoms", sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 60px;
 }
 
@@ -118,30 +119,36 @@ p,
 span,
 .total,
 label {
-  font-family: "AraHamahHoms", sans-serif;
-  font-size: 60px;
+  // font-family: "AraHamahHoms", sans-serif;
+  
+  font-family: Arial, Helvetica, sans-serif;
+
+  font-size: 45px;
 }
+
+
+
 
 .nav-link {
-  font-size: 35px;
-}
-
-a {
   font-size: 25px;
 }
 
+a {
+  font-size: 20px;
+}
+
 p {
-  font-size: 30px;
+  font-size: 25px;
 }
 
 span,
 .dropdown-item {
-  font-size: 28px;
+  font-size: 20px;
   /* color: #f47524; */
 }
 
 label {
-  font-size: 40px;
+  font-size: 30px;
 }
 
 /* a{
@@ -154,9 +161,11 @@ label {
   h2,
   a,
   .total {
-    font-family: "AraHamahHoms", sans-serif;
+    // font-family: "AraHamahHoms", sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
+
     // color: #117c9f;
-    font-size: 35px !important;
+    font-size: 25px !important;
   }
 
   p {
@@ -194,6 +203,7 @@ label {
 
 .arial {
   font-family: Arial, sans-serif !important;
+  
   /* نوع الخط */
   font-weight: normal;
 }

@@ -1,16 +1,16 @@
-<div class="training d-flex align-items-end mt-0">
+<div class="training d-flex align-items-center mt-0">
 
-    <div class="row d-flex justify-content-center align-items-center mx-5 ">
-        <div class="col-md-6 text-center px-3 bg-white top-50">
-            <h1 class="up-down second-color "> Bubblehope</h1>
-            <h1 class="up-down second-color "> {{ 'training.title' | translate }}</h1>
-            <p class="">{{ 'training.desc' | translate }}</p>
+    <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-md-6 text-center px-5 bg-white top-50 ">
+            <h1 class=" second-color "> Bubblehope</h1>
+            <h3 class=" second-color "> {{ 'training.title' | translate }}</h3>
+            <p class="fs-4">{{ 'training.desc' | translate }}</p>
         </div>
 
-        <div class="col-md-6 text-center ">
-            <img *ngIf="(languageService.languageChanged$ | async) === 'en'"
+        <div class="col-md-6 text-center cov-img  py-5">
+            <img class="up-down" *ngIf="(languageService.languageChanged$ | async) === 'en'"
                 src="../../../../assets/baresta trainee ads.png" alt="">
-            <img *ngIf="(languageService.languageChanged$ | async) === 'ar'" src="../../../../assets/reflect.png"
+            <img class="up-down" *ngIf="(languageService.languageChanged$ | async) === 'ar'" src="../../../../assets/reflect.png"
                 alt="">
         </div>
     </div>

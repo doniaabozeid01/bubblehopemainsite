@@ -16,9 +16,15 @@
     <div class="cart-items-wrapper color " *ngIf="cart?.cartItems?.length > 0">
         <div class="cart-item " *ngFor="let item of cart?.cartItems">
             <img class="product-img w-100" [src]="item.imagePath" alt="Iced Espresso" />
-            <h2 class="product-name w-100">{{ (languageService.languageChanged$ | async) === 'ar' ? item.name_ar :
-                item.name }}</h2>
-            <p class="mb-0">{{( item.price) - (( item.price)* (( item.discount)/100)) }} <span> {{
+            <div>
+                <h2 class="product-name w-100">{{ (languageService.languageChanged$ | async) === 'ar' ? item.name_ar :
+                    item.name }}</h2>
+
+                <p class="fs-6">{{ (languageService.languageChanged$ | async) === 'ar' ? item.optionsTextAr :
+                    item.optionsText }}</p>
+
+            </div>
+            <p class="mb-0">{{ item.price}} <span> {{
                     (languageService.languageChanged$ | async) === 'ar' ? item.currency_ar : item.currency }} </span>
             </p>
             <div class="quantity-control">
@@ -45,7 +51,8 @@
 
         </div>
 
-        <button (click)="goToCheckout()" class="btn my-3 checkout-btn btn-bg-secondcolor2 total fs-4">{{"cart.checkout" |
+        <button (click)="goToCheckout()" class="btn my-3 checkout-btn btn-bg-secondcolor2 total fs-4">{{"cart.checkout"
+            |
             translate}}</button>
     </div>
 
@@ -117,12 +124,10 @@
 
 
                 <div class="d-flex justify-content-between align-items-center pb-0">
-                    <button class=" btn pb-0"
-                        (click)="updateQuantity(item, item.quantity - 1)"><span>-</span></button>
+                    <button class=" btn pb-0" (click)="updateQuantity(item, item.quantity - 1)"><span>-</span></button>
                     <span class=" d-flex align-items-center justify-content-center mt-md-3 pb-0 fs-5">{{ item.quantity
                         }}</span>
-                    <button class=" btn pb-0"
-                        (click)="updateQuantity(item, item.quantity + 1)"><span>+</span></button>
+                    <button class=" btn pb-0" (click)="updateQuantity(item, item.quantity + 1)"><span>+</span></button>
                 </div>
 
 
@@ -149,7 +154,8 @@
 
         </div>
 
-        <button (click)="goToCheckout()" class="btn my-2 checkout-btn btn-bg-secondcolor2 total fs-5">{{"cart.checkout" |
+        <button (click)="goToCheckout()" class="btn my-2 checkout-btn btn-bg-secondcolor2 total fs-5">{{"cart.checkout"
+            |
             translate}}</button>
     </div>
 
@@ -159,8 +165,8 @@
 
 
 
-    <div *ngIf="(cart?.cartItems?.length || 0) === 0" class="cart-empty text-center mt-0 mb-5">
-        <h2 class="">{{'cart.slogan' | translate}}</h2>
-        <button class="btn  btn-bg-secondcolor2 fs-4" (click)="goToProducts()"><span
-                class="">{{'wishlist.ExploreProducts' | translate}}</span></button>
-    </div>
+<div *ngIf="(cart?.cartItems?.length || 0) === 0" class="cart-empty text-center mt-0 mb-5">
+    <h2 class="">{{'cart.slogan' | translate}}</h2>
+    <button class="btn  btn-bg-secondcolor2 fs-4" (click)="goToProducts()"><span class="">{{'wishlist.ExploreProducts' |
+            translate}}</span></button>
+</div>

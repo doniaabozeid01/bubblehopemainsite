@@ -1,5 +1,5 @@
 /* الشبكة: 1fr | auto | 1fr = الوسط متزن ومش بيحسب عرض الاسم */
-.navbar-grid{
+.navbar-grid {
   max-width: 1350px;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -8,24 +8,37 @@
 }
 
 /* تعيين الأعمدة */
-.left-rail   { grid-column: 1; justify-self: start; }
-.center-rail { grid-column: 2; }                  /* ده اللي في النص */
-.right-rail  { grid-column: 3; justify-self: end; } /* الاسم يمين الحاوية */
+.left-rail {
+  grid-column: 1;
+  justify-self: start;
+}
+
+.center-rail {
+  grid-column: 2;
+}
+
+/* ده اللي في النص */
+.right-rail {
+  grid-column: 3;
+  justify-self: end;
+}
+
+/* الاسم يمين الحاوية */
 
 /* الاسم يقصّ بنقط لو طويل */
-.username{
+.username {
   max-width: clamp(140px, 24vw, 260px);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.navbar-width{
+.navbar-width {
   max-width: 1500px;
 }
 
-.name{
-  font-size: 35px!important;
+.name {
+  font-size: 25px !important;
 }
 
 /* ألوانك وسلوك اللينكات (زي ما عندك) */
@@ -46,24 +59,52 @@
 
 
 
-.nav-link{ color:#fffffe; }
-.active{ color:#F47421!important; }
-.nav-link:hover,.nav-link:focus{ color:#F47421!important; }
-.navbar .dropdown-menu{ background:#fff; border:none; box-shadow:0 4px 8px rgba(0,0,0,.15); }
-.dropdown-menu a{ color:#0F7C9E; }
-.dropdown-menu a:hover{ background:#F47421; color:#fff; }
-.navbar-toggler{ border-color:rgba(255,255,255,.3); }
-.navbar-brand img{ max-height:60px; width:auto; }
+.nav-link {
+  color: #fffffe;
+}
+
+.active {
+  color: #F47421 !important;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+  color: #F47421 !important;
+}
+
+.navbar .dropdown-menu {
+  background: #fff;
+  border: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, .15);
+}
+
+.dropdown-menu a {
+  color: #0F7C9E;
+}
+
+.dropdown-menu a:hover {
+  background: #F47421;
+  color: #fff;
+}
+
+.navbar-toggler {
+  border-color: rgba(255, 255, 255, .3);
+}
+
+.navbar-brand img {
+  max-height: 60px;
+  width: auto;
+}
 
 
 
 
-.navbar{
+.navbar {
   // background-image: url('../../../assets/image carousel/ara.png.png');
-    background-image:
+  background-image:
     // url('../../../assets/Untitled-3-01 (2).png'),
-    linear-gradient(180deg, #eba172 , #ffffff);
-    // linear-gradient(180deg, #f78437 , #ecd2c1, #ffffff);
+    linear-gradient(180deg, #eba172, #ffffff);
+  // linear-gradient(180deg, #f78437 , #ecd2c1, #ffffff);
 
 }
 
@@ -80,15 +121,32 @@
 
 
 /* موبايل: خبي الاسم وخلي الـcollapse يملى العرض */
-@media (max-width: 991.98px){
-  .username{ display: none !important; }
-  .navbar-grid{ grid-template-columns: auto 1fr auto; } /* أي توزيع هيمشي؛ الوسط لسه في النص */
+@media (max-width: 991.98px) {
+  .username {
+    display: none !important;
+  }
+
+  .navbar-grid {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  /* أي توزيع هيمشي؛ الوسط لسه في النص */
 }
 
 
 
 
 
+
+/* موبايل: خبي الاسم وخلي الـcollapse يملى العرض */
+@media (max-width: 768px) {
+
+  .nav-link{
+    color: rgb(0, 0, 0);
+  }
+
+  /* أي توزيع هيمشي؛ الوسط لسه في النص */
+}
 
 
 
@@ -114,8 +172,11 @@
 
 /* نتحكم في الأيقونة اللي ضفناها */
 .small-caret {
-  font-size: .75rem;   /* حجم أصغر شوية */
-  line-height: 1;      /* يظبطه في النص عمودي */
+  font-size: .75rem;
+  /* حجم أصغر شوية */
+  line-height: 1;
+  /* يظبطه في النص عمودي */
   display: inline-flex;
-  align-items: center; /* يوسّطه بالنسبة للنص */
+  align-items: center;
+  /* يوسّطه بالنسبة للنص */
 }

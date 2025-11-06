@@ -57,13 +57,21 @@ export class BestSellersComponent {
       this.api.GetUserId().subscribe({
         next: (response) => {
           console.log(response);
-          
+
           this.userId = response.userId;
           this.api.GetUserBranch(response.userId).subscribe({
             next: (res) => {
               console.log(res);
-              
+
               this.GetBestSellerProducts(res.id, this.userId);
+
+
+              this.branchService.currentBranch$.subscribe(branchId => {
+                if (branchId && branchId !== this.branchId) {
+                  this.branchId = branchId;
+                  this.GetBestSellerProducts(branchId);
+                }
+              });
             },
             error: () => {
               this.bestSellerProducts = [];
@@ -78,7 +86,7 @@ export class BestSellersComponent {
           this.api.GetDefaultBranch().subscribe({
             next: (res) => {
               console.log(res);
-              
+
               this.GetBestSellerProducts(res.id);
             },
             error: () => {
@@ -90,6 +98,9 @@ export class BestSellersComponent {
 
 
         }
+
+
+
       });
     }
     else {
@@ -97,13 +108,23 @@ export class BestSellersComponent {
         next: (res) => {
           this.GetBestSellerProducts(res.id);
           console.log(res);
-          
+
         },
         error: () => {
           this.bestSellerProducts = [];
 
         }
+
+
+
       })
+
+      this.branchService.currentBranch$.subscribe(branchId => {
+        if (branchId && branchId !== this.branchId) {
+          this.branchId = branchId;
+          this.GetBestSellerProducts(branchId);
+        }
+      });
     }
 
 
@@ -113,6 +134,9 @@ export class BestSellersComponent {
       // عشان الـ rtl يتطبق بعد التغيير:
       this.bestOptions = { ...this.bestOptions, rtl: this.isRTL };
     });
+
+
+
 
   }
 

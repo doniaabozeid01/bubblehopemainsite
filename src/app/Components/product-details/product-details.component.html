@@ -1,61 +1,158 @@
-<div class="product-details d-flex justify-content-center p-0 m-0 my-5 pb-5 mb-5" *ngIf="product as p; else loading">
-  <div class="row cart-data w-100 justify-content-between align-items-center">
+<div class=" product-details justify-content-center container-fluid py-0 py-lg-5" *ngIf="product as p; else loading">
+  <div class="row justify-content-center align-items-center gx-5">
 
-    <!-- Left: image + heart -->
-    <div class="col-md-3 p-0 m-0 text-center d-flex flex-column justify-content-center position-relative">
-      <div class="py-5">
-        <div class="heart-icon fs-4 border-0 d-flex justify-content-center align-items-end second-color">
-          <i
-            [class.fa-solid]="p?.isFavourite"
-            [class.fa-regular]="!p?.isFavourite"
-            class="fa-heart pointer"
-            (click)="toggleFavourite(p)">
-          </i>
+    <!-- ========= Left: Image ========= -->
+    <div class="col-lg-4 col-md-5 text-center position-relative">
+
+      <!-- <div class="d-flex align-items-center justify-content-center w-100"> -->
+
+      <img [src]="p?.images?.length ? p.images[0] : 'assets/placeholder.png'"
+        [alt]="(languageService.languageChanged$ | async) === 'ar' ? p?.name_ar : p?.name"
+        class="img-fluid w-50 m-auto mt-4 mb-3" />
+      <!-- </div> -->
+    </div>
+
+    <!-- ========= Middle: Info & Add to Cart ========= -->
+
+
+    <!-- ========= Right: Options (Size / Ice / Sugar / Extras) ========= -->
+    <div class="col-lg-8 col-md-12 mt-4 mt-lg-0 py-2">
+
+
+      <div class="d-flex flex-column justify-content-center">
+        <h1 class="second-color mb-1 d-none d-md-block">
+          {{ (languageService.languageChanged$ | async) === 'ar'
+          ? p?.category?.name_ar
+          : p?.category?.name }}
+        </h1>
+
+
+        <div class="d-block d-md-none">
+
+          <div class=" d-flex justify-content-between align-items-center w-100">
+            <h1 class="second-color mb-0 ">
+              {{ (languageService.languageChanged$ | async) === 'ar'
+              ? p?.category?.name_ar
+              : p?.category?.name }}
+            </h1>
+
+            <p class=" mb-0 fw-bold fs-4 text-orange " *ngIf="product?.variants?.length && p?.groups?.length">
+              {{ p.oldPrice | number:'1.0-0' }}
+              <span class="ms-1 fs-5 ">{{ (languageService.languageChanged$ | async) === 'ar' ? p?.currency_ar :
+                p?.currency
+                }}</span>
+            </p>
+          </div>
+
         </div>
 
-        <img
-          [src]="p?.images?.length ? p.images[0]?.imagePath : 'assets/placeholder.png'"
-          class=""
-          [alt]="(languageService.languageChanged$ | async) === 'ar' ? p?.name_ar : p?.name" />
-      </div>
-    </div>
+        <h2 class="fs-2 main-color mb-2">
+          {{ (languageService.languageChanged$ | async) === 'ar'
+          ? p?.name_ar
+          : p?.name }}
+        </h2>
 
-    <!-- Right: info -->
-    <div class="product-info col-md-9 me-0 d-flex flex-column justify-content-center ">
-      <h1 class="second-color">
-        {{ (languageService.languageChanged$ | async) === 'ar'
-            ? p?.category?.name_ar
-            : p?.category?.name }}
-      </h1>
+        <p class="description fs-5 text-muted mb-4">
+          {{ (languageService.languageChanged$ | async) === 'ar'
+          ? p?.ingredients_ar
+          : p?.ingredients }}
+          <!-- Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nobis laudantium officia deserunt ab provident? -->
+        </p>
 
-      <h2 class="fs-2 main-color">
-        {{ (languageService.languageChanged$ | async) === 'ar'
-            ? p?.name_ar
-            : p?.name }}
-      </h2>
+        <div class="scroll">
+          <!-- Size -->
+          <div #sizeRef class="row shadow-none justify-content-start mb-3 fs-3" *ngIf="product?.variants?.length">
+            <h4 class="p-0" [class.error]="isSizeMissing">
+              {{ 'cart.size' | translate }} <span class="req">*</span>
+            </h4>
 
-      <p class="description fs-5 main-color">
-        {{ (languageService.languageChanged$ | async) === 'ar'
-            ? p?.ingredients_ar
-            : p?.ingredients }}
-      </p>
+            <div class="col-6 col-md-3" *ngFor="let size of product.variants">
+              <div class="size mx-1 py-2 fs-6" [ngClass]="{ active: selectedSize === size.id }"
+                (click)="selectSize(size.id)" role="button" tabindex="0" (keydown.enter)="selectSize(size.id)"
+                (keydown.space)="selectSize(size.id)">
+                <img [src]="size.imageUrl" class="w-lg-50 w-25 mb-2" [alt]="size.name" />
+                <p class="mb-0 fs-6">{{ (languageService.languageChanged$ | async) === 'ar' ?
+                  size.nameAr : size.name }}
+                </p>
 
-      <div class="price-cart d-flex justify-content-between align-items-center second-color">
-          <p class="price mb-0">
-            {{ p?.newPrice }}
-          <span class="price">
-            {{ (languageService.languageChanged$ | async) === 'ar'
-                ? p?.currency_ar
-                : p?.currency }}
-          </span>
+                <!-- للعرض فقط: لو السعر اللي عندك هو فرق السايز -->
+                <p class="mb-0 fs-6">
+                  {{ (product?.oldPrice ?? 0) + (size?.price ?? 0) }}
+                  <span class="fs-6">{{ (languageService.languageChanged$ | async) ===
+                    'ar' ? product.currency_ar : product.currency }}</span>
+                </p>
+              </div>
+            </div>
+
+            <div class="req-hint" *ngIf="isSizeMissing">
+              {{ 'details.sizeError' | translate }}
+            </div>
+          </div>
+
+          <!-- Groups -->
+          <div *ngIf="p?.groups?.length">
+            <ng-container *ngFor="let group of p.groups">
+              <div class="group-block mb-4" [attr.data-group-id]="group.groupId">
+                <h4 class=" mb-2" [class.error]="isGroupMissing(group.groupId)">
+                  {{ (languageService.languageChanged$ | async) === 'ar' ? group.nameAr : group.name }}
+                  <span class="req" *ngIf="group.isRequired">*</span>
+                </h4>
+
+                <div class="chips">
+                  <div class="chip " *ngFor="let option of group.options"
+                    [ngClass]="{ active: isSelected(group.groupId, option.id) }" (click)="toggleOption(group, option)">
+                    <span class="label fw-normal">{{ (languageService.languageChanged$ | async) === 'ar' ? option.nameAr
+                      :
+                      option.name }}</span>
+                    <span class="count">({{ option.price }})</span>
+                  </div>
+                </div>
+
+                <div class="req-hint" *ngIf="isGroupMissing(group.groupId)">
+                  {{ 'details.additionError' | translate }}
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+
+
+        <div class="d-flex align-items-center gap-3 mt-auto">
+          <!-- <div class="price-cart d-flex align-items-center gap-3 mt-auto"> -->
+          <p class=" mb-0 fw-bold fs-4 text-orange" 
+           [class.me-auto]="(languageService.languageChanged$ | async) === 'en'"
+  [class.ms-auto]="(languageService.languageChanged$ | async) === 'ar'">
+            {{ finalPrice | number:'1.0-0' }}
+            <span class="ms-1 fs-5 ">{{ (languageService.languageChanged$ | async) === 'ar' ? p?.currency_ar :
+              p?.currency
+              }}</span>
           </p>
 
-        <button class="add-btn btn-bg-color2" (click)="addToCart(p)">
-          {{ 'cart.addToCart' | translate }}
-        </button>
-      </div>
-    </div>
+          <div class="d-flex w-80 gap-2">
+            <button class="add-btn rounded btn-bg-color2 px-1 px-lg-4  py-2" (click)="addToCart(p)">
+              {{ 'cart.addToCart' | translate }}
+            </button>
 
+            <button class="add-btn rounded btn-bg-color2 px-1 px-lg-4  py-2" *ngIf="!product.isFavourite"
+              (click)="toggleFavourite(p)">
+              {{ 'cart.addToWishlist' | translate }}
+            </button>
+
+            <button class="add-btn rounded btn-bg-color2 px-1 px-lg-4  py-2" *ngIf="product.isFavourite"
+              (click)="toggleFavourite(p)">
+              {{ 'cart.removeFromWishlist' | translate }}
+            </button>
+
+
+          </div>
+
+        </div>
+      </div>
+
+
+
+    </div>
   </div>
 </div>
 

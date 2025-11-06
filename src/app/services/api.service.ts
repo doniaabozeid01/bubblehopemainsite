@@ -65,6 +65,10 @@ export class ApiService {
   }
 
 
+  // addToCart(userId: string): Observable<any> {
+  //   return this.http.post(`${this.baseUrl}/api/Cart/GetOrCreateCart/${userId}`, {});
+  // }
+
 
   GetCartByUserIdAndBranchId(userId: string, branchId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/api/Cart/GetCartByUserId/${userId}/${branchId}`);
@@ -193,8 +197,8 @@ export class ApiService {
   }
 
 
-  GetProductFavouriteByUserIdAndProductId(userId: string, prodId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/api/ProductFavourite/GetProductFavouriteByUserIdAndProductId/${userId}?productId=${prodId}`);
+  GetProductFavouriteByUserIdAndProductId(userId: string, prodId: number, branchId:number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/api/ProductFavourite/GetProductFavouriteByUserIdAndProductId/${userId}?productId=${prodId}&branchId=${branchId}`);
   }
 
   resetPassword(data: any): Observable<any> {
