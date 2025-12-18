@@ -6,5 +6,4 @@ import { Component } from '@angular/core';
   styleUrls: ['./pending-site.component.scss']
 })
 export class PendingSiteComponent {
-
 }

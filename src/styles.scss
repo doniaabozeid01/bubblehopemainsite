@@ -46,11 +46,11 @@ body {
 }
 
 .btn-bg-color {
-  background-color: #117c9f;
+  background-color: #F47524;
   color: white !important;
 
   &:hover {
-    background-color: #117c9f;
+    background-color: #F47524;
     color: white;
   }
 }
@@ -58,12 +58,12 @@ body {
 
 
 .btn-bg-color2 {
-  background-color: #f0f4f5;
-  color: #117c9f !important;
-  border: 1px solid #117c9f;
+  background-color: #ffffff;
+  color: #F47524 !important;
+  border: 1px solid #F47524;
 
   &:hover {
-    background-color: #117c9f!important;
+    background-color: #F47524!important;
     color: #ffffff!important;
     // border: 1px solid #117c9f;
   }
@@ -184,7 +184,7 @@ label {
 }
 
 .toast-success {
-  background-color: #117c9f !important;
+  background-color: #F47524 !important;
   /* أخضر مخصص */
   color: white !important;
 }
@@ -211,17 +211,16 @@ label {
 
 
 .main-color {
-  color: #117C9F;
+  color: #000000;
 }
 
 
 .main-bg-color {
-  background-color: #117c9f;
+  background-color: #F47524;
 }
 
 .main-border-color {
-  border-color: #117c9f;
-
+  border-color: #F47524;
 }
 
 .second-color {

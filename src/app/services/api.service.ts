@@ -128,7 +128,7 @@ export class ApiService {
   }
 
 
-  CreateOrderPaymob(order: any): Observable<any> {
+  CreateOrderPaymob(order: any): Observable<any>   {
     return this.http.post(`${this.baseUrl}/api/Orders/CreateOrderPaymob`, order);
   }
 

@@ -1,14 +1,24 @@
 <div class=" product-details justify-content-center container-fluid py-0 py-lg-5" *ngIf="product as p; else loading">
-  <div class="row justify-content-center align-items-center gx-5">
+  <div class="row justify-content-center align-items-center gx-5 overflow-hidden ">
 
     <!-- ========= Left: Image ========= -->
-    <div class="col-lg-4 col-md-5 text-center position-relative">
+    <div class="col-lg-4 col-md-5 text-center position-relative ">
 
       <!-- <div class="d-flex align-items-center justify-content-center w-100"> -->
 
+      <div class="big-circle-disktop d-md-block d-none"></div>
+
+      <div class="out-img d-md-none d-flex">
+        <div class="big-circle"></div>
+        <img [src]="p?.images?.length ? p.images[0] : 'assets/placeholder.png'"
+          [alt]="(languageService.languageChanged$ | async) === 'ar' ? p?.name_ar : p?.name"
+          class="img-fluid w-50 m-auto mt-4 mb-3 " />
+      </div>
+
+
       <img [src]="p?.images?.length ? p.images[0] : 'assets/placeholder.png'"
         [alt]="(languageService.languageChanged$ | async) === 'ar' ? p?.name_ar : p?.name"
-        class="img-fluid w-50 m-auto mt-4 mb-3" />
+        class="img-fluid w-50 m-auto mt-4 mb-3 d-md-block d-none" />
       <!-- </div> -->
     </div>
 
@@ -16,7 +26,7 @@
 
 
     <!-- ========= Right: Options (Size / Ice / Sugar / Extras) ========= -->
-    <div class="col-lg-8 col-md-12 mt-4 mt-lg-0 py-2">
+    <div class="col-lg-8 col-md-12  py-2 px-2">
 
 
       <div class="d-flex flex-column justify-content-center">
@@ -29,6 +39,7 @@
 
         <div class="d-block d-md-none">
 
+
           <div class=" d-flex justify-content-between align-items-center w-100">
             <h1 class="second-color mb-0 ">
               {{ (languageService.languageChanged$ | async) === 'ar'
@@ -37,7 +48,7 @@
             </h1>
 
             <p class=" mb-0 fw-bold fs-4 text-orange " *ngIf="product?.variants?.length && p?.groups?.length">
-              {{ p.oldPrice | number:'1.0-0' }}
+              {{ p.oldPrice }}
               <span class="ms-1 fs-5 ">{{ (languageService.languageChanged$ | async) === 'ar' ? p?.currency_ar :
                 p?.currency
                 }}</span>
@@ -117,29 +128,28 @@
         </div>
 
 
-
-        <div class="d-flex align-items-center gap-3 mt-auto">
+        <div class="d-flex align-items-center gap-3 mt-auto py-3">
           <!-- <div class="price-cart d-flex align-items-center gap-3 mt-auto"> -->
-          <p class=" mb-0 fw-bold fs-4 text-orange" 
-           [class.me-auto]="(languageService.languageChanged$ | async) === 'en'"
-  [class.ms-auto]="(languageService.languageChanged$ | async) === 'ar'">
-            {{ finalPrice | number:'1.0-0' }}
-            <span class="ms-1 fs-5 ">{{ (languageService.languageChanged$ | async) === 'ar' ? p?.currency_ar :
+          <p class=" mb-0 fw-bold fs-5 text-orange"
+            [class.me-auto]="(languageService.languageChanged$ | async) === 'en'"
+            [class.ms-auto]="(languageService.languageChanged$ | async) === 'ar'">
+            {{ finalPrice }}
+            <span class="ms-1 fs-5">{{ (languageService.languageChanged$ | async) === 'ar' ? p?.currency_ar :
               p?.currency
               }}</span>
           </p>
 
           <div class="d-flex w-80 gap-2">
-            <button class="add-btn rounded btn-bg-color2 px-1 px-lg-4  py-2" (click)="addToCart(p)">
+            <button class="add-btn rounded btn-bg-color border-0 px-1 px-lg-4  py-2" (click)="addToCart(p)">
               {{ 'cart.addToCart' | translate }}
             </button>
 
-            <button class="add-btn rounded btn-bg-color2 px-1 px-lg-4  py-2" *ngIf="!product.isFavourite"
+            <button class="add-btn rounded btn-bg-color border-0 px-1 px-lg-4  py-2" *ngIf="!product.isFavourite"
               (click)="toggleFavourite(p)">
               {{ 'cart.addToWishlist' | translate }}
             </button>
 
-            <button class="add-btn rounded btn-bg-color2 px-1 px-lg-4  py-2" *ngIf="product.isFavourite"
+            <button class="add-btn rounded btn-bg-color border-0 px-1 px-lg-4  py-2" *ngIf="product.isFavourite"
               (click)="toggleFavourite(p)">
               {{ 'cart.removeFromWishlist' | translate }}
             </button>

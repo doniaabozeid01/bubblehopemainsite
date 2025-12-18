@@ -101,14 +101,14 @@
 .scroll {
   max-height: 450px;
   overflow-y: auto;
-    overflow-x: hidden;
+  overflow-x: hidden;
 
 }
 
 
 
 
-.row{
+.row {
   min-width: 850px;
 }
 
@@ -125,21 +125,23 @@
     margin-top: 2px !important;
   }
 
-  span{
-    font-size: 16px!important;
+  span {
+    font-size: 16px !important;
   }
+
   .scroll {
     max-height: none;
     overflow-y: visible;
     // overflow: hidden;
   }
-  .row{
-  min-width: 100%;
-}
 
-.w-80{
-  width: auto;
-}
+  .row {
+    min-width: 100%;
+  }
+
+  .w-80 {
+    width: auto;
+  }
 
   img {
     // width: 250px;
@@ -156,12 +158,12 @@
     height: auto !important;
   }
 
-  button{
+  button {
     font-size: 14px;
   }
 }
 
-.w-80{
+.w-80 {
   width: 85%;
 }
 
@@ -180,15 +182,61 @@
     margin: 30px 0;
   }
 
-//   .w-80{
-//   width: auto;
-// }
+  .w-80 {
+    width: 75%;
+  }
+
+
+  .out-img {
+    background-color: #f9d3c0;
+    border-bottom-left-radius: 50%;
+    border-bottom-right-radius: 50%;
+    height: 280px;
+    position: relative;
+    // margin-bottom: 100px;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    overflow: visible;
+  }
+
+
+  .out-img img {
+    width: auto;
+    min-width: 60%;
+    height: 100%;
+    max-height: 95%;
+    object-fit: contain;
+    transform: translateY(50%);
+    /* الأساس — لكل الصور */
+    max-height: 90%;
+    width: 90%;
+  }
+
+
+
+  .big-circle {
+    // width: 1650px;
+    width: 1650px;
+    height: 1650px;
+    background: #f9d3c0;
+    /* نفس اللون اللي في الصورة */
+    border-radius: 50%;
+    position: absolute;
+  }
+
+
+  .col-md-12{
+    margin-top: 110px;
+  }
+
 }
 
 .row {
   margin-left: 0 !important;
   margin-right: 0 !important;
-  max-width: 1500px;
+  width: 1500px;
   margin: auto;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   /* border: 1px solid red; */
@@ -411,3 +459,20 @@ h4.error,
 }
 
 /* عشان ما يستخباش تحت الهيدر */
+
+
+
+
+
+.big-circle-disktop {
+  // width: 1650px;
+  width: 1650px;
+  height: 1650px;
+  background: #f9d3c0;
+  /* نفس اللون اللي في الصورة */
+  border-radius: 50%;
+  position: absolute;
+  bottom: 30%;
+  right: 0%;
+  z-index: -1;
+}

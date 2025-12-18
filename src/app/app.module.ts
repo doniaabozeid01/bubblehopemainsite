@@ -44,6 +44,7 @@ import { PendingSiteComponent } from './Components/pending-site/pending-site.com
 import { ChangePasswordComponent } from './Components/change-password/change-password.component';
 import { TrainningComponent } from './Components/HomeSections/trainning/trainning.component';
 import { ImageCarouselComponent } from './Components/HomeSections/image-carousel/image-carousel.component';
+import { TestLoginComponent } from './Components/test-login/test-login.component';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -86,6 +87,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ChangePasswordComponent,
     TrainningComponent,
     ImageCarouselComponent,
+    TestLoginComponent,
   ],
   imports: [
     BrowserModule,
