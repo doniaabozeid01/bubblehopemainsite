@@ -14,8 +14,9 @@
     </div>
 
     <div class="cart-items-wrapper color " *ngIf="cart?.cartItems?.length > 0">
-        <div class="cart-item " *ngFor="let item of cart?.cartItems">
-            <img class="product-img w-100" [src]="item.imagePath" alt="Iced Espresso" />
+        <div class="cart-item" *ngFor="let item of cart?.cartItems">
+<img class="product-img" [src]="item.imagePath" [alt]="item.name" />
+
             <div>
                 <h2 class="product-name w-100">{{ (languageService.languageChanged$ | async) === 'ar' ? item.name_ar :
                     item.name }}</h2>
@@ -90,18 +91,20 @@
         <div class="row justify-content-between mb-3 border rounded shadow-sm py-1"
             *ngFor="let item of cart?.cartItems; let i = index; trackBy: trackById">
             <!-- Item cell -->
-            <div class="col-3">
+            <div class="col-3 d-flex align-items-center">
 
                 <img class="thumb w-100" [src]="item.imagePath" alt="product" />
 
             </div>
 
 
-            <div class="name col-6">
-                <p class="m-0 p-0 ">{{ (languageService.languageChanged$ | async) === 'ar' ? item.name_ar : item.name }}
+            <div class="name col-6 d-flex justify-content-center flex-column ">
+                <p class="m-0 p-0 fs-5">{{ (languageService.languageChanged$ | async) === 'ar' ? item.name_ar :
+                    item.name }}
                 </p>
 
-                <p class="mb-0 ">{{ item.totalPrice }} <span>{{ (languageService.languageChanged$ | async) === 'ar' ?
+                <p class="mb-0 fs-6">{{ item.totalPrice }} <span class="fs-6">{{ (languageService.languageChanged$ |
+                        async) === 'ar' ?
                         item.currency_ar : item.currency }}</span> </p>
 
 
@@ -124,8 +127,8 @@
 
 
                 <div class="d-flex justify-content-between align-items-center pb-0">
-                    <button class=" btn pb-0" (click)="updateQuantity(item, item.quantity - 1)"><span>-</span></button>
-                    <span class=" d-flex align-items-center justify-content-center mt-md-3 pb-0 fs-5">{{ item.quantity
+                    <button class=" btn pb-0 " (click)="updateQuantity(item, item.quantity - 1)"><span>-</span></button>
+                    <span class=" d-flex align-items-center justify-content-center mt-md-3 pb-0 fs-6">{{ item.quantity
                         }}</span>
                     <button class=" btn pb-0" (click)="updateQuantity(item, item.quantity + 1)"><span>+</span></button>
                 </div>
