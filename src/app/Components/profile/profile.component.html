@@ -1,0 +1,190 @@
+<div class="profile" *ngIf="!loading && user">
+
+  <div class="header">
+    <h2 class="title">My Profile</h2>
+
+    <button class="btn-outline" (click)="toggleEdit()" *ngIf="!editing">
+      Edit
+    </button>
+
+    <div class="actions" *ngIf="editing">
+      <button class="btn-outline" (click)="toggleEdit()" [disabled]="actionLoading">Cancel</button>
+      <button class="btn-solid" (click)="saveProfile()" [disabled]="actionLoading || profileForm.invalid">
+        Save
+      </button>
+    </div>
+  </div>
+
+
+  
+  <!-- Profile Card -->
+  <!-- <div class="card" [class.editing]="editing">
+
+    <div class="row">
+      <span>Name</span>
+
+      <ng-container *ngIf="!editing; else editName">
+        <strong>{{ user.name }}</strong>
+      </ng-container>
+
+      <ng-template #editName>
+        <input class="input" type="text" formControlName="name" [formGroup]="profileForm" />
+      </ng-template>
+    </div>
+
+    <div class="row">
+      <span>Email</span>
+      <strong>{{ user.email }}</strong>
+    </div>
+
+    <div class="row">
+      <span>Phone</span>
+
+      <ng-container *ngIf="!editing; else editPhone">
+        <strong>{{ user.phoneNumber || 'Not added' }}</strong>
+      </ng-container>
+
+      <ng-template #editPhone>
+        <input class="input" type="text" formControlName="phoneNumber" [formGroup]="profileForm"
+          placeholder="01xxxxxxxxx" />
+      </ng-template>
+    </div>
+
+  </div> -->
+
+
+
+  <div class="card" [class.editing]="editing" [formGroup]="profileForm">
+
+    <div class="row">
+      <span>Name</span>
+
+      <ng-container *ngIf="!editing; else editName">
+        <strong>{{ user.name }}</strong>
+      </ng-container>
+
+      <ng-template #editName>
+        <input class="input" type="text" formControlName="name" />
+      </ng-template>
+    </div>
+
+    <div class="row">
+      <span>Email</span>
+      <strong>{{ user.email }}</strong>
+    </div>
+
+    <div class="row">
+      <span>Phone</span>
+
+      <ng-container *ngIf="!editing; else editPhone">
+        <strong>{{ user.phoneNumber || 'Not added' }}</strong>
+      </ng-container>
+
+      <ng-template #editPhone>
+        <input class="input" type="text" formControlName="phoneNumber" placeholder="01xxxxxxxxx" />
+      </ng-template>
+    </div>
+
+  </div>
+
+  <!-- Addresses -->
+  <div class="addr-head">
+    <h3 class="subtitle">Addresses</h3>
+    <button class="btn-solid " (click)="openAddAddress()">+ Add Address</button>
+  </div>
+
+  <div class="address-list" *ngIf="user.address?.length; else noAddress">
+    <div class="address-card" *ngFor="let addr of user.address">
+
+      <div class="top">
+        <div class="line">
+          {{ addr.street }}, Building {{ addr.buildingNumber }},
+          Floor {{ addr.floor }}, Apt {{ addr.apartment }}
+        </div>
+
+        <span class="badge" *ngIf="addr.isDefault">Default</span>
+      </div>
+
+      <small>
+        {{ addr.districtName }} - {{ addr.cityName }},
+        {{ addr.governorateName }}, {{ addr.countryName }}
+      </small>
+
+      <div class="landmark" *ngIf="addr.landmark">
+        Landmark: {{ addr.landmark }}
+      </div>
+
+      <div class="addr-actions">
+        <button class="btn-outline" (click)="setDefault(addr.id)" [disabled]="addr.isDefault || actionLoading">
+          Make Default
+        </button>
+
+        <button class="btn-danger" (click)="deleteAddress(addr.id)" [disabled]="actionLoading">
+          Delete
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <ng-template #noAddress>
+    <p class="empty">No addresses added yet.</p>
+  </ng-template>
+
+  <!-- Add Address Modal (Simple) -->
+  <div class="modal" *ngIf="showAddAddress">
+    <div class="modal-card" [formGroup]="addressForm">
+      <h3>Add Address</h3>
+
+
+      <div class="grid2 mb-0">
+        <select class="input mb-0" formControlName="countryId">
+          <option [ngValue]="0">Select Country</option>
+          <option *ngFor="let c of countries" [ngValue]="c.id">{{ c.country_name }}</option>
+        </select>
+
+        <select class="input mt-0" formControlName="governorateId" [disabled]="governorates.length === 0">
+          <option [ngValue]="0">Select Governorate</option>
+          <option *ngFor="let g of governorates" [ngValue]="g.id">{{ g.governorate_name }}</option>
+        </select>
+
+        <select class="input" formControlName="cityId" [disabled]="cities.length === 0">
+          <option [ngValue]="0">Select City</option>
+          <option *ngFor="let c of cities" [ngValue]="c.id">{{ c.city_name }}</option>
+        </select>
+
+        <select class="input" formControlName="districtId" [disabled]="districts.length === 0">
+          <option [ngValue]="0">Select District</option>
+          <option *ngFor="let d of districts" [ngValue]="d.id">{{ d.district_name }}</option>
+        </select>
+      </div>
+
+
+      <!-- ✅ باقي الداتا -->
+      <div class="grid3">
+        <input class="input mt-2" formControlName="street" placeholder="Street" />
+        <input class="input mt-2" formControlName="buildingNumber" placeholder="Building Number" />
+        <input class="input mt-2" formControlName="floor" placeholder="Floor" />
+        <input class="input mt-2" formControlName="apartment" placeholder="Apartment" />
+      </div>
+
+
+      <input class="input" formControlName="landmark" placeholder="Landmark" />
+
+
+      <label class="check">
+        <input type="checkbox" formControlName="isDefault" />
+        Make this address default
+      </label>
+
+
+      <div class="modal-actions">
+        <button class="btn-outline" (click)="closeAddAddress()" [disabled]="actionLoading">Cancel</button>
+        <button class="btn-solid btn-bg-color" (click)="addAddress()" [disabled]="actionLoading || addressForm.invalid">
+          Add
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

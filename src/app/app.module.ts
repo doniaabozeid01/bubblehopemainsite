@@ -45,12 +45,11 @@ import { ChangePasswordComponent } from './Components/change-password/change-pas
 import { TrainningComponent } from './Components/HomeSections/trainning/trainning.component';
 import { ImageCarouselComponent } from './Components/HomeSections/image-carousel/image-carousel.component';
 import { TestLoginComponent } from './Components/test-login/test-login.component';
-
+import { ProfileComponent } from './Components/profile/profile.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, '../assets/i18n/', '.json');
 }
-
 
 @NgModule({
   declarations: [
@@ -88,7 +87,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     TrainningComponent,
     ImageCarouselComponent,
     TestLoginComponent,
-  ],
+    ProfileComponent
+    ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -119,10 +119,10 @@ export function HttpLoaderFactory(http: HttpClient) {
 })
 export class AppModule {
 
-
   constructor(private authService: AuthService) { }
 
   ngOnInit() {
     this.authService.loadUserFromStorage();
   }
+
 }

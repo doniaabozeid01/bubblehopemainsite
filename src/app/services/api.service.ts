@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { Address, UserDetails } from '../Components/profile/profile.component';
 
 @Injectable({
   providedIn: 'root'
@@ -10,35 +11,23 @@ export class ApiService {
 
 
   constructor(private http: HttpClient, private router: Router) { }
-  //baseUrl:string="https://localhost:7298";
-  //baseUrl:string="https://bubblehopecafe.somee.com";
+
+
   baseUrl: string = "https://alhendalcompany-001-site1.stempurl.com";
   drinks: number = 1;
   rawMaterials: number = 2;
-
-
-
-  //https://localhost:7298/api/Products/GetAllProducts
-
+  
+  
   GetAllAdvertisements(): Observable<any> {
-    //return this.http.get(`${this.baseUrl}/api/Products/GetAllProducts`);
     return this.http.get(`${this.baseUrl}/api/Advertisements/GetAllAdvertisements`);
   }
+
 
   GetAllProducts(branchId: number, userId?: string, groupCategoryId?: number): Observable<any> {
     //return this.http.get(`${this.baseUrl}/api/Products/GetAllProducts`);
     //return this.http.get(`${this.baseUrl}/api/Stock/GetProductsForBranch?branchId=${branchId}`);
     return this.http.get(`${this.baseUrl}/api/Stock/GetProductsForBranch?branchId=${branchId}&userId=${userId}&groupCategoryId=${groupCategoryId}`);
   }
-
-
-
-
-  //GetAllProductsByCategoryId(branchId:number,categoryId?:number,userId?:string):Observable<any>{
-
-  //return this.http.get<any>(`${this.baseUrl}/api/Stock/GetProducts?branchId=${branchId}&categoryId=${categoryId}&userId=${userId}`);
-  //}
-
 
 
   GetAllProductsByCategoryId(
@@ -65,11 +54,6 @@ export class ApiService {
   }
 
 
-  // addToCart(userId: string): Observable<any> {
-  //   return this.http.post(`${this.baseUrl}/api/Cart/GetOrCreateCart/${userId}`, {});
-  // }
-
-
   GetCartByUserIdAndBranchId(userId: string, branchId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/api/Cart/GetCartByUserId/${userId}/${branchId}`);
   }
@@ -85,14 +69,10 @@ export class ApiService {
   }
 
 
-
   GetProductFavouriteByUserId(userId: string, branchId: number): Observable<any> {
     // console.log(userId, branchId);
     return this.http.get(`${this.baseUrl}/api/ProductFavourite/GetProductFavouriteByUserId/${userId}?branchId=${branchId}`);
   }
-
-
-
 
 
   getGovernoratesByCountryId(countryId: number): Observable<any> {
@@ -100,11 +80,9 @@ export class ApiService {
   }
 
 
-
   getCitiesByGovernorateId(govId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/api/Location/GetCitiesByGovernorateId/${govId}`);
   }
-
 
 
   getDistrictsByCityId(cityId: number): Observable<any> {
@@ -117,28 +95,25 @@ export class ApiService {
   }
 
 
-
   GetAllPaymentMethods(): Observable<any> {
     return this.http.get(`${this.baseUrl}/api/PaymentMethods/GetAllPaymentMethods`);
   }
 
-  
+
   createOrder(order: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/api/Orders/CreateOrder`, order);
   }
 
 
-  CreateOrderPaymob(order: any): Observable<any>   {
+  CreateOrderPaymob(order: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/api/Orders/CreateOrderPaymob`, order);
   }
-
 
 
   GetOrderById(orderId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/api/Orders/GetOrderByOrderId/${orderId}`);
   }
 
-  //https://localhost:7298/api/CartItems/GetCartItemById/6
 
   GetCartItemByCartId(cartId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/api/CartItems/GetCartItemById/${cartId}`);
@@ -154,25 +129,17 @@ export class ApiService {
     return this.http.put(`${this.baseUrl}/api/Orders/CancelOrder/${orderId}`, {});
   }
 
-  //getAllCategories():Observable<any>{
-  //return this.http.get(`${this.baseUrl}/api/Categories/GetAllCategories`);
-  //}
-
-
-
-
+  
   getAllCategories(groupId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/api/Categories/GetAllCategories?categoryGroupId=${groupId}`);
   }
-
-
 
 
   GetProductById(prodId: number, branchId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/api/Products/GetProductById/${prodId}/Branch/${branchId}`);
   }
 
-
+  
   contactUs(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/api/ContactUs`, data);
   }
@@ -187,6 +154,7 @@ export class ApiService {
     return this.http.delete(`${this.baseUrl}/api/CartItems/DeleteCartItem/${id}`);
   }
 
+
   ClearCart(cartId: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/api/CartItems/ClearCart/${cartId}`);
   }
@@ -197,9 +165,10 @@ export class ApiService {
   }
 
 
-  GetProductFavouriteByUserIdAndProductId(userId: string, prodId: number, branchId:number): Observable<any> {
+  GetProductFavouriteByUserIdAndProductId(userId: string, prodId: number, branchId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/api/ProductFavourite/GetProductFavouriteByUserIdAndProductId/${userId}?productId=${prodId}&branchId=${branchId}`);
   }
+
 
   resetPassword(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/api/Account/resetPassword`, data);
@@ -216,8 +185,6 @@ export class ApiService {
   }
 
 
-
-
   getAllBranches(): Observable<any> {
     return this.http.get(`${this.baseUrl}/api/Branch/GetAllBranches`);
   }
@@ -232,16 +199,15 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}/api/Branch/GetUserBranch/${userId}`);
   }
 
+
   GetDefaultBranch(): Observable<any> {
     return this.http.get(`${this.baseUrl}/api/Branch/GetDefaultBranch`);
   }
 
 
-
   GetProductByName(name: string, branchId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/api/Products/GetProductByName/${name}/Branch/${branchId}`);
   }
-
 
 
   checkDiscountCode(discountCode: string): Observable<any> {
@@ -252,9 +218,6 @@ export class ApiService {
   GetBestSellerProducts(branchId: number, userId?: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/api/Products/GetBestSellerProducts?branchId=${branchId}&userId=${userId}`);
   }
-
-
-
 
 
   rejectEmail(confirmationId: string): Observable<any> {
@@ -269,27 +232,48 @@ export class ApiService {
   }
 
 
-
   resendConfirmation(email: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/api/Account/resend-confirmation`, email);
   }
 
 
-
-
-
   checkDiscountValidation(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/api/DiscountControllers/CheckDiscountAvailability`, data, {
-      withCredentials: true//<--مهمجداً
+      withCredentials: true//<--مهم جداً
     });
   }
 
 
+  getUserDetails(userId: string): Observable<any> {
+    return this.http.get<UserDetails>(
+      `${this.baseUrl}/api/Account/getUserDetails/${userId}`
+    );
+  }
 
 
+  updateProfile(payload: { fullName: string; phoneNumber: string | null }): Observable<any> {
+    return this.http.put(`${this.baseUrl}/api/Account/update-profile`, payload);
+  }
 
 
+  GetUserAddresses(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/api/UserAddresses/GetAll`);
+  }
 
+
+  addAddress( payload: Partial<Address>): Observable<any> {
+    return this.http.post(`${this.baseUrl}/api/UserAddresses/Add`, payload);
+  }
+
+
+  deleteAddress(addressId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/api/UserAddresses/Delete/${addressId}`);
+  }
+
+
+  setDefaultAddress (addressId: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/api/UserAddresses/SetDefault/${addressId}/default`, {});
+  }
 
 
 }

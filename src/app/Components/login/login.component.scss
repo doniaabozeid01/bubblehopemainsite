@@ -12,7 +12,7 @@
 .auth-shell {
     min-height: 100vh;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1.4fr 1fr;
     background: var(--bg);
 }
 
@@ -207,15 +207,43 @@
     background: #f6f6f6;
 }
 
+/* الفيديو */
+.bg-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.02);
+    filter: saturate(1.02);
+    z-index: 0;
+      pointer-events: none; /* يمنع أي تفاعل */
+  filter: saturate(0.95) brightness(0.95);
+
+}
+
+/* الـ overlay */
 .img-layer {
     position: absolute;
     inset: 0;
-    background:
-        linear-gradient(180deg, rgba(255, 255, 255, .20), rgba(255, 255, 255, .55)),
-        url("../../../assets/background-01-011.png") center/cover no-repeat;
-    transform: scale(1.02);
-    filter: saturate(1.02);
+    background: linear-gradient(180deg,
+            rgba(255, 255, 255, 0.20),
+            rgba(255, 255, 255, 0.55));
+    z-index: 1;
 }
+
+
+
+
+// .img-layer {
+//     position: absolute;
+//     inset: 0;
+//     background:
+//         linear-gradient(180deg, rgba(255, 255, 255, .20), rgba(255, 255, 255, .55)),
+//         url("../../../assets/background-01-011.png") center/cover no-repeat;
+//     transform: scale(1.02);
+//     filter: saturate(1.02);
+// }
 
 /* ✅ Responsive */
 @media (max-width: 992px) {

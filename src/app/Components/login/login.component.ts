@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -121,4 +121,17 @@ export class LoginComponent {
         }
       });
   }
+
+
+  @ViewChild('bgVideo') bgVideo!: ElementRef<HTMLVideoElement>;
+
+ngAfterViewInit() {
+  if (this.bgVideo) {
+    const video = this.bgVideo.nativeElement;
+    video.muted = true;
+    video.volume = 0;
+    video.play().catch(() => {});
+  }
+}
+
 }

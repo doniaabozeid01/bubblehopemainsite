@@ -54,7 +54,8 @@
         "register": "Register",
         "logout": "Logout",
         "changepassword": "Change Password",
-        "hello": "Hello"
+        "hello": "Hello",
+        "profile": "Profile"
     },
     "aboutus": {
         "aboutusDescribtion": "At Bubble Hope, we don’t just serve delicious bubble tea  we create  joyful moments in every cup! We started with passion to deliver a unique experience that combines rich flavors, high quality, and friendly service.From the heart of the city, we founded Bubble Hope as a place for people who love discovering new flavors and enjoying cheerful moments throughout their day.We use the finest natural ingredients and prepare every drink with care and love."
@@ -81,8 +82,8 @@
         "size": "Size",
         "addToWishlist": "Add To Wishlist",
         "removeFromWishlist": "Remove From Wishlist",
-        "moredetails":"more Details",
-        "delete":"Delete"
+        "moredetails": "more Details",
+        "delete": "Delete"
     },
     "order": {
         "slogan": "Pick it, tap it, sip the refreshment!"
@@ -120,7 +121,9 @@
         "selectCity": "Select City",
         "selectDistrict": "Select District",
         "confirmOrder": "Confirm Order",
-        "code": "Discount Code"
+        "code": "Discount Code",
+        "addNewAddress": "Add New Address",
+        "selectAddress": "Select Address"
     },
     "appAdvertise": {
         "doneEasy": "DONE EASY",
@@ -155,7 +158,6 @@
     "slide-advertise": {
         "adv1": "Sip the flavor . . feel the joy . . share the moment"
     },
-    
     "details": {
         "sizeError": "Size is required — please select a size to add to cart.",
         "additionError": "At least one option is required."

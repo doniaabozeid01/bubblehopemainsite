@@ -2,6 +2,7 @@
     <!-- LEFT: Form -->
     <div class="auth-left">
         <div class="auth-box">
+
             <div class="brand">
                 <!-- <img src="../../../assets/ph logo-01.png" alt="" class="logo"> -->
                 <div class="brand-text ">
@@ -29,6 +30,7 @@
                     </div>
                 </div>
 
+
                 <div class="field mb-0">
                     <label class="label">{{ 'auth.Password' | translate }}</label>
                     <input type="password" class="input" formControlName="password" placeholder="********" />
@@ -37,11 +39,13 @@
                     </div>
                 </div>
 
+
                 <div class="row ">
                     <a routerLink="/auth/forgetpassword" class="link">
                         {{ 'auth.forgetpassword' | translate }}
                     </a>
                 </div>
+
 
                 <button class="btn btn-bg-color w-100 py-1 fs-5" type="submit" [disabled]="loading">
                     <ng-container *ngIf="!loading; else loadingTpl">
@@ -63,8 +67,17 @@
 
     <!-- RIGHT: Image -->
     <div class="auth-right" aria-hidden="true">
+        <video class="bg-video"   class="bg-video"
+            #bgVideo
+  autoplay
+  muted
+  loop
+  playsinline
+  preload="auto">
+            <source src="assets/videos/bubble.mp4" type="video/mp4" />
+        </video>
+
         <div class="img-layer"></div>
     </div>
+
 </div>
-
-

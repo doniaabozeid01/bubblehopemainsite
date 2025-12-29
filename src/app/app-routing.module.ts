@@ -24,6 +24,7 @@ import { RawMaterialDetailsComponent } from './Components/raw-material-details/r
 import { PaymentCallbackComponent } from './Components/payment-callback/payment-callback.component';
 import { PaymentPendingComponent } from './Components/payment-pending/payment-pending.component';
 import { ChangePasswordComponent } from './Components/change-password/change-password.component';
+import { ProfileComponent } from './Components/profile/profile.component';
 
 
 
@@ -65,6 +66,7 @@ const routes: Routes = [
       { path: 'confirm-email/:id', component: EmailConfirmationComponentComponent },           
       { path: 'reject-email/:id', component: EmailConfirmationComponentComponent },
       { path: 'payment/callback', component: PaymentCallbackComponent },
+      { path: 'profile', component: ProfileComponent, canActivate: [authGuard]},
 
     ]
   },
