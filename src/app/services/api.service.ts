@@ -276,4 +276,9 @@ export class ApiService {
   }
 
 
+
+  GetProductsByAdvertisementId(AdvertiseId: number , branchId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/api/Advertisements/GetAdvertisementProductsByBranch?advertiseId=1&branchId=2`);
+  }
+
 }

@@ -12,7 +12,7 @@
 .auth-shell {
     min-height: 100vh;
     display: grid;
-    grid-template-columns: 1.4fr 1fr;
+    grid-template-columns: 1.3fr 1fr;
     background: var(--bg);
 }
 
@@ -24,9 +24,11 @@
 }
 
 .auth-box {
-    width: min(480px, 100%);
-    /* أوسع شوية */
-    padding: 8px;
+  width: min(520px, 100%);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+
 }
 
 .brand {
@@ -47,7 +49,7 @@
     font-size: 28px;
     /* أوضح */
     //   font-weight: 900;
-    color: var(--text);
+    // color: #F47524!important;
     letter-spacing: -0.2px;
 }
 

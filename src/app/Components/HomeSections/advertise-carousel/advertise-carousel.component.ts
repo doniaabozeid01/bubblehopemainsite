@@ -28,9 +28,12 @@ export class AdvertiseCarouselComponent {
   ngOnInit() {
     this.api.GetAllAdvertisements().subscribe({
       next: (res) => {
+        console.log(res);
+        
         // ضمان أن اللي بيتحط Array
         const arr = Array.isArray(res) ? res : (res?.data || res?.result || []);
         this.advertisements = arr?.map((x: any) => ({
+          id: x.id,
           imageUrl: x.imageUrl || x.url || x.image, // غطي احتمالات أسماء الخصائص
           title: x.title || ''
         })) ?? [];

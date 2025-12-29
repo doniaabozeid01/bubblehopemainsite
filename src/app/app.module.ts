@@ -46,6 +46,7 @@ import { TrainningComponent } from './Components/HomeSections/trainning/trainnin
 import { ImageCarouselComponent } from './Components/HomeSections/image-carousel/image-carousel.component';
 import { TestLoginComponent } from './Components/test-login/test-login.component';
 import { ProfileComponent } from './Components/profile/profile.component';
+import { AdvertisementProductsComponent } from './Components/advertisement-products/advertisement-products.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, '../assets/i18n/', '.json');
@@ -87,7 +88,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     TrainningComponent,
     ImageCarouselComponent,
     TestLoginComponent,
-    ProfileComponent
+    ProfileComponent,
+    AdvertisementProductsComponent
     ],
   imports: [
     BrowserModule,

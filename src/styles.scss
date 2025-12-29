@@ -46,13 +46,20 @@ body {
 }
 
 .btn-bg-color {
+
   background-color: #F47524;
   color: white !important;
-
+  
   &:hover {
     background-color: #F47524;
     color: white;
   }
+  &:disabled {
+    background-color: #F47524;
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
 }
 
 

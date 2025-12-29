@@ -1,0 +1,60 @@
+<div class="parent">
+
+    <div *ngIf="products?.length > 0">
+
+        <div class="row responsive-container justify-content-start m-auto" >
+            <h1>{{products[0].title}}</h1>
+            <p class="fs-6 mb-4">{{products[0].description}}</p>
+
+            <div class="col-6 col-sm-6 col-md-4 col-lg-3 col  px-2 pointer" *ngFor="let item of products[0].products"
+                (click)="gotodetails(item)">
+                <div class="product-card h-100 d-flex flex-column justify-content-between">
+                    <div class="d-flex justify-content-between align-items-start">
+
+
+                        <div class="icons second-color">
+                            <i *ngIf="!item.isFavorite" class="fa-regular fa-heart fs-5 pointer"
+                                (click)="addToFavourite(item); $event.stopPropagation()">
+                            </i>
+
+                            <i *ngIf="item.isFavorite" class="fa-solid fa-heart fs-5 pointer"
+                                (click)="removeFromFavourite(item); $event.stopPropagation()">
+                            </i>
+                            <!-- <i *ngIf="item.stock > 0" class="fa-solid fa-cart-shopping fs-5 pointer"
+                                (click)="addToCart(item); $event.stopPropagation()"></i> -->
+                        </div>
+
+                        <div class="discount-badge second-bg-color" *ngIf="item.discount > 0 && item.stock > 0">{{item.discount}}%
+                        </div>
+
+                        <p class="outOfStock px-1 mb-0 rounded" *ngIf="item.stock <= 0">{{'outOfStock' | translate}}</p>
+
+
+                    </div>
+
+                    <div class="image-wrapper">
+                        <img [src]="item.imageUrl" class="product-image" />
+                        <!-- <img src="../../../assets/mango matcha.png" class="product-image" /> -->
+                    </div>
+
+                    <!-- <h6 class="product-name">{{item.name}}</h6> -->
+                    <p class="product-name pb-0 main-color">{{ (languageService.languageChanged$ | async) === 'ar' ?
+                        item.name_ar
+                        : item.name }}</p>
+                    <div class="price second-color"> <span> {{ item.newPrice}} <span>{{ (languageService.languageChanged$ |
+                                async) === 'ar' ?
+                                item.currency_ar : item.currency }}</span> </span></div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+
+    <h1 class="text-center my-5 py-5" *ngIf="products?.length == 0">{{"Products.NoProductsFound" | translate}}
+    </h1>
+
+</div>

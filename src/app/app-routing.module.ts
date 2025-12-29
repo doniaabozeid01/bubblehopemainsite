@@ -25,6 +25,7 @@ import { PaymentCallbackComponent } from './Components/payment-callback/payment-
 import { PaymentPendingComponent } from './Components/payment-pending/payment-pending.component';
 import { ChangePasswordComponent } from './Components/change-password/change-password.component';
 import { ProfileComponent } from './Components/profile/profile.component';
+import { AdvertisementProductsComponent } from './Components/advertisement-products/advertisement-products.component';
 
 
 
@@ -59,6 +60,7 @@ const routes: Routes = [
       { path: 'checkout', component: CheckoutComponent, canActivate: [authGuard] },
       { path: 'rawmaterialdetails/:name', component: RawMaterialDetailsComponent },
       { path: 'productdetails/:name', component: ProductDetailsComponent },
+      { path: 'advertisementProducts/:id', component: AdvertisementProductsComponent },
       { path: 'cart', component: CartComponent, canActivate: [authGuard] },
       { path: 'payment/pending', component: PaymentPendingComponent, canActivate: [authGuard] },
       { path: 'allorders', component: AllordersComponent, canActivate: [authGuard] },

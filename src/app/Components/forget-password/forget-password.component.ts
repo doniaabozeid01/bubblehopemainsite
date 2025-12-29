@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'src/app/services/api.service';
 import { LoadingService } from 'src/app/services/loading.service';
@@ -56,5 +56,21 @@ export class ForgetPasswordComponent {
     }
   }
 
+
+
+
+
+
+    @ViewChild('bgVideo') bgVideo!: ElementRef<HTMLVideoElement>;
+  
+    ngAfterViewInit() {
+      if (this.bgVideo) {
+        const video = this.bgVideo.nativeElement;
+        video.muted = true;
+        video.volume = 0;
+        video.play().catch(() => { });
+      }
+    }
+  
 
 }

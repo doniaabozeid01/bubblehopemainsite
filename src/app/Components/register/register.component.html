@@ -1,7 +1,8 @@
+<!-- register.component.html -->
 <div class="auth-shell">
   <!-- LEFT: Form -->
   <div class="auth-left">
-    <div class="auth-box">
+    <div class="auth-box ">
 
       <div class="brand">
         <div class="brand-text">
@@ -21,6 +22,7 @@
       </div>
 
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="form" novalidate>
+
         <!-- Full name -->
         <div class="field">
           <label class="label" for="fullName">{{ 'auth.FullName' | translate }}</label>
@@ -34,29 +36,153 @@
         <div class="field">
           <label class="label" for="email">{{ 'auth.email' | translate }}</label>
           <input id="email" type="email" class="input" formControlName="email" placeholder="example@email.com" />
-          <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.errors as errors"
-               class="error" aria-live="polite">
+          <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.errors as errors" class="error"
+            aria-live="polite">
             <div *ngIf="errors['gmailOnly']">Only Gmail accounts are allowed</div>
             <div *ngIf="errors['required']">Email is required</div>
             <div *ngIf="errors['email']">Invalid email format</div>
           </div>
         </div>
 
+        <!-- Phone -->
+        <div class="field">
+          <label class="label" for="phoneNumber">Phone Number</label>
+          <input id="phoneNumber" type="tel" class="input" formControlName="phoneNumber" placeholder="01..." />
+          <div *ngIf="registerForm.get('phoneNumber')?.touched && registerForm.get('phoneNumber')?.invalid"
+            class="error">
+            Phone number is required
+          </div>
+        </div>
+
+        <!-- Address Group -->
+        <div formGroupName="address">
+
+          <!-- Country -->
+          <div class="field">
+            <label class="label" for="countryId">Country</label>
+            <select id="countryId" class="input select" formControlName="countryId">
+              <option [ngValue]="null" disabled selected>
+                {{ loadingCountries ? 'Loading...' : 'Select country' }}
+              </option>
+              <option *ngFor="let c of countries" [ngValue]="c.id">
+                {{ c.name ?? c.country_name ?? c.country_name_ar ?? c.nameAr }}
+              </option>
+            </select>
+            <div *ngIf="addressFG.get('countryId')?.touched && addressFG.get('countryId')?.invalid" class="error">
+              Country is required
+            </div>
+          </div>
+
+          <!-- Governorate -->
+          <div class="field">
+            <label class="label" for="governorateId">Governorate</label>
+            <select id="governorateId" class="input select" formControlName="governorateId"
+              [disabled]="addressFG.get('governorateId')?.disabled || loadingGovernorates">
+              <option [ngValue]="null" disabled selected>
+                {{ loadingGovernorates ? 'Loading...' : 'Select governorate' }}
+              </option>
+              <option *ngFor="let g of governorates" [ngValue]="g.id">
+                {{ g.name ?? g.governorate_name ?? g.governorate_name_ar ?? g.nameAr }}
+              </option>
+            </select>
+            <div *ngIf="addressFG.get('governorateId')?.touched && addressFG.get('governorateId')?.invalid"
+              class="error">
+              Governorate is required
+            </div>
+          </div>
+
+          <!-- City -->
+          <div class="field">
+            <label class="label" for="cityId">City</label>
+            <select id="cityId" class="input select" formControlName="cityId"
+              [disabled]="addressFG.get('cityId')?.disabled || loadingCities">
+              <option [ngValue]="null" disabled selected>
+                {{ loadingCities ? 'Loading...' : 'Select city' }}
+              </option>
+              <option *ngFor="let city of cities" [ngValue]="city.id">
+                {{ city.name ?? city.city_name ?? city.city_name_ar ?? city.nameAr }}
+              </option>
+            </select>
+            <div *ngIf="addressFG.get('cityId')?.touched && addressFG.get('cityId')?.invalid" class="error">
+              City is required
+            </div>
+          </div>
+
+          <!-- District -->
+          <div class="field">
+            <label class="label" for="districtId">District</label>
+            <select id="districtId" class="input select" formControlName="districtId"
+              [disabled]="addressFG.get('districtId')?.disabled || loadingDistricts">
+              <option [ngValue]="null" disabled selected>
+                {{ loadingDistricts ? 'Loading...' : 'Select district' }}
+              </option>
+              <option *ngFor="let d of districts" [ngValue]="d.id">
+                {{ d.name ?? d.district_name ?? d.district_name_ar ?? d.nameAr }}
+              </option>
+            </select>
+            <div *ngIf="addressFG.get('districtId')?.touched && addressFG.get('districtId')?.invalid" class="error">
+              District is required
+            </div>
+          </div>
+
+          <!-- Street -->
+          <div class="field">
+            <label class="label" for="street">Street</label>
+            <input id="street" type="text" class="input" formControlName="street" placeholder="Street name" />
+            <div *ngIf="addressFG.get('street')?.touched && addressFG.get('street')?.invalid" class="error">
+              Street is required
+            </div>
+          </div>
+
+          <!-- Building Number -->
+          <div class="field">
+            <label class="label" for="buildingNumber">Building Number</label>
+            <input id="buildingNumber" type="text" class="input" formControlName="buildingNumber"
+              placeholder="e.g. 12B" />
+            <div *ngIf="addressFG.get('buildingNumber')?.touched && addressFG.get('buildingNumber')?.invalid"
+              class="error">
+              Building number is required
+            </div>
+          </div>
+
+          <!-- Floor -->
+          <div class="field">
+            <label class="label" for="floor">Floor</label>
+            <input id="floor" type="text" class="input" formControlName="floor" placeholder="Optional" />
+          </div>
+
+          <!-- Apartment -->
+          <div class="field">
+            <label class="label" for="apartment">Apartment</label>
+            <input id="apartment" type="text" class="input" formControlName="apartment" placeholder="Optional" />
+          </div>
+
+          <!-- Landmark -->
+          <div class="field">
+            <label class="label" for="landmark">Landmark</label>
+            <input id="landmark" type="text" class="input" formControlName="landmark" placeholder="Optional" />
+          </div>
+
+
+
+        </div>
+
         <!-- Password -->
-        <div class="field mb-0">
+        <div class="field mb-0 ">
           <label class="label" for="password">{{ 'auth.Password' | translate }}</label>
 
           <div class="pwd-wrap">
-            <input id="password" [type]="showPwd ? 'text' : 'password'"
-                   class="input pe-5" formControlName="password" placeholder="********" aria-describedby="pwdHelp" />
+            <input id="password" [type]="showPwd ? 'text' : 'password'" class="input pe-5" formControlName="password"
+              placeholder="********" aria-describedby="pwdHelp" />
             <button type="button" class="pwd-toggle" (click)="showPwd = !showPwd"
-                    aria-label="Toggle password visibility">
-              <span *ngIf="!showPwd">Show</span>
-              <span *ngIf="showPwd">Hide</span>
+              aria-label="Toggle password visibility">
+              <span *ngIf="!showPwd"><i class="fa-regular fa-eye"></i></span>
+              <span *ngIf="showPwd"><i class="fa-regular fa-eye-slash"></i></span>
             </button>
           </div>
 
-          <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" class="error mt-2">
+          <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid"
+            class="error mt-2">
             Password doesn't meet the policy below
           </div>
 
@@ -70,26 +196,34 @@
         </div>
 
         <button class="btn btn-bg-color w-100 py-1 fs-5 mt-3" type="submit"
-                [disabled]="registerForm.invalid || loading">
+          [disabled]="registerForm.invalid || loading">
           <ng-container *ngIf="!loading; else loadingTpl">
             {{ 'auth.register' | translate }}
           </ng-container>
           <ng-template #loadingTpl>Registering...</ng-template>
         </button>
 
-        <div class="divider"><span>or</span></div>
 
-        <div class="bottom">
-          <span>{{ 'auth.Alreadyhaveanaccount' | translate }}</span>
-          <a routerLink="/auth/login" class="link strong pb-0">{{ 'auth.login' | translate }}</a>
-        </div>
       </form>
+
+
+
+
+      <div class="divider"><span>or</span></div>
+
+      <div class="bottom">
+        <span>{{ 'auth.Alreadyhaveanaccount' | translate }}</span>
+        <a routerLink="/auth/login" class="link strong pb-0">{{ 'auth.login' | translate }}</a>
+      </div>
 
     </div>
   </div>
 
-  <!-- RIGHT: Image -->
   <div class="auth-right" aria-hidden="true">
+    <video class="bg-video" class="bg-video" #bgVideo autoplay muted loop playsinline preload="auto">
+      <source src="assets/videos/bubble.mp4" type="video/mp4" />
+    </video>
+
     <div class="img-layer"></div>
   </div>
 </div>

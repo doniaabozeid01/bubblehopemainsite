@@ -30,7 +30,7 @@
   <owl-carousel-o *ngIf="advertisements?.length" [options]="customOptions">
     <ng-template carouselSlide *ngFor="let item of advertisements; trackBy: trackById">
       <div class="m-1 m-sm-0   overflow-hidden img-cover">
-        <img [src]="item.imageUrl" [alt]="item.title" class="h-100 w-100 " loading="lazy" />
+        <img [src]="item.imageUrl" [alt]="item.title" class="h-100 w-100 "  [routerLink]="['/advertisementProducts', item.id]" loading="lazy" />
       </div>
     </ng-template>
   </owl-carousel-o>
