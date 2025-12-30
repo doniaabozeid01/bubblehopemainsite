@@ -277,8 +277,8 @@ export class ApiService {
 
 
 
-  GetProductsByAdvertisementId(AdvertiseId: number , branchId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/api/Advertisements/GetAdvertisementProductsByBranch?advertiseId=1&branchId=2`);
+  GetProductsByAdvertisementId(AdvertiseId: number , branchId: number, userId?: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/api/Advertisements/GetAdvertisementProductsByBranch?advertiseId=${AdvertiseId}&branchId=${branchId}&userId=${userId}`);
   }
 
 }

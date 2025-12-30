@@ -24,7 +24,8 @@
         "requireDigit": "The password must contain at least one digit.",
         "requireLowercase": "The password must contain at least one lowercase letter.",
         "requireUniqueChars": "The password must contain at least one unique character.",
-        "optional": "This field is optional"
+        "optional": "This field is optional",
+        "emailOrPhone": "Email or Phone Number"
     },
     "home": {
         "catergories": "Beverages",
@@ -89,7 +90,8 @@
         "slogan": "Pick it, tap it, sip the refreshment!"
     },
     "Products": {
-        "NoProductsFound": "No Products Were Found In This Branch Or Category"
+        "NoProductsFound": "No Products Were Found In This Branch Or Category",
+        "NoOffersFound": "No Products Were Found In This Offer"
     },
     "orders": {
         "prevorder": "My Previous Orders",

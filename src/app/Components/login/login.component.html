@@ -1,22 +1,18 @@
-<div class="auth-shell">
-    <!-- LEFT: Form -->
+<!-- <div class="auth-shell">
     <div class="auth-left">
         <div class="auth-box">
 
             <div class="brand">
-                <!-- <img src="../../../assets/ph logo-01.png" alt="" class="logo"> -->
                 <div class="brand-text ">
                     <h1 class="title">{{ 'auth.login' | translate }}</h1>
                     <p class="sub">Welcome back. Please enter your details.</p>
                 </div>
             </div>
 
-            <!-- Success -->
             <div *ngIf="successMessage" class="alert alert-success text-center mb-3">
                 {{ successMessage }}
             </div>
 
-            <!-- Error -->
             <div *ngIf="errorMessage" class="alert alert-danger text-center mb-3">
                 {{ errorMessage }}
             </div>
@@ -65,7 +61,6 @@
         </div>
     </div>
 
-    <!-- RIGHT: Image -->
     <div class="auth-right" aria-hidden="true">
         <video class="bg-video"   class="bg-video"
             #bgVideo
@@ -80,4 +75,145 @@
         <div class="img-layer"></div>
     </div>
 
+</div> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="auth-shell">
+  <!-- LEFT: Form -->
+  <div class="auth-left">
+    <div class="auth-box">
+
+      <div class="brand">
+        <div class="brand-text">
+          <h1 class="title">{{ 'auth.login' | translate }}</h1>
+          <p class="sub">Welcome back. Please enter your details.</p>
+        </div>
+      </div>
+
+      <!-- Success -->
+      <div *ngIf="successMessage" class="alert alert-success text-center mb-3">
+        {{ successMessage }}
+      </div>
+
+      <!-- Error -->
+      <div *ngIf="errorMessage" class="alert alert-danger text-center mb-3">
+        {{ errorMessage }}
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="form">
+
+        <!-- ✅ Email or Phone -->
+        <div class="field">
+          <label class="label">{{ 'auth.emailOrPhone' | translate }}</label>
+
+          <input
+            type="text"
+            class="input"
+            formControlName="identifier"
+            placeholder="example@email.com or 010XXXXXXXX"
+          />
+
+          <div
+            *ngIf="loginForm.get('identifier')?.touched && loginForm.get('identifier')?.invalid"
+            class="error"
+          >
+            Enter a valid email or phone number
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="field mb-0">
+          <label class="label">{{ 'auth.Password' | translate }}</label>
+
+          <input
+            type="password"
+            class="input"
+            formControlName="password"
+            placeholder="********"
+          />
+
+          <div
+            *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
+            class="error"
+          >
+            Password is required
+          </div>
+        </div>
+
+        <div class="row">
+          <a routerLink="/auth/forgetpassword" class="link">
+            {{ 'auth.forgetpassword' | translate }}
+          </a>
+        </div>
+
+        <button class="btn btn-bg-color w-100 py-1 fs-5" type="submit" [disabled]="loading">
+          <ng-container *ngIf="!loading; else loadingTpl">
+            {{ 'auth.login' | translate }}
+          </ng-container>
+          <ng-template #loadingTpl>Logging...</ng-template>
+        </button>
+
+        <!-- ✅ Resend confirmation (optional UI) -->
+        <button
+          *ngIf="needEmailConfirmation"
+          type="button"
+          class="btn btn-outline-secondary w-100 mt-2"
+          (click)="resendConfirmation()"
+          [disabled]="resending"
+        >
+          {{ resending ? 'Resending...' : 'Resend confirmation email' }}
+        </button>
+
+        <div class="divider"><span>or</span></div>
+
+        <div class="bottom">
+          <span>{{ 'auth.Donthaveanaccount' | translate }}</span>
+          <a routerLink="/auth/register" class="link strong pb-0">
+            {{ 'auth.CreateAccount' | translate }}
+          </a>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- RIGHT: Video -->
+  <div class="auth-right" aria-hidden="true">
+    <video
+      class="bg-video"
+      #bgVideo
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+    >
+      <source src="assets/videos/bubble.mp4" type="video/mp4" />
+    </video>
+
+    <div class="img-layer"></div>
+  </div>
 </div>

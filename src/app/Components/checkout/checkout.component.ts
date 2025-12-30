@@ -95,7 +95,7 @@ ngOnInit(): void {
   }
 
   goToAddAddress() {
-    this.router.navigate(['/profile/addresses'], {
+    this.router.navigate(['/profile'], {
       queryParams: { returnUrl: '/checkout' }
     });
   }
