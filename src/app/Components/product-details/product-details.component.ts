@@ -4,13 +4,14 @@ import { ToastrService } from 'ngx-toastr';
 import { catchError, of } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { BranchService } from 'src/app/services/branch.service';
+import { CartCountService } from 'src/app/services/cart-count.service';
 import { LanguageService } from 'src/app/services/language.service';
 import { SeoService } from 'src/app/services/seo.service';
 
 @Component({
   selector: 'app-product-details',
   templateUrl: './product-details.component.html',
-  styleUrls: ['./product-details.component.scss']
+  styleUrls: ['./product-details.component.scss'],
 })
 export class ProductDetailsComponent {
   product: any = null;
@@ -19,6 +20,7 @@ export class ProductDetailsComponent {
   branchId!: any;
 
   constructor(
+    private cartCountService : CartCountService,
     private api: ApiService,
     private route: ActivatedRoute,
     private router: Router,
@@ -26,13 +28,13 @@ export class ProductDetailsComponent {
     private toastr: ToastrService,
     private seoService: SeoService,
     public languageService: LanguageService
-  ) { }
+  ) {}
 
   ngOnInit() {
-
-    const name = decodeURIComponent(this.route.snapshot.paramMap.get('name') ?? '');
+    const name = decodeURIComponent(
+      this.route.snapshot.paramMap.get('name') ?? ''
+    );
     const token = localStorage.getItem('token');
-
 
     // if (!token) {
     //   this.router.navigate(['/auth/login'], {
@@ -40,25 +42,21 @@ export class ProductDetailsComponent {
     //   });
     //   return;
     // }
-    if(token){
-        this.api.GetUserId().subscribe({
-          next: (r) => {
-            console.log(r);
-            
-            this.usreId = r.userId;
-            console.log(this.usreId);
-            
-          },
-          error:(err)=>{
-            console.log(err);
-            
-          }
-        });
+    if (token) {
+      this.api.GetUserId().subscribe({
+        next: (r) => {
+          console.log(r);
+
+          this.usreId = r.userId;
+          console.log(this.usreId);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
     }
 
-    
-
-    this.branchService.currentBranch$.subscribe(bid => {
+    this.branchService.currentBranch$.subscribe((bid) => {
       // احفظ قيمة الـ stream الأول
       this.branchId = bid;
 
@@ -69,7 +67,7 @@ export class ProductDetailsComponent {
       }
 
       if (!name || !this.branchId) {
-        console.log('no name or branchId');  // هنا مش هتدخلي بعد التصليح
+        console.log('no name or branchId'); // هنا مش هتدخلي بعد التصليح
         return;
       }
 
@@ -83,9 +81,9 @@ export class ProductDetailsComponent {
       //       this.loadProduct(name);
       //     }
       //   });
-      // } 
+      // }
       // else {
-        this.loadProduct(name);
+      this.loadProduct(name);
       // }
     });
   }
@@ -96,25 +94,31 @@ export class ProductDetailsComponent {
     this.api.GetProductByName(name, this.branchId).subscribe({
       next: (response) => {
         console.log(response);
-        
+
         this.product = response;
 
         this.seoService.updateTitleAndDescription(
           `${this.product?.name ?? name} | Bubble Hope`,
-          `جرب مشروب ${this.product?.name ?? name} من Bubble Hope - نكهة مميزة ومحبوبة في فرع حدائق الأهرام.`
+          `جرب مشروب ${
+            this.product?.name ?? name
+          } من Bubble Hope - نكهة مميزة ومحبوبة في فرع حدائق الأهرام.`
         );
 
         if (this.usreId) {
           this.api
-            .GetProductFavouriteByUserIdAndProductId(this.usreId, this.product.id,this.branchId)
+            .GetProductFavouriteByUserIdAndProductId(
+              this.usreId,
+              this.product.id,
+              this.branchId
+            )
             .pipe(
-              catchError(err => {
+              catchError((err) => {
                 // 404 معناها "مش موجود في المفضلة"
                 if (err?.status === 404) return of(null);
                 return of(null);
               })
             )
-            .subscribe(res => {
+            .subscribe((res) => {
               this.product.isFavourite = !!res;
             });
         } else {
@@ -123,17 +127,24 @@ export class ProductDetailsComponent {
       },
       error: (err) => {
         console.log('Error loading product:', err);
-      }
+      },
     });
   }
 
-
   addToCart(product: any): void {
     // 1) تحققات المقاس (لو فيه Variants)
-    const hasVariants = Array.isArray(product?.variants) && product.variants.length > 0;
+    const hasVariants =
+      Array.isArray(product?.variants) && product.variants.length > 0;
     if (hasVariants && this.selectedSize == null) {
       this.isSizeMissing = true;
-      setTimeout(() => this.sizeRef?.nativeElement?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 0);
+      setTimeout(
+        () =>
+          this.sizeRef?.nativeElement?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+          }),
+        0
+      );
       return;
     }
 
@@ -146,16 +157,16 @@ export class ProductDetailsComponent {
     }
 
     // 3) ابني الـ payload حسب الفورمات المطلوب
-    const variant = this.getSelectedVariant(product);            // { id, name, price } أو undefined
-    const selectedOptions = this.buildSelectedOptions(product);  // [{ groupId, optionId }, ...]
+    const variant = this.getSelectedVariant(product); // { id, name, price } أو undefined
+    const selectedOptions = this.buildSelectedOptions(product); // [{ groupId, optionId }, ...]
 
     const payload = {
       quantity: 1,
       productId: product.id,
       branchId: this.branchId,
       userId: this.usreId,
-      productVariantId: variant?.id ?? null,                     // لو مفيش variants هيبقى null
-      optionIds: selectedOptions.map(o => o.optionId)            // [1918, 1454, ...]
+      productVariantId: variant?.id ?? null, // لو مفيش variants هيبقى null
+      optionIds: selectedOptions.map((o) => o.optionId), // [1918, 1454, ...]
     };
 
     console.log(payload);
@@ -163,23 +174,29 @@ export class ProductDetailsComponent {
     const token = localStorage.getItem('token');
     if (!token) {
       // لو لازم تسجّل قبل الإضافة على السيرفر:
-      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url },
+      });
       return;
     }
 
     // 4) الاتصال بالـ API
     this.api.addToCart(payload).subscribe({
-      next: () => this.toastr.success("Great choice! It's now in your cart."),
-      error: (err) => this.toastr.error(err?.error?.message || 'Something went wrong')
+      next: () => {
+            this.cartCountService.refresh(this.branchId, this.usreId); // تأكدي userId صح
+        this.toastr.success("Great choice! It's now in your cart.");
+      },
+
+      error: (err) =>
+        this.toastr.error(err?.error?.message || 'Something went wrong'),
     });
   }
-
 
   toggleFavourite(product: any) {
     const token = localStorage.getItem('token');
     if (!token) {
       this.router.navigate(['/auth/login'], {
-        queryParams: { returnUrl: this.router.url }
+        queryParams: { returnUrl: this.router.url },
       });
       return;
     }
@@ -187,14 +204,14 @@ export class ProductDetailsComponent {
     //     this.api.GetUserId().subscribe({
     //       next: (r) => {
     //         console.log(r);
-            
+
     //         this.usreId = r.userId;
     //         console.log(this.usreId);
-            
+
     //       },
     //       error:(err)=>{
     //         console.log(err);
-            
+
     //       }
     //     });
     // }
@@ -202,27 +219,33 @@ export class ProductDetailsComponent {
     const data = {
       productId: product.id,
       userId: this.usreId,
-      branchId: this.branchId
+      branchId: this.branchId,
     };
 
     console.log(data);
 
     if (product.isFavourite) {
       this.api
-        .GetProductFavouriteByUserIdAndProductId(this.usreId, product.id, this.branchId)
+        .GetProductFavouriteByUserIdAndProductId(
+          this.usreId,
+          product.id,
+          this.branchId
+        )
         .pipe(catchError(() => of(null)))
         .subscribe((fav: any) => {
           if (!fav?.id) {
             product.isFavourite = false;
             return;
           }
-          this.api.removeFromFavourite(fav.productId, this.branchId, this.usreId).subscribe({
-            next: () => {
-              this.toastr.success('Product removed from your wishlist.');
-              product.isFavourite = false;
-            },
-            error: (err) => console.log(err)
-          });
+          this.api
+            .removeFromFavourite(fav.productId, this.branchId, this.usreId)
+            .subscribe({
+              next: () => {
+                this.toastr.success('Product removed from your wishlist.');
+                product.isFavourite = false;
+              },
+              error: (err) => console.log(err),
+            });
         });
     } else {
       this.api.addToFavourite(data).subscribe({
@@ -230,19 +253,19 @@ export class ProductDetailsComponent {
           this.toastr.success('Product Saved to your wishlist!');
           product.isFavourite = true;
         },
-        error: (err) => console.log(err)
+        error: (err) => console.log(err),
       });
     }
   }
 
-
-
-
-
   missingRequired = new Set<number>();
 
   private getMinSelect(group: any): number {
-    return typeof group.minSelect === 'number' ? group.minSelect : (group.isRequired ? 1 : 0);
+    return typeof group.minSelect === 'number'
+      ? group.minSelect
+      : group.isRequired
+      ? 1
+      : 0;
   }
 
   private isGroupValid(group: any): boolean {
@@ -266,8 +289,8 @@ export class ProductDetailsComponent {
   // (اختياري) اسكرول لأول جروب ناقص
   @ViewChildren('groupRef') groupRefs!: any; // QueryList<ElementRef>
   private scrollToFirstMissing(firstMissingId: number) {
-    const el = this.groupRefs?.find((r: any) =>
-      r?.nativeElement?.dataset?.groupId == String(firstMissingId)
+    const el = this.groupRefs?.find(
+      (r: any) => r?.nativeElement?.dataset?.groupId == String(firstMissingId)
     )?.nativeElement;
     el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
@@ -279,17 +302,26 @@ export class ProductDetailsComponent {
 
     const isMulti = group.selectionType === 1;
     const minSelect = this.getMinSelect(group);
-    const maxSelect = typeof group.maxSelect === 'number' ? group.maxSelect : (isMulti ? Number.POSITIVE_INFINITY : 1);
+    const maxSelect =
+      typeof group.maxSelect === 'number'
+        ? group.maxSelect
+        : isMulti
+        ? Number.POSITIVE_INFINITY
+        : 1;
 
     const already = set.has(option.id);
 
     if (already) {
-      if (set.size <= minSelect) return;   // ماينفعش ننزل عن الحد الأدنى
+      if (set.size <= minSelect) return; // ماينفعش ننزل عن الحد الأدنى
       set.delete(option.id);
     } else {
       if (set.size >= maxSelect) {
-        if (!isMulti) { set.clear(); set.add(option.id); }
-        else { return; }
+        if (!isMulti) {
+          set.clear();
+          set.add(option.id);
+        } else {
+          return;
+        }
       } else {
         set.add(option.id);
       }
@@ -301,8 +333,12 @@ export class ProductDetailsComponent {
   }
 
   private buildSelectedOptions(product: any): Array<{
-    groupId: number; groupName: string;
-    optionId: number; optionName: string; optionNameAr: string; pricePerUnit: number;
+    groupId: number;
+    groupName: string;
+    optionId: number;
+    optionName: string;
+    optionNameAr: string;
+    pricePerUnit: number;
   }> {
     const result: any[] = [];
     product?.groups?.forEach((g: any) => {
@@ -324,11 +360,18 @@ export class ProductDetailsComponent {
     return result;
   }
 
-  private getSelectedVariant(product: any): { id?: number; name?: string; nameAr?: string; price?: number } | null {
+  private getSelectedVariant(
+    product: any
+  ): { id?: number; name?: string; nameAr?: string; price?: number } | null {
     if (this.selectedSize == null) return null;
     const v = product?.variants?.find((vv: any) => vv.id === this.selectedSize);
     if (!v) return null;
-    return { id: v.id, name: v.variantName ?? v.name, nameAr: v.variantName ?? v.name, price: Number(v.price ?? 0) };
+    return {
+      id: v.id,
+      name: v.variantName ?? v.name,
+      nameAr: v.variantName ?? v.name,
+      price: Number(v.price ?? 0),
+    };
   }
 
   initVariantDefault(product: any): void {
@@ -354,7 +397,6 @@ export class ProductDetailsComponent {
     this.selectedSize = id;
     this.isSizeMissing = false; // أول ما يختار السايز، شيل الوسم الأحمر
   }
-
 
   selectedToppings = new Set<number>();
 
@@ -396,7 +438,12 @@ export class ProductDetailsComponent {
       });
 
       // لو الجروب Required ومفيش اختيار، اختار أول Option موجود
-      if (g.isRequired && set.size === 0 && Array.isArray(g.options) && g.options.length > 0) {
+      if (
+        g.isRequired &&
+        set.size === 0 &&
+        Array.isArray(g.options) &&
+        g.options.length > 0
+      ) {
         const firstId = g.options[0]?.id;
         if (typeof firstId === 'number') set.add(firstId);
       }
@@ -442,31 +489,27 @@ export class ProductDetailsComponent {
   //   return total;
   // }
 
-
-
-
   get finalPrice(): number {
-  let total = this.basePrice;
+    let total = this.basePrice;
 
-  // ✅ هات الـ variant بالسليم
-  const variant = this.getSelectedVariant(this.product);
-  if (variant?.price) {
-    total += Number(variant.price); // زوّدي فرق سعر السايز
+    // ✅ هات الـ variant بالسليم
+    const variant = this.getSelectedVariant(this.product);
+    if (variant?.price) {
+      total += Number(variant.price); // زوّدي فرق سعر السايز
+    }
+
+    // ✅ جمع أسعار اختيارات الجروبات
+    this.product?.groups?.forEach((g: any) => {
+      const set = this.selectedByGroup.get(g.groupId);
+      if (!set) return;
+      set.forEach((optId: number) => {
+        const opt = g.options?.find((o: any) => o.id === optId);
+        if (opt) total += Number(opt.price ?? 0); // أو pricePerUnit لو اسمك كده
+      });
+    });
+
+    return total;
   }
 
-  // ✅ جمع أسعار اختيارات الجروبات
-  this.product?.groups?.forEach((g: any) => {
-    const set = this.selectedByGroup.get(g.groupId);
-    if (!set) return;
-    set.forEach((optId: number) => {
-      const opt = g.options?.find((o: any) => o.id === optId);
-      if (opt) total += Number(opt.price ?? 0); // أو pricePerUnit لو اسمك كده
-    });
-  });
-
-  return total;
-}
-
   // خريطة للاختيارات في كل جروب
-
 }
