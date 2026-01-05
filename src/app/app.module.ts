@@ -48,6 +48,9 @@ import { TestLoginComponent } from './Components/test-login/test-login.component
 import { ProfileComponent } from './Components/profile/profile.component';
 import { AdvertisementProductsComponent } from './Components/advertisement-products/advertisement-products.component';
 
+
+
+
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, '../assets/i18n/', '.json');
 }
@@ -90,7 +93,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     TestLoginComponent,
     ProfileComponent,
     AdvertisementProductsComponent
-    ],
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -115,7 +118,6 @@ export function HttpLoaderFactory(http: HttpClient) {
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }, // ✅,
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true }
-
   ],
   bootstrap: [AppComponent]
 })

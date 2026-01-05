@@ -40,23 +40,23 @@ export class ProductDetailsComponent {
     //   });
     //   return;
     // }
-    if(token){
-        this.api.GetUserId().subscribe({
-          next: (r) => {
-            console.log(r);
-            
-            this.usreId = r.userId;
-            console.log(this.usreId);
-            
-          },
-          error:(err)=>{
-            console.log(err);
-            
-          }
-        });
+    if (token) {
+      this.api.GetUserId().subscribe({
+        next: (r) => {
+          console.log(r);
+
+          this.usreId = r.userId;
+          console.log(this.usreId);
+
+        },
+        error: (err) => {
+          console.log(err);
+
+        }
+      });
     }
 
-    
+
 
     this.branchService.currentBranch$.subscribe(bid => {
       // احفظ قيمة الـ stream الأول
@@ -85,7 +85,7 @@ export class ProductDetailsComponent {
       //   });
       // } 
       // else {
-        this.loadProduct(name);
+      this.loadProduct(name);
       // }
     });
   }
@@ -96,7 +96,7 @@ export class ProductDetailsComponent {
     this.api.GetProductByName(name, this.branchId).subscribe({
       next: (response) => {
         console.log(response);
-        
+
         this.product = response;
 
         this.seoService.updateTitleAndDescription(
@@ -106,7 +106,7 @@ export class ProductDetailsComponent {
 
         if (this.usreId) {
           this.api
-            .GetProductFavouriteByUserIdAndProductId(this.usreId, this.product.id,this.branchId)
+            .GetProductFavouriteByUserIdAndProductId(this.usreId, this.product.id, this.branchId)
             .pipe(
               catchError(err => {
                 // 404 معناها "مش موجود في المفضلة"
@@ -162,8 +162,9 @@ export class ProductDetailsComponent {
 
     const token = localStorage.getItem('token');
     if (!token) {
+      this.toastr.success("Please log in to add products to your cart.");
       // لو لازم تسجّل قبل الإضافة على السيرفر:
-      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      this.router.navigate(['/auth/login'], { queryParams: { returnUrl: this.router.url } });
       return;
     }
 
@@ -187,14 +188,14 @@ export class ProductDetailsComponent {
     //     this.api.GetUserId().subscribe({
     //       next: (r) => {
     //         console.log(r);
-            
+
     //         this.usreId = r.userId;
     //         console.log(this.usreId);
-            
+
     //       },
     //       error:(err)=>{
     //         console.log(err);
-            
+
     //       }
     //     });
     // }
@@ -446,26 +447,26 @@ export class ProductDetailsComponent {
 
 
   get finalPrice(): number {
-  let total = this.basePrice;
+    let total = this.basePrice;
 
-  // ✅ هات الـ variant بالسليم
-  const variant = this.getSelectedVariant(this.product);
-  if (variant?.price) {
-    total += Number(variant.price); // زوّدي فرق سعر السايز
-  }
+    // ✅ هات الـ variant بالسليم
+    const variant = this.getSelectedVariant(this.product);
+    if (variant?.price) {
+      total += Number(variant.price); // زوّدي فرق سعر السايز
+    }
 
-  // ✅ جمع أسعار اختيارات الجروبات
-  this.product?.groups?.forEach((g: any) => {
-    const set = this.selectedByGroup.get(g.groupId);
-    if (!set) return;
-    set.forEach((optId: number) => {
-      const opt = g.options?.find((o: any) => o.id === optId);
-      if (opt) total += Number(opt.price ?? 0); // أو pricePerUnit لو اسمك كده
+    // ✅ جمع أسعار اختيارات الجروبات
+    this.product?.groups?.forEach((g: any) => {
+      const set = this.selectedByGroup.get(g.groupId);
+      if (!set) return;
+      set.forEach((optId: number) => {
+        const opt = g.options?.find((o: any) => o.id === optId);
+        if (opt) total += Number(opt.price ?? 0); // أو pricePerUnit لو اسمك كده
+      });
     });
-  });
 
-  return total;
-}
+    return total;
+  }
 
   // خريطة للاختيارات في كل جروب
 

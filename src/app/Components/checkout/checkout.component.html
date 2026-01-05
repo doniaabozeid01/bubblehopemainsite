@@ -34,7 +34,6 @@
                     <h4>{{ 'delivery.paymentMethod' | translate }}</h4>
 
                     <select class="form-control" formControlName="paymentMethodId">
-                        <option [ngValue]="null">Select</option>
                         <option *ngFor="let method of paymentMethods" [ngValue]="method.id">
                             {{ method.name }}
                         </option>

@@ -26,6 +26,7 @@
     "bootstrap": "^5.3.7",
     "bootstrap-icons": "^1.13.1",
     "crypto-js": "^4.2.0",
+    "firebase": "^12.7.0",
     "ngx-owl-carousel-o": "^16.0.1",
     "ngx-toastr": "^17.0.2",
     "rxjs": "^7.8.1",

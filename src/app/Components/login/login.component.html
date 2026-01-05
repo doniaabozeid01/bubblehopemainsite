@@ -104,7 +104,13 @@
 <div class="auth-shell">
   <!-- LEFT: Form -->
   <div class="auth-left">
-    <div class="auth-box">
+
+    <!-- <h2 class="">Bubble Hope</h2> -->
+    <div class="auth-box ">
+
+      <!-- ✅ Firebase reCAPTCHA container (لازم يكون موجود دايمًا) -->
+      <div id="recaptcha-container"></div>
+
 
       <div class="brand">
         <div class="brand-text">
@@ -129,17 +135,10 @@
         <div class="field">
           <label class="label">{{ 'auth.emailOrPhone' | translate }}</label>
 
-          <input
-            type="text"
-            class="input"
-            formControlName="identifier"
-            placeholder="example@email.com or 010XXXXXXXX"
-          />
+          <input type="text" class="input" formControlName="identifier"
+            placeholder="example@email.com or 010XXXXXXXX" />
 
-          <div
-            *ngIf="loginForm.get('identifier')?.touched && loginForm.get('identifier')?.invalid"
-            class="error"
-          >
+          <div *ngIf="loginForm.get('identifier')?.touched && loginForm.get('identifier')?.invalid" class="error">
             Enter a valid email or phone number
           </div>
         </div>
@@ -148,17 +147,9 @@
         <div class="field mb-0">
           <label class="label">{{ 'auth.Password' | translate }}</label>
 
-          <input
-            type="password"
-            class="input"
-            formControlName="password"
-            placeholder="********"
-          />
+          <input type="password" class="input" formControlName="password" placeholder="********" />
 
-          <div
-            *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
-            class="error"
-          >
+          <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="error">
             Password is required
           </div>
         </div>
@@ -177,13 +168,8 @@
         </button>
 
         <!-- ✅ Resend confirmation (optional UI) -->
-        <button
-          *ngIf="needEmailConfirmation"
-          type="button"
-          class="btn btn-outline-secondary w-100 mt-2"
-          (click)="resendConfirmation()"
-          [disabled]="resending"
-        >
+        <button *ngIf="needEmailConfirmation" type="button" class="btn btn-outline-secondary w-100 mt-2"
+          (click)="resendConfirmation()" [disabled]="resending">
           {{ resending ? 'Resending...' : 'Resend confirmation email' }}
         </button>
 
@@ -202,15 +188,7 @@
 
   <!-- RIGHT: Video -->
   <div class="auth-right" aria-hidden="true">
-    <video
-      class="bg-video"
-      #bgVideo
-      autoplay
-      muted
-      loop
-      playsinline
-      preload="auto"
-    >
+    <video class="bg-video" #bgVideo autoplay muted loop playsinline preload="auto">
       <source src="assets/videos/bubble.mp4" type="video/mp4" />
     </video>
 

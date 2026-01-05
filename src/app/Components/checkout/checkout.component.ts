@@ -39,26 +39,26 @@ export class CheckoutComponent implements OnInit {
     private translate: TranslateService
   ) { }
 
-ngOnInit(): void {
-  this.orderForm = this.fb.group({
-    addressId: [null, Validators.required],
-    paymentMethodId: [null, Validators.required],
-    code: [''],
-    source: [1]
-  });
-
-  this.loadPaymentMethods();
-
-  this.api.GetUserId().subscribe(res => {
-    this.userId = res.userId;
-
-    this.loadAddresses();
-
-    this.api.GetUserBranch(this.userId).subscribe(branch => {
-      this.getCartId(this.userId, branch.id);
+  ngOnInit(): void {
+    this.orderForm = this.fb.group({
+      addressId: [null, Validators.required],
+      paymentMethodId: [null, Validators.required],
+      code: [''],
+      source: [1]
     });
-  });
-}
+
+    this.loadPaymentMethods();
+
+    this.api.GetUserId().subscribe(res => {
+      this.userId = res.userId;
+
+      this.loadAddresses();
+
+      this.api.GetUserBranch(this.userId).subscribe(branch => {
+        this.getCartId(this.userId, branch.id);
+      });
+    });
+  }
 
 
   // =============================
@@ -75,9 +75,7 @@ ngOnInit(): void {
       error: (err) => {
         console.error('Error loading cart', err);
       }
-    }
-
-    );
+    });
   }
 
   // =============================
@@ -87,6 +85,9 @@ ngOnInit(): void {
     this.api.GetUserAddresses().subscribe({
       next: (res) => {
         this.addresses = res;
+        this.orderForm.patchValue({
+          addressId: this.addresses.find(a => a.isDefault)?.id || null
+        });
       },
       error: (err) => {
         console.error('Error loading addresses', err);
@@ -106,6 +107,9 @@ ngOnInit(): void {
   loadPaymentMethods() {
     this.api.GetAllPaymentMethods().subscribe(res => {
       this.paymentMethods = res;
+      this.orderForm.patchValue({
+        paymentMethodId: this.paymentMethods.length > 0 ? this.paymentMethods[0].id : null
+      });
     });
   }
 
@@ -196,6 +200,4 @@ ngOnInit(): void {
       }
     });
   }
-
 }
-
