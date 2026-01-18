@@ -24,10 +24,10 @@
 }
 
 .auth-box {
-  width: min(520px, 100%);
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+    width: min(520px, 100%);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
 
 }
 
@@ -219,8 +219,9 @@
     transform: scale(1.02);
     filter: saturate(1.02);
     z-index: 0;
-      pointer-events: none; /* يمنع أي تفاعل */
-  filter: saturate(0.95) brightness(0.95);
+    pointer-events: none;
+    /* يمنع أي تفاعل */
+    filter: saturate(0.95) brightness(0.95);
 
 }
 
@@ -267,6 +268,11 @@
     .auth-box {
         width: min(520px, 100%);
     }
+
+    .link {
+        font-size: 14px!important;
+
+    }
 }
 
 /* Mobile */
@@ -277,5 +283,10 @@
 
     .title {
         font-size: 24px;
+    }
+
+    .link {
+        font-size: 14px!important;
+
     }
 }
