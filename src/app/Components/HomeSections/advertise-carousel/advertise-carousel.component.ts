@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, ViewChild } from '@angular/core';
 import { OwlOptions } from 'ngx-owl-carousel-o';
 import { ApiService } from 'src/app/services/api.service';
 import { LanguageService } from 'src/app/services/language.service';
@@ -16,7 +16,6 @@ export class AdvertiseCarouselComponent {
     autoplay: true,
     dots: false,
     nav: false,
-    // navText: ['<i class="bi bi-chevron-left"></i>','<i class="bi bi-chevron-right"></i>'], // أو FontAwesome
     rtl: true,
     items: 1,
     autoHeight: false
@@ -29,7 +28,7 @@ export class AdvertiseCarouselComponent {
     this.api.GetAllAdvertisements().subscribe({
       next: (res) => {
         console.log(res);
-        
+
         // ضمان أن اللي بيتحط Array
         const arr = Array.isArray(res) ? res : (res?.data || res?.result || []);
         this.advertisements = arr?.map((x: any) => ({
@@ -44,4 +43,17 @@ export class AdvertiseCarouselComponent {
   }
 
   trackById = (_: number, item: any) => item.id ?? item.imageUrl;
+
+
+@ViewChild('heroCarousel', { static: false }) heroCarousel: any;
+
+@HostListener('window:resize')
+onResize() {
+  // refresh سريع
+  setTimeout(() => this.heroCarousel?.refresh?.(), 50);
+
+  // refresh بعد ما Bootstrap يطبّق d-none/d-md-flex
+  setTimeout(() => this.heroCarousel?.refresh?.(), 350);
+}
+
 }

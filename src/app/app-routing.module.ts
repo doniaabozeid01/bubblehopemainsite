@@ -52,6 +52,17 @@ const routes: Routes = [
       { path: 'advertise', component: AdvertiseCarouselComponent },
       { path: 'main-categories', component: MainCategoriesComponent },
       { path: 'rawMaterial-categories', component: RawMaterialCategoriesComponent },
+      { path: 'powders', component: RawMaterialCategoriesComponent },
+      { path: 'popping', component: RawMaterialCategoriesComponent },
+      { path: 'juice', component: RawMaterialCategoriesComponent },
+      { path: 'tapioca', component: RawMaterialCategoriesComponent },
+      { path: 'sauce', component: RawMaterialCategoriesComponent },
+      { path: 'waffle-sauce', component: RawMaterialCategoriesComponent },
+      { path: 'waffle-mix', component: RawMaterialCategoriesComponent },
+
+
+
+
       { path: 'products', component: ProductsComponent },
       { path: 'products/:id', component: ProductsComponent },
       // { path: 'rawMaterialProducts/:categoryId', component: RawMaterialProductsComponent },

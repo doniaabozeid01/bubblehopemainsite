@@ -1,145 +1,138 @@
-.up-down {
-    // display: inline-block;
-    animation: upDown 2s ease-in-out infinite;
-
+.training {
+    max-width: 1950px;
+    margin: auto;
+    position: relative;
+    overflow: hidden;
+    padding: 60px 0;
 }
+
+
+.training::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url('../../../../assets/Group 74.png');
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-size: 100% auto;
+    z-index: 0;
+}
+
+/* خلي المحتوى فوق الخلفية */
+.training .row {
+    position: relative;
+    z-index: 1;
+}
+
+/* المحتوى */
+.content {
+    width: 70%;
+}
+
+/* موبايل */
+@media (max-width: 992px) {
+    .training {
+        min-height: auto;
+        padding-top: 140px;
+        padding-bottom: 60px;
+        background-size: 100% auto;
+    }
+
+    .content {
+        width: 100%;
+    }
+
+    .training img {
+        width: 100%;
+    }
+}
+
 
 
 
 .training {
-    // min-height: 80vh; 
-    // height: 100vh;
-    max-width: 1950px;
-    margin: auto;
-    // background-image: url('../../../../assets/texture-01.png');
-    background-position: top;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Desktop / default: الخلفية عادي */
+.training::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* تغطي السكشن كله على الشاشات الكبيرة */
+    background-image: url('../../../../assets/Group 74.png');
     background-repeat: no-repeat;
-    background-size: contain;
-    overflow: hidden;
+    background-position: top center;
+    background-size: 100% auto;
+    z-index: 0;
 }
 
-.cov-img{
-    background-color: #F47421;
+.training .row {
+    position: relative;
+    z-index: 1;
 }
 
-@keyframes upDown {
 
-    0%,
-    100% {
-        transform: translateY(0);
-        /* الوضع الطبيعي */
+
+
+
+@media (max-width: 1600px) {
+    .training {
+        padding-top: 120px;
+        /* مساحة للكلام */
+        padding-bottom: 60px;
+        /* مساحة للصورة */
+        // background-color: green;
     }
 
-    50% {
-        transform: translateY(-20px);
-        /* تطلع لفوق مسافة صغيرة */
-    }
-}
-
-
-
-img {
-    width: 50%;
-}
-
-
-
-// @media (min-width:993px) {
-
-//     .training {
-//         height: 100vh !important;
-//     }
-
-// }
-
-
-// @media (max-width:992px) {
-
-//     img {
-//         width: 100%;
-//     }
-
-//     .training {
-//         height: auto !important;
-//         padding-top: 150px;
-//     }
-
-//     .up-down {}
-
-// }
-
-
-
-
-/* ≥993px: الافتراضي 100vh */
-@media (min-width:993px) {
-//   .training { height: 100vh !important; }
-}
-
-/* ≤992px: موبايل */
-@media (max-width:992px) {
-  img { width: 100%; }
-  .training { height: auto !important; padding-top: 150px; }
-}
-
-/* XL فقط (زي الشاشة اللي بعتّيها ~1323px) */
-@media (min-width:1200px) and (max-width:1399.98px) {
-  .training { height: 80vh !important; }
-}
-
-
-
-
-.scroller {
-    --gap: 3px;
-    --speed: 20s;
-    overflow: hidden;
-    width: 100%;
-    background: #F47421;
-    padding-block: 12px;
-
-}
-
-
-
-.scroller__track {
-    display: flex;
-    gap: var(--gap);
-    width: max-content;
-    /* خليه على قد المحتوى */
-    align-items: center;
-    animation: scroll var(--speed) linear infinite;
-}
-
-
-
-/* الإتجاه LTR: من اليمين لليسار بصرياً */
-@keyframes scroll {
-    from {
-        transform: translateX(-50%);
+    .training::before {
+        inset: auto;
+        /* مهم: نشيل inset:0 */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        // height: clamp(260px, 45vh, 420px); /* تغطي النص فقط */
+        background-size: cover;
+        background-position: center;
     }
 
-    to {
-        transform: translateX(0);
+}
+
+
+
+
+
+
+/* ✅ Mobile فقط: الخلفية تغطي الكلام بس */
+@media (max-width: 768px) {
+    .training {
+        padding-top: 120px;
+        /* مساحة للكلام */
+        padding-bottom: 60px;
+        /* مساحة للصورة */
+    }
+
+    .training::before {
+        inset: auto;
+        /* مهم: نشيل inset:0 */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 70vh;
+        // height: clamp(260px, 45vh, 420px); /* تغطي النص فقط */
+        background-size: cover;
+        background-position: right top;
+    }
+
+    .content {
+        padding-top: 40px;
+
     }
 }
 
 
 
-/* احترام تفضيل تقليل الحركة */
-@media (prefers-reduced-motion: reduce) {
-    .scroller__track {
-        animation: none;
-    }
-}
 
 
-
-/* موبايل: صغّري الارتفاع والـgap */
-@media (max-width: 576px) {
-    .scroller {
-        --gap: 12px;
-    }
-
-
-}

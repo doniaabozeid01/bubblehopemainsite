@@ -1,68 +1,53 @@
-<!-- <owl-carousel-o *ngIf="advertisements?.length" [options]="customOptions">
-  <ng-template carouselSlide *ngFor="let item of advertisements; trackBy: trackById" >
-        <img [src]="item.imageUrl" [alt]="item.title" class="d-block w-100" loading="lazy" />
-  </ng-template>
-</owl-carousel-o> -->
+<div class="parent">
+  <div class="hero-carousel">
+    <owl-carousel-o #heroCarousel [options]="customOptions">
 
+      <!-- ✅ Slide 1: Promo -->
+      <ng-template carouselSlide [id]="'promo-slide'">
 
+        <section class="promo ">
+          <div class="promo__container  w-75">
 
+            <div class="promo__visual d-md-flex d-none">
+              <img class="promo__img " src="../../../../assets/Untitled-1 (4).png" alt="Bubble tea cups" />
+            </div>
 
+            <div class="promo__content text-center ms-0 ">
+              <h2 class="promo__title">
+                Burstin’<br />
+                <span class="orange promo__title">Bubble</span><br />
+                Delight!
+              </h2>
+              <p class="promo__subtitle fs-3 fw-light ">Sip, smile &amp; enjoy the fun!</p>
+              <div class="promo__actions d-flex justify-content-center ">
+                <a class="btn btn--primary py-4 fs-4" href="https://offers.bubblehope.com">Order Now</a>
+                <a class="btn btn--outline py-4 fs-4" routerLink="/products">View Menu</a>
+              </div>
+            </div>
 
+          </div>
 
-<!-- 
-<owl-carousel-o *ngIf="advertisements?.length" [options]="customOptions">
-  <ng-template carouselSlide *ngFor="let item of advertisements; trackBy: trackById">
-    <div class="m-1 m-sm-0 rounded-3 overflow-hidden img-cover">  
-      <img [src]="item.imageUrl" [alt]="item.title" class="d-block w-100" loading="lazy" />
-    </div>
-  </ng-template>
-</owl-carousel-o> -->
+          <span class="b b1"></span>
+          <span class="b b2"></span>
+          <span class="b b3"></span>
+          <span class="b b4"></span>
+          <span class="b b5"></span>
+          <span class="b b6"></span>
+          <span class="b b7"></span>
+          <span class="b b8"></span>
+          <span class="b b9"></span>
 
+        </section>
 
+      </ng-template>
 
+      <!-- ✅ Slides 2..n: Ads -->
+      <ng-template carouselSlide *ngFor="let item of advertisements; trackBy: trackById">
+        <div class="img-cover  ad-slide" [routerLink]="['/advertisementProducts', item.id]">
+          <img [src]="item.imageUrl" [alt]="item.title" loading="lazy" />
+        </div>
+      </ng-template>
 
-
-
-
-
-
-<div class="hero-carousel">
-  <owl-carousel-o *ngIf="advertisements?.length" [options]="customOptions">
-    <ng-template carouselSlide *ngFor="let item of advertisements; trackBy: trackById">
-      <div class="m-1 m-sm-0   overflow-hidden img-cover">
-        <img [src]="item.imageUrl" [alt]="item.title" class="h-100 w-100 "  [routerLink]="['/advertisementProducts', item.id]" loading="lazy" />
-      </div>
-    </ng-template>
-  </owl-carousel-o>
-</div>
-
-
-<!-- <p class="moving-text-ar pb-0 mb-0 text-end ">بتلابنلاتر ةيبللاة تيسنبللاب تلقنبلا </p> -->
-
-<!-- <div class="second-bg-color text-white overflow-hidden">
-
-  <p class="moving-text-ar pb-0 mb-0 text-end ">بتلابنلاتر ةيبللاة تيسنبللاب تلقنبلا </p>
-  <p class="moving-text pb-0 mb-0 text-end ">Lorem ipsum dolor sit amet, consectetur adipisicing.</p>
-
-</div> -->
-
-
-
-
-
-
-<div class="second-bg-color text-white overflow-hidden">
-
-  <!-- النص العربي -->
-  <p  *ngIf="(languageService.languageChanged$ | async) === 'ar'"
-     class="moving-text-ar pb-0 mb-0 text-end fs-2">
-    {{'slide-advertise.adv1' | translate}}
-  </p>
-
-  <!-- النص الإنجليزي -->
-  <p *ngIf="(languageService.languageChanged$ | async) !== 'ar'"
-     class="moving-text pb-0 mb-0 text-start fs-2">
-    {{'slide-advertise.adv1' | translate}}
-  </p>
-
+    </owl-carousel-o>
+  </div>
 </div>

@@ -4,13 +4,25 @@ body {
   margin: 0;
   padding: 0;
   width: 100%;
+
+
+
+
 }
 
 
 
 
+// .grandstander {
+//   font-family: "Grandstander", cursive;
+//   font-optical-sizing: auto;
+//   font-weight: 400;
+//   font-style: normal;
+// }
+
+
 :root {
-    --color: #d19981;
+  --color: #d19981;
 }
 
 
@@ -52,17 +64,21 @@ body {
   // color: #117c9f !important;
   overflow-x: hidden;
   /* background-color: aquamarine; */
+  font-family: 'Grandstander', cursive;
+
+
 }
 
 .btn-bg-color {
 
   background-color: #F47524;
   color: white !important;
-  
+
   &:hover {
     background-color: #F47524;
     color: white;
   }
+
   &:disabled {
     background-color: #F47524;
     opacity: 0.6;
@@ -79,8 +95,8 @@ body {
   border: 1px solid #F47524;
 
   &:hover {
-    background-color: #F47524!important;
-    color: #ffffff!important;
+    background-color: #F47524 !important;
+    color: #ffffff !important;
     // border: 1px solid #117c9f;
   }
 }
@@ -93,27 +109,27 @@ body {
   border: 2px solid #F47421;
 
   &:hover {
-    background-color: #F47421!important;
-    color: #ffffff!important;
+    background-color: #F47421 !important;
+    color: #ffffff !important;
     // border: 1px solid #117c9f;
   }
 }
 
 
 
-@font-face {
-  font-family: "AraHamahHoms";
-  src: url("assets/fonts/AraHamahHoms-Regular.otf") format("opentype");
-  font-weight: normal;
-  font-style: normal;
-}
+// @font-face {
+//   font-family: "AraHamahHoms";
+//   src: url("assets/fonts/AraHamahHoms-Regular.otf") format("opentype");
+//   font-weight: normal;
+//   font-style: normal;
+// }
 
-@font-face {
-  font-family: "alfontCom";
-  src: url("assets/fonts/alfont_com_AlFont_com_Segoe.UI_DownloadSoftware.iR_.ttf") format("opentype");
-  font-weight: normal;
-  font-style: normal;
-}
+// @font-face {
+//   font-family: "alfontCom";
+//   src: url("assets/fonts/alfont_com_AlFont_com_Segoe.UI_DownloadSoftware.iR_.ttf") format("opentype");
+//   font-weight: normal;
+//   font-style: normal;
+// }
 
 html[dir="rtl"] h1,
 h2,
@@ -123,7 +139,7 @@ p,
 span,
 .total {
   // font-family: "AraHamahHoms", sans-serif;
-  font-family: Arial, Helvetica, sans-serif;
+  // font-family: Arial, Helvetica, sans-serif;
   font-size: 60px;
 }
 
@@ -136,8 +152,8 @@ span,
 .total,
 label {
   // font-family: "AraHamahHoms", sans-serif;
-  
-  font-family: Arial, Helvetica, sans-serif;
+
+  // font-family: Arial, Helvetica, sans-serif;
 
   font-size: 45px;
 }
@@ -178,10 +194,11 @@ label {
   a,
   .total {
     // font-family: "AraHamahHoms", sans-serif;
-      font-family: Arial, Helvetica, sans-serif;
+    // font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Grandstander', cursive;
 
     // color: #117c9f;
-    font-size: 25px !important;
+    font-size: 35px !important;
   }
 
   p {
@@ -205,21 +222,24 @@ label {
   color: white !important;
 }
 
-@font-face {
-  font-family: "tido";
-  src: url("assets/fonts/alfont_com_TIDO-B.otf") format("opentype");
-  font-weight: normal;
-  font-style: normal;
-}
+// @font-face {
+//   font-family: "tido";
+//   src: url("assets/fonts/alfont_com_TIDO-B.otf") format("opentype");
+//   font-weight: normal;
+//   font-style: normal;
+// }
 
 .footer-data {
-  font-family: "tido";
+  // font-family: "tido";
+    font-family: 'Grandstander', cursive;
+
 }
 
 
 .arial {
-  font-family: Arial, sans-serif !important;
-  
+  // font-family: Arial, sans-serif !important;
+  font-family: 'Grandstander', cursive;
+
   /* نوع الخط */
   font-weight: normal;
 }
@@ -244,6 +264,10 @@ label {
 }
 
 
+.third-color{
+  color: #FDE08C;
+}
+
 .second-bg-color {
   background-color: #f47421;
 }
@@ -251,5 +275,4 @@ label {
 
 .second-border-color {
   border-color: #f47421;
-
 }

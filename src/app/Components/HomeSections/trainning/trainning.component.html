@@ -1,26 +1,29 @@
-<div class="training d-flex align-items-center mt-0">
+<div class="training mt-0 ">
+    <div class="row w-100 align-items-center justify-content-between">
 
-    <div class="row d-flex justify-content-center align-items-center">
-        <div class="col-md-6 text-center px-5 bg-white top-50 ">
-            <h1 class=" second-color "> Bubblehope</h1>
-            <h3 class=" second-color "> {{ 'training.title' | translate }}</h3>
-            <p class="fs-4">{{ 'training.desc' | translate }}</p>
+        <div class="col-md-6 text-center d-flex justify-content-center">
+            <div class=" content">
+                <h1 class="third-color">Bubblehope</h1>
+                <h3 class="third-color">{{ 'training.title' | translate }}</h3>
+                <p class="fs-4 text-white pt-3">
+                    {{ 'training.desc' | translate }}
+                </p>
+            </div>
         </div>
 
-        <div class="col-md-6 text-center cov-img  py-5">
-            <img class="up-down" *ngIf="(languageService.languageChanged$ | async) === 'en'"
-                src="../../../../assets/baresta trainee ads.png" alt="">
-            <img class="up-down" *ngIf="(languageService.languageChanged$ | async) === 'ar'" src="../../../../assets/reflect.png"
-                alt="">
+        <div class="col-md-6 text-center ">
+            <img src="../../../../assets/000.png" alt="">
         </div>
+
     </div>
 </div>
 
 
 
-<div class="scroller p-0" dir="ltr"> <!-- لو عايزة عربي خليه dir="rtl" -->
+
+
+<!-- <div class="scroller p-0" dir="ltr"> 
     <ul class="scroller__track p-0 m-0">
-        <!-- الصف الأصلي -->
         <span class="main-color ">follow</span><span class="text-white">@bubblehope.com</span>
         <span class="main-color ">follow</span><span class="text-white">@bubblehope.com</span>
         <span class="main-color ">follow</span><span class="text-white">@bubblehope.com</span>
@@ -41,4 +44,4 @@
         <span aria-hidden="true" class="main-color ">follow</span><span class="text-white">@bubblehope.com</span>
         <span aria-hidden="true" class="main-color ">follow</span><span class="text-white">@bubblehope.com</span>
     </ul>
-</div>
+</div> -->

@@ -1,23 +1,23 @@
 
 .contact-box {
-  border: 1px solid rgba(231, 142, 59, 0.2);
+  border: 2px solid #F47421;
   transition: box-shadow 0.3s ease;
   width: 100%;
 }
 
 .border-blue {
-  border: 1px solid rgba(231, 142, 59, 0.2);
+  border: 1px solid #F47421;
   background-color: white;
 }
 
-.contact-box:hover {
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.05);
-}
+// .contact-box:hover {
+//   box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+// }
 
-input,
-textarea {
-  background-color: #f9f9f9;
-}
+// input,
+// textarea {
+//   background-color: #9b2424;
+// }
 
 .contact-img {
   max-width: 100%;

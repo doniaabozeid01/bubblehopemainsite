@@ -24,19 +24,21 @@ export class BestSellersComponent {
 
   // 1 على الصغير، 2 على التابلت، 3 على اللابتوب، 4 على الكبير
   bestOptions: OwlOptions = {
-    loop: false,
+    loop: true,          // لازم عشان center يشتغل كويس
+    center: true,        // 👈 الأساس
     dots: false,
-    nav: false,                      // أزرارنا خارجية
+    nav: false,
     mouseDrag: true,
     touchDrag: true,
     rtl: this.isRTL,
     responsive: {
-      0: { items: 1, margin: 8 },
+      0: { items: 1, margin: 12 },
       576: { items: 2, margin: 12 },
-      992: { items: 3, margin: 16 },
-      1200: { items: 4, margin: 16 }
+      992: { items: 3, margin: 18 },   // 👈 3 عناصر = سنتر واضح
+      1200: { items: 3, margin: 26 }
     }
   };
+
 
   trackById = (_: number, p: any) => p.productId ?? p.id;
 
@@ -75,8 +77,8 @@ export class BestSellersComponent {
             },
             error: () => {
               this.bestSellerProducts = [];
-
             }
+
           })
 
 

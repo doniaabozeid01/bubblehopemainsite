@@ -1,130 +1,183 @@
-.footer {
-  max-width: 1950px;
-  // height: 500px;
-  direction: ltr;
+.footer-wave {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
 
-  /* الصورة فوق، الجريدينت تحت */
-  background-image:
-    url('../../../assets/Untitled-3-01 (2).png'),
-    linear-gradient(180deg, #ffffff, #f47524);
-  // linear-gradient(180deg, #ffffff, #F7E8D3);
 
-  /* لكل طبقة قيمة */
-  background-position: right;
-  background-repeat: no-repeat, no-repeat;
+  background: linear-gradient(to top,
+      #FF7304 0%,
+      #FF7304 80%,
+      #ffffff 80%,
+      #ffffff 100%);
 
-  /* حجم الصورة ثابت/مرن + الجريدينت يغطي كله */
-  background-size: contain;
+
+  // background: #FF7304;   
+
+  padding: 70px 0 60px;
 }
 
 
-.pointer {
+/* موجة بيضا فوق */
+.footer-wave::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 120px; // ارتفاع الموجة
+  background-image: url("../../../assets/Vector\ \(3\).png");
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-size: 100% 100%;
+  z-index: 0;
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); // ✅ بدل 3
+  gap: 48px;
+  align-items: start;
+}
+
+
+/* العناوين */
+.footer-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  margin: 0 0 14px;
+  text-transform: uppercase;
+  opacity: .95;
+}
+
+/* الروابط */
+.footer-link {
+  display: block;
+  color: rgba(255, 255, 255, .95);
+  text-decoration: none;
+  font-size: 13px;
+  line-height: 1.8;
+  width: fit-content;
   cursor: pointer;
 }
 
-
-.row {
-  padding: 48px 0;
+.footer-link:hover {
+  text-decoration: underline;
 }
 
-  .t-c{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: start;  
-  }
-
-
-
-@media (max-width:992px) {
-  .w-50 {
-    width: 70% !important;
-    margin-bottom: 20px;
-    
-  }
-
-  .t-c{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    // text-align: center;
-    // margin: auto;
-    // background-color: #f47524;
-  }
-
-  i {
-    margin: 0;
-    padding: 0;
-  }
-
-  .row {
-    padding: 0;
-  }
-
-
-
-  .footer {
-    
-    background-position: bottom right;
-
-  }
-
-}
-
-
-.footer-dal {
-  font-size: 14px;
-  letter-spacing: 1px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-
-
-
-
-/* احذفي أو علّقي السطر ده لأنه هو سبب البلوكات الزرقا */
-/* a { background-color: #2496f4; } */
-
-/* شكل الأيقونة */
-.cover-icon {
-  background-color: #fff;
-  width: 50px;
-  height: 50px;
-  border-radius: 20px;
-  /* بيضاوي صغير */
-  display: inline-flex;
+/* يمين */
+.footer-right {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  margin: 0 6px;
-  text-decoration: none;
-  line-height: 1;
-  /* يمنع تمدّد الخط */
+  gap: 18px;
 }
 
-.cover-icon i {
+.footer-logo {
+  width: 190px;
+  height: auto;
+  display: block;
+}
+
+/* سوشيال (دوائر) */
+.footer-social {
+  display: flex;
+  gap: 12px;
+}
+
+.social-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, .85);
+  display: grid;
+  place-items: center;
   color: #f47524;
-  /* لون الأيقونة */
-  font-size: 22px;
-  /* حجم موحّد */
-}
-
-/* Hover بسيط (اختياري) */
-.cover-icon:hover {
-  box-shadow: 0 6px 14px rgba(0, 0, 0, .12);
-  transform: translateY(-1px);
-  transition: .2s ease;
-}
-
-/* لو بتحبيهم دواير تمامًا بدّلي: border-radius:50%; */
-
-/* إلغاء التسطير لكل الروابط لو لسه ظاهر */
-a,
-a:hover,
-a:focus {
   text-decoration: none;
+  box-shadow: 0 10px 18px rgba(0, 0, 0, .10);
+  transition: transform .18s ease, background .18s ease;
 }
 
-// .w-30{
-//   width: 40%;
-// }
+.social-btn:hover {
+  transform: translateY(-2px);
+  background: #fff;
+}
+
+
+.footer-title {
+  color: #FDE08C;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .footer-link {
+    margin: 0 auto;
+    font-size: 20px !important;
+  }
+
+  .footer-title {
+    font-size: 24px !important;
+  }
+
+  .footer-wave {
+    padding: 60px 0 50px;
+  }
+
+
+
+  .footer-wave {
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+
+
+    background: linear-gradient(to top,
+        #FF7304 0%,
+        #FF7304 80%,
+        #FF7304 90%,
+        #ffffff 100%);
+
+
+    // background: #FF7304;   
+
+    padding: 70px 0 60px;
+  }
+
+
+
+
+
+
+  .social-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, .85);
+    display: grid;
+    place-items: center;
+    color: #f47524;
+    text-decoration: none;
+    box-shadow: 0 10px 18px rgba(0, 0, 0, .10);
+    transition: transform .18s ease, background .18s ease;
+    i{
+      font-size: 28px;
+    }
+  }
+
+
+
+
+}

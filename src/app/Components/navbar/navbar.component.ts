@@ -18,6 +18,7 @@ export class NavbarComponent {
   userId!: string;
   branchId!: number;
   user: any;
+  isMenuOpen = false;
 
   constructor(
     private cartCountService: CartCountService,
@@ -27,8 +28,8 @@ export class NavbarComponent {
     private branchService: BranchService,
     private toastr: ToastrService,
     public languageService: LanguageService
-  ) {}
-cartCount = 0;
+  ) { }
+  cartCount = 0;
 
   ngOnInit(): void {
     this.authService.currentUser$.subscribe((u) => {
@@ -39,26 +40,6 @@ cartCount = 0;
 
     const token = localStorage.getItem('token');
     if (token) {
-      // this.apiService.GetUserId().subscribe({
-      //   next: (response) => {
-      //     this.userId = response.userId;
-      //     console.log(this.userId);
-
-      //     this.GetUserBranch(this.userId);
-
-      //     this.authService.getFullName().subscribe({
-      //       next: (res) => {
-      //         console.log(res);
-      //         this.user = res;
-
-      //       }
-      //     })
-      //     // this.GetAllProducts(this.branchId);
-
-      //   },
-      //   error: (err) => console.log(err)
-      // });
-
       this.apiService.GetUserId().subscribe({
         next: (res) => {
           this.userId = typeof res === 'string' ? res : res?.userId;
@@ -222,4 +203,7 @@ cartCount = 0;
     if (!this.user?.fullName) return '';
     return this.user.fullName.split(' ')[0]; // أول كلمة بس
   }
+
+
+
 }

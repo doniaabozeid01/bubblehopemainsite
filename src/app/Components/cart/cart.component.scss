@@ -1,7 +1,7 @@
 .parent {
   max-width: 1200px;
   margin: auto;
-  /* min-height: 93vh; */
+  // min-height: 20vh;
   margin-bottom: 50px;
   padding-top: 25px;
 }
@@ -43,7 +43,8 @@
   width: 120px;
   height: auto;
   min-height: 150px;
-  object-fit: contain;    /* أو contain حسب صورك */
+  object-fit: contain;
+  /* أو contain حسب صورك */
   border-radius: 10px;
 }
 

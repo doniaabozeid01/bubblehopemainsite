@@ -31,7 +31,7 @@
         "catergories": "Beverages",
         "categoriesSlogan": "Explore our wide range of drinks and find your perfect flavor today.",
         "rawMaterial": {
-            "raw": "Raw",
+            "raw": "Our",
             "material": "Material"
         },
         "rawmaterialsSlogan": "As Bubblehope, you can consume our products we offer to our valued customers as you wish. Which one did you choose?",
@@ -56,7 +56,15 @@
         "logout": "Logout",
         "changepassword": "Change Password",
         "hello": "Hello",
-        "profile": "Profile"
+        "profile": "Profile",
+        "tapioca": "Tapioca Pearls",
+        "juice": "Concentrated Juice",
+        "sauce": "Concentrated Sauce",
+        "popping": "Popping Bubble Tea",
+        "powders": "Powders",
+        "waffle-sauce": "Waffle Sauce",
+        "waffle-mix": "Waffle Mix",
+        "teas": "Teas"
     },
     "aboutus": {
         "aboutusDescribtion": "At Bubble Hope, we don’t just serve delicious bubble tea  we create  joyful moments in every cup! We started with passion to deliver a unique experience that combines rich flavors, high quality, and friendly service.From the heart of the city, we founded Bubble Hope as a place for people who love discovering new flavors and enjoying cheerful moments throughout their day.We use the finest natural ingredients and prepare every drink with care and love."
@@ -151,7 +159,11 @@
         "weAreAlsoIn": "We are also in",
         "kuwaitTurkiye": "kuwait & Turkiye",
         "privacypolicy": "Privacy Policy",
-        "termsofcondition": "Terms & Condition"
+        "termsofcondition": "Terms & Condition",
+        "aboutus": "About Us",
+        "popularcategories": "Our Popular Categories",
+        "hadayekalahram": "Hadayek Al Ahram",
+        "wasletdahshour": "Waslet Dahshour"
     },
     "training": {
         "title": "Master One Skill, Work Anywhere",

@@ -234,10 +234,14 @@ export class ProfileComponent implements OnInit {
     };
 
     this.accountService.addAddress(payload).subscribe({
-      next: () => {
+      next: (res) => {
+        console.log("payload : ",payload);
+        
         this.actionLoading = false;
         this.closeAddAddress();
         this.load();
+        console.log("res : ", res);
+        
       },
       error: () => (this.actionLoading = false),
     });

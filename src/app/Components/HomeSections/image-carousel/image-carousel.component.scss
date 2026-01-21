@@ -1,20 +1,20 @@
 .scroller {
-    --gap: 3px;
+    --gap: 10px;
     --speed: 20s;
-    /* زوّدي/قلّلي للسرعة */
     overflow: hidden;
     width: 100%;
     background: #ffffff;
-    /* اختياري */
-    padding-block: 12px;
-    /* اختياري */
-      border-top: 1px solid #dd820b;
-    // margin-top: 2px;
+    padding-top: 20px;
+    background-image: url('../../../../assets/Vector\ \(2\).png');
+    background-position: top;
+    background-size: cover;
+    padding-bottom: 120px;
+    background-repeat: no-repeat;
 }
 
 .scroller__track {
     display: flex;
-    gap: var(--gap);
+    gap: 10px !important;
     width: max-content;
     /* خليه على قد المحتوى */
     align-items: center;
@@ -27,6 +27,8 @@
     object-fit: contain;
     pointer-events: none;
     user-select: none;
+    height: 320px !important;
+    object-fit: contain;
 }
 
 
@@ -78,10 +80,10 @@ li {
     }
 }
 
-/* إيقاف الحركة عند الـhover (اختياري) */
-.scroller:hover .scroller__track {
-    animation-play-state: paused;
-}
+// /* إيقاف الحركة عند الـhover (اختياري) */
+// .scroller:hover .scroller__track {
+//     animation-play-state: paused;
+// }
 
 /* احترام تفضيل تقليل الحركة */
 @media (prefers-reduced-motion: reduce) {
@@ -93,44 +95,45 @@ li {
 /* موبايل: صغّري الارتفاع والـgap */
 @media (max-width: 576px) {
     .scroller {
-        --gap: 12px;
+        --gap: 2px !important;
     }
+
+    .scroller__track {
+        display: flex;
+        gap: 0px !important;
+        width: max-content;
+        align-items: center;
+        animation: scroll var(--speed) linear infinite;
+    }
+
+
 
     .scroller__track img {
-        height: 140px;
+        display: block;
+        object-fit: contain;
+        pointer-events: none;
+        user-select: none;
+        height: 200px !important;
+        object-fit: contain;
     }
 
 
-    .scroller__track .img1 {
-    height: 200px;
-    /* عدّلي المقاس المناسب */
-    min-width: 100px;
-    /* عدّلي المقاس المناسب */
 }
 
 
-.scroller__track .img2 {
-    height: 300px;
-    /* عدّلي المقاس المناسب */
-    min-width: 100px;
-    /* عدّلي المقاس المناسب */
-}
-}
-
-
-img {
-    transform: rotateZ(-20deg);
-}
+// img {
+//     transform: rotateZ(-20deg);
+// }
 
 
 
-.soda {
-    background-image: url('../../../../assets/image carousel/ara.png.png');
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    height: 100px;
-    // height: 580px;
-    width: 1950px;
-    margin: auto;
-}
+// .soda {
+//     background-image: url('../../../../assets/image carousel/ara.png.png');
+//     background-position: center;
+//     background-size: cover;
+//     background-repeat: no-repeat;
+//     height: 100px;
+//     // height: 580px;
+//     width: 1950px;
+//     margin: auto;
+// }
