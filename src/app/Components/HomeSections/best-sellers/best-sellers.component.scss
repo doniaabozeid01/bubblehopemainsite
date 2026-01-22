@@ -31,12 +31,13 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
-    gap: 50px !important;
 }
 
 .categories-wrapper {
     max-width: 1500px;
     margin: auto;
+    padding: 20px;
+
 }
 
 .discount-badge {
@@ -78,22 +79,30 @@
 
 
 @media (max-width: 768px) {
-    .product-card {
-        min-height: 310px !important;
+    .categories-wrapper h1 {
+    font-size: 30px !important;
+  }
+
+  .categories-wrapper p {
+    font-size: 18px !important;
+  }
+
+  .product-card {
+        min-height: 350px !important;
     }
 
-    .product-name {
-        font-size: 25px;
+  .product-name {
+        font-size: 22px !important;
         margin: 0;
     }
 
-    .product-image {
+  .product-image {
         width: 60%;
         height: auto;
     }
 
-    .slider-arrow {
-        font-size: 10px;
+  .slider-arrow {
+        font-size: 15px;
     }
 }
 
@@ -145,7 +154,7 @@
     width: 100%;
 }
 
-/* عنصر السلايد نفسه */
+
 .outOfStock {
     color: red;
     border: 1px solid red;
@@ -273,6 +282,7 @@
 .b7{ width: 60px; height: 60px; left: 6%; top: 90%; }
 
 /* Responsive: صغري الأحجام على الموبايل */
+
 @media (max-width: 768px){
   .b1{ width: 34px; height: 34px; }
   .b3{ width: 32px; height: 32px; }
@@ -283,7 +293,7 @@
 
 @media (max-width: 480px) {
   .categories-wrapper h1 {
-    font-size: 24px !important;
+    font-size: 20px !important;
   }
 
   .categories-wrapper p {

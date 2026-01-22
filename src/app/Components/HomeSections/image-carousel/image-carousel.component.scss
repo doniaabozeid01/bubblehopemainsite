@@ -93,6 +93,16 @@ li {
 }
 
 /* موبايل: صغّري الارتفاع والـgap */
+
+@media (max-width: 999px) {
+
+  .scroller__track img {
+        height: 180px !important;
+    }
+
+}
+
+
 @media (max-width: 576px) {
     .scroller {
         --gap: 2px !important;
