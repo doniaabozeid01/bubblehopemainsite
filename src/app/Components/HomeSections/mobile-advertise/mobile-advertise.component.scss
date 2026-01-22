@@ -43,13 +43,38 @@ a {
   min-width: 200px;
 }
 
+.w-90 {
+  width: 80%;
+  margin: auto;
+}
+
 
 @media (max-width:768px) {
   .phone-template {
     padding-top: 45px;
   }
+
+  .text-head {
+
+    .w-50-100 {
+      width: 35%;
+    }
+
+    .second-color{
+      font-size: 22px !important;
+    }
+
+    .main-color{
+      font-size: 18px !important;
+    }
+
+
+  }
+
+  .w-90 {
+    width: 65%;
+  }
+
 }
 
-.w-90 {
-  width: 90%;
-}
+

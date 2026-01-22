@@ -28,14 +28,15 @@ export class BestSellersComponent {
     center: true,        // 👈 الأساس
     dots: false,
     nav: false,
+    margin: 280,
     mouseDrag: true,
     touchDrag: true,
     rtl: this.isRTL,
     responsive: {
-      0: { items: 1, margin: 12 },
-      576: { items: 2, margin: 12 },
-      992: { items: 3, margin: 18 },   // 👈 3 عناصر = سنتر واضح
-      1200: { items: 3, margin: 26 }
+      0: { items: 1, },
+      576: { items: 2, },
+      992: { items: 3, },   // 👈 3 عناصر = سنتر واضح
+      1200: { items: 3,  }
     }
   };
 
