@@ -265,20 +265,92 @@ $teal: #0b7c8f;
   }
 }
 
+// @media (max-width: 480px) {
+//   .bh-brand img {
+//     height: 80px;
+//   }
+
+//   .bh-wave {
+//     height: 58px;
+//     background:
+//       radial-gradient(160px 62px at 18% 0%, $teal 98%, transparent 100%),
+//       radial-gradient(220px 84px at 55% 0%, $teal 98%, transparent 100%),
+//       radial-gradient(175px 70px at 88% 0%, $teal 98%, transparent 100%),
+//       linear-gradient($teal 0 0);
+//   }
+// }
+
+
 @media (max-width: 480px) {
+
+
   .bh-brand img {
-    height: 40px;
+    height: 80px !important; // تصغيره من 80px لـ 50px
+    width: auto;
   }
 
-  .bh-wave {
-    height: 58px;
-    background:
-      radial-gradient(160px 62px at 18% 0%, $teal 98%, transparent 100%),
-      radial-gradient(220px 84px at 55% 0%, $teal 98%, transparent 100%),
-      radial-gradient(175px 70px at 88% 0%, $teal 98%, transparent 100%),
-      linear-gradient($teal 0 0);
+
+  .bh-actions {
+    display: flex;
+    gap: 5px !important;
+    align-items: center;
+
+    .icon-btn {
+      i {
+        font-size: 22px !important;
+      }
+    }
   }
+
+
+  .bh-wave {
+    height: 40px !important;
+    margin-top: -5px;
+  }
+
+
+  .bh-inner {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    padding-top: 10px !important;
+  }
+
+
+
+  .account-menu {
+      background: rgba(0, 0, 0, 0.18);
+      backdrop-filter: blur(10px);
+      min-width: 150px !important;
+      padding: 8px 0 !important;
+      border-radius: 10px !important;
+
+
+
+
+    .dropdown-item {
+      color: white !important;
+      font-weight: 500;
+      padding: 8px 15px;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.116);
+      }
+    }
+
+
+    &.dropdown-menu-end {
+      right: -10px !important;
+      left: auto;
+    }
+  }
+
+
+  .dropdown-divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
 }
+
 
 
 @media (min-width: 1101px) {
