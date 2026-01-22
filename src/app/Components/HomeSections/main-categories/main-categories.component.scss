@@ -4,15 +4,15 @@
   top: 60%;
   transform: translateY(-50%);
   z-index: 5;
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   border: 0;
   border-radius: 9999px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: white;
-  color: #000000;
+  background-color: rgb(255, 131, 30);
+  color: #ffffff;
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
 }
 
@@ -83,7 +83,9 @@
 
 .categoriesSwiperCustom {
   max-width: 1600px;
-  margin: auto;
+  margin: 50px 150px 0 150px !important;
+
+
 }
 
 // @media (max-width:768px) {
@@ -162,6 +164,12 @@
 
 @media (max-width: 1200px ) {
 
+  .categoriesSwiperCustom {
+    margin: auto !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+
   .slider-arrow{
     display: none;
   }
@@ -185,6 +193,7 @@
 
 @media (max-width: 768px) {
   .categoriesSwiperCustom {
+    margin: auto !important;
     padding-left: 15px !important;
     padding-right: 15px !important;
   }

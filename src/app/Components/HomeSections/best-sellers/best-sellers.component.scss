@@ -231,22 +231,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* layer ثابت فوق السكشن */
 .bubbles-decor{
   position: absolute;
@@ -291,4 +275,25 @@
   .b1{ width: 34px; height: 34px; }
   .b3{ width: 32px; height: 32px; }
   .b6{ width: 42px; height: 42px; }
+}
+
+
+
+@media (max-width: 480px) {
+  .categories-wrapper h1 {
+    font-size: 24px !important; 
+  }
+
+  .categories-wrapper p {
+    font-size: 14px !important;
+  }
+
+  .product-card {
+    max-width: 280px;
+  }
+
+
+  .slider-arrow {
+    display: none !important;
+  }
 }
