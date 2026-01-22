@@ -46,7 +46,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 73%; // حجم الدائرة بالنسبة للصورة 
+  width: 73%; // حجم الدائرة بالنسبة للصورة
   height: 75%;
   border-radius: 50%;
   background-color: var(--bg-color, #e60000);
@@ -57,9 +57,9 @@
 .category-card img {
   position: relative;
   z-index: 1;
-  // فوق الدائرة 
+  // فوق الدائرة
   width: 260px;
-  // عدليها حسب حجمك 
+  // عدليها حسب حجمك
   height: auto;
   object-fit: contain;
   display: block;
@@ -86,28 +86,28 @@
   margin: auto;
 }
 
-@media (max-width:768px) {
-  
-  /* صورة الكوب */
-  .category-card img {
-    position: relative;
-    z-index: 1;
-    // فوق الدائرة 
-    width: 200px;
-    // عدليها حسب حجمك 
-    height: auto;
-    object-fit: contain;
-    display: block;
-    height: 330px;
-  }
-}
+// @media (max-width:768px) {
+
+//   /* صورة الكوب */
+//   .category-card img {
+//     position: relative;
+//     z-index: 1;
+//     // فوق الدائرة
+//     width: 200px;
+//     // عدليها حسب حجمك
+//     height: auto;
+//     object-fit: contain;
+//     display: block;
+//     height: 330px;
+//   }
+// }
 
 .owl-item {
-  margin: 0 70px !important;
+  margin: 0 50px !important;
 }
 
 .category-card {
-  --b: clamp(18px, 1.8vw, 26px);
+  --b: clamp(15px, 1.8vw, 26px);
 }
 
 
@@ -157,4 +157,63 @@
   background: #FFE18D;
   right: 4%;
   top: 12%;
+}
+
+
+@media (max-width: 1200px ) {
+
+  .slider-arrow{
+    display: none;
+  }
+
+  .category-card img {
+    height: 350px;
+    width: 220px;
+  }
+
+  .cat-name {
+    font-size: 1.5rem !important;
+  }
+
+
+  .b1 { left: 15%; top: 20%; }
+  .b6 { right: 8%; top: 15%; }
+
+
+
+}
+
+@media (max-width: 768px) {
+  .categoriesSwiperCustom {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+
+  .category-card {
+    &::before {
+      width: 220px;
+      height: 200px;
+    }
+
+    img {
+      height: 280px !important;
+      width: 180px !important;
+    }
+  }
+
+  .cat-name {
+    font-size: 25px !important;
+    margin-top: 5px !important;
+  }
+
+
+  .bubble {
+    transform: scale(0.7);
+  }
+
+  .b1 { left: 5%; top: 25%; }
+  .b4 { right: 5%; bottom: 30%; }
+  .b6 { right: 2%; top: 20%; }
+
+  .b2, .b3, .b5 { display: none; }
 }

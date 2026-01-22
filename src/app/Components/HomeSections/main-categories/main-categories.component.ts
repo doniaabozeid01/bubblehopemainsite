@@ -22,6 +22,7 @@ export class MainCategoriesComponent {
     dots: false,
     mouseDrag: true,
     touchDrag: true,
+    margin: 20,
     nav: false,                 // بنستخدم أزرار خارجية
     rtl: true,
     responsive: {
