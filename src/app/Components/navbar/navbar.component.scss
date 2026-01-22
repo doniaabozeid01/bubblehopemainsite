@@ -185,10 +185,45 @@ $teal: #0b7c8f;
 }
 
 
+  .account-menu {
+      background: rgba(0, 0, 0, 0.18);
+      backdrop-filter: blur(10px);
+      min-width: 150px !important;
+      padding: 5px 0 !important;
+      border-radius: 10px !important;
+
+
+
+
+    .dropdown-item {
+      color: white !important;
+      font-size: 20px !important;
+      font-weight: 400 !important;
+      padding: 12px 25px;
+
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.116);
+      }
+
+      &.dropdown-menu-end {
+      right: 0 !important;
+      top: 100% !important;
+      margin-top: 10px !important;
+      }
+    }
+
+    .bh-actions {
+    .icon-btn i {
+      font-size: 20px !important;
+    }
+  }
+  }
+
 // -------------------------------------------
 // Responsive
 // -------------------------------------------
-@media (max-width: 1100px) {
+@media (max-width: 1200px) {
   .bh-links {
     // Turn into dropdown panel
     position: absolute;
@@ -210,6 +245,7 @@ $teal: #0b7c8f;
 
     a {
       width: 100%;
+      font-size: 25px;
       padding: 10px 10px;
       border-radius: 12px;
 
@@ -281,7 +317,7 @@ $teal: #0b7c8f;
 // }
 
 
-@media (max-width: 480px) {
+@media (max-width: 880px) {
 
 
   .bh-brand img {
@@ -315,6 +351,16 @@ $teal: #0b7c8f;
     padding-top: 10px !important;
   }
 
+    .bh-links {
+
+      width: min(92%, 500px) !important;
+      padding: 10px !important;
+      gap: 5px;
+
+      a {
+        font-size: 22px !important;
+      }
+  }
 
 
   .account-menu {
@@ -329,19 +375,27 @@ $teal: #0b7c8f;
 
     .dropdown-item {
       color: white !important;
-      font-weight: 500;
-      padding: 8px 15px;
+      font-size: 20px !important;
+      font-weight: 400 !important;
+      padding: 5px 10px;
+
 
       &:hover {
         background: rgba(255, 255, 255, 0.116);
       }
+
+      &.dropdown-menu-end {
+      right: 0 !important;
+      top: 100% !important;
+      margin-top: 10px !important;
+      }
     }
 
-
-    &.dropdown-menu-end {
-      right: -10px !important;
-      left: auto;
+    .bh-actions {
+    .icon-btn i {
+      font-size: 20px !important;
     }
+  }
   }
 
 
