@@ -302,130 +302,129 @@ $orange: #ff7a00;
   background: $orange;
 }
 
-@media (max-width: 992px) {
-  .promo {
-    padding: 28px 0 34px;
-    min-height: auto;
-  }
+// @media (max-width: 992px) {
+//   .promo {
+//     padding: 28px 0 34px;
+//     min-height: auto;
+//   }
 
-  .promo__container {
-    grid-template-columns: 1fr;
-    min-height: auto;
-    gap: 18px;
-    text-align: center;
-  }
+//   .promo__container {
+//     grid-template-columns: 1fr;
+//     min-height: auto;
+//     gap: 18px;
+//     text-align: center;
+//   }
 
-  .promo__content {
-    order: 1;
-  }
+//   .promo__content {
+//     order: 1;
+//   }
 
-  .promo__visual {
-    order: 2;
-  }
+//   .promo__visual {
+//     order: 2;
+//   }
 
-  .promo__title {
-    font-size: clamp(44px, 9vw, 64px); // ✅ بدل 90
-    line-height: 0.95;
-  }
+//   .promo__title {
+//     font-size: clamp(44px, 9vw, 64px); // ✅ بدل 90
+//     line-height: 0.95;
+//   }
 
-  .promo__subtitle {
-    font-size: 14px;
-    margin: 10px 0 14px;
-  }
+//   .promo__subtitle {
+//     font-size: 14px;
+//     margin: 10px 0 14px;
+//   }
 
-  .promo__actions {
-    justify-content: center;
-    gap: 10px;
-  }
+//   .promo__actions {
+//     justify-content: center;
+//     gap: 10px;
+//   }
 
-  .btn {
-    height: 44px;
-    padding: 0 18px;
-  }
+//   .btn {
+//     height: 44px;
+//     padding: 0 18px;
+//   }
 
-  .promo__img {
-    height: auto; // ✅ أهم سطر
-    width: min(420px, 92%);
-    max-width: 100%;
-    object-fit: contain;
-    margin: 0 auto;
-  }
+//   .promo__img {
+//     height: auto; // ✅ أهم سطر
+//     width: min(420px, 92%);
+//     max-width: 100%;
+//     object-fit: contain;
+//     margin: 0 auto;
+//   }
 
-  /* ✅ البابلز: صغريها وقلليها عشان متغطيش */
-  .b {
-    transform: scale(0.6);
-    opacity: 0.75;
-  }
+//   /* ✅ البابلز: صغريها وقلليها عشان متغطيش */
+//   .b {
+//     transform: scale(0.6);
+//     opacity: 0.75;
+//   }
 
-  /* خفي اللي بيغطي الهيدر/العنوان */
-  .b1,
-  .b2,
-  .b3,
-  .b5 {
-    display: none;
-  }
+//   /* خفي اللي بيغطي الهيدر/العنوان */
+//   .b1,
+//   .b2,
+//   .b3,
+//   .b5 {
+//     display: none;
+//   }
 
-  /* سيبي شوية بابلز لطيفة */
-  .b4 {
-    left: 10px;
-    bottom: 120px;
-  }
+//   /* سيبي شوية بابلز لطيفة */
+//   .b4 {
+//     left: 10px;
+//     bottom: 120px;
+//   }
 
-  .b6 {
-    right: 14px;
-    bottom: 140px;
-  }
+//   .b6 {
+//     right: 14px;
+//     bottom: 140px;
+//   }
 
-  .b7 {
-    right: 20px;
-    top: 240px;
-  }
+//   .b7 {
+//     right: 20px;
+//     top: 240px;
+//   }
 
-  .b8 {
-    left: 18px;
-    top: 220px;
-  }
+//   .b8 {
+//     left: 18px;
+//     top: 220px;
+//   }
 
-  .b9 {
-    left: 40px;
-    bottom: 40px;
-  }
-}
+//   .b9 {
+//     left: 40px;
+//     bottom: 40px;
+//   }
+// }
 
-@media (max-width: 768px) {
-  .promo__container {
-    height: 30vh;
+// @media (max-width: 768px) {
+//   .promo__container {
+//     height: 30vh;
 
-  }
-}
-
-
-@media (max-width: 480px) {
-  .promo__title {
-    font-size: 42px;
-  }
-
-  .promo__actions {
-    flex-direction: column; // ✅ الأزرار تحت بعض
-    align-items: center;
-  }
-
-  .btn {
-    width: min(220px, 92%);
-  }
-
-  .promo__img {
-    width: min(360px, 94%);
-  }
+//   }
+// }
 
 
+// @media (max-width: 480px) {
+//   .promo__title {
+//     font-size: 42px;
+//   }
 
-  .promo__container {
-    height: 30vh;
+//   .promo__actions {
+//     flex-direction: column; // ✅ الأزرار تحت بعض
+//     align-items: center;
+//   }
 
-  }
-}
+//   .btn {
+//     width: min(220px, 92%);
+//   }
 
+//   .promo__img {
+//     width: min(360px, 94%);
+//   }
+
+
+
+//   .promo__container {
+//     height: 30vh;
+
+//   }
+// }
 
 
 
