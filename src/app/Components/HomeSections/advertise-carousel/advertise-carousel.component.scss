@@ -450,8 +450,11 @@ $orange: #ff7a00;
 
 
 @media (max-width: 1200px) {
-  .img-cover {
-    height: 50vh;
+.img-cover {
+    height: 400px !important; /* الرقم اللي يريحك بس يتوحد */
+  }
+  .promo__container {
+    height: 400px !important;
   }
 
 
@@ -467,7 +470,7 @@ $orange: #ff7a00;
 
 
   .promo__title {
-    font-size: clamp(40px, 8vw, 60px);
+    font-size: clamp(30px, 8vw, 50px);
   }
 }
 
@@ -485,7 +488,7 @@ $orange: #ff7a00;
 
     img {
       width: 100% !important;
-      height: 70% !important;
+      height: 100% !important;
       object-fit: fill !important;
     }
   }
@@ -507,7 +510,7 @@ $orange: #ff7a00;
 
 
 .promo__container {
-    height: auto !important;
+    height: 40vh !important;
     min-height: 350px;
     padding: 40px 0;
     display: flex;
@@ -569,11 +572,11 @@ $orange: #ff7a00;
     height: 40vh !important;
 
 
-    img {
-      width: 100% !important;
-      height: 60% !important;
-      object-fit: fill !important;
-    }
+    // img {
+    //   width: 100% !important;
+    //   height: 100% !important;
+    //   object-fit: fill !important;
+    // }
   }
 
 
