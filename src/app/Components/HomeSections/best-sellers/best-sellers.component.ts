@@ -28,7 +28,7 @@ export class BestSellersComponent {
     center: true,        // 👈 الأساس
     dots: false,
     nav: false,
-    margin: 280,
+    // margin: 280,
     mouseDrag: true,
     touchDrag: true,
     rtl: this.isRTL,

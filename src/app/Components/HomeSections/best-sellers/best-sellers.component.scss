@@ -79,22 +79,26 @@
 
 
 @media (max-width: 768px) {
-    .categories-wrapper h1 {
-    font-size: 30px !important;
-  }
-
-  .categories-wrapper p {
+    .categories-wrapper{
+    h1 {
+    font-size: 35px !important;
+    }
+    p {
     font-size: 18px !important;
-  }
+    }
+    }
+
 
   .product-card {
         min-height: 350px !important;
+
+        .product-name {
+        font-size: 20px !important;
+        margin: 0;
+        }
     }
 
-  .product-name {
-        font-size: 22px !important;
-        margin: 0;
-    }
+
 
   .product-image {
         width: 60%;

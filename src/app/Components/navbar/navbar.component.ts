@@ -32,6 +32,11 @@ export class NavbarComponent {
   cartCount = 0;
 
   ngOnInit(): void {
+
+    this.router.events.subscribe(() => {
+    this.isMenuOpen = false;
+      });
+
     this.authService.currentUser$.subscribe((u) => {
       this.user = u;
       console.log('user', this.user);
@@ -204,6 +209,8 @@ export class NavbarComponent {
     return this.user.fullName.split(' ')[0]; // أول كلمة بس
   }
 
-
+  closeMenu() {
+  this.isMenuOpen = false;
+}
 
 }

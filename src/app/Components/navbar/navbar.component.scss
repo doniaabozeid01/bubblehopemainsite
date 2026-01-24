@@ -236,6 +236,10 @@ $teal: #0b7c8f;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 16px;
+    display: none; // تأكد أنها none بشكل افتراضي هنا
+    pointer-events: none; // منع التفاعل وهي مخفية
+    opacity: 0;
+    transition: opacity 0.3s ease;
 
     padding: 14px;
     display: none;
@@ -256,8 +260,11 @@ $teal: #0b7c8f;
     }
 
     &.is-open {
-      display: flex;
-    }
+          display: flex !important; // إجبار الظهور عند فتح المنيو
+          pointer-events: auto;
+          opacity: 1;
+        }
+
   }
 
   .menu-btn {
