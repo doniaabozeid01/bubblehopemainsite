@@ -86,32 +86,32 @@
 }
 
 /* موبايل/تابلت */
-@media (max-width: 768px) {
-  :host ::ng-deep .hero-carousel .img-cover {
-    height: 30vh;
-    width: 96%;
-    margin: auto;
-    /* جرّبي 55–65vh حسب ذوقك */
-    // max-height: 520px;     /* اختياري: سقف علوي */
-    // min-height: 360px;     /* اختياري: حد أدنى */
-    border-radius: 12px;
-    /* لو عايزة نفس التدوير */
-    overflow: hidden;
-    /* مهم مع cover */
-    margin-top: 10px !important;
-  }
+// @media (max-width: 768px) {
+//   :host ::ng-deep .hero-carousel .img-cover {
+//     height: 30vh;
+//     width: 96%;
+//     margin: auto;
+//     /* جرّبي 55–65vh حسب ذوقك */
+//     // max-height: 520px;     /* اختياري: سقف علوي */
+//     // min-height: 360px;     /* اختياري: حد أدنى */
+//     border-radius: 12px;
+//     /* لو عايزة نفس التدوير */
+//     overflow: hidden;
+//     /* مهم مع cover */
+//     margin-top: 10px !important;
+//   }
 
-  :host ::ng-deep .hero-carousel .img-cover img {
-    width: 100%;
-    height: 100%;
-    // object-fit: cover;
-    /* تملأ المساحة بالكامل */
-  }
+//   :host ::ng-deep .hero-carousel .img-cover img {
+//     width: 100%;
+//     height: 100%;
+//     // object-fit: cover;
+//     /* تملأ المساحة بالكامل */
+//   }
 
-  .img-cover {
-    border-radius: 20px;
-  }
-}
+//   .img-cover {
+//     border-radius: 20px;
+//   }
+// }
 
 
 
@@ -212,7 +212,7 @@ $orange: #ff7a00;
 .promo__img {
   // width: min(700px, 100%);
   object-fit: contain;
-  height: 70vh !important;
+  height: 75vh !important;
   display: block;
   filter: drop-shadow(0 16px 30px rgba(0, 0, 0, 0.18));
 }
@@ -445,11 +445,35 @@ $orange: #ff7a00;
 // }
 
 
-/* -- (Tablets) --- */
 .b8 { display: none !important; }
 
-
 @media (max-width: 1200px) {
+  .img-cover {
+    height: 400px !important; /* الرقم اللي يريحك بس يتوحد */
+  }
+  .promo__container {
+    height: 400px !important;
+  }
+
+
+
+  .b1 { top: 5%; left: 5%; bottom: auto; right: auto; }
+  .b2 { top: 45%; left: 2%; bottom: auto; left: auto; }
+  .b3 { top: 5%; right: 5%; left: auto; bottom: auto; }
+  .b4 { bottom: 10%; left: 8%; top: auto; right: auto; }
+  .b6 { bottom: 10%; right: 8%; top: auto; left: auto; }
+  .b7 { bottom: 10%; right: 8%; top: auto; right: auto; }
+
+  .b8, .b5 , .b9{ display: none !important; }
+
+
+  .promo__title {
+    font-size: clamp(30px, 8vw, 50px);
+  }
+}
+
+/* -- (Tablets) --- */
+@media (max-width: 950px) {
 .img-cover {
     height: 400px !important; /* الرقم اللي يريحك بس يتوحد */
   }
@@ -474,12 +498,13 @@ $orange: #ff7a00;
   }
 }
 
+
 /* --- (Mobile) --- */
 @media (max-width: 768px) {
 
 
   :host ::ng-deep .hero-carousel .img-cover {
-    height: 40vh !important;
+    height: 30vh !important;
     width: 100% !important;
     margin: 0px auto !important;
     border-radius: 0px;
@@ -510,9 +535,9 @@ $orange: #ff7a00;
 
 
 .promo__container {
-    height: 40vh !important;
-    min-height: 350px;
-    padding: 40px 0;
+    height: 30vh !important;
+    min-height: 280px;
+    padding: 20px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -569,14 +594,14 @@ $orange: #ff7a00;
 @media (max-width: 480px) {
 
   :host ::ng-deep .hero-carousel .img-cover {
-    height: 40vh !important;
+    height: 30vh !important;
 
 
-    // img {
-    //   width: 100% !important;
-    //   height: 100% !important;
-    //   object-fit: fill !important;
-    // }
+    img {
+      width: 100% !important;
+      height: 80% !important;
+      object-fit: fill !important;
+    }
   }
 
 
