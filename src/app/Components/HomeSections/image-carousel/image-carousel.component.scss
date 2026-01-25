@@ -97,11 +97,11 @@ li {
 @media (max-width: 999px) {
 
   .scroller__track img {
-        height: 180px !important;
+      height: 180px !important;
     }
 
   h2{
-    font-size: 35px !important;
+      font-size: 35px !important;
   }
     p{
       padding: 15px !important;
@@ -114,7 +114,7 @@ li {
 
 @media (max-width: 576px) {
     .scroller {
-        --gap: 2px !important;
+        --gap: 0px !important;
     }
 
     .scroller__track {
