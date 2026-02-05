@@ -13,7 +13,8 @@ export class ApiService {
   constructor(private http: HttpClient, private router: Router) { }
 
 
-  baseUrl: string = "https://alhendalcompany-001-site1.stempurl.com";
+  // baseUrl: string = "https://alhendalcompany-001-site1.stempurl.com";
+  baseUrl: string = "https://localhost:5001";
   drinks: number = 1;
   rawMaterials: number = 2;
   
