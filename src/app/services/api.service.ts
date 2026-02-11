@@ -282,4 +282,11 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}/api/Advertisements/GetAdvertisementProductsByBranch?advertiseId=${AdvertiseId}&branchId=${branchId}&userId=${userId}`);
   }
 
+
+
+
+  IsSiteOn(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/api/OnAndOff/IsMainsiteOn`);
+  }
+
 }
