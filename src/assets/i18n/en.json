@@ -27,6 +27,18 @@
         "optional": "This field is optional",
         "emailOrPhone": "Email or Phone Number"
     },
+    "branchModal": {
+    "titleLine1": "Forget what",
+    "titleLine1Alt": "drains you",
+    "titleLine1End": "Bubble Hope",
+    "titleLine2": "will boost you",
+    "subtitle": "Pick your branch and leave the rest to us! ✨",
+    "branches": {
+      "ahram": "Hadayek Al Ahram",
+      "dahshour": "Waslet Dahshour",
+      "zeweil": "Zewail Branch"
+    }
+  },
     "home": {
         "catergories": "Beverages",
         "categoriesSlogan": "Explore our wide range of drinks and find your perfect flavor today.",

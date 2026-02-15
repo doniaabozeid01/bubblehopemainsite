@@ -21,3 +21,146 @@
 .navbar-toggler {
   border-color: rgba(255, 255, 255, 0.3);
 }
+
+
+/*  الطبقه اللي بتغطي الشاشة */
+.branch-selector-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000000;
+}
+
+/* كارت الموديل الأبيض */
+.branch-selector-card {
+  background: #ffffff;
+  padding: 40px 30px;
+  border-radius: 30px;
+  text-align: center;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+  animation: fadeInPop 0.4s ease-out;
+
+  .logo-section img {
+    width: 150px;
+    margin-bottom: 20px;
+    animation: bounce 2s infinite;
+  }
+
+.hero-title {
+  font-size: 28px;
+  font-weight: 900;
+  color: #333;
+  line-height: 1.4;
+  margin-bottom: 15px;
+  direction: rtl;
+
+  .highlight {
+    color: #f28c28;
+    display: inline-block;
+    margin-bottom: 5px;
+
+    i {
+      margin-right: 5px;
+      font-size: 0.9em;
+    }
+  }
+
+  .highlight-alt {
+    color: #00769d;
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+}
+
+.hero-subtitle {
+  font-size: 15px;
+  color: #666;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+
+}
+
+/*   قايمة الفروع   */
+.branch-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  .branch-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 18px 25px;
+    border: 2px solid #f0f0f0;
+    border-radius: 20px;
+    background: #fdfdfd;
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    direction: rtl;
+
+    .icon {
+      margin-left: 15px;
+      font-size: 20px;
+    }
+
+    &:hover {
+      border-color: #f28c28;
+      background: #f28c28;
+      color: white;
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 10px 20px rgba(242, 140, 40, 0.3);
+
+      .icon { filter: brightness(0) invert(1); }
+    }
+  }
+}
+
+
+.hero-title {
+  text-align: center;
+  direction: inherit;
+
+  .highlight-alt {
+    display: inline-block;
+    margin: 0 5px;
+  }
+}
+
+.branch-btn {
+
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+
+
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+
+
+/* أنيميشن الظهور */
+@keyframes fadeInPop {
+  0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* انيميشن اللوجو */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}

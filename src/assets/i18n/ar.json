@@ -27,6 +27,18 @@
         "optional": "هذا الحقل اختياري",
         "emailOrPhone": "البريد الإلكتروني أو رقم الهاتف"
     },
+    "branchModal": {
+    "titleLine1": "فكك من اللي",
+    "titleLine1Alt": "بيفصلك",
+    "titleLine1End": "بابل هوب",
+    "titleLine2": "هيوصلك",
+    "subtitle": "حدد فرعك وخلي الباقي علينا! ✨",
+    "branches": {
+      "ahram": "حدائق الأهرام",
+      "dahshour": "وصلة دهشور",
+      "zeweil": "فرع زويل"
+    }
+  },
     "home": {
         "catergories": "المشروبات",
         "categoriesSlogan": "استكشف مجموعتنا الواسعة من المشروبات وابحث عن نكهتك المفضلة اليوم.",

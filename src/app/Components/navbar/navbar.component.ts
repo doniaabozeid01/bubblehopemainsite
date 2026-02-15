@@ -16,9 +16,12 @@ export class NavbarComponent {
   categories: any;
   branches: any;
   userId!: string;
-  branchId!: number;
+  // branchId!: number;
   user: any;
   isMenuOpen = false;
+
+  selectedBranchName: string = '';
+  branchId: number | null = null;
 
   constructor(
     private cartCountService: CartCountService,
@@ -27,15 +30,15 @@ export class NavbarComponent {
     private router: Router,
     private branchService: BranchService,
     private toastr: ToastrService,
-    public languageService: LanguageService
-  ) { }
+    public languageService: LanguageService,
+    public api: ApiService,
+  ) {}
   cartCount = 0;
 
   ngOnInit(): void {
-
     this.router.events.subscribe(() => {
-    this.isMenuOpen = false;
-      });
+      this.isMenuOpen = false;
+    });
 
     this.authService.currentUser$.subscribe((u) => {
       this.user = u;
@@ -51,7 +54,7 @@ export class NavbarComponent {
 
           if (this.userId) {
             const initialBranchId = Number(
-              this.branchService.getCurrentBranch()
+              this.branchService.getCurrentBranch(),
             );
             if (initialBranchId) {
               this.branchId = initialBranchId;
@@ -106,6 +109,109 @@ export class NavbarComponent {
         console.error('Error loading branches:', err);
       },
     });
+
+    this.branchService.currentBranch$.subscribe((id) => {
+      if (id) {
+        this.branchId = id; //
+        this.updateBranchName(id); // تحديث الاسم فوراً في الناف بار
+      }
+    });
+
+    // جوه ngOnInit في الـ navbar.component.ts
+    this.apiService.getAllBranches().subscribe({
+      next: (data) => {
+        this.branches = data; // تخزين الفروع
+
+        // لو فيه فرع محفوظ في الـ Service، نحدث اسمه فوراً
+        const currentId = this.branchService.getCurrentBranch();
+        if (currentId) {
+          this.updateBranchName(Number(currentId));
+        }
+      },
+    });
+  }
+
+  // ngOnInit(): void {
+  //   // 1. إغلاق القائمة
+  //   this.router.events.subscribe(() => (this.isMenuOpen = false));
+
+  //   // 2. متابعة المستخدم
+  //   this.authService.currentUser$.subscribe((u) => (this.user = u));
+
+  //   // 3. عداد السلة
+  //   this.cartCountService.cartCount$.subscribe((c) => (this.cartCount = c));
+
+  //   // 4. جلب الـ ID المبدئي (مهم جداً يكون هنا قبل تحميل الفروع)
+  //   const savedBranchId = this.branchService.getCurrentBranch();
+  //   if (savedBranchId) {
+  //     this.branchId = Number(savedBranchId);
+  //   }
+
+  //   // 5. تحميل الـ Categories
+  //   this.apiService.getAllCategories(this.apiService.drinks).subscribe({
+  //     next: (data) => (this.categories = data),
+  //   });
+
+  //   // 6. تحميل الفروع وتحديث الاسم فوراً عند الوصول
+  //   this.apiService.getAllBranches().subscribe({
+  //     next: (data) => {
+  //       this.branches = data;
+  //       console.log('Branches loaded:', this.branches);
+  //       // بمجرد وصول الفروع، لو معانا ID قديم نحدث الاسم فوراً
+  //       if (this.branchId) {
+  //         this.updateBranchName(this.branchId);
+  //       }
+  //     },
+  //   });
+
+  //   // 7. مراقب التغيير (بيشتغل لما المستخدم يختار فرع جديد)
+  //   this.branchService.currentBranch$.subscribe((id) => {
+  //     if (id) {
+  //       this.branchId = id;
+  //       // لا تحدث الاسم إلا لو مصفوفة الفروع جاهزة
+  //       if (this.branches && this.branches.length > 0) {
+  //         this.updateBranchName(id);
+  //       }
+
+  //       if (this.userId) {
+  //         this.cartCountService.refresh(id, this.userId);
+  //       }
+  //     }
+  //   });
+
+  //   // 8. جلب بيانات المستخدم لو مسجل
+  //   const token = localStorage.getItem('token');
+  //   if (token) {
+  //     this.apiService.GetUserId().subscribe({
+  //       next: (res) => {
+  //         this.userId = typeof res === 'string' ? res : res?.userId;
+  //         if (this.userId && this.branchId) {
+  //           this.cartCountService.refresh(this.branchId, this.userId);
+  //         }
+  //       }
+  //     });
+  //   } else {
+  //     this.GetDefaultBranch();
+  //   }
+  // }
+
+  updateBranchName(id: any) {
+    // حولنا الـ id لرقم عشان نضمن المقارنة الصح
+    const numericId = Number(id);
+
+    if (numericId && this.branches && this.branches.length > 0) {
+      // البحث باستخدام == بدلاً من === لمرونة أكثر
+      const branch = this.branches.find((b: any) => b.id == numericId);
+
+      if (branch) {
+        // الهروب من خطأ الـ translateService اللي ظهر في الـ Terminal
+        const isAr =
+          (this.languageService as any).translate?.currentLang === 'ar' ||
+          (this.languageService as any).currentLang === 'ar';
+
+        this.selectedBranchName = isAr ? branch.name_ar : branch.name;
+      }
+    }
   }
 
   logout() {
@@ -152,6 +258,9 @@ export class NavbarComponent {
       localStorage.setItem('br', branchId.toString());
       this.branchService.setBranch(branchId); // 👈 ضيف دي      // this.router.navigate(['/auth/login'])
     }
+
+    this.branchService.setBranch(branchId);
+    this.updateBranchName(branchId);
   }
 
   GetUserBranch(userId: string) {
@@ -162,7 +271,9 @@ export class NavbarComponent {
           this.branchId = response.id;
           localStorage.setItem('br', response.id);
 
-          this.branchService.setBranch(this.branchId);
+          if (this.branchId !== null) {
+            this.branchService.setBranch(this.branchId);
+          }
         },
         error: (err) => {
           console.log(err);
@@ -210,7 +321,22 @@ export class NavbarComponent {
   }
 
   closeMenu() {
-  this.isMenuOpen = false;
-}
+    this.isMenuOpen = false;
+  }
 
+  openBranchSelector() {
+    // هنا بننادي على ميثود في الـ BranchService تفتح المودال في الـ AppComponent
+    this.branchService.openModal();
+
+    this.api.getAllBranches().subscribe({
+      next: (data) => {
+        this.branches = data; // تخزين الفروع لعرضها
+        console.log(data);
+        const savedBranchId = this.branchService.getCurrentBranch();
+        if (!savedBranchId) {
+          this.branchService.openModal(); // تظهر أول ما الصفحة تحمل لو مفيش فرع
+        }
+      },
+    });
+  }
 }

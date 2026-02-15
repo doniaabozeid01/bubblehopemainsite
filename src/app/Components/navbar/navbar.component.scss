@@ -328,7 +328,7 @@ $teal: #0b7c8f;
 
 
   .bh-brand img {
-    height: 80px !important; // تصغيره من 80px لـ 50px
+    height: 50px !important; // تصغيره من 80px لـ 50px
     width: auto;
   }
 
@@ -414,9 +414,65 @@ $teal: #0b7c8f;
 
 
 
+
+.branch-switcher-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 6px 12px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin-right: 5px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+  }
+
+  i {
+    color: #fff;
+    font-size: 14px;
+  }
+
+  .current-branch-text {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .arrow {
+    font-size: 10px;
+    opacity: 0.8;
+  }
+}
+
+
+@media (max-width: 880px) {
+  .current-branch-text {
+    display: none;
+  }
+  .branch-switcher-nav {
+    padding: 8px;
+  }
+}
+
 @media (min-width: 1101px) {
   .bh-links {
     display: flex;
     justify-content: center;
   }
 }
+
+:host-context([dir='rtl']) {
+  .bh-links a {
+    font-size: 22px !important;
+  }
+}
+
+
+
+

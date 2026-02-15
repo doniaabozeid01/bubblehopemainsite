@@ -17,8 +17,8 @@ export class ApiService {
   // baseUrl: string = "https://localhost:5001";
   drinks: number = 1;
   rawMaterials: number = 2;
-  
-  
+
+
   GetAllAdvertisements(): Observable<any> {
     return this.http.get(`${this.baseUrl}/api/Advertisements/GetAllAdvertisements`);
   }
@@ -130,7 +130,7 @@ export class ApiService {
     return this.http.put(`${this.baseUrl}/api/Orders/CancelOrder/${orderId}`, {});
   }
 
-  
+
   getAllCategories(groupId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/api/Categories/GetAllCategories?categoryGroupId=${groupId}`);
   }
@@ -140,7 +140,7 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}/api/Products/GetProductById/${prodId}/Branch/${branchId}`);
   }
 
-  
+
   contactUs(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/api/ContactUs`, data);
   }
