@@ -188,5 +188,12 @@
     "details": {
         "sizeError": "Size is required — please select a size to add to cart.",
         "additionError": "At least one option is required."
+    },
+    "RAMADAN": {
+      "GREETING": "Ramadan Kareem",
+      "HIGHLIGHT": "Ramadan is better with Bubble Hope",
+      "DESC": "Enjoy the best offers and discounts on all our drinks throughout the holy month of Ramadan.",
+      "ORDER_NOW": "Order Now",
+      "VIEW_OFFERS": "View Offers"
     }
 }

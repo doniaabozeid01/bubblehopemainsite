@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
+import { BranchService } from 'src/app/services/branch.service';
 import { LanguageService } from 'src/app/services/language.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
@@ -35,9 +36,37 @@ export class CheckoutComponent implements OnInit {
     private api: ApiService,
     private router: Router,
     public languageService: LanguageService,
+    public branchService: BranchService,
     private toastr: ToastrService,
     private translate: TranslateService
   ) { }
+
+//   ngOnInit(): void {
+//     this.orderForm = this.fb.group({
+//       addressId: [null, Validators.required],
+//       paymentMethodId: [null, Validators.required],
+//       code: [''],
+//       source: [1]
+//     });
+
+//     this.loadPaymentMethods();
+
+//     this.api.GetUserId().subscribe(res => {
+//       this.userId = res.userId;
+
+//       this.loadAddresses();
+
+// this.api.GetUserBranch(this.userId).subscribe(branch => {
+
+//   this.getCartId(this.userId, branch.id);
+// });
+//     });
+//   }
+
+
+  // =============================
+  // Cart
+  // =============================
 
   ngOnInit(): void {
     this.orderForm = this.fb.group({
@@ -51,19 +80,25 @@ export class CheckoutComponent implements OnInit {
 
     this.api.GetUserId().subscribe(res => {
       this.userId = res.userId;
-
       this.loadAddresses();
 
-      this.api.GetUserBranch(this.userId).subscribe(branch => {
-        this.getCartId(this.userId, branch.id);
-      });
+
+      const currentBranchId = this.branchService.getCurrentBranch();
+
+      if (currentBranchId) {
+        this.getCartId(this.userId, currentBranchId);
+      } else {
+
+        this.api.GetUserBranch(this.userId).subscribe(branch => {
+          this.getCartId(this.userId, branch.id);
+        });
+      }
     });
-  }
+}
 
 
-  // =============================
-  // Cart 
-  // =============================
+
+
   getCartId(userId: string, branchId: number) {
     this.api.GetCartByUserIdAndBranchId(userId, branchId).subscribe({
       next: (res) => {

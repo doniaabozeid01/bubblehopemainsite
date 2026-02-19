@@ -47,6 +47,7 @@ import { ImageCarouselComponent } from './Components/HomeSections/image-carousel
 import { TestLoginComponent } from './Components/test-login/test-login.component';
 import { ProfileComponent } from './Components/profile/profile.component';
 import { AdvertisementProductsComponent } from './Components/advertisement-products/advertisement-products.component';
+import { RamadanComponent } from './Components/HomeSections/ramadan/ramadan.component';
 
 
 
@@ -92,7 +93,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     ImageCarouselComponent,
     TestLoginComponent,
     ProfileComponent,
-    AdvertisementProductsComponent
+    AdvertisementProductsComponent,
+    RamadanComponent
   ],
   imports: [
     BrowserModule,

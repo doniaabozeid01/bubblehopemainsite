@@ -41,6 +41,17 @@
 
       </ng-template>
 
+
+<!--
+    <ng-template carouselSlide id="static-ad-1">
+    <div class="img-cover ad-slide">
+      <img src="../../../../assets/ramdan drinks for web site.jpg.jpeg" alt="Special Offer" loading="lazy" />
+    </div>
+  </ng-template> -->
+
+
+
+
       <!-- ✅ Slides 2..n: Ads -->
       <ng-template carouselSlide *ngFor="let item of advertisements; trackBy: trackById">
         <div class="img-cover  ad-slide" [routerLink]="['/advertisementProducts', item.id]">
