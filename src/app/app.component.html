@@ -1,40 +1,3 @@
-<!-- <app-pending-site></app-pending-site> -->
-
-
-<!-- <div class="branch-selector-overlay" *ngIf="showBranchModal">
-  <div class="branch-selector-card">
-    <div class="logo-section">
-      <img src="../assets/Untitled-2.png" alt="Bubble Hope" class="bubble-logo" />
-    </div>
-
-    <h2 class="hero-title">
-      {{ 'branchModal.titleLine1' | translate }}
-      <span class="highlight-alt">{{ 'branchModal.titleLine1Alt' | translate }}</span>
-      {{ 'branchModal.titleLine1End' | translate }}
-      <br>
-      <span class="highlight">
-        {{ 'branchModal.titleLine2' | translate }} <i class="fa-solid fa-face-smile-beam"></i>!
-      </span>
-    </h2>
-
-    <p class="hero-subtitle">{{ 'branchModal.subtitle' | translate }}</p>
-
-    <div class="branch-list">
-      <button (click)="selectBranch('فرع حدائق الأهرام')" class="branch-btn">
-        <span class="icon text-orange"><i class="fa-solid fa-location-dot"></i></span>
-        {{ 'branchModal.branches.ahram' | translate }}
-      </button>
-      <button (click)="selectBranch('فرع وصلة دهشور')" class="branch-btn">
-        <span class="icon text-orange"><i class="fa-solid fa-location-dot"></i></span>
-        {{ 'branchModal.branches.dahshour' | translate }}
-      </button>
-      <button (click)="selectBranch('فرع زويل')" class="branch-btn">
-        <span class="icon text-orange"><i class="fa-solid fa-location-dot"></i></span>
-        {{ 'branchModal.branches.zeweil' | translate }}
-      </button>
-    </div>
-  </div>
-</div> -->
 
 <div class="branch-selector-overlay" *ngIf="showBranchModal">
   <div class="branch-selector-card">
@@ -69,21 +32,19 @@
   </div>
 </div>
 
-<app-preloader [show]="!!(isLoading$ | async)"></app-preloader>
-    <router-outlet></router-outlet>
-
-
+<!-- <app-preloader [show]="!!(isLoading$ | async)"></app-preloader>
+    <router-outlet></router-outlet> -->
 
 <!-- لسه بيجيب الحالة من الباك -->
-<!-- <ng-container *ngIf="isSiteEnabled !== null"> -->
+<ng-container *ngIf="isSiteEnabled !== null">
 
-    <!-- ❌ الموقع مقفول -->
-    <!-- <app-pending-site *ngIf="!isSiteEnabled"></app-pending-site> -->
+<!-- ❌ الموقع مقفول -->
+<app-pending-site *ngIf="!isSiteEnabled"></app-pending-site>
 
-    <!-- ✅ الموقع مفتوح -->
-     <!-- <ng-container *ngIf="isSiteEnabled">
-        <app-preloader [show]="!!(isLoading$ | async)"></app-preloader>
-        <router-outlet></router-outlet>
-    </ng-container>
+<!-- ✅ الموقع مفتوح -->
+<ng-container *ngIf="isSiteEnabled">
+  <app-preloader [show]="!!(isLoading$ | async)"></app-preloader>
+  <router-outlet></router-outlet>
+</ng-container>
 
-</ng-container> -->
+</ng-container>

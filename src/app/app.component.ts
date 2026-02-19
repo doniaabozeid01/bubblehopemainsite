@@ -116,6 +116,9 @@ ngOnInit() {
   this.branchService.showModal$.subscribe((isOpen) => {
     this.showBranchModal = isOpen;
   });
+
+
+  this.checkSiteStatus();
 }
 
   // 4. إرسال الـ ID الصحيح عند الضغط على الفرع
