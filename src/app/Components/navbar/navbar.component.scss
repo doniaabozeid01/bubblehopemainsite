@@ -1,122 +1,208 @@
+
+
+// ==========================================
+// 1. Variables
+// ==========================================
+$orange: #ff7a00;
+$teal: #0b7c8f;
+
+// ==========================================
+// 2. Main Layout & Navbar
+// ==========================================
+.bh-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 9500;
+  background: linear-gradient(
+    to bottom,
+    $orange 0%,
+    $orange 80%,
+    transparent 80%,
+    transparent 100%
+  );
+}
+
 .bh-inner {
   width: min(1500px, 98%);
   margin: 0 auto;
   display: flex;
   align-items: center;
+  justify-content: space-between; // توزيع العناصر: لوجو - لينكات - أيقونات
   gap: 18px;
-  padding: 14px 0 14px;
+  padding: 14px 0;
+
+
+@media (max-width: 880px) {
+    padding: 10px !important;
+    // للتأكد من أن اللوجو يذهب لليمين والأيقونات لليسار في العربي
+
+  }
 }
 
-$orange: #ff7a00;
-$teal: #0b7c8f;
-
-.bh-navbar {
-  position: relative;
-  background: linear-gradient(to bottom,
-      #ff7a00 0%,
-      #ff7a00 80%,
-      transparent 80%,
-      transparent 100%);
-  z-index: 50;
-}
-
+// ==========================================
+// 3. Wave Effect
+// ==========================================
 .bh-wave {
   position: relative;
   height: 40px;
   overflow: hidden;
+
+  @media (max-width: 880px) {
+    height: 40px !important;
+    margin-top: -5px;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: $teal;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0 L1440,0 L1440,75 C1280,135 1120,15 960,75 C800,140 640,10 480,75 C320,135 160,15 0,75 L0,0 Z' fill='black'/%3E%3C/svg%3E") no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0 L1440,0 L1440,75 C1280,135 1120,15 960,75 C800,140 640,10 480,75 C320,135 160,15 0,75 L0,0 Z' fill='black'/%3E%3C/svg%3E") no-repeat;
+    mask-size: 100% 100%;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: $orange;
+    transform: translateY(-14px);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0 L1440,0 L1440,75 C1280,135 1120,15 960,75 C800,140 640,10 480,75 C320,135 160,15 0,75 L0,0 Z' fill='black'/%3E%3C/svg%3E") no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0 L1440,0 L1440,75 C1280,135 1120,15 960,75 C800,140 640,10 480,75 C320,135 160,15 0,75 L0,0 Z' fill='black'/%3E%3C/svg%3E") no-repeat;
+    mask-size: 100% 100%;
+  }
 }
 
-.bh-navbar {
-  position: sticky;
-  top: 0;
-  z-index: 9500;
-}
-
-.bh-links {
-  z-index: 9999;
-}
-
-
-/* ✅ teal تحت */
-.bh-wave::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: $teal;
-
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0 L1440,0 L1440,75 C1280,135 1120,15 960,75 C800,140 640,10 480,75 C320,135 160,15 0,75 L0,0 Z' fill='black'/%3E%3C/svg%3E") no-repeat;
-  -webkit-mask-size: 100% 100%;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0 L1440,0 L1440,75 C1280,135 1120,15 960,75 C800,140 640,10 480,75 C320,135 160,15 0,75 L0,0 Z' fill='black'/%3E%3C/svg%3E") no-repeat;
-  mask-size: 100% 100%;
-
-}
-
-/* ✅ orange فوقه (نفس الموجة) */
-.bh-wave::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: $orange;
-
-  transform: translateY(-14px); // 👈 سُمك الأزرق المموج
-
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0 L1440,0 L1440,75 C1280,135 1120,15 960,75 C800,140 640,10 480,75 C320,135 160,15 0,75 L0,0 Z' fill='black'/%3E%3C/svg%3E") no-repeat;
-  -webkit-mask-size: 100% 100%;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0 L1440,0 L1440,75 C1280,135 1120,15 960,75 C800,140 640,10 480,75 C320,135 160,15 0,75 L0,0 Z' fill='black'/%3E%3C/svg%3E") no-repeat;
-  mask-size: 100% 100%;
-
-}
-
-
+// ==========================================
+// 4. Brand / Logo
+// ==========================================
 .bh-brand {
   display: inline-flex;
   align-items: center;
   text-decoration: none;
 
   img {
-    height: 70px;
+    height: 85px;
     width: auto;
     display: block;
+
+    @media (max-width: 880px) {
+      height: 70px !important;
+    }
   }
 }
 
+// ==========================================
+// 5. Links (Desktop & Mobile Panel)
+// ==========================================
 .bh-links {
+  z-index: 9999;
   flex: 1;
   display: flex;
   align-items: center;
+  justify-content: center; // سنترة اللينكات في الديسكتوب
   gap: 20px;
-  width: 30px;
-  // background-color: #0b7c8f;
   overflow: hidden;
 
   a {
-    // margin-right: 10px;
     color: #fff;
     text-decoration: none;
-    // font-size: 14px;
     font-size: 16px;
     opacity: 0.95;
     white-space: nowrap;
 
-    &:hover {
+    &:hover, &.active {
       opacity: 1;
       text-decoration: underline;
       text-underline-offset: 6px;
     }
 
-    &.active {
+    &.active { font-weight: 700; }
+  }
+
+  // Mobile Menu Dropdown Styles
+  @media (max-width: 1200px) {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 80px;
+    z-index: 55;
+    width: min(92%, 720px);
+    background: rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 16px;
+    display: none;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    padding: 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+
+    a {
+      width: 100%;
+      font-size: 25px;
+      padding: 10px;
+      border-radius: 12px;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.12);
+        text-decoration: none;
+      }
+    }
+
+    &.is-open {
+      display: flex !important;
+      pointer-events: auto;
       opacity: 1;
-      font-weight: 700;
-      text-decoration: underline;
-      text-underline-offset: 6px;
+    }
+  }
+
+  @media (max-width: 880px) {
+    width: min(92%, 500px) !important;
+    padding: 10px !important;
+    gap: 5px;
+
+    a { font-size: 22px !important; }
+  }
+}
+
+// RTL Support
+:host-context([dir='rtl']) {
+  .bh-links a {
+    font-size: 22px !important;
+  }
+  @media (max-width: 880px) {
+    .bh-actions {
+      margin-left: 0;
+      margin-right: auto;
+      flex-direction: row;
+    }
+
+    .bh-brand {
+      margin-left: 0;
+      margin-right: 0;
     }
   }
 }
 
+// ==========================================
+// 6. Actions (Icons, Cart, Branch)
+// ==========================================
 .bh-actions {
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-left: auto;
+
+  @media (max-width: 880px) {
+    gap: 5px !important;
+  }
 }
 
 .icon-btn {
@@ -134,11 +220,11 @@ $teal: #0b7c8f;
     display: inline-block;
     padding: 0;
     margin: 0;
-  }
 
-  // &:hover {
-  //   background: rgba(255, 255, 255, 0.12);
-  // }
+    @media (max-width: 880px) {
+      font-size: 22px !important;
+    }
+  }
 }
 
 .badge {
@@ -157,264 +243,7 @@ $teal: #0b7c8f;
   font-weight: 800;
 }
 
-// --- Mobile burger button ---
-.menu-btn {
-  display: none;
-  width: 44px;
-  height: 40px;
-  border: 0;
-  background: transparent;
-  border-radius: 12px;
-  cursor: pointer;
-  padding: 10px;
-
-  span {
-    display: block;
-    height: 2px;
-    background: #ffffff;
-    border-radius: 999px;
-    margin: 5px 0;
-  }
-}
-
-.bh-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, .15);
-  z-index: 9000;
-}
-
-
-  .account-menu {
-      background: rgba(0, 0, 0, 0.18);
-      backdrop-filter: blur(10px);
-      min-width: 150px !important;
-      padding: 5px 0 !important;
-      border-radius: 10px !important;
-
-
-
-
-    .dropdown-item {
-      color: white !important;
-      font-size: 20px !important;
-      font-weight: 400 !important;
-      padding: 12px 25px;
-
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.116);
-      }
-
-      &.dropdown-menu-end {
-      right: 0 !important;
-      top: 100% !important;
-      margin-top: 10px !important;
-      }
-    }
-
-    .bh-actions {
-    .icon-btn i {
-      font-size: 20px !important;
-    }
-  }
-  }
-
-// -------------------------------------------
-// Responsive
-// -------------------------------------------
-@media (max-width: 1200px) {
-  .bh-links {
-    // Turn into dropdown panel
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 80px;
-    z-index: 55;
-    width: min(92%, 720px);
-    background: rgba(0, 0, 0, 0.18);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 16px;
-    display: none; // تأكد أنها none بشكل افتراضي هنا
-    pointer-events: none; // منع التفاعل وهي مخفية
-    opacity: 0;
-    transition: opacity 0.3s ease;
-
-    padding: 14px;
-    display: none;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-
-    a {
-      width: 100%;
-      font-size: 25px;
-      padding: 10px 10px;
-      border-radius: 12px;
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.12);
-        text-decoration: none;
-      }
-    }
-
-    &.is-open {
-          display: flex !important; // إجبار الظهور عند فتح المنيو
-          pointer-events: auto;
-          opacity: 1;
-        }
-
-  }
-
-  .menu-btn {
-    display: inline-block;
-  }
-
-
-
-  .bh-brand {
-    display: inline-flex;
-    align-items: center;
-    text-decoration: none;
-
-    img {
-      height: 70px;
-      width: auto;
-      display: block;
-    }
-  }
-
-
-
-  .icon-btn {
-    position: relative;
-    border: 0;
-    background: transparent;
-    color: #fff;
-    padding: 8px;
-    border-radius: 10px;
-    cursor: pointer;
-    line-height: 1;
-
-    i {
-      font-size: 22px;
-      display: inline-block;
-      padding: 0;
-      margin: 0;
-    }
-
-
-  }
-}
-
-// @media (max-width: 480px) {
-//   .bh-brand img {
-//     height: 80px;
-//   }
-
-//   .bh-wave {
-//     height: 58px;
-//     background:
-//       radial-gradient(160px 62px at 18% 0%, $teal 98%, transparent 100%),
-//       radial-gradient(220px 84px at 55% 0%, $teal 98%, transparent 100%),
-//       radial-gradient(175px 70px at 88% 0%, $teal 98%, transparent 100%),
-//       linear-gradient($teal 0 0);
-//   }
-// }
-
-
-@media (max-width: 880px) {
-
-
-  .bh-brand img {
-    height: 50px !important; // تصغيره من 80px لـ 50px
-    width: auto;
-  }
-
-
-  .bh-actions {
-    display: flex;
-    gap: 5px !important;
-    align-items: center;
-
-    .icon-btn {
-      i {
-        font-size: 22px !important;
-      }
-    }
-  }
-
-
-  .bh-wave {
-    height: 40px !important;
-    margin-top: -5px;
-  }
-
-
-  .bh-inner {
-    padding-left: 10px !important;
-    padding-right: 10px !important;
-    padding-top: 10px !important;
-  }
-
-    .bh-links {
-
-      width: min(92%, 500px) !important;
-      padding: 10px !important;
-      gap: 5px;
-
-      a {
-        font-size: 22px !important;
-      }
-  }
-
-
-  .account-menu {
-      background: rgba(0, 0, 0, 0.18);
-      backdrop-filter: blur(10px);
-      min-width: 150px !important;
-      padding: 8px 0 !important;
-      border-radius: 10px !important;
-
-
-
-
-    .dropdown-item {
-      color: white !important;
-      font-size: 20px !important;
-      font-weight: 400 !important;
-      padding: 5px 10px;
-
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.116);
-      }
-
-      &.dropdown-menu-end {
-      right: 0 !important;
-      top: 100% !important;
-      margin-top: 10px !important;
-      }
-    }
-
-    .bh-actions {
-    .icon-btn i {
-      font-size: 20px !important;
-    }
-  }
-  }
-
-
-  .dropdown-divider {
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
-}
-
-
-
-
+// Branch Switcher Pill
 .branch-switcher-nav {
   display: flex;
   align-items: center;
@@ -432,91 +261,174 @@ $teal: #0b7c8f;
     transform: translateY(-2px);
   }
 
-  i {
-    color: #fff;
-    font-size: 14px;
-  }
+  i { color: #fff; font-size: 14px; }
+  .arrow { font-size: 10px; opacity: 0.8; }
 
   .current-branch-text {
     color: #fff;
     font-size: 13px;
     font-weight: 700;
     white-space: nowrap;
+
+    @media (max-width: 880px) { display: none; }
   }
 
-  .arrow {
-    font-size: 10px;
-    opacity: 0.8;
+  @media (max-width: 880px) { padding: 8px; }
+}
+
+// ==========================================
+// 7. Menus & Dropdowns
+// ==========================================
+.account-menu {
+  background: rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(10px);
+  min-width: 150px !important;
+  padding: 5px 0 !important;
+  border-radius: 10px !important;
+
+  @media (max-width: 880px) {
+    padding: 8px 0 !important;
+  }
+
+  .dropdown-item {
+    color: white !important;
+    font-size: 20px !important;
+    font-weight: 400 !important;
+    padding: 12px 25px;
+
+    @media (max-width: 880px) { padding: 5px 10px; }
+
+    &:hover { background: rgba(255, 255, 255, 0.116); }
+
+    &.dropdown-menu-end {
+      right: 0 !important;
+      top: 100% !important;
+      margin-top: 10px !important;
+    }
   }
 }
 
-
-@media (max-width: 880px) {
-  .current-branch-text {
-    display: none;
-  }
-  .branch-switcher-nav {
-    padding: 8px;
-  }
+.dropdown-divider {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-@media (min-width: 1101px) {
-  .bh-links {
+// Mobile-only section inside the hamburger menu
+.mobile-only-menu {
+  display: none; // Hidden on Desktop
+  width: 100%;
+  padding: 10px 0;
+
+  .menu-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    margin: 15px 0;
+  }
+
+  .welcome-text {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    margin-bottom: 10px;
+    padding-left: 10px;
+  }
+
+  .mobile-action-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+
+    a, button {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 16px !important;
+      text-align: center;
+      color: white;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .logout-btn { color: #ff4d4d; }
+  }
+
+  .mobile-footer-actions {
     display: flex;
-    justify-content: center;
+    gap: 10px;
+
+    button {
+      flex: 1;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 10px;
+      border-radius: 12px;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
   }
 }
 
-:host-context([dir='rtl']) {
-  .bh-links a {
-    font-size: 22px !important;
+// ==========================================
+// 8. Toggles & Utility Classes
+// ==========================================
+.menu-btn {
+  display: none;
+  width: 44px;
+  height: 40px;
+  border: 0;
+  background: transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  padding: 10px;
+
+  span {
+    display: block;
+    height: 2px;
+    background: #ffffff;
+    border-radius: 999px;
+    margin: 5px 0;
+  }
+
+  @media (max-width: 1200px) {
+    display: inline-block;
   }
 }
 
-
-
-
-
-.bh-navbar {
-  position: sticky;
-  top: 0;
-  z-index: 9500;
-
+.bh-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .15);
+  z-index: 9000;
 }
 
-.zeina-floating {
+@media (max-width: 1200px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+
+  .bh-links.is-open .mobile-only-menu {
+    display: block; // Show mobile inner menu when panel is open
+  }
+}
+
+// ==========================================
+// 9. Decorations (Zeina)
+// ==========================================
+.zeina-floating, .zeina-floating-right {
   position: absolute;
   top: 0;
-  left: 0;
-  width: 50%;
   height: auto;
   pointer-events: none;
   z-index: 9999;
   opacity: 0.9;
-}
 
-
-@media (max-width: 880px) {
-  .zeina-floating {
+  @media (max-width: 880px) {
     width: 150%;
     left: -25%;
   }
 }
-.zeina-floating-right {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 50%;
-  height: auto;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.9;
-}
 
-
-@media (max-width: 880px) {
-  .zeina-floating-right {
-    width: 150%;
-    left: -25%;
-  }
-}

@@ -32,14 +32,15 @@
   </div>
 </div>
 
-<!-- <app-preloader [show]="!!(isLoading$ | async)"></app-preloader>
-    <router-outlet></router-outlet> -->
+
+<app-preloader [show]="!!(isLoading$ | async)"></app-preloader>
+    <router-outlet></router-outlet>
 
 <!-- لسه بيجيب الحالة من الباك -->
 <ng-container *ngIf="isSiteEnabled !== null">
 
 <!-- ❌ الموقع مقفول -->
-<app-pending-site *ngIf="!isSiteEnabled"></app-pending-site>
+<!-- <app-pending-site *ngIf="!isSiteEnabled"></app-pending-site> -->
 
 <!-- ✅ الموقع مفتوح -->
 <ng-container *ngIf="isSiteEnabled">

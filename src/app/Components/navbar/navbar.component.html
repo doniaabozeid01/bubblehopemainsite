@@ -1,7 +1,4 @@
 <header class="bh-navbar">
-<!-- <img src="../../../assets/ramadan zeina.png" alt="" class="zeina-floating">
-<img src="../../../assets/ramadan zeina.png" alt="" class="zeina-floating-right"> -->
-
   <div class="bh-inner d-flex align-items-center pt-3 justify-content-between">
     <!-- Logo -->
     <a class="bh-brand" routerLink="/">
@@ -10,115 +7,95 @@
     </a>
 
     <!-- Desktop links -->
-    <nav class="bh-links" [class.is-open]="isMenuOpen">
-      <!-- <a routerLink="/home" routerLinkActive="active">Home</a> -->
-      <a routerLink="/tapioca" routerLinkActive="active">{{
-        "navbar.tapioca" | translate
-      }}</a>
-      <a href="https://t4tea.shop" routerLinkActive="active">{{
-        "navbar.teas" | translate
-      }}</a>
-      <a routerLink="/juice" routerLinkActive="active">{{
-        "navbar.juice" | translate
-      }}</a>
-      <a routerLink="/sauce" routerLinkActive="active">{{
-        "navbar.sauce" | translate
-      }}</a>
-      <a routerLink="/popping" routerLinkActive="active">{{
-        "navbar.popping" | translate
-      }}</a>
-      <a routerLink="/powders" routerLinkActive="active">{{
-        "navbar.powders" | translate
-      }}</a>
+      <nav class="bh-links" [class.is-open]="isMenuOpen">
+          <a routerLink="/tapioca" routerLinkActive="active">{{ "navbar.tapioca" | translate }}</a>
+          <a href="https://t4tea.shop" routerLinkActive="active">{{ "navbar.teas" | translate }}</a>
+          <a routerLink="/juice" routerLinkActive="active">{{ "navbar.juice" | translate }}</a>
+          <a routerLink="/sauce" routerLinkActive="active">{{ "navbar.sauce" | translate }}</a>
+          <a routerLink="/popping" routerLinkActive="active">{{ "navbar.popping" | translate }}</a>
+          <a routerLink="/powders" routerLinkActive="active">{{ "navbar.powders" | translate }}</a>
 
-      <!-- <a routerLink="/waffle-sauce" routerLinkActive="active">Waffle Sauce</a>
-      <a routerLink="/waffle-mix" routerLinkActive="active">Waffle Mix</a> -->
-    </nav>
+        <div class="mobile-only-menu">
+          <div class="menu-divider"></div>
+
+            <div class="mobile-account-section">
+                <ng-container *ngIf="isLoggedIn; else guestMobile">
+                    <p class="welcome-text">{{ "navbar.hello" | translate }}, {{ firstName }}</p>
+                    <div class="mobile-action-grid">
+                        <a routerLink="/profile" (click)="isMenuOpen=false"><i class="bi bi-person"></i> {{ "navbar.profile" | translate }}</a>
+                        <button (click)="logout(); isMenuOpen=false" class="logout-btn"><i class="bi bi-box-arrow-right"></i> {{ "navbar.logout" | translate }}</button>
+                    </div>
+                </ng-container>
+                <ng-template #guestMobile>
+                    <div class="mobile-action-grid">
+                        <a routerLink="/auth/login" (click)="isMenuOpen=false"><i class="bi bi-box-arrow-in-right"></i> {{ "navbar.login" | translate }}</a>
+                        <a routerLink="/auth/register" (click)="isMenuOpen=false"><i class="bi bi-person-plus"></i> {{ "navbar.register" | translate }}</a>
+                    </div>
+                </ng-template>
+            </div>
+
+          <div class="menu-divider"></div>
+            <div class="mobile-footer-actions">
+              <button (click)="changeLanguage(); isMenuOpen=false">
+                <i class="fa-solid fa-globe"></i> {{ "navbar.language" | translate }}
+              </button>
+
+              <button routerLink="/wishlist" (click)="isMenuOpen=false">
+                <i class="bi bi-heart"></i> {{ "navbar.fafvorites" | translate }}
+              </button>
+            </div>
+        </div>
+      </nav>
+
 
     <!-- Icons -->
-    <div class="bh-actions">
-      <div class="dropdown account-dd">
-        <button
-          class="icon-btn dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-          aria-label="Account"
-        >
-          <i class="bi bi-person fs-3"></i>
-        </button>
-
-        <ul class="dropdown-menu dropdown-menu-end account-menu">
-          <!-- لو مسجل -->
-          <ng-container *ngIf="isLoggedIn; else guestMenu">
-            <li class="px-3 py-2 text-muted small">Hello, {{ firstName }}</li>
-
-            <li><a class="dropdown-item" routerLink="/profile">Profile</a></li>
-            <li>
-              <a class="dropdown-item" routerLink="/change-password"
-                >Change Password</a
+      <div class="bh-actions">
+            <div class="dropdown account-dd hide-on-mobile">
+              <button
+                class="icon-btn dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                aria-label="Account"
               >
-            </li>
-            <li>
-              <hr class="dropdown-divider" />
-            </li>
-            <li>
-              <button class="dropdown-item text-danger" (click)="logout()">
-                Logout
+                <i class="bi bi-person fs-3"></i>
               </button>
-            </li>
-          </ng-container>
-
-          <!-- لو مش مسجل -->
-          <ng-template #guestMenu>
-            <li><a class="dropdown-item" routerLink="/auth/login">Login</a></li>
-            <li>
-              <a class="dropdown-item" routerLink="/auth/register">Register</a>
-            </li>
-            <li>
-              <a class="dropdown-item" routerLink="/change-password"
-                >Change Password</a
-              >
-            </li>
-          </ng-template>
-        </ul>
-      </div>
-
-      <button class="icon-btn" aria-label="Cart" routerLink="/cart">
-        <i class="bi bi-bag"></i>
-        <span class="badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
-      </button>
-
-      <button class="icon-btn" routerLink="/wishlist" aria-label="Favorites">
-        <i class="bi bi-heart"></i>
-      </button>
-
-      <button class="icon-btn">
-        <i class="fa-solid fa-globe fs-4" (click)="changeLanguage()"></i>
-      </button>
-
-      <div class="branch-switcher-nav" (click)="openBranchSelector()">
-        <i class="fa-solid fa-location-dot"></i>
-        <span class="current-branch-text">
-          <span class="current-branch-text">{{
-            selectedBranchName || "..."
-          }}</span>
-        </span>
-        <i class="fa-solid fa-chevron-down arrow"></i>
-      </div>
-
-      <div class="dropdown account-dd"></div>
-
-      <!-- Mobile toggle -->
-      <button
-        class="menu-btn"
-        type="button"
-        (click)="isMenuOpen = !isMenuOpen"
-        [attr.aria-expanded]="isMenuOpen"
-        aria-label="Menu"
-      >
-        <span></span><span></span><span></span>
-      </button>
+                  <ul class="dropdown-menu dropdown-menu-end account-menu">
+                      <ng-container *ngIf="isLoggedIn; else guestMenu">
+                          <li class="px-3 py-2 text-muted small">{{ "navbar.hello" | translate }}, {{ firstName }}</li>
+                          <li><a class="dropdown-item" routerLink="/profile">{{ "navbar.profile" | translate }}</a></li>
+                          <li>
+                              <a class="dropdown-item" routerLink="/change-password">{{ "navbar.changepassword" | translate }}</a>
+                          </li>
+                          <li><hr class="dropdown-divider" /></li>
+                          <li>
+                              <button class="dropdown-item text-danger" (click)="logout()">{{ "navbar.logout" | translate }}</button>
+                          </li>
+                      </ng-container>
+                      <ng-template #guestMenu>
+                          <li><a class="dropdown-item" routerLink="/auth/login">{{ "navbar.login" | translate }}</a></li>
+                          <li><a class="dropdown-item" routerLink="/auth/register">{{ "navbar.register" | translate }}</a></li>
+                      </ng-template>
+                  </ul>
+            </div>
+        <button class="icon-btn" aria-label="Cart" routerLink="/cart">
+          <i class="bi bi-bag"></i>
+          <span class="badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
+        </button>
+        <button class="icon-btn hide-on-mobile" routerLink="/wishlist">
+          <i class="bi bi-heart"></i>
+        </button>
+        <button class="icon-btn hide-on-mobile">
+          <i class="fa-solid fa-globe fs-4" (click)="changeLanguage()"></i>
+        </button>
+        <div class="branch-switcher-nav" (click)="openBranchSelector()">
+          <i class="fa-solid fa-location-dot"></i>
+          <span class="current-branch-text">{{ selectedBranchName || "..." }}</span>
+          <i class="fa-solid fa-chevron-down arrow"></i>
+        </div>
+        <button class="menu-btn" type="button" (click)="isMenuOpen = !isMenuOpen">
+          <span></span><span></span><span></span>
+        </button>
     </div>
   </div>
 
@@ -127,4 +104,16 @@
 </header>
 
 <div class="bh-overlay" *ngIf="isMenuOpen" (click)="isMenuOpen = false"></div>
+
+
+
+
+
+
+
+
+
+
+
+
 
