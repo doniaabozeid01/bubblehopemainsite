@@ -53,23 +53,24 @@ export class MainCategoriesComponent {
 ngOnInit() {
   this.api.getAllCategories(this.api.drinks).subscribe({
     next: (res) => {
+      // دي الألوان القديمة اللي أنت كنت مختارها بالظبط
+      const myOldColors = [
+        '#b10000', // الأحمر (Mojito)
+        '#f48b1f', // البرتقالي (Our Signature)
+        '#2f5b3a', // الأخضر (Matchcha)
+        '#f4c430', // الأصفر (Ice Tea)
+        '#8e44ad',
+        '#16a085',
+        '#c0392b',
+        '#2980b9',
+        '#d35400',
+        '#27ae60'
+      ];
 
-      const colorMap: Record<number, string> = {
-        1: '#b10000', // Mojito
-        2: '#f48b1f', // Our Signature
-        3: '#2f5b3a', // Matcha Classic
-        4: '#f4c430', // Ice Tea
-        5: '#8e44ad',
-        6: '#16a085',
-        7: '#c0392b',
-        8: '#2980b9',
-        9: '#d35400',
-        10:'#27ae60',
-      };
-
-      this.categories = res.map((c: any) => ({
+      this.categories = res.map((c: any, index: number) => ({
         ...c,
-        bgColor: colorMap[c.id] || '#2f5b3a', // fallback
+
+        bgColor: myOldColors[index % myOldColors.length]
       }));
     },
     error: (err) => console.log(err)

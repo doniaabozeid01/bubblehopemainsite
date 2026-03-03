@@ -59,7 +59,7 @@ $dark-text: rgb(29, 29, 29);
 
       .greeting {
         font-family: 'Brush Script MT', cursive;
-        font-size: 0.7em;
+        font-size: 0.9em !important;
         color: $orange;
         display: block;
         margin-top: 40px !important;
@@ -67,6 +67,7 @@ $dark-text: rgb(29, 29, 29);
       }
       .highlight {
         color: $teal;
+        font-size: 0.5em !important;
         display: block;
       }
     }

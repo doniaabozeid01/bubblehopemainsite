@@ -62,8 +62,12 @@
 }
 
 .product-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
   font-size: 20px;
-  margin-top: 5px;
+  margin-top: 10px;
   margin-bottom: 0px;
   font-weight: normal;
   letter-spacing: 0px;

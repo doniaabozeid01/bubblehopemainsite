@@ -39,7 +39,7 @@
                     </div>
 
                     <!-- <h6 class="product-name">{{item.name}}</h6> -->
-                    <p class="product-name pb-0 main-color">{{ (languageService.languageChanged$ | async) === 'ar' ?
+                    <p class="product-name main-color">{{ (languageService.languageChanged$ | async) === 'ar' ?
                         item.name_ar
                         : item.name }}</p>
                     <div class="price second-color"> <span> {{ item.newPrice}} <span>{{ (languageService.languageChanged$ |
@@ -85,7 +85,7 @@
                             <div class="discount-badge second-bg-color" *ngIf="product.discount > 0 && product.stock > 0">
                                 {{product.discount}}%</div>
 
-                                
+
                             <p class="outOfStock px-1 mb-0 rounded " *ngIf="product.stock <= 0">{{'outOfStock' |
                                 translate}}</p>
 

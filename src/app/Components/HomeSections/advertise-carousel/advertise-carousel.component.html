@@ -54,7 +54,7 @@
 
       <!-- ✅ Slides 2..n: Ads -->
       <ng-template carouselSlide *ngFor="let item of advertisements; trackBy: trackById">
-        <div class="img-cover  ad-slide" [routerLink]="['/advertisementProducts', item.id]">
+        <div class="img-cover  ad-slide">
           <img [src]="item.imageUrl" [alt]="item.title" loading="lazy" />
         </div>
       </ng-template>
