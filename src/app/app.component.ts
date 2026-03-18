@@ -4,6 +4,7 @@ import { LoadingService } from './services/loading.service';
 import { BranchService } from './services/branch.service';
 import { Observable } from 'rxjs';
 import { ApiService } from './services/api.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-root',
@@ -94,7 +95,8 @@ export class AppComponent implements OnInit {
     public translate: TranslateService,
     loading: LoadingService,
     private api: ApiService,
-    private branchService: BranchService
+    private branchService: BranchService,
+    private toastr: ToastrService
   ) {
     translate.setDefaultLang('en');
     this.isLoading$ = loading.isLoading$;
@@ -123,7 +125,38 @@ ngOnInit() {
 
   // 4. إرسال الـ ID الصحيح عند الضغط على الفرع
   selectBranch(branchId: number) {
+    const token = localStorage.getItem('token');
+
+    // Always update locally so UI reacts instantly
     this.branchService.setBranch(branchId);
+    this.showBranchModal = false;
+
+    // If logged in, also sync selection to backend
+    if (!token) return;
+
+    this.api.GetUserId().subscribe({
+      next: (res) => {
+        const userId = typeof res === 'string' ? res : res?.userId;
+        if (!userId) return;
+
+        this.api.switchBranch({ userId, newBranchId: branchId }).subscribe({
+          next: () => {
+            // keep silent or show success (optional)
+          },
+          error: (err) => {
+            const msg = err?.error?.message || 'Failed to switch branch on server.';
+            this.toastr.error(msg);
+          },
+        });
+      },
+      error: () => {
+        this.toastr.error('Failed to identify user for branch switch.');
+      },
+    });
+  }
+
+  closeBranchModal() {
+    this.branchService.closeModal();
     this.showBranchModal = false;
   }
 

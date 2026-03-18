@@ -1,51 +1,60 @@
-
-<div class="branch-selector-overlay" *ngIf="showBranchModal">
-  <div class="branch-selector-card">
-    <div class="logo-section">
-      <img src="../assets/Untitled-2.png" alt="Bubble Hope" class="bubble-logo" />
-    </div>
-
-    <h2 class="hero-title">
-      {{ 'branchModal.titleLine1' | translate }}
-      <span class="highlight-alt">{{ 'branchModal.titleLine1Alt' | translate }}</span>
-      {{ 'branchModal.titleLine1End' | translate }}
-      <br>
-      <span class="highlight">
-        {{ 'branchModal.titleLine2' | translate }} <i class="fa-solid fa-face-smile-beam"></i>!
-      </span>
-    </h2>
-
-    <p class="hero-subtitle">{{ 'branchModal.subtitle' | translate }}</p>
-
-<div class="branch-list">
-  <button *ngFor="let branch of branches"
-          (click)="selectBranch(branch.id)"
-          class="branch-btn">
-    <span class="icon text-orange"><i class="fa-solid fa-location-dot"></i></span>
-    {{ translate.currentLang === 'ar' ? branch.name_ar : branch.name }}
-  </button>
-
-  <p *ngIf="branches.length === 0" style="text-align:center; color:#666;">
-    Loading branches...
-  </p>
-</div>
-  </div>
-</div>
+<!-- <app-pending-site></app-pending-site> -->
+<!-- <app-preloader [show]="!!(isLoading$ | async)"></app-preloader>
+    <router-outlet></router-outlet> -->
 
 
-<app-preloader [show]="!!(isLoading$ | async)"></app-preloader>
-    <router-outlet></router-outlet>
 
 <!-- لسه بيجيب الحالة من الباك -->
 <ng-container *ngIf="isSiteEnabled !== null">
 
-<!-- ❌ الموقع مقفول -->
-<!-- <app-pending-site *ngIf="!isSiteEnabled"></app-pending-site> -->
+    <!-- ❌ الموقع مقفول -->
+    <app-pending-site *ngIf="!isSiteEnabled"></app-pending-site>
 
-<!-- ✅ الموقع مفتوح -->
-<ng-container *ngIf="isSiteEnabled">
-  <app-preloader [show]="!!(isLoading$ | async)"></app-preloader>
-  <router-outlet></router-outlet>
+    <!-- ✅ الموقع مفتوح -->
+    <ng-container *ngIf="isSiteEnabled">
+        <app-preloader [show]="!!(isLoading$ | async)"></app-preloader>
+        <router-outlet></router-outlet>
+    </ng-container>
+
 </ng-container>
 
-</ng-container>
+<!-- Branch selector modal -->
+<div
+  class="branch-selector-overlay"
+  *ngIf="showBranchModal"
+  (click)="closeBranchModal()"
+>
+  <div class="branch-selector-card" (click)="$event.stopPropagation()">
+    <div class="logo-section">
+      <img src="assets/Group 73.png" alt="Bubble Hope" />
+    </div>
+
+    <h2 class="hero-title">
+      <span class="highlight">
+        {{ 'branchModal.titleLine1' | translate }}
+        {{ 'branchModal.titleLine1Alt' | translate }}
+      </span>
+      {{ 'branchModal.titleLine1End' | translate }}
+      <br />
+      {{ 'branchModal.titleLine2' | translate }}
+    </h2>
+
+    <p class="hero-subtitle">{{ 'branchModal.subtitle' | translate }}</p>
+
+    <div class="branch-list">
+      <button
+        type="button"
+        class="branch-btn"
+        *ngFor="let branch of branches"
+        (click)="selectBranch(branch.id)"
+      >
+        <span class="icon">
+          <i class="fa-solid fa-location-dot"></i>
+        </span>
+        <span>
+          {{ translate.currentLang === 'ar' ? branch.name_ar : branch.name }}
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
