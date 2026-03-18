@@ -31,7 +31,7 @@ export class AdvertisementProductsComponent {
     );
 
     this.advertisementId = Number(this.route.snapshot.paramMap.get('id')) ?? 0;
-    console.log(this.advertisementId);
+    // console.log(this.advertisementId);
 
 
     if (token) {
@@ -96,12 +96,12 @@ export class AdvertisementProductsComponent {
   GetDefaultBranch() {
     this.apiService.GetDefaultBranch().subscribe({
       next: (response) => {
-        console.log("Default Branch : ", response);
+        // console.log("Default Branch : ", response);
         this.branchId = response.id;
         this.loadProducts(this.advertisementId, this.branchId, this.userId);
       },
       error: (err) => {
-        console.log(err);
+        // console.log(err);
       }
     })
 
@@ -111,10 +111,10 @@ export class AdvertisementProductsComponent {
   loadProducts(advertisementId: number, branchId: number, userId: string) {
     this.apiService.GetProductsByAdvertisementId(advertisementId, branchId, userId).subscribe({
       next: (productsResponse) => {
-        console.log(productsResponse);
+        // console.log(productsResponse);
         this.products = productsResponse;
       },
-      error: (err) => console.log(err)
+      // error: (err) => console.log(err)
     });
   }
 
@@ -147,20 +147,20 @@ export class AdvertisementProductsComponent {
 
     this.apiService.addToFavourite(dataToAdded).subscribe({
       next: (res) => {
-        console.log(res);
+        // console.log(res);
         
         this.toastr.success("Product Saved to your wishlist!");
 
         item.isFavorite = true;
       },
       error: (err) => {
-        console.log(err)
+        // console.log(err)
       }
     });
   }
 
   removeFromFavourite(item: any) {
-    console.log(item);
+    // console.log(item);
 
     const token = localStorage.getItem('token');
     if (!token) {
@@ -177,10 +177,10 @@ export class AdvertisementProductsComponent {
 
         item.isFavorite = false;
       },
-      error: (err) => console.log(err)
+      // error: (err) => console.log(err)
     });
 
-    console.log(item);
+    // console.log(item);
 
 
 

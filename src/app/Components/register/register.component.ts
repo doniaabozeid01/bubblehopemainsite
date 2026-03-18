@@ -200,7 +200,7 @@ export class RegisterComponent {
       .pipe(finalize(() => (this.loadingCountries = false)))
       .subscribe({
         next: (res: any) => {
-          console.log(res);
+          // console.log(res);
 
           this.countries = res?.data ?? res ?? []
         },

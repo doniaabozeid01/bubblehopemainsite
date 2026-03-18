@@ -140,7 +140,7 @@ export class RawMaterialProductsComponent implements OnDestroy {
           ).subscribe(list => {
             // لو مفيش منتجات → products=[] وهنعرض رسالة تحت
             this.loadState = 'success';
-            console.log(list);
+            // console.log(list);
             this.products = list;
             const token = localStorage.getItem('token');
             // const hasToken = !!token && token !== 'null' && token !== 'undefined' && token.trim() !== '';
@@ -166,7 +166,7 @@ export class RawMaterialProductsComponent implements OnDestroy {
       ).subscribe(list => {
         // لو مفيش منتجات → products=[] وهنعرض رسالة تحت
         this.loadState = 'success';
-        console.log(list);
+        // console.log(list);
         this.products = list;
         const token = localStorage.getItem('token');
         // const hasToken = !!token && token !== 'null' && token !== 'undefined' && token.trim() !== '';
@@ -227,12 +227,12 @@ export class RawMaterialProductsComponent implements OnDestroy {
       next: (response) => {
         this.toastr.success("Great choice! It's now in your cart.");
 
-        console.log("add to cart", response);
+        // console.log("add to cart", response);
       },
       error: (err) => {
         this.toastr.warning(err.error.message);
 
-        console.log(err);
+        // console.log(err);
       }
     });
 
@@ -264,7 +264,7 @@ export class RawMaterialProductsComponent implements OnDestroy {
         item.isFavorite = true;
       },
       error: (err) => {
-        console.log(err)
+        // console.log(err)
       }
     });
   }
@@ -287,10 +287,10 @@ export class RawMaterialProductsComponent implements OnDestroy {
 
         item.isFavorite = false;
       },
-      error: (err) => console.log(err)
+      // error: (err) => console.log(err)
 
     })
-    console.log(item);
+    // console.log(item);
 
 
 

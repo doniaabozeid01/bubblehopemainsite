@@ -32,7 +32,7 @@ export class FavouritsComponent {
     if (token) {
       this.apiService.GetUserId().subscribe({
         next: (response) => {
-          console.log(response);
+          // console.log(response);
 
           this.usreId = response.userId;
           this.GetProductFavouriteByUserId(this.usreId, this.branchId);
@@ -71,7 +71,7 @@ export class FavouritsComponent {
               this.GetProductFavouriteByUserId(this.usreId, branchId);
             }
           });
-          console.log(err);
+          // console.log(err);
         }
       });
     }
@@ -89,15 +89,15 @@ export class FavouritsComponent {
 
 
   GetProductFavouriteByUserId(usreId: string, branchId: number) {
-    console.log("br  : ", branchId);
+    // console.log("br  : ", branchId);
 
     this.apiService.GetProductFavouriteByUserId(usreId, branchId).subscribe({
       next: (response) => {
-        console.log(response);
+        // console.log(response);
         this.wishlist = response;
       },
       error: (err) => {
-        console.log(err);
+        // console.log(err);
 
       }
     })
@@ -153,13 +153,13 @@ export class FavouritsComponent {
 
     this.apiService.removeFromFavourite(item.productId, this.branchId, this.usreId).subscribe({
       next: (response) => {
-        console.log(response);
+        // console.log(response);
         this.wishlist = response.data;
         // this.GetProductFavouriteByUserId(this.usreId, this.branchId);
         this.toastr.success("Product removed from your wishlist.");
 
       },
-      error: (err) => console.log(err)
+      // error: (err) => console.log(err)
     });
   }
 

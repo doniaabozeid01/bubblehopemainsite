@@ -47,8 +47,8 @@ export class CartComponent {
         next: (res) => {
           this.userId = typeof res === 'string' ? res : res?.userId;
           if (this.userId) {
-            console.log('hi');
-            console.log(res);
+            // console.log('hi');
+            // console.log(res);
 
             const initialBranchId = Number(
               this.branchService.getCurrentBranch()
@@ -128,12 +128,12 @@ export class CartComponent {
   // }
 
   getCart(branchId: number, userId: string) {
-    console.log('hello');
+    // console.log('hello');
 
     this.apiService.GetCartByUserIdAndBranchId(userId, branchId).subscribe({
       next: (res: any) => {
         this.cart = res;
-        console.log('✅ cart loaded:', this.cart);
+        // console.log('✅ cart loaded:', this.cart);
 
         // ✅ 1) هاتي الـ items من أي شكل (جرّبت أكتر من احتمال)
         const items =

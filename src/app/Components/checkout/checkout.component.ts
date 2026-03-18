@@ -102,7 +102,7 @@ export class CheckoutComponent implements OnInit {
   getCartId(userId: string, branchId: number) {
     this.api.GetCartByUserIdAndBranchId(userId, branchId).subscribe({
       next: (res) => {
-        console.log(res);
+        // console.log(res);
         this.cartId = res.id;
         this.cartItems = res.cartItems;
         this.totalamount = res.totalAmount;
@@ -170,15 +170,18 @@ export class CheckoutComponent implements OnInit {
     this.loading = true;
 
     const request = {
-      userId: this.userId,
       addressId: this.orderForm.value.addressId,
       paymentMethodId: this.orderForm.value.paymentMethodId,
       code: this.orderForm.value.code,
       source: 1
     };
+    // console.log(request);
+    
 
     this.api.CreateOrderPaymob(request).subscribe({
       next: (res) => {
+        // console.log(res);
+        
         this.loading = false;
 
         if (res?.checkoutUrl) {
@@ -195,6 +198,8 @@ export class CheckoutComponent implements OnInit {
       },
       error: (err) => {
         this.loading = false;
+        // console.log(err);
+        
         this.toastr.error(
           err.error?.message || 'Something went wrong'
         );
@@ -214,7 +219,7 @@ export class CheckoutComponent implements OnInit {
       userId: this.userId
     }).subscribe({
       next: (res) => {
-        console.log(res);
+        // console.log(res);
         if (res?.success && !this.applydiscount) {
           this.discountRatio = res.discountValue;
           this.totalamount -= this.totalamount * (this.discountRatio / 100);
@@ -229,7 +234,7 @@ export class CheckoutComponent implements OnInit {
         }
       },
       error: (err) => {
-        console.log(err);
+        // console.log(err);
 
         this.discountError = err.error?.message || 'Invalid code';
       }

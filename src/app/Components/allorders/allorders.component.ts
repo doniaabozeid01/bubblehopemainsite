@@ -20,7 +20,7 @@ export class AllordersComponent {
   ngOnInit() {
     this.api.GetUserId().subscribe({
       next: (res) => {
-        console.log(res);
+        // console.log(res);
         
         this.seoService.updateTitleAndDescription(
           `Orders | Bubble Hope`,
@@ -35,19 +35,19 @@ export class AllordersComponent {
 
         this.api.getOrdersByUserId(res.userId).subscribe({
           next: (response) => {
-            console.log(response);
+            // console.log(response);
             
             this.orders = response.sort((a: any, b: any) => b.orderId - a.orderId);
           },
           error: (err) => {
-            console.log(err);
+            // console.log(err);
             this.orders = [];
           }
         });
       },
       error: (err) => {
         this.isLoggedIn = false;
-        console.log("User not logged in:", err);
+        // console.log("User not logged in:", err);
       }
     });
   }

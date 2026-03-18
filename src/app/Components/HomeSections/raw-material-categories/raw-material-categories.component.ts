@@ -34,12 +34,12 @@ export class RawMaterialCategoriesComponent {
     ngOnInit(){
     this.api.getAllCategories(this.api.rawMaterials).subscribe({
       next:(res)=>{
-        console.log(res);
+        // console.log(res);
         this.RawMaterialcategories = res;
         
       },
       error:(err)=>{
-        console.log(err);
+        // console.log(err);
         
       }
 

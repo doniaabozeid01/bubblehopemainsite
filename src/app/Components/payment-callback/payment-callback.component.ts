@@ -111,9 +111,9 @@ export class PaymentCallbackComponent implements OnInit {
       const success = (params.get('success') ?? '').toLowerCase() === 'true';
       const pending = (params.get('pending') ?? '').toLowerCase() === 'true';
 
-      console.log(id);
-      console.log(success);
-      console.log(pending);
+      // console.log(id);
+      // console.log(success);
+      // console.log(pending);
 
 
       if(success){

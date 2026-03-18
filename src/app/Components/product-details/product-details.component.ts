@@ -45,13 +45,13 @@ export class ProductDetailsComponent {
     if (token) {
       this.api.GetUserId().subscribe({
         next: (r) => {
-          console.log(r);
+          // console.log(r);
 
           this.usreId = r.userId;
-          console.log(this.usreId);
+          // console.log(this.usreId);
         },
         error: (err) => {
-          console.log(err);
+          // console.log(err);
         },
       });
     }
@@ -67,7 +67,7 @@ export class ProductDetailsComponent {
       }
 
       if (!name || !this.branchId) {
-        console.log('no name or branchId'); // هنا مش هتدخلي بعد التصليح
+        // console.log('no name or branchId'); // هنا مش هتدخلي بعد التصليح
         return;
       }
 
@@ -93,7 +93,7 @@ export class ProductDetailsComponent {
 
     this.api.GetProductByName(name, this.branchId).subscribe({
       next: (response) => {
-        console.log(response);
+        // console.log(response);
 
         this.product = response;
 
@@ -126,7 +126,7 @@ export class ProductDetailsComponent {
         }
       },
       error: (err) => {
-        console.log('Error loading product:', err);
+        // console.log('Error loading product:', err);
       },
     });
   }
@@ -169,7 +169,7 @@ export class ProductDetailsComponent {
       optionIds: selectedOptions.map((o) => o.optionId), // [1918, 1454, ...]
     };
 
-    console.log(payload);
+    // console.log(payload);
 
     const token = localStorage.getItem('token');
     if (!token) {
@@ -223,7 +223,7 @@ export class ProductDetailsComponent {
       branchId: this.branchId,
     };
 
-    console.log(data);
+    // console.log(data);
 
     if (product.isFavourite) {
       this.api
@@ -245,7 +245,7 @@ export class ProductDetailsComponent {
                 this.toastr.success('Product removed from your wishlist.');
                 product.isFavourite = false;
               },
-              error: (err) => console.log(err),
+              // error: (err) => console.log(err),
             });
         });
     } else {
@@ -254,7 +254,7 @@ export class ProductDetailsComponent {
           this.toastr.success('Product Saved to your wishlist!');
           product.isFavourite = true;
         },
-        error: (err) => console.log(err),
+        // error: (err) => console.log(err),
       });
     }
   }

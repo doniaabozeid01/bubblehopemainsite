@@ -64,7 +64,7 @@ export class TestLoginComponent {
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (res) => {
-          console.log(res);
+          // console.log(res);
           
           this.authService.signIn({ fullName: res.fullName, email: res.email });
 

@@ -40,7 +40,7 @@ export class ContactComponent {
 
   submit() {
     if (this.contactForm.invalid) {
-      console.log(this.contactForm);
+      // console.log(this.contactForm);
       return;
     }
 

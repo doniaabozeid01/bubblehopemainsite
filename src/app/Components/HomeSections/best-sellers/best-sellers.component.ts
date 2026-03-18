@@ -59,12 +59,12 @@ export class BestSellersComponent {
     if (token) {
       this.api.GetUserId().subscribe({
         next: (response) => {
-          console.log(response);
+          // console.log(response);
 
           this.userId = response.userId;
           this.api.GetUserBranch(response.userId).subscribe({
             next: (res) => {
-              console.log(res);
+              // console.log(res);
 
               this.GetBestSellerProducts(res.id, this.userId);
 
@@ -88,7 +88,7 @@ export class BestSellersComponent {
 
           this.api.GetDefaultBranch().subscribe({
             next: (res) => {
-              console.log(res);
+              // console.log(res);
 
               this.GetBestSellerProducts(res.id);
             },
@@ -110,7 +110,7 @@ export class BestSellersComponent {
       this.api.GetDefaultBranch().subscribe({
         next: (res) => {
           this.GetBestSellerProducts(res.id);
-          console.log(res);
+          // console.log(res);
 
         },
         error: () => {
@@ -146,7 +146,7 @@ export class BestSellersComponent {
   GetBestSellerProducts(branchId: number, userId?: string) {
     this.api.GetBestSellerProducts(branchId, userId).subscribe({
       next: (products) => {
-        console.log(products);
+        // console.log(products);
 
         this.bestSellerProducts = products
       },
@@ -183,7 +183,7 @@ export class BestSellersComponent {
 
 
 
-    console.log(data);
+    // console.log(data);
 
     const dataToAdded = {
       quantity: 1,
@@ -191,17 +191,17 @@ export class BestSellersComponent {
       branchId: this.branchId,
       userId: this.userId,
     };
-    console.log(dataToAdded);
+    // console.log(dataToAdded);
 
 
     this.api.addToCart(dataToAdded).subscribe({
       next: (response) => {
         this.toastr.success("Great choice! It's now in your cart.");
 
-        console.log("add to cart", response);
+        // console.log("add to cart", response);
       },
       error: (err) => {
-        console.log(err);
+        // console.log(err);
       }
     });
 
@@ -230,7 +230,7 @@ export class BestSellersComponent {
         item.isFavorite = true;
       },
       error: (err) => {
-        console.log(err)
+        // console.log(err)
       }
     });
   }
@@ -253,7 +253,7 @@ export class BestSellersComponent {
 
         item.isFavorite = false;
       },
-      error: (err) => console.log(err)
+      // error: (err) => console.log(err)
     });
 
 

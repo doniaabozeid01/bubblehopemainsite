@@ -73,7 +73,7 @@ ngOnInit() {
         bgColor: myOldColors[index % myOldColors.length]
       }));
     },
-    error: (err) => console.log(err)
+    // error: (err) => console.log(err)
   });
 }
 

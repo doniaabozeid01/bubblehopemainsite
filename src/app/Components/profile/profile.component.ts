@@ -51,7 +51,7 @@ export class ProfileComponent implements OnInit {
   loadCountries() {
     this.addrService.getAllCountries().subscribe({
       next: (res) => {
-        console.log(res);
+        // console.log(res);
 
         this.countries = res;
       },
@@ -144,7 +144,7 @@ export class ProfileComponent implements OnInit {
     this.accountService.getUserDetails(this.userId).subscribe({
       next: (res) => {
         this.user = res;
-        console.log("load : ", res);
+        // console.log("load : ", res);
 
         this.profileForm.patchValue({
           name: res.name,
@@ -177,18 +177,18 @@ export class ProfileComponent implements OnInit {
       phoneNumber: this.profileForm.getRawValue().phoneNumber,
     };
 
-    console.log(this.profileForm.getRawValue());
+    // console.log(this.profileForm.getRawValue());
 
 
     this.accountService.updateProfile(payload).subscribe({
       next: (res) => {
-        console.log(res);
+        // console.log(res);
         this.actionLoading = false;
         this.editing = false;
         this.load();
       },
       error: (err) => {
-        console.log(err);
+        // console.log(err);
         this.actionLoading = false;
       },
     });
@@ -235,12 +235,12 @@ export class ProfileComponent implements OnInit {
 
     this.accountService.addAddress(payload).subscribe({
       next: (res) => {
-        console.log("payload : ",payload);
+        // console.log("payload : ",payload);
         
         this.actionLoading = false;
         this.closeAddAddress();
         this.load();
-        console.log("res : ", res);
+        // console.log("res : ", res);
         
       },
       error: () => (this.actionLoading = false),
@@ -262,13 +262,13 @@ export class ProfileComponent implements OnInit {
     this.actionLoading = true;
     this.accountService.setDefaultAddress(addrId).subscribe({
       next: (res) => {
-        console.log(res);
+        // console.log(res);
 
         this.actionLoading = false;
         this.load();
       },
       error: (err) => {
-        console.log(err);
+        // console.log(err);
 
         this.actionLoading = false
       },

@@ -63,10 +63,10 @@ export class ChangePasswordComponent {
     this.loading = true;
     this.apiService.GetUserId().subscribe({
       next: (res) => {
-        console.log("res 1 => ", res);
+        // console.log("res 1 => ", res);
         this.authService.getUserDetails(res.userId).subscribe({
           next: (response) => {
-            console.log("res 2 => ", response);
+            // console.log("res 2 => ", response);
             const body = {
               email: response.email,
               oldPassword: oldpassword,

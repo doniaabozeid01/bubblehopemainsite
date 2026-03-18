@@ -42,7 +42,7 @@ export class NavbarComponent {
 
     this.authService.currentUser$.subscribe((u) => {
       this.user = u;
-      console.log('user', this.user);
+      // console.log('user', this.user);
     });
     this.cartCountService.cartCount$.subscribe((c) => (this.cartCount = c));
 
@@ -101,7 +101,7 @@ export class NavbarComponent {
 
     this.apiService.getAllBranches().subscribe({
       next: (data) => {
-        console.log(data);
+        // console.log(data);
 
         this.branches = data;
       },
@@ -228,7 +228,7 @@ export class NavbarComponent {
     if (token) {
       this.apiService.GetUserId().subscribe({
         next: (res) => {
-          console.log(res);
+          // console.log(res);
           this.userId = res.userId;
 
           const data = {
@@ -236,18 +236,18 @@ export class NavbarComponent {
             newBranchId: branchId,
           };
 
-          console.log(data);
+          // console.log(data);
 
           this.apiService.switchBranch(data).subscribe({
             next: (response) => {
               this.toastr.success('Branch Swiched Successfully.');
 
-              console.log('response : ', response);
+              // console.log('response : ', response);
               this.branchService.setBranch(branchId);
             },
             error: (err) => {
-              console.log(err);
-              console.log('err : ', err);
+              // console.log(err);
+              // console.log('err : ', err);
               this.toastr.success(err.error.message);
             },
           });
@@ -267,7 +267,7 @@ export class NavbarComponent {
     if (userId) {
       this.apiService.GetUserBranch(userId).subscribe({
         next: (response) => {
-          console.log('branch : ', response);
+          // console.log('branch : ', response);
           this.branchId = response.id;
           localStorage.setItem('br', response.id);
 
@@ -276,23 +276,23 @@ export class NavbarComponent {
           }
         },
         error: (err) => {
-          console.log(err);
+          // console.log(err);
         },
       });
     } else {
-      console.log(userId);
+      // console.log(userId);
     }
   }
 
   GetDefaultBranch() {
     this.apiService.GetDefaultBranch().subscribe({
       next: (response) => {
-        console.log('Default Branch : ', response);
+        // console.log('Default Branch : ', response);
         this.branchId = response.id;
         localStorage.setItem('br', response.id);
       },
       error: (err) => {
-        console.log(err);
+        // console.log(err);
       },
     });
   }
@@ -331,7 +331,7 @@ export class NavbarComponent {
     this.api.getAllBranches().subscribe({
       next: (data) => {
         this.branches = data; // تخزين الفروع لعرضها
-        console.log(data);
+        // console.log(data);
         const savedBranchId = this.branchService.getCurrentBranch();
         if (!savedBranchId) {
           this.branchService.openModal(); // تظهر أول ما الصفحة تحمل لو مفيش فرع

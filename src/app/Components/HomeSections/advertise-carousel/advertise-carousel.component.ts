@@ -27,7 +27,7 @@ export class AdvertiseCarouselComponent {
   ngOnInit() {
     this.api.GetAllAdvertisements().subscribe({
       next: (res) => {
-        console.log(res);
+        // console.log(res);
 
         // ضمان أن اللي بيتحط Array
         const arr = Array.isArray(res) ? res : (res?.data || res?.result || []);

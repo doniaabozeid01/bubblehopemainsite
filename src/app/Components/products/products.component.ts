@@ -96,7 +96,7 @@ export class ProductsComponent {
   loadProducts(branchId: number) {
     this.route.paramMap.subscribe(params => {
       const categoryId = params.get('id');
-      console.log('📦 Loading products for branch:', branchId, 'category:', categoryId);
+      // console.log('📦 Loading products for branch:', branchId, 'category:', categoryId);
 
       if (categoryId) {
         this.full = false;
@@ -110,11 +110,11 @@ export class ProductsComponent {
 
 
   selectIdFromPathIfExist(branchId: number) {
-    console.log("1", branchId);
+    // console.log("1", branchId);
 
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
-      console.log("id : ", id);
+      // console.log("id : ", id);
       if (id) {
         this.full = false;
         this.GetAllProductsByCategoryId(branchId, Number(id), this.userId);
@@ -128,12 +128,12 @@ export class ProductsComponent {
   GetDefaultBranch() {
     this.apiService.GetDefaultBranch().subscribe({
       next: (response) => {
-        console.log("Default Branch : ", response);
+        // console.log("Default Branch : ", response);
         this.branchId = response.id;
         this.selectIdFromPathIfExist(this.branchId);
       },
       error: (err) => {
-        console.log(err);
+        // console.log(err);
       }
     })
 
@@ -146,10 +146,10 @@ export class ProductsComponent {
 
     this.apiService.GetAllProducts(Number(branchID), userId, groupCategoryId).subscribe({
       next: (productsResponse) => {
-        console.log(productsResponse);
+        // console.log(productsResponse);
         this.products = productsResponse;
       },
-      error: (err) => console.log(err)
+      // error: (err) => console.log(err)
     });
   }
 
@@ -159,15 +159,15 @@ export class ProductsComponent {
 
   GetAllProductsByCategoryId(branchID: number, categoryId?: number, userId?: string, groupCategoryId?: number) {
 
-    console.log("branch : ", branchID);
+    // console.log("branch : ", branchID);
 
     this.apiService.GetAllProductsByCategoryId(Number(branchID), {categoryId, userId, groupCategoryId} ).subscribe({
       next: (productsResponse) => {
-        console.log(productsResponse);
+        // console.log(productsResponse);
         this.products = productsResponse;
 
       },
-      error: (err) => console.log(err)
+      // error: (err) => console.log(err)
     });
   }
 
@@ -198,7 +198,7 @@ export class ProductsComponent {
       error: (err) => {
         this.toastr.warning(err.error.message);
 
-        console.log(err);
+        // console.log(err);
       }
     });
 
@@ -228,13 +228,13 @@ export class ProductsComponent {
         item.isFavorite = true;
       },
       error: (err) => {
-        console.log(err)
+        // console.log(err)
       }
     });
   }
 
   removeFromFavourite(item: any) {
-    console.log(item);
+    // console.log(item);
 
     const token = localStorage.getItem('token');
     if (!token) {
@@ -251,10 +251,10 @@ export class ProductsComponent {
 
         item.isFavorite = false;
       },
-      error: (err) => console.log(err)
+      // error: (err) => console.log(err)
     });
 
-    console.log(item);
+    // console.log(item);
 
 
 
