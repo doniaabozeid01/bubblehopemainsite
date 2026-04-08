@@ -23,6 +23,9 @@ export class CheckoutComponent implements OnInit {
 
   cartItems: any[] = [];
   totalamount: number = 0;
+  deliveryFee: number = 0;
+  branchId: number | null = null;
+  branches: any[] = [];
 
   addresses: any[] = [];
   paymentMethods: any[] = [];
@@ -77,6 +80,7 @@ export class CheckoutComponent implements OnInit {
     });
 
     this.loadPaymentMethods();
+    this.loadBranches();
 
     this.api.GetUserId().subscribe(res => {
       this.userId = res.userId;
@@ -86,15 +90,51 @@ export class CheckoutComponent implements OnInit {
       const currentBranchId = this.branchService.getCurrentBranch();
 
       if (currentBranchId) {
+        this.branchId = Number(currentBranchId);
+        this.setDeliveryFeeByBranch(this.branchId);
         this.getCartId(this.userId, currentBranchId);
       } else {
 
         this.api.GetUserBranch(this.userId).subscribe(branch => {
+          this.branchId = Number(branch.id);
+          this.setDeliveryFeeByBranch(this.branchId);
           this.getCartId(this.userId, branch.id);
         });
       }
+
+      this.branchService.currentBranch$.subscribe((newBranchId) => {
+        if (!newBranchId || !this.userId) return;
+        if (newBranchId === this.branchId) return;
+
+        this.branchId = newBranchId;
+        this.setDeliveryFeeByBranch(newBranchId);
+        this.getCartId(this.userId, newBranchId);
+      });
     });
 }
+
+  loadBranches() {
+    this.api.getAllBranches().subscribe({
+      next: (res: any[]) => {
+        this.branches = res || [];
+        this.setDeliveryFeeByBranch(this.branchId);
+      },
+      error: () => {
+        this.deliveryFee = 0;
+      }
+    });
+  }
+
+  setDeliveryFeeByBranch(branchId: number | null) {
+    const numericBranchId = Number(branchId);
+    if (!numericBranchId || !this.branches?.length) {
+      this.deliveryFee = 0;
+      return;
+    }
+
+    const currentBranch = this.branches.find((b: any) => b.id === numericBranchId);
+    this.deliveryFee = Number(currentBranch?.deliveryFee ?? 0);
+  }
 
 
 
@@ -111,6 +151,10 @@ export class CheckoutComponent implements OnInit {
         console.error('Error loading cart', err);
       }
     });
+  }
+
+  getFinalTotal() {
+    return this.totalamount + this.deliveryFee;
   }
 
   // =============================

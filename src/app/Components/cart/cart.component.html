@@ -51,6 +51,18 @@
             </span>
 
         </div>
+        <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+            <span class="fs-2 total ">{{"cart.deliveryFee" | translate}}:</span>
+            <span class="fs-2 total ">{{ deliveryFee }} <span>{{ (languageService.languageChanged$ | async)
+                    === 'ar' ? cart?.cartItems[0].currency_ar : cart?.cartItems[0].currency }}</span>
+            </span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center py-3">
+            <span class="fs-2 total ">{{"cart.total" | translate}}: </span>
+            <span class="fs-2 total ">{{ getTotalAfterDeliveryFee() }} <span>{{ (languageService.languageChanged$ | async)
+                    === 'ar' ? cart?.cartItems[0].currency_ar : cart?.cartItems[0].currency }}</span>
+            </span>
+        </div>
 
         <button (click)="goToCheckout()" class="btn my-3 checkout-btn btn-bg-secondcolor2 total fs-4">{{"cart.checkout"
             |
@@ -155,6 +167,18 @@
                     === 'ar' ? cart?.cartItems[0].currency_ar : cart?.cartItems[0].currency }}</span>
             </span>
 
+        </div>
+        <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+            <span class="fs-2 total ">{{"cart.deliveryFee" | translate}}:</span>
+            <span class="fs-2 total ">{{ deliveryFee }} <span>{{ (languageService.languageChanged$ | async)
+                    === 'ar' ? cart?.cartItems[0].currency_ar : cart?.cartItems[0].currency }}</span>
+            </span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center py-3">
+            <span class="fs-2 total ">{{"cart.total" | translate}}: </span>
+            <span class="fs-2 total ">{{ getTotalAfterDeliveryFee() }} <span>{{ (languageService.languageChanged$ | async)
+                    === 'ar' ? cart?.cartItems[0].currency_ar : cart?.cartItems[0].currency }}</span>
+            </span>
         </div>
 
         <button (click)="goToCheckout()" class="btn my-2 checkout-btn btn-bg-secondcolor2 total fs-5">{{"cart.checkout"

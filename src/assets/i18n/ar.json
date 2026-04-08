@@ -101,6 +101,7 @@
         "total": "الإجمالي",
         "subtotal": "الإجمالي الفرعي",
         "fees": "الرسوم",
+        "deliveryFee": "رسوم التوصيل",
         "yourcart": "سلة مشترياتك",
         "size": "الحجم",
         "addToWishlist": "أضف الي المفضلة",
@@ -121,7 +122,8 @@
         "Date": "التاريخ",
         "price": "السعر",
         "count": "الكمية",
-        "totalAmount": "السعر الكلي"
+        "totalAmount": "السعر بدون توصيل",
+        "deliveryFee": "رسوم التوصيل"
     },
     "delivery": {
         "deliveryInformation": "معلومات التوصيل",

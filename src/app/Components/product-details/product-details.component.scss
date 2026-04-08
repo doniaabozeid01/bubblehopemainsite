@@ -476,3 +476,9 @@ h4.error,
   right: 0%;
   z-index: -1;
 }
+
+/* Keep circle placement consistent in RTL and LTR */
+:host-context([dir='rtl']) .big-circle-disktop {
+  right: auto;
+  left: 0%;
+}

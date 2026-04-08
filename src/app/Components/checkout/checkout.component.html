@@ -89,6 +89,18 @@
                     cartItems[0].currency_ar :
                     cartItems[0].currency }}</span>
             </div>
+            <div class="summary-total" *ngIf="cartItems.length">
+                <span>{{ 'cart.deliveryFee' | translate }}</span>
+                <span>{{ deliveryFee }} {{ (languageService.languageChanged$ | async) === 'ar' ?
+                    cartItems[0].currency_ar :
+                    cartItems[0].currency }}</span>
+            </div>
+            <div class="summary-total" *ngIf="cartItems.length">
+                <span>{{ 'cart.total' | translate }}</span>
+                <span>{{ getFinalTotal() }} {{ (languageService.languageChanged$ | async) === 'ar' ?
+                    cartItems[0].currency_ar :
+                    cartItems[0].currency }}</span>
+            </div>
         </div>
     </div>
 </div>

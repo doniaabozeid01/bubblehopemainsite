@@ -92,4 +92,12 @@ export class AllordersComponent {
   scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
+  getDeliveryFee(order: any): number {
+    return Number(order?.deliveryFee ?? 0);
+  }
+
+  getTotalAfterDelivery(order: any): number {
+    return Number(order?.totalAmount ?? 0) + this.getDeliveryFee(order);
+  }
 }

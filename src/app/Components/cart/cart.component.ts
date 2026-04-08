@@ -21,6 +21,8 @@ export class CartComponent {
   cart: any = null;
   userId: string = '';
   branchId!: any;
+  branches: any[] = [];
+  deliveryFee: number = 0;
 
   constructor(
     private http: HttpClient,
@@ -40,6 +42,7 @@ export class CartComponent {
       (e) => (this.isRtl = e.lang.startsWith('ar'))
     );
     this.branchId = localStorage.getItem('br');
+    this.loadBranches();
 
     const token = localStorage.getItem('token');
     if (token) {
@@ -55,12 +58,14 @@ export class CartComponent {
             );
             if (initialBranchId) {
               this.branchId = initialBranchId;
+              this.setDeliveryFeeByBranch(this.branchId);
               this.getCart(this.branchId, this.userId);
             }
 
             this.branchService.currentBranch$.subscribe((branchId) => {
               if (branchId && branchId !== this.branchId) {
                 this.branchId = branchId;
+                this.setDeliveryFeeByBranch(branchId);
                 this.getCart(branchId, this.userId);
               }
             });
@@ -76,12 +81,14 @@ export class CartComponent {
           const initialBranchId = Number(this.branchService.getCurrentBranch());
           if (initialBranchId) {
             this.branchId = initialBranchId;
+            this.setDeliveryFeeByBranch(this.branchId);
             this.getCart(this.branchId, this.userId);
           }
 
           this.branchService.currentBranch$.subscribe((branchId) => {
             if (branchId && branchId !== this.branchId) {
               this.branchId = branchId;
+              this.setDeliveryFeeByBranch(branchId);
               this.getCart(branchId, this.userId);
             }
           });
@@ -103,6 +110,29 @@ export class CartComponent {
     //     this.getCart();
     //   }
     // });
+  }
+
+  loadBranches() {
+    this.apiService.getAllBranches().subscribe({
+      next: (res: any[]) => {
+        this.branches = res || [];
+        this.setDeliveryFeeByBranch(this.branchId);
+      },
+      error: () => {
+        this.deliveryFee = 0;
+      },
+    });
+  }
+
+  setDeliveryFeeByBranch(branchId: number) {
+    const numericBranchId = Number(branchId);
+    if (!numericBranchId || !this.branches?.length) {
+      this.deliveryFee = 0;
+      return;
+    }
+
+    const currentBranch = this.branches.find((b: any) => b.id === numericBranchId);
+    this.deliveryFee = Number(currentBranch?.deliveryFee ?? 0);
   }
 
   // getCart(branchId: number, userId: string) {
@@ -281,6 +311,10 @@ export class CartComponent {
         0
       ) || 0
     );
+  }
+
+  getTotalAfterDeliveryFee() {
+    return this.getSubtotal() + this.deliveryFee;
   }
 
   // getTax() {

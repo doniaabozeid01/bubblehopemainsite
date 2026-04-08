@@ -101,6 +101,7 @@
         "total": "Total",
         "subtotal": "Subtotal",
         "fees": "Fees",
+        "deliveryFee": "Delivery Fee",
         "yourcart": "Your Cart",
         "size": "Size",
         "addToWishlist": "Add To Wishlist",
@@ -121,7 +122,8 @@
         "Date": "Date",
         "price": "Price",
         "count": "Count",
-        "totalAmount": "Total Amount"
+        "totalAmount": "Sub Total",
+        "deliveryFee": "Delivery Fee"
     },
     "delivery": {
         "deliveryInformation": "Delivery Information",
