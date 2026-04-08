@@ -59,6 +59,20 @@ export class TestLoginComponent {
 
     const loginData = this.loginForm.value;
     this.loading = true;
+    8
+    8
+    8
+    8
+    8
+    8
+    8
+    8
+    8
+    8
+    8
+    8
+    8
+    8         
 
     this.authService.login(loginData)
       .pipe(finalize(() => (this.loading = false)))
