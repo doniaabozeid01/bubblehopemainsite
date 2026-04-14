@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 
 export interface Address {
@@ -29,7 +30,7 @@ export interface UserDetails {
 })
 export class ProfileComponent implements OnInit {
   
-  userId = 'ab8107af-9f83-4445-b16c-e75e48e6f7bb';
+  userId = '';
   user!: UserDetails;
   loading = true;
   countries: any[] = [];
@@ -46,7 +47,7 @@ export class ProfileComponent implements OnInit {
 
   showAddAddress = false;
 
-  constructor(private accountService: ApiService, private addrService: ApiService) { }
+  constructor(private accountService: ApiService, private addrService: ApiService, private router: Router) { }
 
   loadCountries() {
     this.addrService.getAllCountries().subscribe({
@@ -81,7 +82,27 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     this.loadCountries();
     this.setupCascading();
-    this.load();
+    this.resolveUserAndLoad();
+  }
+
+  resolveUserAndLoad() {
+    this.loading = true;
+    this.accountService.GetUserId().subscribe({
+      next: (res) => {
+        const id = typeof res === 'string' ? res : res?.userId;
+        if (!id) {
+          this.loading = false;
+          this.router.navigate(['/home']);
+          return;
+        }
+        this.userId = id;
+        this.load();
+      },
+      error: () => {
+        this.loading = false;
+        this.router.navigate(['/home']);
+      }
+    });
   }
 
   setupCascading() {

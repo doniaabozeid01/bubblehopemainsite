@@ -216,11 +216,8 @@ export class NavbarComponent {
 
   logout() {
     this.authService.logout();
-
-    const token = localStorage.getItem('token');
-    if (token) {
-      localStorage.removeItem('token');
-    }
+    this.cartCountService.setCount(0);
+    this.router.navigate(['/home']);
   }
 
   switchBranch(branchId: number) {

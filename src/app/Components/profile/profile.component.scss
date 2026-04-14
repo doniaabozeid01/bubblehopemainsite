@@ -44,10 +44,25 @@
   position: relative;
 }
 
+.address-card .top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+.address-card .line {
+  flex: 1;
+  line-height: 1.7;
+}
+
 .badge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
+  position: static;
+  white-space: nowrap;
+  display: inline-block;
+  min-width: 72px;
+  text-align: center;
+  margin-left: auto;
   background: #ff6a2a;
   color: #fff;
   font-size: 12px;
@@ -108,6 +123,7 @@
   display: flex;
   gap: 10px;
   margin-top: 12px;
+  flex-wrap: wrap;
 }
 
 .input {
@@ -353,4 +369,21 @@ select.input {
 .modal-card .grid2 + .grid3,
 .modal-card .grid3 + .input {
   margin-top: 10px;
+}
+
+/* Better RTL layout for Arabic profile page */
+:host-context([dir='rtl']) .profile,
+:host-context([dir='rtl']) .address-card,
+:host-context([dir='rtl']) .addr-head,
+:host-context([dir='rtl']) .header {
+  text-align: right;
+}
+
+:host-context([dir='rtl']) .addr-actions {
+  justify-content: flex-start;
+}
+
+:host-context([dir='rtl']) .badge {
+  margin-left: 0;
+  margin-right: auto;
 }

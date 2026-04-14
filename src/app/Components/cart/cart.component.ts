@@ -95,7 +95,7 @@ export class CartComponent {
         },
       });
     } else {
-      this.route.navigate(['/auth/login']);
+      this.route.navigate(['/home']);
     }
 
     // const initialBranchId = Number(this.branchService.getCurrentBranch());

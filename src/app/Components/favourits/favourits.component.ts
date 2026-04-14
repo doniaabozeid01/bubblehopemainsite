@@ -78,7 +78,7 @@ export class FavouritsComponent {
 
 
     else {
-      this.router.navigate(['/auth/login'])
+      this.router.navigate(['/home'])
     }
   }
 
@@ -145,9 +145,7 @@ export class FavouritsComponent {
 
     const token = localStorage.getItem('token');
     if (!token) {
-      this.router.navigate(['/auth/login'], {
-        queryParams: { returnUrl: this.router.url }
-      });
+      this.router.navigate(['/home']);
       return;
     }
 
