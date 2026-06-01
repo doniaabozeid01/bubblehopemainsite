@@ -1,0 +1,326 @@
+<div class="kids-page" dir="ltr">
+
+  <!-- ===================== HERO ===================== -->
+  <section class="kids-hero">
+
+    <!-- Left: colorful play-wall media panel -->
+    <div class="kids-hero__media">
+      <div class="kids-hero__holds" aria-hidden="true">
+        <span class="hold hold--1"></span>
+        <span class="hold hold--2"></span>
+        <span class="hold hold--3"></span>
+        <span class="hold hold--4"></span>
+        <span class="hold hold--5"></span>
+        <span class="hold hold--6"></span>
+        <span class="hold hold--7"></span>
+      </div>
+
+      <div class="kids-hero__badge">
+        <span class="kids-hero__badge-title">AGES 2–12</span>
+        <span class="kids-hero__badge-sub">Open daily · 10 AM – 9 PM</span>
+      </div>
+
+      <div class="kids-hero__content">
+        <span class="kids-eyebrow kids-eyebrow--light">— BUBBLE HOPE KIDS AREA</span>
+        <h1 class="kids-hero__title">
+          Where kids thrive
+          <span class="accent">and parents</span>
+          breathe easy.
+        </h1>
+        <p class="kids-hero__lead">
+          A safe, fun and inspiring space where children play freely
+          while parents relax with premium bubble tea.
+        </p>
+
+        <div class="kids-hero__stats">
+          <div class="stat">
+            <span class="stat__num">500+</span>
+            <span class="stat__label">Happy families</span>
+          </div>
+          <div class="stat">
+            <span class="stat__num">4.9</span>
+            <span class="stat__label">Parent rating</span>
+          </div>
+          <div class="stat">
+            <span class="stat__num">8</span>
+            <span class="stat__label">Play zones</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: registration form -->
+    <div class="kids-hero__panel" id="kids-register">
+      <span class="kids-eyebrow">— RESERVE A SPOT</span>
+      <h2 class="kids-panel__title">
+        Register your
+        <span class="accent">little one</span>
+      </h2>
+      <p class="kids-panel__sub">
+        Fill in the details below and we'll confirm via SMS within 1 hour.
+      </p>
+
+      <form class="kids-form" (ngSubmit)="submitRegistration()" #regForm="ngForm">
+
+        <p class="kids-form__group-title">CHILD'S INFO</p>
+        <div class="kids-form__row">
+          <div class="kids-field">
+            <label>FULL NAME</label>
+            <input type="text" name="childName" placeholder="Child's name"
+                   [(ngModel)]="registration.childName" required />
+          </div>
+          <div class="kids-field kids-field--sm">
+            <label>AGE</label>
+            <select name="childAge" [(ngModel)]="registration.childAge" required>
+              <option value="" disabled selected>Select</option>
+              <option *ngFor="let a of ages" [value]="a">{{ a }} years</option>
+            </select>
+          </div>
+        </div>
+
+        <p class="kids-form__group-title">PARENT'S INFO</p>
+        <div class="kids-form__row">
+          <div class="kids-field">
+            <label>PARENT NAME</label>
+            <input type="text" name="parentName" placeholder="Your name"
+                   [(ngModel)]="registration.parentName" required />
+          </div>
+          <div class="kids-field">
+            <label>PHONE</label>
+            <input type="tel" name="phone" placeholder="+20 1XX"
+                   [(ngModel)]="registration.phone" required />
+          </div>
+        </div>
+        <div class="kids-form__row">
+          <div class="kids-field">
+            <label>EMERGENCY CONTACT</label>
+            <input type="text" name="emergencyContact" placeholder="Name & number"
+                   [(ngModel)]="registration.emergencyContact" />
+          </div>
+          <div class="kids-field">
+            <label>ALLERGIES / NOTES</label>
+            <input type="text" name="allergies" placeholder="None"
+                   [(ngModel)]="registration.allergies" />
+          </div>
+        </div>
+
+        <p class="kids-form__group-title">VISIT DETAILS</p>
+        <div class="kids-form__row">
+          <div class="kids-field">
+            <label>VISIT DATE</label>
+            <input type="date" name="visitDate" [(ngModel)]="registration.visitDate" />
+          </div>
+          <div class="kids-field">
+            <label>DURATION</label>
+            <select name="duration" [(ngModel)]="registration.duration">
+              <option value="" disabled selected>Select</option>
+              <option value="1h">1 hour</option>
+              <option value="2h">2 hours</option>
+              <option value="half">Half day</option>
+              <option value="full">Full day</option>
+            </select>
+          </div>
+        </div>
+
+        <label class="kids-check">
+          <input type="checkbox" name="agreed" [(ngModel)]="registration.agreed" />
+          <span>I agree to the Bubble Hope Kids Area safety rules and consent to
+            CCTV monitoring during the visit.</span>
+        </label>
+
+        <button type="submit" class="kids-submit">Complete Registration</button>
+        <p class="kids-form__note">Secure · Confirmed via SMS · Never shared</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===================== ACTIVITIES (BENTO) ===================== -->
+  <section class="kids-activities">
+    <div class="kids-activities__head">
+      <div>
+        <span class="kids-eyebrow">— SIX CURATED EXPERIENCES</span>
+        <h2 class="kids-activities__title">
+          A world of activities
+          <span class="accent-blue">for every child</span>
+        </h2>
+      </div>
+      <p class="kids-activities__desc">
+        From energetic play to quiet creativity — every zone is thoughtfully
+        designed for children aged 2 to 12.
+      </p>
+    </div>
+
+    <div class="kids-bento">
+      <article class="bento bento--play">
+        <i class="bi bi-balloon-heart bento__watermark"></i>
+        <div class="bento__body">
+          <h3>Play Zone</h3>
+          <span class="bento__caption">Ball pit · Slides · Tunnels</span>
+        </div>
+      </article>
+
+      <article class="bento bento--cinema">
+        <i class="bi bi-film bento__watermark"></i>
+        <div class="bento__body">
+          <h3>Mini Cinema</h3>
+          <span class="bento__caption">Disney · Pixar · Bean bags</span>
+        </div>
+      </article>
+
+      <article class="bento bento--games">
+        <i class="bi bi-controller bento__watermark"></i>
+        <div class="bento__body">
+          <h3>Interactive Games</h3>
+          <span class="bento__caption">PS5 · Multiplayer · Age-safe</span>
+        </div>
+      </article>
+
+      <article class="bento bento--draw">
+        <i class="bi bi-palette bento__watermark"></i>
+        <div class="bento__body">
+          <h3>Drawing Corner</h3>
+          <span class="bento__caption">Canvases · Colors · Guided</span>
+        </div>
+      </article>
+
+      <article class="bento bento--lego">
+        <i class="bi bi-bricks bento__watermark"></i>
+        <div class="bento__body">
+          <h3>Building &amp; LEGO</h3>
+          <span class="bento__caption">Creativity · Problem solving</span>
+        </div>
+      </article>
+
+      <article class="bento bento--reading">
+        <i class="bi bi-book bento__watermark"></i>
+        <div class="bento__body">
+          <h3>Reading Nook</h3>
+          <span class="bento__caption">Curated books · Cozy space</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===================== PARENTS LOUNGE ===================== -->
+  <section class="kids-parents">
+    <div class="kids-parents__head">
+      <span class="kids-eyebrow">— FOR THE PARENTS</span>
+      <h2 class="kids-parents__title">
+        Your personal
+        <span class="accent-blue">relaxation zone</span>
+      </h2>
+    </div>
+
+    <div class="kids-parents__grid">
+
+      <!-- Left: lounge media -->
+      <div class="kids-parents__media">
+        <div class="lounge">
+          <i class="bi bi-cup-hot lounge__watermark"></i>
+          <div class="lounge__thumb"><i class="bi bi-images"></i></div>
+        </div>
+
+        <div class="lounge-card">
+          <div class="lounge-card__img">
+            <img src="../../../assets/Drinks 2 (1).png" alt="Premium Bubble Tea" />
+          </div>
+          <div class="lounge-card__text">
+            <strong>Premium Bubble Tea</strong>
+            <span>While kids play, you sip</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: content -->
+      <div class="kids-parents__content">
+        <p class="kids-parents__lead">
+          While your children explore and play, settle into our beautifully
+          designed parent lounge — a modern café space with warm lighting,
+          premium seating, and our full bubble tea menu.
+        </p>
+
+        <span class="kids-eyebrow kids-eyebrow--sm">SIGNATURE DRINKS</span>
+        <div class="drinks">
+          <div class="drink">
+            <strong>Classic Taro</strong>
+            <span class="drink__price">EGP 120</span>
+          </div>
+          <div class="drink">
+            <strong>Mango Passion</strong>
+            <span class="drink__price">EGP 130</span>
+          </div>
+          <div class="drink">
+            <strong>Brown Sugar Latte</strong>
+            <span class="drink__price">EGP 140</span>
+          </div>
+          <div class="drink">
+            <strong>Lychee Green Tea</strong>
+            <span class="drink__price">EGP 110</span>
+          </div>
+        </div>
+
+        <ul class="perks">
+          <li>
+            <i class="bi bi-diamond-fill"></i>
+            <span><strong>Free Wi-Fi</strong> 1 Gbps · Always connected</span>
+          </li>
+          <li>
+            <i class="bi bi-diamond-fill"></i>
+            <span><strong>Kids in View</strong> Glass partition to play zone</span>
+          </li>
+          <li>
+            <i class="bi bi-diamond-fill"></i>
+            <span><strong>Lounge seating</strong> Plush sofas · Quiet ambience</span>
+          </li>
+          <li>
+            <i class="bi bi-diamond-fill"></i>
+            <span><strong>Parent Monitor</strong> Live feed via Bubble Hope app</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== EXPERIENCE ===================== -->
+  <section class="kids-features">
+    <div class="kids-features__head">
+      <span class="kids-eyebrow">— THE EXPERIENCE</span>
+      <h2 class="kids-features__title">Why families love <span class="accent">Bubble Hope Kids Area</span></h2>
+      <p class="kids-features__sub">
+        Everything is designed so kids have the time of their lives while parents truly relax.
+      </p>
+    </div>
+
+    <div class="kids-cards">
+      <article class="kids-card">
+        <div class="kids-card__icon"><i class="bi bi-balloon-heart"></i></div>
+        <h3>Activities</h3>
+        <p>Climbing walls, ball pits, soft play and creative zones to spark every imagination.</p>
+      </article>
+      <article class="kids-card">
+        <div class="kids-card__icon"><i class="bi bi-shield-check"></i></div>
+        <h3>Safety first</h3>
+        <p>CCTV monitored, trained supervisors and sanitized play areas, every single day.</p>
+      </article>
+      <article class="kids-card">
+        <div class="kids-card__icon"><i class="bi bi-stars"></i></div>
+        <h3>8 themed zones</h3>
+        <p>Carefully built play zones tailored for ages 2 to 12, so everyone finds their spot.</p>
+      </article>
+      <article class="kids-card">
+        <div class="kids-card__icon"><i class="bi bi-cup-straw"></i></div>
+        <h3>For parents</h3>
+        <p>Sit back with premium bubble tea and a clear view while your kids play freely.</p>
+      </article>
+    </div>
+
+    <div class="kids-cta">
+      <button class="kids-cta__btn" (click)="scrollToForm()">Reserve your spot</button>
+    </div>
+  </section>
+
+</div>
+
+<button class="kids-scroll-top" *ngIf="showScrollButton" (click)="scrollToTop()" aria-label="Back to top">
+  <i class="fa-solid fa-arrow-up"></i>
+</button>

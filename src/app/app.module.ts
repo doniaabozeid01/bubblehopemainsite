@@ -48,6 +48,8 @@ import { TestLoginComponent } from './Components/test-login/test-login.component
 import { ProfileComponent } from './Components/profile/profile.component';
 import { AdvertisementProductsComponent } from './Components/advertisement-products/advertisement-products.component';
 import { RamadanComponent } from './Components/HomeSections/ramadan/ramadan.component';
+import { KidsAreaComponent } from './Components/kids-area/kids-area.component';
+import { KidsAreaSectionComponent } from './Components/HomeSections/kids-area-section/kids-area-section.component';
 
 
 
@@ -94,7 +96,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     TestLoginComponent,
     ProfileComponent,
     AdvertisementProductsComponent,
-    RamadanComponent
+    RamadanComponent,
+    KidsAreaComponent,
+    KidsAreaSectionComponent
   ],
   imports: [
     BrowserModule,

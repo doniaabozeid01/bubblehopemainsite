@@ -26,6 +26,7 @@ import { PaymentPendingComponent } from './Components/payment-pending/payment-pe
 import { ChangePasswordComponent } from './Components/change-password/change-password.component';
 import { ProfileComponent } from './Components/profile/profile.component';
 import { AdvertisementProductsComponent } from './Components/advertisement-products/advertisement-products.component';
+import { KidsAreaComponent } from './Components/kids-area/kids-area.component';
 
 
 
@@ -49,6 +50,7 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'home', component: HomeComponent },
+      { path: 'kids-area', component: KidsAreaComponent },
       { path: 'advertise', component: AdvertiseCarouselComponent },
       { path: 'main-categories', component: MainCategoriesComponent },
       { path: 'rawMaterial-categories', component: RawMaterialCategoriesComponent },
