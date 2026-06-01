@@ -8,6 +8,10 @@ $muted: #8a8178;
 :host {
   display: block;
   background: $cream;
+  /* اسحب الصفحة لأعلى تحت موجة النافبار حتى يبدو الـ nav واقف على السكشن */
+  margin-top: -44px;
+  position: relative;
+  z-index: 1;
 }
 
 .kids-page {
@@ -48,7 +52,7 @@ $muted: #8a8178;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 48px;
+  padding: 82px 48px 48px;
   color: #fff;
   background:
     linear-gradient(180deg, rgba(20, 12, 6, 0) 30%, rgba(20, 12, 6, 0.85) 100%),
@@ -86,7 +90,7 @@ $muted: #8a8178;
 
 .kids-hero__badge {
   position: absolute;
-  top: 36px;
+  top: 64px;
   left: 36px;
   z-index: 2;
   display: flex;
@@ -157,7 +161,7 @@ $muted: #8a8178;
 /* Right registration panel */
 .kids-hero__panel {
   background: $cream;
-  padding: 64px 64px 56px;
+  padding: 88px 64px 56px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -768,10 +772,10 @@ $blue: #2f9bc0;
 }
 
 @media (max-width: 768px) {
-  .kids-hero__media { padding: 32px 22px; }
-  .kids-hero__badge { top: 22px; left: 22px; }
+  .kids-hero__media { padding: 62px 22px 32px; }
+  .kids-hero__badge { top: 46px; left: 22px; }
   .kids-hero__stats { gap: 26px; }
-  .kids-hero__panel { padding: 40px 20px; }
+  .kids-hero__panel { padding: 56px 20px 40px; }
   .kids-form__row { grid-template-columns: 1fr; gap: 0; }
   .kids-features { padding: 64px 22px 80px; }
   .kids-cards { grid-template-columns: 1fr; }
