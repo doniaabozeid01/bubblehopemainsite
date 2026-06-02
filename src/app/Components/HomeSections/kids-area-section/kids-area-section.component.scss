@@ -1,6 +1,7 @@
 $navy: #243a63;
 $teal: #2bb6cf;
 $green: #6cc24a;
+$orange: #FF7304;
 
 .kids-joy {
   position: relative;
@@ -9,8 +10,8 @@ $green: #6cc24a;
   background: #fbf8e7;
   padding: 96px 16px 120px;
   /* اسحب السكشن اللي بعده لفوق عشان الموجة تبقى آخر حاجة تحت من غير فراغ أبيض (لازم تفضل سالبة) */
-  margin-bottom: 172px;
-  margin-top: 172px;
+  margin-bottom: 150px;
+  margin-top: 150px;
 }
 
 /* الموجات */
@@ -118,8 +119,8 @@ $green: #6cc24a;
     .joy-btn__icon { color: $teal; }
   }
   &--price {
-    background: $green;
-    .joy-btn__icon { color: $green; }
+    background: $orange;
+    .joy-btn__icon { color: $orange; }
   }
 }
 
@@ -156,7 +157,12 @@ $green: #6cc24a;
   .kids-joy__actions { justify-content: center; }
   .kids-joy__deco--bear { left: 16px; top: 60px; width: 70px; }
   .kids-joy__deco--horse { right: 16px; bottom: 70px; width: 74px; }
-  .kids-joy__img { max-width: 440px; }
+  /* على الشاشات الصغيرة: الصورة متطلعش لبرّه ولا تركب على الأزرار */
+  .kids-joy__img {
+    max-width: 440px;
+    margin-top: 16px;
+    margin-bottom: 0;
+  }
 }
 
 @media (max-width: 768px) {

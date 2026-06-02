@@ -10,18 +10,14 @@ import { SeoService } from 'src/app/services/seo.service';
 export class KidsAreaComponent {
   showScrollButton = false;
 
-  ages = Array.from({ length: 11 }, (_, i) => i + 2); // 2..12
+  ages = Array.from({ length: 10 }, (_, i) => i + 3); // 3..12
 
   registration = {
-    childName: '',
-    childAge: '',
     parentName: '',
     phone: '',
-    emergencyContact: '',
-    allergies: '',
-    visitDate: '',
-    duration: '',
-    agreed: false
+    childName: '',
+    childAge: '',
+    birthDate: ''
   };
 
   constructor(
@@ -38,28 +34,24 @@ export class KidsAreaComponent {
 
   submitRegistration() {
     if (
-      !this.registration.childName ||
-      !this.registration.childAge ||
       !this.registration.parentName ||
       !this.registration.phone ||
-      !this.registration.agreed
+      !this.registration.childName ||
+      !this.registration.childAge ||
+      !this.registration.birthDate
     ) {
-      this.toastr.error('Please fill in the required fields and accept the terms.');
+      this.toastr.error('Please fill in all the required fields.');
       return;
     }
 
     this.toastr.success(`Thanks ${this.registration.parentName}! We'll confirm via SMS within 1 hour.`);
 
     this.registration = {
-      childName: '',
-      childAge: '',
       parentName: '',
       phone: '',
-      emergencyContact: '',
-      allergies: '',
-      visitDate: '',
-      duration: '',
-      agreed: false
+      childName: '',
+      childAge: '',
+      birthDate: ''
     };
   }
 

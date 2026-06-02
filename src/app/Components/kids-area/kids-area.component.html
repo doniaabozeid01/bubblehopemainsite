@@ -62,10 +62,24 @@
 
       <form class="kids-form" (ngSubmit)="submitRegistration()" #regForm="ngForm">
 
+        <p class="kids-form__group-title">PARENT'S INFO</p>
+        <div class="kids-form__row">
+          <div class="kids-field">
+            <label>PARENT NAME</label>
+            <input type="text" name="parentName" placeholder="Parent's full name"
+                   [(ngModel)]="registration.parentName" required />
+          </div>
+          <div class="kids-field">
+            <label>PHONE NUMBER</label>
+            <input type="tel" name="phone" placeholder="+20 1XX XXX XXXX"
+                   [(ngModel)]="registration.phone" required />
+          </div>
+        </div>
+
         <p class="kids-form__group-title">CHILD'S INFO</p>
         <div class="kids-form__row">
           <div class="kids-field">
-            <label>FULL NAME</label>
+            <label>CHILD'S NAME</label>
             <input type="text" name="childName" placeholder="Child's name"
                    [(ngModel)]="registration.childName" required />
           </div>
@@ -77,56 +91,12 @@
             </select>
           </div>
         </div>
-
-        <p class="kids-form__group-title">PARENT'S INFO</p>
         <div class="kids-form__row">
           <div class="kids-field">
-            <label>PARENT NAME</label>
-            <input type="text" name="parentName" placeholder="Your name"
-                   [(ngModel)]="registration.parentName" required />
-          </div>
-          <div class="kids-field">
-            <label>PHONE</label>
-            <input type="tel" name="phone" placeholder="+20 1XX"
-                   [(ngModel)]="registration.phone" required />
+            <label>DATE OF BIRTH</label>
+            <input type="date" name="birthDate" [(ngModel)]="registration.birthDate" required />
           </div>
         </div>
-        <div class="kids-form__row">
-          <div class="kids-field">
-            <label>EMERGENCY CONTACT</label>
-            <input type="text" name="emergencyContact" placeholder="Name & number"
-                   [(ngModel)]="registration.emergencyContact" />
-          </div>
-          <div class="kids-field">
-            <label>ALLERGIES / NOTES</label>
-            <input type="text" name="allergies" placeholder="None"
-                   [(ngModel)]="registration.allergies" />
-          </div>
-        </div>
-
-        <p class="kids-form__group-title">VISIT DETAILS</p>
-        <div class="kids-form__row">
-          <div class="kids-field">
-            <label>VISIT DATE</label>
-            <input type="date" name="visitDate" [(ngModel)]="registration.visitDate" />
-          </div>
-          <div class="kids-field">
-            <label>DURATION</label>
-            <select name="duration" [(ngModel)]="registration.duration">
-              <option value="" disabled selected>Select</option>
-              <option value="1h">1 hour</option>
-              <option value="2h">2 hours</option>
-              <option value="half">Half day</option>
-              <option value="full">Full day</option>
-            </select>
-          </div>
-        </div>
-
-        <label class="kids-check">
-          <input type="checkbox" name="agreed" [(ngModel)]="registration.agreed" />
-          <span>I agree to the Bubble Hope Kids Area safety rules and consent to
-            CCTV monitoring during the visit.</span>
-        </label>
 
         <button type="submit" class="kids-submit">Complete Registration</button>
         <p class="kids-form__note">Secure · Confirmed via SMS · Never shared</p>

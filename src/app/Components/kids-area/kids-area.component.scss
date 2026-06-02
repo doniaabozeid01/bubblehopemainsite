@@ -54,15 +54,19 @@ $muted: #8a8178;
   justify-content: flex-end;
   padding: 82px 48px 48px;
   color: #fff;
-  background:
-    linear-gradient(180deg, rgba(20, 12, 6, 0) 30%, rgba(20, 12, 6, 0.85) 100%),
-    repeating-linear-gradient(
-      135deg,
-      #e23b3b 0 70px,
-      #f4b740 70px 140px,
-      #7bbf3a 140px 210px,
-      #3aa3c9 210px 280px
-    );
+  // background:
+  //   linear-gradient(180deg, rgba(20, 12, 6, 0) 30%, rgba(20, 12, 6, 0.85) 100%),
+  //   repeating-linear-gradient(
+  //     135deg,
+  //     #e23b3b 0 70px,
+  //     #f4b740 70px 140px,
+  //     #7bbf3a 140px 210px,
+  //     #3aa3c9 210px 280px
+  //   );
+  background-image: url('/assets/kidsarea-bg.jpg') ;
+  object-fit: cover;
+  object-position: center;
+  object-repeat: no-repeat;
 }
 
 .kids-hero__holds {
