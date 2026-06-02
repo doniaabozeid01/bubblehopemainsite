@@ -1,28 +1,73 @@
-<section class="kids-teaser" dir="ltr">
-  <div class="kids-teaser__inner">
+<section class="kids-joy" dir="ltr">
 
-    <div class="kids-teaser__holds" aria-hidden="true">
-      <span class="hold hold--a"></span>
-      <span class="hold hold--b"></span>
-      <span class="hold hold--c"></span>
-      <span class="hold hold--d"></span>
-    </div>
+  <!-- موجة بيضا فوق -->
+  <svg class="kids-joy__wave kids-joy__wave--top" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,0 L1440,0 L1440,38 C1180,86 980,8 720,42 C470,74 230,4 0,44 Z" fill="#ffffff" />
+  </svg>
 
-    <div class="kids-teaser__content">
-      <span class="kids-teaser__tag">NEW · KIDS AREA</span>
-      <h2 class="kids-teaser__title">Bubble Hope <span class="accent">Kids Area</span></h2>
-      <p class="kids-teaser__text">
-        A safe, fun and inspiring space where kids play freely while parents relax
-        with premium bubble tea. Ages 2–12 · 8 themed play zones.
+  <!-- دبدوب outline -->
+  <svg class="kids-joy__deco kids-joy__deco--bear" viewBox="0 0 100 110" fill="none" aria-hidden="true">
+    <g stroke="#e7a06a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="28" cy="20" r="11" />
+      <circle cx="72" cy="20" r="11" />
+      <circle cx="50" cy="38" r="26" />
+      <circle cx="40" cy="34" r="3" />
+      <circle cx="60" cy="34" r="3" />
+      <circle cx="50" cy="44" r="6" />
+      <path d="M44 48 Q50 53 56 48" />
+      <ellipse cx="50" cy="82" rx="28" ry="24" />
+      <circle cx="22" cy="70" r="9" />
+      <circle cx="78" cy="70" r="9" />
+      <ellipse cx="36" cy="102" rx="11" ry="7" />
+      <ellipse cx="64" cy="102" rx="11" ry="7" />
+    </g>
+  </svg>
+
+  <div class="kids-joy__wrap">
+
+    <!-- النص -->
+    <div class="kids-joy__content">
+      <h2 class="kids-joy__title">Bubble Hope,<br />Kids Area</h2>
+      <p class="kids-joy__text">
+        A cozy, safe and exciting space where kids can play while parents enjoy their Bubble Hope moments.
       </p>
 
-      <div class="kids-teaser__actions">
-        <a routerLink="/kids-area" class="kids-teaser__btn">Discover Kids Area</a>
-        <span class="kids-teaser__meta">
-          <i class="bi bi-shield-check"></i> CCTV monitored · Open daily 10 AM – 9 PM
-        </span>
+      <div class="kids-joy__actions">
+        <a routerLink="/kids-area" class="joy-btn joy-btn--book">
+          Start The Fun <span class="joy-btn__icon"><i class="bi bi-heart-fill"></i></span>
+        </a>
+        <a routerLink="/kids-area" class="joy-btn joy-btn--price">
+          View Pricing
+          <span class="joy-btn__icon"><i class="bi bi-flower1"></i></span>
+        </a>
       </div>
     </div>
 
+    <!-- صورة كومة الألعاب -->
+    <div class="kids-joy__media">
+      <img src="../../../../assets/Untitled10.png" alt="Kids playing with a big pile of colorful toys"
+        class="kids-joy__img" />
+    </div>
+
   </div>
+
+  <!-- حصان هزاز outline -->
+  <svg class="kids-joy__deco kids-joy__deco--horse" viewBox="0 0 120 100" fill="none" aria-hidden="true">
+    <g stroke="#e0584b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M30 40 Q26 24 42 22 Q48 10 60 16 L74 18 Q86 20 84 32 L84 44" />
+      <circle cx="48" cy="26" r="2.2" fill="#e0584b" />
+      <path d="M42 22 L36 14 M50 18 L48 9" />
+      <path d="M34 44 L34 70 M52 44 L52 70 M70 44 L70 70 M84 44 L84 70" />
+      <path d="M22 78 Q60 96 98 78" />
+      <path d="M34 70 Q30 76 24 78 M84 70 Q90 76 96 78" />
+    </g>
+  </svg>
+
+  <!-- موجة تحت: حد متموّج بين الكريمي والبرتقالي -->
+  <svg class="kids-joy__wave kids-joy__wave--bottom" viewBox="0 0 1440 170" preserveAspectRatio="none"
+    aria-hidden="true">
+    <path d="M0,64 C220,98 380,34 600,66 C820,100 980,36 1200,66 C1320,90 1380,52 1440,66
+             L1440,170 L0,170 Z" fill="#ff7304" />
+  </svg>
+
 </section>
