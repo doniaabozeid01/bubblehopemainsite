@@ -1,171 +1,261 @@
-<div class="kids-page" dir="ltr">
+<div
+  class="kids-page"
+  [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'">
 
   <!-- ===================== HERO ===================== -->
   <section class="kids-hero">
 
-    <!-- Left: colorful play-wall media panel -->
+    <!-- Media panel -->
     <div class="kids-hero__media">
-      <div class="kids-hero__holds" aria-hidden="true">
-        <span class="hold hold--1"></span>
-        <span class="hold hold--2"></span>
-        <span class="hold hold--3"></span>
-        <span class="hold hold--4"></span>
-        <span class="hold hold--5"></span>
-        <span class="hold hold--6"></span>
-        <span class="hold hold--7"></span>
+      <div class="kids-hero__overlay" aria-hidden="true"></div>
+      <div class="kids-hero__bubbles" aria-hidden="true">
+        <span
+          *ngFor="let b of floatingBubbles"
+          class="kids-hero__bubble"
+          [class.kids-hero__bubble--orange]="b.variant === 0"
+          [class.kids-hero__bubble--teal]="b.variant === 1"
+          [class.kids-hero__bubble--gold]="b.variant === 2"
+          [style.--drift.px]="b.drift"
+          [style.width.px]="b.size"
+          [style.height.px]="b.size"
+          [style.left.%]="b.x"
+          [style.opacity]="b.opacity"
+          [style.animationDuration.s]="b.duration"
+          [style.animationDelay.s]="b.delay"
+        ></span>
       </div>
 
       <div class="kids-hero__badge">
-        <span class="kids-hero__badge-title">AGES 2–12</span>
-        <span class="kids-hero__badge-sub">Open daily · 10 AM – 9 PM</span>
+        <span class="kids-hero__badge-title">{{ 'kidsArea.page.hero.badgeTitle' | translate }}</span>
+        <span class="kids-hero__badge-sub">{{ 'kidsArea.page.hero.badgeSub' | translate }}</span>
       </div>
 
       <div class="kids-hero__content">
-        <span class="kids-eyebrow kids-eyebrow--light">— BUBBLE HOPE KIDS AREA</span>
+        <span class="kids-eyebrow kids-eyebrow--light">{{ 'kidsArea.page.hero.eyebrow' | translate }}</span>
         <h1 class="kids-hero__title">
-          Where kids thrive
-          <span class="accent">and parents</span>
-          breathe easy.
+          {{ 'kidsArea.page.hero.titleLine1' | translate }}
+          <span class="accent">{{ 'kidsArea.page.hero.titleAccent' | translate }}</span>
+          {{ 'kidsArea.page.hero.titleLine2' | translate }}
         </h1>
         <p class="kids-hero__lead">
-          A safe, fun and inspiring space where children play freely
-          while parents relax with premium bubble tea.
+          {{ 'kidsArea.page.hero.lead' | translate }}
         </p>
 
         <div class="kids-hero__stats">
           <div class="stat">
-            <span class="stat__num">500+</span>
-            <span class="stat__label">Happy families</span>
+            <span class="stat__num">{{ 'kidsArea.page.hero.stat1Num' | translate }}</span>
+            <span class="stat__label">{{ 'kidsArea.page.hero.stat1Label' | translate }}</span>
           </div>
           <div class="stat">
-            <span class="stat__num">4.9</span>
-            <span class="stat__label">Parent rating</span>
+            <span class="stat__num">{{ 'kidsArea.page.hero.stat2Num' | translate }}</span>
+            <span class="stat__label">{{ 'kidsArea.page.hero.stat2Label' | translate }}</span>
           </div>
           <div class="stat">
-            <span class="stat__num">8</span>
-            <span class="stat__label">Play zones</span>
+            <span class="stat__num">{{ 'kidsArea.page.hero.stat3Num' | translate }}</span>
+            <span class="stat__label">{{ 'kidsArea.page.hero.stat3Label' | translate }}</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Right: registration form -->
+    <!-- Registration form -->
     <div class="kids-hero__panel" id="kids-register">
-      <span class="kids-eyebrow">— RESERVE A SPOT</span>
+      <span class="kids-eyebrow">{{ 'kidsArea.page.form.eyebrow' | translate }}</span>
       <h2 class="kids-panel__title">
-        Register your
-        <span class="accent">little one</span>
+        {{ 'kidsArea.page.form.titleLine1' | translate }}
+        <span class="accent">{{ 'kidsArea.page.form.titleAccent' | translate }}</span>
       </h2>
       <p class="kids-panel__sub">
-        Fill in the details below and we'll confirm via SMS within 1 hour.
+        {{ 'kidsArea.page.form.sub' | translate }}
       </p>
 
       <form class="kids-form" (ngSubmit)="submitRegistration()" #regForm="ngForm">
 
-        <p class="kids-form__group-title">PARENT'S INFO</p>
+        <p class="kids-form__group-title">{{ 'kidsArea.page.form.parentGroup' | translate }}</p>
         <div class="kids-form__row">
           <div class="kids-field">
-            <label>PARENT NAME</label>
-            <input type="text" name="parentName" placeholder="Parent's full name"
+            <label>{{ 'kidsArea.page.form.parentName' | translate }}</label>
+            <input class="kids-input" type="text" name="parentName"
+                   [placeholder]="'kidsArea.page.form.parentNamePlaceholder' | translate"
                    [(ngModel)]="registration.parentName" required />
           </div>
           <div class="kids-field">
-            <label>PHONE NUMBER</label>
-            <input type="tel" name="phone" placeholder="+20 1XX XXX XXXX"
+            <label>{{ 'kidsArea.page.form.phone' | translate }}</label>
+            <input class="kids-input" type="tel" name="phone"
+                   [placeholder]="'kidsArea.page.form.phonePlaceholder' | translate"
                    [(ngModel)]="registration.phone" required />
           </div>
         </div>
 
-        <p class="kids-form__group-title">CHILD'S INFO</p>
+        <p class="kids-form__group-title">{{ 'kidsArea.page.form.childGroup' | translate }}</p>
         <div class="kids-form__row">
           <div class="kids-field">
-            <label>CHILD'S NAME</label>
-            <input type="text" name="childName" placeholder="Child's name"
+            <label>{{ 'kidsArea.page.form.childName' | translate }}</label>
+            <input class="kids-input" type="text" name="childName"
+                   [placeholder]="'kidsArea.page.form.childNamePlaceholder' | translate"
                    [(ngModel)]="registration.childName" required />
           </div>
-          <div class="kids-field kids-field--sm">
-            <label>AGE</label>
-            <select name="childAge" [(ngModel)]="registration.childAge" required>
-              <option value="" disabled selected>Select</option>
-              <option *ngFor="let a of ages" [value]="a">{{ a }} years</option>
-            </select>
+          <div class="kids-field kids-field--sm kids-field--select">
+            <label for="childAgeSelect">{{ 'kidsArea.page.form.age' | translate }}</label>
+            <div
+              class="kids-age-select"
+              [class.kids-age-select--open]="ageMenuOpen"
+              [class.kids-age-select--filled]="registration.childAge"
+            >
+              <button
+                type="button"
+                id="childAgeSelect"
+                class="kids-age-select__trigger"
+                (click)="toggleAgeMenu($event)"
+                [attr.aria-expanded]="ageMenuOpen"
+                aria-haspopup="listbox"
+              >
+                <span
+                  class="kids-age-select__value"
+                  [class.kids-age-select__value--placeholder]="!registration.childAge"
+                >
+                  <ng-container *ngIf="registration.childAge; else agePlaceholder">
+                    {{ 'kidsArea.page.form.ageYears' | translate:{ age: registration.childAge } }}
+                  </ng-container>
+                  <ng-template #agePlaceholder>
+                    {{ 'kidsArea.page.form.selectAge' | translate }}
+                  </ng-template>
+                </span>
+                <i class="bi bi-chevron-down kids-age-select__icon" aria-hidden="true"></i>
+              </button>
+              <ul
+                *ngIf="ageMenuOpen"
+                class="kids-age-select__menu"
+                role="listbox"
+                [attr.aria-label]="'kidsArea.page.form.age' | translate"
+              >
+                <li
+                  *ngFor="let a of ages"
+                  class="kids-age-select__option"
+                  role="option"
+                  [attr.aria-selected]="registration.childAge === a + ''"
+                  [class.kids-age-select__option--active]="registration.childAge === a + ''"
+                  (click)="selectAge(a, $event)"
+                >
+                  {{ 'kidsArea.page.form.ageYears' | translate:{ age: a } }}
+                </li>
+              </ul>
+            </div>
+            <input type="hidden" name="childAge" [(ngModel)]="registration.childAge" required />
           </div>
         </div>
-        <div class="kids-form__row">
-          <div class="kids-field">
-            <label>DATE OF BIRTH</label>
-            <input type="date" name="birthDate" [(ngModel)]="registration.birthDate" required />
+        <div class="kids-form__row kids-form__row--full">
+          <div class="kids-field kids-field--date">
+            <label for="childBirthDate">{{ 'kidsArea.page.form.birthDate' | translate }}</label>
+            <div class="kids-date-field">
+              <input
+                id="childBirthDate"
+                class="kids-input kids-input--date"
+                type="date"
+                name="birthDate"
+                [(ngModel)]="registration.birthDate"
+                [class.kids-input--date-empty]="!registration.birthDate"
+                [attr.max]="maxBirthDate"
+                required
+              />
+              <div
+                class="kids-date-field__face"
+                *ngIf="!registration.birthDate"
+                (click)="openBirthDatePicker($event)"
+                aria-hidden="true"
+              >
+                <span class="kids-date-field__hint">
+                  {{ 'kidsArea.page.form.birthDateHint' | translate }}
+                </span>
+                <span class="kids-date-field__icon-btn" role="presentation">
+                  <i class="bi bi-calendar3" aria-hidden="true"></i>
+                </span>
+              </div>
+              <button
+                *ngIf="registration.birthDate"
+                type="button"
+                class="kids-date-field__icon-btn kids-date-field__icon-btn--solo"
+                (click)="openBirthDatePicker($event)"
+                [attr.aria-label]="'kidsArea.page.form.birthDate' | translate"
+              >
+                <i class="bi bi-calendar3" aria-hidden="true"></i>
+              </button>
+            </div>
           </div>
         </div>
 
-        <button type="submit" class="kids-submit">Complete Registration</button>
-        <p class="kids-form__note">Secure · Confirmed via SMS · Never shared</p>
+        <button
+          type="submit"
+          class="kids-submit"
+          [disabled]="submittingRegistration"
+          [attr.aria-busy]="submittingRegistration"
+        >
+          {{
+            submittingRegistration
+              ? ('kidsArea.page.form.submitting' | translate)
+              : ('kidsArea.page.form.submit' | translate)
+          }}
+        </button>
+        <p class="kids-form__note">{{ 'kidsArea.page.form.note' | translate }}</p>
       </form>
     </div>
   </section>
+
+  <div class="kids-sections">
+    <div class="kids-sections__deco" aria-hidden="true">
+      <span class="kids-float-circle kids-float-circle--o1"></span>
+      <span class="kids-float-circle kids-float-circle--o2"></span>
+      <span class="kids-float-circle kids-float-circle--o3"></span>
+      <span class="kids-float-circle kids-float-circle--b1"></span>
+      <span class="kids-float-circle kids-float-circle--b2"></span>
+      <span class="kids-float-circle kids-float-circle--b3"></span>
+      <span class="kids-float-circle kids-float-circle--c1"></span>
+      <span class="kids-float-circle kids-float-circle--c2"></span>
+      <span class="kids-float-circle kids-float-circle--t1"></span>
+      <span class="kids-float-circle kids-float-circle--t2"></span>
+      <span class="kids-float-circle kids-float-circle--o4"></span>
+      <span class="kids-float-circle kids-float-circle--o5"></span>
+      <span class="kids-float-circle kids-float-circle--o6"></span>
+      <span class="kids-float-circle kids-float-circle--b4"></span>
+      <span class="kids-float-circle kids-float-circle--b5"></span>
+      <span class="kids-float-circle kids-float-circle--b6"></span>
+      <span class="kids-float-circle kids-float-circle--c3"></span>
+      <span class="kids-float-circle kids-float-circle--c4"></span>
+      <span class="kids-float-circle kids-float-circle--t3"></span>
+      <span class="kids-float-circle kids-float-circle--t4"></span>
+    </div>
 
   <!-- ===================== ACTIVITIES (BENTO) ===================== -->
   <section class="kids-activities">
     <div class="kids-activities__head">
       <div>
-        <span class="kids-eyebrow">— SIX CURATED EXPERIENCES</span>
+        <span class="kids-eyebrow">{{ 'kidsArea.page.activities.eyebrow' | translate }}</span>
         <h2 class="kids-activities__title">
-          A world of activities
-          <span class="accent-blue">for every child</span>
+          {{ 'kidsArea.page.activities.titleLine1' | translate }}
+          <span class="accent-blue">{{ 'kidsArea.page.activities.titleAccent' | translate }}</span>
         </h2>
       </div>
       <p class="kids-activities__desc">
-        From energetic play to quiet creativity — every zone is thoughtfully
-        designed for children aged 2 to 12.
+        {{ 'kidsArea.page.activities.desc' | translate }}
       </p>
     </div>
 
     <div class="kids-bento">
-      <article class="bento bento--play">
-        <i class="bi bi-balloon-heart bento__watermark"></i>
+      <article
+        *ngFor="let zone of activityZones"
+        class="bento"
+        [ngClass]="'bento--' + zone.id">
+        <img
+          class="bento__photo"
+          [src]="zone.image"
+          [alt]="('kidsArea.page.zones.' + zone.id + '.alt') | translate"
+          [style.object-position]="zone.imagePosition || 'center'"
+          loading="lazy"
+          (error)="onActivityImageError($event, zone.id)" />
+        <i class="bi bento__watermark" [ngClass]="zone.icon"></i>
         <div class="bento__body">
-          <h3>Play Zone</h3>
-          <span class="bento__caption">Ball pit · Slides · Tunnels</span>
-        </div>
-      </article>
-
-      <article class="bento bento--cinema">
-        <i class="bi bi-film bento__watermark"></i>
-        <div class="bento__body">
-          <h3>Mini Cinema</h3>
-          <span class="bento__caption">Disney · Pixar · Bean bags</span>
-        </div>
-      </article>
-
-      <article class="bento bento--games">
-        <i class="bi bi-controller bento__watermark"></i>
-        <div class="bento__body">
-          <h3>Interactive Games</h3>
-          <span class="bento__caption">PS5 · Multiplayer · Age-safe</span>
-        </div>
-      </article>
-
-      <article class="bento bento--draw">
-        <i class="bi bi-palette bento__watermark"></i>
-        <div class="bento__body">
-          <h3>Drawing Corner</h3>
-          <span class="bento__caption">Canvases · Colors · Guided</span>
-        </div>
-      </article>
-
-      <article class="bento bento--lego">
-        <i class="bi bi-bricks bento__watermark"></i>
-        <div class="bento__body">
-          <h3>Building &amp; LEGO</h3>
-          <span class="bento__caption">Creativity · Problem solving</span>
-        </div>
-      </article>
-
-      <article class="bento bento--reading">
-        <i class="bi bi-book bento__watermark"></i>
-        <div class="bento__body">
-          <h3>Reading Nook</h3>
-          <span class="bento__caption">Curated books · Cozy space</span>
+          <h3>{{ ('kidsArea.page.zones.' + zone.id + '.title') | translate }}</h3>
+          <span class="bento__caption">{{ ('kidsArea.page.zones.' + zone.id + '.caption') | translate }}</span>
         </div>
       </article>
     </div>
@@ -174,79 +264,67 @@
   <!-- ===================== PARENTS LOUNGE ===================== -->
   <section class="kids-parents">
     <div class="kids-parents__head">
-      <span class="kids-eyebrow">— FOR THE PARENTS</span>
+      <span class="kids-eyebrow">{{ 'kidsArea.page.parents.eyebrow' | translate }}</span>
       <h2 class="kids-parents__title">
-        Your personal
-        <span class="accent-blue">relaxation zone</span>
+        {{ 'kidsArea.page.parents.titleLine1' | translate }}
+        <span class="accent-blue">{{ 'kidsArea.page.parents.titleAccent' | translate }}</span>
       </h2>
     </div>
 
     <div class="kids-parents__grid">
 
-      <!-- Left: lounge media -->
       <div class="kids-parents__media">
-        <div class="lounge">
-          <i class="bi bi-cup-hot lounge__watermark"></i>
-          <div class="lounge__thumb"><i class="bi bi-images"></i></div>
-        </div>
-
-        <div class="lounge-card">
-          <div class="lounge-card__img">
-            <img src="../../../assets/Drinks 2 (1).png" alt="Premium Bubble Tea" />
-          </div>
-          <div class="lounge-card__text">
-            <strong>Premium Bubble Tea</strong>
-            <span>While kids play, you sip</span>
+        <div class="parents-media-stack">
+          <div class="lounge lounge--primary">
+            <img
+              class="lounge__photo"
+              src="/assets/4_V1.jpg"
+              [alt]="'kidsArea.page.parents.loungeAlt' | translate"
+              loading="lazy"
+              decoding="async" />
           </div>
         </div>
       </div>
 
-      <!-- Right: content -->
       <div class="kids-parents__content">
-        <p class="kids-parents__lead">
-          While your children explore and play, settle into our beautifully
-          designed parent lounge — a modern café space with warm lighting,
-          premium seating, and our full bubble tea menu.
-        </p>
+        <div class="parents-lead">
+          <i class="bi bi-quote parents-lead__mark" aria-hidden="true"></i>
+          <p>{{ 'kidsArea.page.parents.lead' | translate }}</p>
+        </div>
 
-        <span class="kids-eyebrow kids-eyebrow--sm">SIGNATURE DRINKS</span>
-        <div class="drinks">
-          <div class="drink">
-            <strong>Classic Taro</strong>
-            <span class="drink__price">EGP 120</span>
-          </div>
-          <div class="drink">
-            <strong>Mango Passion</strong>
-            <span class="drink__price">EGP 130</span>
-          </div>
-          <div class="drink">
-            <strong>Brown Sugar Latte</strong>
-            <span class="drink__price">EGP 140</span>
-          </div>
-          <div class="drink">
-            <strong>Lychee Green Tea</strong>
-            <span class="drink__price">EGP 110</span>
+        <div class="parents-block">
+          <h3 class="parents-block__label">
+            <span>{{ 'kidsArea.page.parents.menuEyebrow' | translate }}</span>
+          </h3>
+          <div class="parents-menu__grid">
+            <article *ngFor="let item of parentsMenuItems" class="parents-menu__card">
+              <span class="parents-menu__icon" aria-hidden="true">
+                <i class="bi" [ngClass]="item.icon"></i>
+              </span>
+              <div class="parents-menu__copy">
+                <h4>{{ item.titleKey | translate }}</h4>
+                <p>{{ item.subKey | translate }}</p>
+              </div>
+            </article>
           </div>
         </div>
 
-        <ul class="perks">
-          <li>
-            <i class="bi bi-diamond-fill"></i>
-            <span><strong>Free Wi-Fi</strong> 1 Gbps · Always connected</span>
-          </li>
-          <li>
-            <i class="bi bi-diamond-fill"></i>
-            <span><strong>Kids in View</strong> Glass partition to play zone</span>
-          </li>
-          <li>
-            <i class="bi bi-diamond-fill"></i>
-            <span><strong>Lounge seating</strong> Plush sofas · Quiet ambience</span>
-          </li>
-          <li>
-            <i class="bi bi-diamond-fill"></i>
-            <span><strong>Parent Monitor</strong> Live feed via Bubble Hope app</span>
-          </li>
-        </ul>
+        <div class="parents-block">
+          <h3 class="parents-block__label">
+            <span>{{ 'kidsArea.page.parents.perksEyebrow' | translate }}</span>
+          </h3>
+          <div class="parents-perks__grid">
+            <article *ngFor="let perk of parentsPerks" class="parents-perk">
+              <span class="parents-perk__icon" aria-hidden="true">
+                <i class="bi" [ngClass]="perk.icon"></i>
+              </span>
+              <div class="parents-perk__copy">
+                <h4>{{ perk.titleKey | translate }}</h4>
+                <p>{{ perk.textKey | translate }}</p>
+              </div>
+            </article>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -254,43 +332,52 @@
   <!-- ===================== EXPERIENCE ===================== -->
   <section class="kids-features">
     <div class="kids-features__head">
-      <span class="kids-eyebrow">— THE EXPERIENCE</span>
-      <h2 class="kids-features__title">Why families love <span class="accent">Bubble Hope Kids Area</span></h2>
+      <span class="kids-eyebrow">{{ 'kidsArea.page.features.eyebrow' | translate }}</span>
+      <h2 class="kids-features__title">
+        {{ 'kidsArea.page.features.titlePrefix' | translate }}
+        <span class="accent">{{ 'kidsArea.page.features.titleAccent' | translate }}</span>
+      </h2>
       <p class="kids-features__sub">
-        Everything is designed so kids have the time of their lives while parents truly relax.
+        {{ 'kidsArea.page.features.sub' | translate }}
       </p>
     </div>
 
     <div class="kids-cards">
       <article class="kids-card">
         <div class="kids-card__icon"><i class="bi bi-balloon-heart"></i></div>
-        <h3>Activities</h3>
-        <p>Climbing walls, ball pits, soft play and creative zones to spark every imagination.</p>
+        <h3>{{ 'kidsArea.page.features.card1Title' | translate }}</h3>
+        <p>{{ 'kidsArea.page.features.card1Text' | translate }}</p>
       </article>
       <article class="kids-card">
         <div class="kids-card__icon"><i class="bi bi-shield-check"></i></div>
-        <h3>Safety first</h3>
-        <p>CCTV monitored, trained supervisors and sanitized play areas, every single day.</p>
+        <h3>{{ 'kidsArea.page.features.card2Title' | translate }}</h3>
+        <p>{{ 'kidsArea.page.features.card2Text' | translate }}</p>
       </article>
       <article class="kids-card">
         <div class="kids-card__icon"><i class="bi bi-stars"></i></div>
-        <h3>8 themed zones</h3>
-        <p>Carefully built play zones tailored for ages 2 to 12, so everyone finds their spot.</p>
+        <h3>{{ 'kidsArea.page.features.card3Title' | translate }}</h3>
+        <p>{{ 'kidsArea.page.features.card3Text' | translate }}</p>
       </article>
       <article class="kids-card">
         <div class="kids-card__icon"><i class="bi bi-cup-straw"></i></div>
-        <h3>For parents</h3>
-        <p>Sit back with premium bubble tea and a clear view while your kids play freely.</p>
+        <h3>{{ 'kidsArea.page.features.card4Title' | translate }}</h3>
+        <p>{{ 'kidsArea.page.features.card4Text' | translate }}</p>
       </article>
     </div>
 
     <div class="kids-cta">
-      <button class="kids-cta__btn" (click)="scrollToForm()">Reserve your spot</button>
+      <button class="kids-cta__btn" (click)="scrollToForm()">{{ 'kidsArea.page.cta' | translate }}</button>
     </div>
   </section>
 
+  </div>
+
 </div>
 
-<button class="kids-scroll-top" *ngIf="showScrollButton" (click)="scrollToTop()" aria-label="Back to top">
+<button
+  class="kids-scroll-top"
+  *ngIf="showScrollButton"
+  (click)="scrollToTop()"
+  [attr.aria-label]="'kidsArea.page.scrollTop' | translate">
   <i class="fa-solid fa-arrow-up"></i>
 </button>

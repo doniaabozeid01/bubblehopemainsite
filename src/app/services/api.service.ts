@@ -289,4 +289,14 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}/api/OnAndOff/IsMainsiteOn`);
   }
 
+  createKidsAreaBooking(payload: {
+    parentName: string;
+    parentNumber: string;
+    childName: string;
+    childOld: number;
+    childBirthday: string;
+  }): Observable<any> {
+    return this.http.post(`${this.baseUrl}/api/KidsArea`, payload);
+  }
+
 }

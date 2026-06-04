@@ -97,7 +97,45 @@ export class AllordersComponent {
     return Number(order?.deliveryFee ?? 0);
   }
 
-  getTotalAfterDelivery(order: any): number {
-    return Number(order?.totalAmount ?? 0) + this.getDeliveryFee(order);
+  /** مجموع المنتجات فقط (بدون توصيل). */
+  getOrderSubtotal(order: any): number {
+    const items = order?.orderItems ?? [];
+    if (items.length > 0) {
+      const fromItems = items.reduce((sum: number, item: any) => {
+        const lineTotal = Number(item.totalPrice ?? item.lineTotal ?? 0);
+        if (lineTotal > 0) {
+          return sum + lineTotal;
+        }
+        return sum + Number(item.unitPrice ?? 0) * Number(item.quantity ?? 1);
+      }, 0);
+      if (fromItems > 0) {
+        return fromItems;
+      }
+    }
+
+    const grandTotal = Number(order?.totalAmount ?? 0);
+    const delivery = this.getDeliveryFee(order);
+    if (delivery > 0 && grandTotal >= delivery) {
+      return grandTotal - delivery;
+    }
+    return grandTotal;
+  }
+
+  /** الإجمالي النهائي (بدون إضافة التوصيل مرتين). */
+  getOrderGrandTotal(order: any): number {
+    const stored = Number(order?.totalAmount ?? 0);
+    const delivery = this.getDeliveryFee(order);
+    const subtotal = this.getOrderSubtotal(order);
+
+    if (delivery <= 0) {
+      return stored;
+    }
+
+    // السيرفر يخزّن الإجمالي شامل التوصيل في totalAmount
+    if (stored > subtotal) {
+      return stored;
+    }
+
+    return subtotal + delivery;
   }
 }

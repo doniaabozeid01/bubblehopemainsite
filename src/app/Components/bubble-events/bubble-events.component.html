@@ -1,0 +1,408 @@
+<div class="events-page" dir="ltr">
+  <!-- ========== HERO ========== -->
+  <section class="events-hero" #heroSection aria-label="Bubble Events hero">
+    <div class="events-hero__bg" #heroBg>
+      <div class="events-hero__slides">
+        <img
+          *ngFor="let slide of heroSlides; let i = index"
+          class="events-hero__bg-img"
+          [class.events-hero__bg-img--active]="i === heroSlideIndex"
+          [src]="slide.src"
+          [alt]="slide.alt"
+          [attr.loading]="i === 0 ? 'eager' : 'lazy'"
+          decoding="async"
+        />
+      </div>
+      <div class="events-hero__grad events-hero__grad--br" aria-hidden="true"></div>
+      <div class="events-hero__grad events-hero__grad--t" aria-hidden="true"></div>
+      <div class="events-hero__shade" aria-hidden="true"></div>
+    </div>
+
+    <div class="events-hero__bubbles" #heroBubblesLayer aria-hidden="true">
+      <span
+        *ngFor="let b of heroBubbles"
+        class="events-hero__bubble"
+        [class.events-hero__bubble--orange]="b.variant === 0"
+        [class.events-hero__bubble--teal]="b.variant === 1"
+        [class.events-hero__bubble--gold]="b.variant === 2"
+        [style.width.px]="b.size"
+        [style.height.px]="b.size"
+        [style.left.%]="b.x"
+        [style.opacity]="b.opacity"
+        [style.--dur]="b.duration + 's'"
+        [style.--delay]="b.delay + 's'"
+        [style.--drift]="b.drift + 'px'"
+      ></span>
+    </div>
+
+    <div class="events-hero__content" #heroContent>
+      <div class="events-hero__badge">
+        <i class="bi bi-stars" aria-hidden="true"></i>
+        <span>Bubble Hope — Premium Event Experiences</span>
+      </div>
+
+      <div class="events-hero__title-wrap">
+        <h1 class="events-hero__title">
+          <span class="events-hero__title-inner">
+            Bubble <span class="events-hero__title-accent">Events</span>
+          </span>
+        </h1>
+      </div>
+
+      <div class="events-hero__subtitle-wrap">
+        <p class="events-hero__subtitle">
+          <span class="events-hero__subtitle-inner">
+            Unforgettable birthday parties, boba bars &amp; catering — crafted with love in every bubble.
+          </span>
+        </p>
+      </div>
+
+      <div class="events-hero__actions">
+        <a class="events-hero__cta events-hero__cta--primary" href="#events-booking">
+          <span class="events-hero__cta-text">Book Your Event</span>
+          <span class="events-hero__cta-ring" aria-hidden="true"></span>
+        </a>
+        <button type="button" class="events-hero__cta events-hero__cta--ghost" (click)="scrollToSection('events-gallery')">
+          View Gallery
+        </button>
+      </div>
+    </div>
+
+    <button type="button" class="events-hero__scroll" (click)="scrollToSection('events-split')" aria-label="Scroll to explore">
+      <span>Scroll to explore</span>
+      <i class="bi bi-chevron-down"></i>
+    </button>
+
+    <div class="events-hero__wave" aria-hidden="true">
+      <svg viewBox="0 0 1440 90" preserveAspectRatio="none">
+        <path d="M0,60 C360,100 1080,20 1440,60 L1440,90 L0,90 Z" fill="#fffbf7" />
+      </svg>
+    </div>
+  </section>
+
+  <!-- ========== SPLIT: BRANCH vs CATERING ========== -->
+  <section class="events-split events-reveal" id="events-split" aria-label="Event types">
+    <article
+      class="events-split__panel events-split__panel--catering"
+      [class.events-split__panel--active]="splitHover === 'catering'"
+      (mouseenter)="setSplitHover('catering')"
+      (mouseleave)="setSplitHover(null)"
+      (focusin)="setSplitHover('catering')"
+      (focusout)="setSplitHover(null)"
+      tabindex="0"
+    >
+      <div class="events-split__bg" aria-hidden="true"></div>
+      <div class="events-split__content">
+        <span class="events-split__tag">Off-site</span>
+        <h2><span class="events-split__title-line">Catering &amp;</span> External Events</h2>
+        <p>Customized beverage bars, waffle stations, and full party catering delivered to your venue.</p>
+        <ul>
+          <li>Corporate &amp; private venues</li>
+          <li>Custom menus &amp; branding</li>
+          <li>Setup &amp; service staff</li>
+        </ul>
+        <a class="events-split__cta" href="#events-booking">Request catering</a>
+      </div>
+    </article>
+
+    <article
+      class="events-split__panel events-split__panel--branch"
+      [class.events-split__panel--active]="splitHover === 'branch'"
+      (mouseenter)="setSplitHover('branch')"
+      (mouseleave)="setSplitHover(null)"
+      (focusin)="setSplitHover('branch')"
+      (focusout)="setSplitHover(null)"
+      tabindex="0"
+    >
+      <div class="events-split__bg" aria-hidden="true"></div>
+      <div class="events-split__content">
+        <span class="events-split__tag">In-branch</span>
+        <h2><span class="events-split__title-line">Birthday Parties</span> at Our Branches</h2>
+        <p>Immersive party rooms, play-friendly layouts, and Bubble Hope signature treats.</p>
+        <ul>
+          <li>Hadayek Al Ahram</li>
+          <li>Zewail City</li>
+          <li>Maslat Dahshour</li>
+        </ul>
+        <a class="events-split__cta" href="#events-booking">Book branch party</a>
+      </div>
+    </article>
+  </section>
+
+  <!-- ========== GALLERY ========== -->
+  <section class="events-gallery events-reveal" id="events-gallery" #gallerySection aria-label="Event gallery">
+    <div class="events-gallery__wave" aria-hidden="true">
+      <svg viewBox="0 0 1440 56" preserveAspectRatio="none">
+        <path d="M0,28 C240,56 480,0 720,28s480,28 720,0 240-28 480,0 720,28V0H0z" fill="#fffaf5" />
+      </svg>
+    </div>
+    <div class="events-gallery__bubbles" aria-hidden="true">
+      <span
+        *ngFor="let b of bgBubbles"
+        class="events-bg-bubble"
+        [style.left.%]="b.x"
+        [style.top.%]="b.y"
+        [style.width.px]="b.size"
+        [style.height.px]="b.size"
+      ></span>
+    </div>
+
+    <header class="events-gallery__head">
+      <p class="events-section-eyebrow">— CELEBRATION GALLERY</p>
+      <h2>Moments we create</h2>
+      <p class="events-gallery__lead">Tap any card to explore the package, venue, and story behind each celebration.</p>
+    </header>
+
+    <div class="events-gallery__parallax-layer">
+      <div class="events-gallery__grid">
+        <button
+          *ngFor="let item of galleryItems; let i = index"
+          #galleryCard
+          type="button"
+          class="events-gallery__card"
+          [attr.data-depth]="item.depth"
+          [style.--card-x]="item.offsetX + 'px'"
+          [style.--card-y]="item.offsetY + 'px'"
+          [style.--card-rotate]="item.rotate + 'deg'"
+          [style.--card-width]="item.width + 'px'"
+          [style.--depth]="item.depth"
+          (click)="openLightbox(item)"
+        >
+          <span class="events-gallery__card-inner">
+            <img
+              *ngIf="item.type === 'image'"
+              [src]="item.src"
+              [alt]="item.alt"
+              loading="lazy"
+              decoding="async"
+            />
+            <span *ngIf="item.type === 'video'" class="events-gallery__video-thumb">
+              <img [src]="item.poster" [alt]="item.alt" loading="lazy" decoding="async" />
+              <i class="bi bi-play-circle" aria-hidden="true"></i>
+            </span>
+            <span class="events-gallery__card-label">{{ item.eventType }}</span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== PACKAGES ========== -->
+  <section class="events-packages events-reveal" aria-label="Event packages and services">
+    <header class="events-packages__head">
+      <p class="events-section-eyebrow">— PACKAGES &amp; SERVICES</p>
+      <h2>Everything for an unforgettable party</h2>
+    </header>
+
+    <div class="events-packages__grid">
+      <article *ngFor="let pkg of packages" class="events-package-card">
+        <div class="events-package-card__icon" aria-hidden="true">
+          <i class="bi" [ngClass]="pkg.icon"></i>
+        </div>
+        <span class="events-package-card__badge" [attr.data-badge]="pkg.badge">
+          {{ badgeLabel(pkg.badge) }}
+        </span>
+        <h3>{{ pkg.title }}</h3>
+        <p>{{ pkg.description }}</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ========== BOOKING ========== -->
+  <section class="events-booking events-reveal" id="events-booking" aria-label="Book your event">
+    <div class="events-booking__card">
+      <header>
+        <p class="events-section-eyebrow">— RESERVE YOUR DATE</p>
+        <h2>Start your celebration</h2>
+        <p class="events-booking__sub">Share your details and our events team will reach out within 24 hours.</p>
+      </header>
+
+      <form class="events-form" (ngSubmit)="submitBooking()" #bookingForm="ngForm">
+        <div class="events-form__row">
+          <div class="events-field">
+            <label for="evName">Full name</label>
+            <input
+              id="evName"
+              class="events-input"
+              type="text"
+              name="name"
+              placeholder="Your name"
+              [(ngModel)]="booking.name"
+              required
+            />
+          </div>
+          <div class="events-field">
+            <label for="evPhone">Phone number</label>
+            <input
+              id="evPhone"
+              class="events-input"
+              type="tel"
+              name="phone"
+              placeholder="+20 1XX XXX XXXX"
+              [(ngModel)]="booking.phone"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="events-form__row">
+          <div class="events-field events-field--select">
+            <label for="evEventType">Event type</label>
+            <div
+              class="events-select"
+              [class.events-select--open]="eventTypeMenuOpen"
+              [class.events-select--filled]="booking.eventType"
+            >
+              <button
+                type="button"
+                id="evEventType"
+                class="events-select__trigger"
+                (click)="toggleEventTypeMenu($event)"
+                [attr.aria-expanded]="eventTypeMenuOpen"
+              >
+                <span [class.events-select__placeholder]="!booking.eventType">
+                  {{ booking.eventType || 'Select event type' }}
+                </span>
+                <i class="bi bi-chevron-down" aria-hidden="true"></i>
+              </button>
+              <ul *ngIf="eventTypeMenuOpen" class="events-select__menu" role="listbox">
+                <li
+                  *ngFor="let t of eventTypes"
+                  role="option"
+                  [class.is-active]="booking.eventType === t"
+                  (click)="selectEventType(t, $event)"
+                >
+                  {{ t }}
+                </li>
+              </ul>
+            </div>
+            <input type="hidden" name="eventType" [(ngModel)]="booking.eventType" required />
+          </div>
+
+          <div class="events-field">
+            <label for="evGuests">Guest count</label>
+            <input
+              id="evGuests"
+              class="events-input"
+              type="number"
+              name="guestCount"
+              min="1"
+              max="500"
+              placeholder="e.g. 25"
+              [(ngModel)]="booking.guestCount"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="events-form__row">
+          <div class="events-field events-field--select">
+            <label for="evVenue">Venue / branch preference</label>
+            <div
+              class="events-select"
+              [class.events-select--open]="venueMenuOpen"
+              [class.events-select--filled]="booking.venue"
+            >
+              <button
+                type="button"
+                id="evVenue"
+                class="events-select__trigger"
+                (click)="toggleVenueMenu($event)"
+                [attr.aria-expanded]="venueMenuOpen"
+              >
+                <span [class.events-select__placeholder]="!booking.venue">
+                  {{ booking.venue || 'Select venue or branch' }}
+                </span>
+                <i class="bi bi-chevron-down" aria-hidden="true"></i>
+              </button>
+              <ul *ngIf="venueMenuOpen" class="events-select__menu" role="listbox">
+                <li
+                  *ngFor="let b of branches"
+                  role="option"
+                  [class.is-active]="booking.venue === b"
+                  (click)="selectVenue(b, $event)"
+                >
+                  {{ b }}
+                </li>
+                <li
+                  role="option"
+                  [class.is-active]="booking.venue === 'External / Catering'"
+                  (click)="selectVenue('External / Catering', $event)"
+                >
+                  External / Catering
+                </li>
+              </ul>
+            </div>
+            <input type="hidden" name="venue" [(ngModel)]="booking.venue" required />
+          </div>
+        </div>
+
+        <div class="events-field">
+          <label for="evNotes">Additional notes (optional)</label>
+          <textarea
+            id="evNotes"
+            class="events-input events-input--area"
+            name="notes"
+            rows="3"
+            placeholder="Theme, date ideas, dietary needs…"
+            [(ngModel)]="booking.notes"
+          ></textarea>
+        </div>
+
+        <button type="submit" class="events-submit">
+          <span class="events-submit__fill" aria-hidden="true"></span>
+          <span class="events-submit__text">Request booking</span>
+        </button>
+        <p class="events-form__note">Secure request · No payment required to inquire</p>
+      </form>
+    </div>
+  </section>
+</div>
+
+<!-- ========== LIGHTBOX ========== -->
+<div
+  class="events-lightbox"
+  *ngIf="lightboxOpen && activeGalleryItem"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-label]="activeGalleryItem.alt"
+  (click)="closeLightbox()"
+>
+  <div class="events-lightbox__panel" (click)="$event.stopPropagation()">
+    <button type="button" class="events-lightbox__close" (click)="closeLightbox()" aria-label="Close">
+      <i class="bi bi-x-lg"></i>
+    </button>
+
+    <div class="events-lightbox__media">
+      <img
+        *ngIf="activeGalleryItem.type === 'image'"
+        [src]="activeGalleryItem.src"
+        [alt]="activeGalleryItem.alt"
+      />
+      <video
+        *ngIf="activeGalleryItem.type === 'video'"
+        [src]="activeGalleryItem.src"
+        [poster]="activeGalleryItem.poster"
+        controls
+        playsinline
+      ></video>
+    </div>
+
+    <div class="events-lightbox__info">
+      <p class="events-section-eyebrow">Event spotlight</p>
+      <h3>{{ activeGalleryItem.eventType }}</h3>
+      <dl>
+        <div>
+          <dt>Package</dt>
+          <dd>{{ activeGalleryItem.packageName }}</dd>
+        </div>
+        <div>
+          <dt>Location</dt>
+          <dd>{{ activeGalleryItem.location }}</dd>
+        </div>
+      </dl>
+      <p class="events-lightbox__desc">{{ activeGalleryItem.alt }}</p>
+      <a class="events-lightbox__book" href="#events-booking" (click)="closeLightbox()">Book a similar event</a>
+    </div>
+  </div>
+</div>

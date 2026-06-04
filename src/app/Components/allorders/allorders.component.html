@@ -64,11 +64,11 @@
                         <!-- إجمالي الطلب -->
                         <div class="d-flex justify-content-between align-items-center mt-2 ">
                             <span class="fw-bold fs-4">{{"orders.totalAmount" | translate}}:</span>
-                            <span class="fw-bold fs-4"> {{ order.totalAmount }}
+                            <span class="fw-bold fs-4"> {{ getOrderSubtotal(order) }}
                                 <span>{{(languageService.languageChanged$ | async) === 'ar' ?
                                     order?.orderItems[0]?.currency_ar : order?.orderItems[0]?.currency }}</span></span>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center mt-2 ">
+                        <div class="d-flex justify-content-between align-items-center mt-2 " *ngIf="getDeliveryFee(order) > 0">
                             <span class="fw-bold fs-4 ">{{"orders.deliveryFee" | translate}}:</span>
                             <span class="fw-bold fs-4"> {{ getDeliveryFee(order) }}
                                 <span>{{(languageService.languageChanged$ | async) === 'ar' ?
@@ -76,7 +76,7 @@
                         </div>
                         <div class="d-flex justify-content-between align-items-center mt-2 second-color">
                             <span class="fw-bold fs-4">{{"cart.total" | translate}}:</span>
-                            <span class="fw-bold fs-4"> {{ getTotalAfterDelivery(order) }}
+                            <span class="fw-bold fs-4"> {{ getOrderGrandTotal(order) }}
                                 <span>{{(languageService.languageChanged$ | async) === 'ar' ?
                                     order?.orderItems[0]?.currency_ar : order?.orderItems[0]?.currency }}</span></span>
                         </div>

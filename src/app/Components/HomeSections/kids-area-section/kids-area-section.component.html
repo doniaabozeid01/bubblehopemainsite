@@ -1,4 +1,6 @@
-<section class="kids-joy" dir="ltr">
+<section
+  class="kids-joy"
+  [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'">
 
   <!-- موجة بيضا فوق -->
   <svg class="kids-joy__wave kids-joy__wave--top" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
@@ -27,17 +29,17 @@
 
     <!-- النص -->
     <div class="kids-joy__content">
-      <h2 class="kids-joy__title">Bubble Hope,<br />Kids Area</h2>
+      <h2 class="kids-joy__title">{{ 'kidsArea.titleLine1' | translate }}<br />{{ 'kidsArea.titleLine2' | translate }}</h2>
       <p class="kids-joy__text">
-        A cozy, safe and exciting space where kids can play while parents enjoy their Bubble Hope moments.
+        {{ 'kidsArea.description' | translate }}
       </p>
 
       <div class="kids-joy__actions">
         <!-- <a routerLink="/kids-area" class="joy-btn joy-btn--book">
-          Start The Fun <span class="joy-btn__icon"><i class="bi bi-heart-fill"></i></span>
+          {{ 'kidsArea.cta' | translate }} <span class="joy-btn__icon"><i class="bi bi-heart-fill"></i></span>
         </a> -->
         <a routerLink="/kids-area" class="joy-btn joy-btn--price">
-          Start The Fun <span class="joy-btn__icon"><i class="bi bi-flower1"></i></span>
+          {{ 'kidsArea.cta' | translate }} <span class="joy-btn__icon"><i class="bi bi-flower1"></i></span>
         </a>
       </div>
     </div>

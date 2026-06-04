@@ -50,6 +50,8 @@ import { AdvertisementProductsComponent } from './Components/advertisement-produ
 import { RamadanComponent } from './Components/HomeSections/ramadan/ramadan.component';
 import { KidsAreaComponent } from './Components/kids-area/kids-area.component';
 import { KidsAreaSectionComponent } from './Components/HomeSections/kids-area-section/kids-area-section.component';
+import { BubbleEventsComponent } from './Components/bubble-events/bubble-events.component';
+import { BubbleEventsSectionComponent } from './Components/HomeSections/bubble-events-section/bubble-events-section.component';
 
 
 
@@ -98,7 +100,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     AdvertisementProductsComponent,
     RamadanComponent,
     KidsAreaComponent,
-    KidsAreaSectionComponent
+    KidsAreaSectionComponent,
+    BubbleEventsComponent,
+    BubbleEventsSectionComponent
   ],
   imports: [
     BrowserModule,

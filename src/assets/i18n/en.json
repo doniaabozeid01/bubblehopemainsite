@@ -228,5 +228,156 @@
       "DESC": "Enjoy the best offers and discounts on all our drinks throughout the holy month of Ramadan.",
       "ORDER_NOW": "Order Now",
       "VIEW_OFFERS": "View Offers"
+    },
+    "kidsArea": {
+        "titleLine1": "Bubble Hope,",
+        "titleLine2": "Kids Area",
+        "description": "A cozy, safe and exciting space where kids can play while parents enjoy their Bubble Hope moments.",
+        "cta": "Start The Fun",
+        "page": {
+            "seoTitle": "Bubble Hope Kids Area | Where kids play and parents relax",
+            "seoDescription": "Register your child at Bubble Hope Kids Area — a safe, fun space for ages 2–12, with premium bubble tea for parents.",
+            "hero": {
+                "badgeTitle": "AGES 2–12",
+                "badgeSub": "Open daily · 10 AM – 9 PM",
+                "eyebrow": "— BUBBLE HOPE KIDS AREA",
+                "titleLine1": "Where kids thrive",
+                "titleAccent": "and parents",
+                "titleLine2": "breathe easy.",
+                "lead": "A safe, fun and inspiring space where children play freely while parents relax with premium bubble tea.",
+                "stat1Num": "500+",
+                "stat1Label": "Happy families",
+                "stat2Num": "4.9",
+                "stat2Label": "Parent rating",
+                "stat3Num": "8",
+                "stat3Label": "Play zones"
+            },
+            "form": {
+                "eyebrow": "— RESERVE A SPOT",
+                "titleLine1": "Register your",
+                "titleAccent": "little one",
+                "sub": "Fill in the details below and we'll confirm via SMS within 1 hour.",
+                "parentGroup": "PARENT'S INFO",
+                "parentName": "PARENT NAME",
+                "parentNamePlaceholder": "Parent's full name",
+                "phone": "PHONE NUMBER",
+                "phonePlaceholder": "+20 1XX XXX XXXX",
+                "childGroup": "CHILD'S INFO",
+                "childName": "CHILD'S NAME",
+                "childNamePlaceholder": "Child's name",
+                "age": "AGE",
+                "selectAge": "Select age",
+                "ageYears": "{{age}} years old",
+                "birthDate": "DATE OF BIRTH",
+                "birthDateHint": "Select date",
+                "submit": "Complete Registration",
+                "submitting": "Sending to cashier…",
+                "note": "Your request appears at the cashier · Status: Pending until confirmed"
+            },
+            "activities": {
+                "eyebrow": "— FOUR CURATED EXPERIENCES",
+                "titleLine1": "A world of activities",
+                "titleAccent": "for every child",
+                "desc": "From energetic play to quiet creativity — every zone is thoughtfully designed for children aged 2 to 12."
+            },
+            "zones": {
+                "play": {
+                    "title": "Play Zone",
+                    "caption": "Ball pit · Slides · Tunnels",
+                    "alt": "Indoor play zone with colorful slides and a ball pit"
+                },
+                "draw": {
+                    "title": "Drawing Corner",
+                    "caption": "Canvases · Colors · Guided",
+                    "alt": "Child painting on a canvas with brushes and colors"
+                },
+                "lego": {
+                    "title": "Building & LEGO",
+                    "caption": "Creativity · Problem solving",
+                    "alt": "Child building and playing with colorful blocks on a play mat"
+                },
+                "reading": {
+                    "title": "Reading Nook",
+                    "caption": "Curated books · Cozy space",
+                    "alt": "Boy reading a book at a cozy kids reading table"
+                }
+            },
+            "parents": {
+                "eyebrow": "— FOR THE PARENTS",
+                "titleLine1": "Your personal",
+                "titleAccent": "relaxation zone",
+                "lead": "While your kids enjoy a safe and fun experience inside Bubble Hope Kids Area, you can relax in our cozy café atmosphere — featuring indoor seating, open-air spaces, chill music, delicious waffles, desserts, ice cream, and our signature bubble tea drinks.",
+                "loungeAlt": "Bubble Hope parents lounge",
+                "loungeAlt2": "Cozy café seating at Bubble Hope Kids Area",
+                "drinkCardTitle": "Premium Bubble Tea",
+                "drinkCardSub": "While kids play, you sip",
+                "treatCardTitle": "Waffles & Sweet Treats",
+                "treatCardSub": "Desserts · Chill vibes · Open seating",
+                "menuEyebrow": "Our Menu",
+                "perksEyebrow": "Lounge Experience",
+                "menu1Title": "Bubble Tea & Signature Drinks",
+                "menu1Sub": "Refreshing flavors • Hot & iced beverages",
+                "menu2Title": "Desserts & Sweet Treats",
+                "menu2Sub": "Fresh desserts made for sharing moments",
+                "menu3Title": "Waffles & Snacks",
+                "menu3Sub": "Warm waffles • Light bites • Café favorites",
+                "menu4Title": "Ice Cream Corner",
+                "menu4Sub": "Creamy flavors kids & adults love",
+                "perk1Title": "Indoor & Outdoor Seating",
+                "perk1Text": "Cozy indoor lounge + relaxing open-air atmosphere",
+                "perk2Title": "Bubble Tea & Desserts",
+                "perk2Text": "Signature drinks • Waffles • Ice cream • Sweet treats",
+                "perk3Title": "Music & Chill Vibes",
+                "perk3Text": "Comfortable ambiance designed for families & friends",
+                "perk4Title": "Kids Area in View",
+                "perk4Text": "Parents can relax while keeping an eye on their children",
+                "perk5Title": "Games & Activities",
+                "perk5Text": "Interactive play zones, drawing activities & entertainment",
+                "perk6Title": "Perfect Family Experience",
+                "perk6Text": "A space designed for both kids and parents to enjoy together"
+            },
+            "features": {
+                "eyebrow": "— THE EXPERIENCE",
+                "titlePrefix": "Why families love",
+                "titleAccent": "Bubble Hope Kids Area",
+                "sub": "Everything is designed so kids have the time of their lives while parents truly relax.",
+                "card1Title": "Activities",
+                "card1Text": "Climbing walls, ball pits, soft play and creative zones to spark every imagination.",
+                "card2Title": "Safety first",
+                "card2Text": "CCTV monitored, trained supervisors and sanitized play areas, every single day.",
+                "card3Title": "4 themed zones",
+                "card3Text": "Carefully built play zones tailored for ages 2 to 12, so everyone finds their spot.",
+                "card4Title": "For parents",
+                "card4Text": "Sit back with premium bubble tea and a clear view while your kids play freely."
+            },
+            "cta": "Reserve your spot",
+            "scrollTop": "Back to top",
+            "toast": {
+                "errorRequired": "Please fill in all the required fields.",
+                "errorSubmit": "Could not submit registration. Please try again.",
+                "success": "Thanks {{name}}! Your booking was sent to the cashier (Pending)."
+            }
+        }
+    },
+    "bubbleEvents": {
+        "eyebrow": "Bubble Events",
+        "titleLine1": "Parties & Birthdays",
+        "titleLine2": "Bubble Hope style",
+        "description": "Celebrate at our branches or bring premium Bubble Hope catering to your venue — boba bars, decor, and moments worth remembering.",
+        "chipBranch": "In-Branch Parties",
+        "chipCatering": "External Catering",
+        "cta": "Plan Your Party",
+        "imageAlt": "Party table setup for a celebration",
+        "orbit": {
+            "0": "Children celebrating a birthday",
+            "1": "Kids birthday party with cake",
+            "2": "Kids birthday party",
+            "3": "Kids birthday party table",
+            "4": "Children birthday celebration",
+            "5": "Children birthday party fun",
+            "6": "Wedding celebration lights",
+            "7": "Wedding party celebration",
+            "8": "Wedding reception dancing"
+        }
     }
 }

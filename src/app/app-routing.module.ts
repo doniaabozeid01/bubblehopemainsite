@@ -27,6 +27,7 @@ import { ChangePasswordComponent } from './Components/change-password/change-pas
 import { ProfileComponent } from './Components/profile/profile.component';
 import { AdvertisementProductsComponent } from './Components/advertisement-products/advertisement-products.component';
 import { KidsAreaComponent } from './Components/kids-area/kids-area.component';
+import { BubbleEventsComponent } from './Components/bubble-events/bubble-events.component';
 
 
 
@@ -51,6 +52,7 @@ const routes: Routes = [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'home', component: HomeComponent },
       { path: 'kids-area', component: KidsAreaComponent },
+      { path: 'bubble-events', component: BubbleEventsComponent },
       { path: 'advertise', component: AdvertiseCarouselComponent },
       { path: 'main-categories', component: MainCategoriesComponent },
       { path: 'rawMaterial-categories', component: RawMaterialCategoriesComponent },

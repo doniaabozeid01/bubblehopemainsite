@@ -7,7 +7,7 @@ $orange: #FF7304;
   position: relative;
   z-index: 3;
   width: 100%;
-  background: #fbf8e7;
+  background: #FFE18D;
   padding: 96px 16px 120px;
   /* اسحب السكشن اللي بعده لفوق عشان الموجة تبقى آخر حاجة تحت من غير فراغ أبيض (لازم تفضل سالبة) */
   margin-bottom: 150px;
@@ -34,13 +34,13 @@ $orange: #FF7304;
 
   &--bear {
     top: 70px;
-    left: 48px;
+    inset-inline-start: 48px;
     width: 92px;
     height: auto;
   }
   &--horse {
     bottom: 86px;
-    right: 60px;
+    inset-inline-end: 60px;
     width: 96px;
     height: auto;
   }
@@ -59,7 +59,8 @@ $orange: #FF7304;
 
 /* النص */
 .kids-joy__content {
-  padding-left: 40px;
+  padding-inline-start: 40px;
+  text-align: start;
 }
 
 .kids-joy__title {
@@ -89,7 +90,8 @@ $orange: #FF7304;
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 12px 12px 24px;
+  padding-block: 12px;
+  padding-inline: 24px 12px;
   border-radius: 999px;
   color: #fff !important;
   text-decoration: none;
@@ -152,11 +154,11 @@ $orange: #FF7304;
     gap: 18px;
     text-align: center;
   }
-  .kids-joy__content { padding-left: 0; }
+  .kids-joy__content { padding-inline-start: 0; }
   .kids-joy__text { margin-left: auto; margin-right: auto; }
   .kids-joy__actions { justify-content: center; }
-  .kids-joy__deco--bear { left: 16px; top: 60px; width: 70px; }
-  .kids-joy__deco--horse { right: 16px; bottom: 70px; width: 74px; }
+  .kids-joy__deco--bear { inset-inline-start: 16px; top: 60px; width: 70px; }
+  .kids-joy__deco--horse { inset-inline-end: 16px; bottom: 70px; width: 74px; }
   /* على الشاشات الصغيرة: الصورة متطلعش لبرّه ولا تركب على الأزرار */
   .kids-joy__img {
     max-width: 440px;

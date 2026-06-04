@@ -1,0 +1,68 @@
+<section
+  class="events-spot"
+  [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'">
+
+  <div class="events-spot__ambient" aria-hidden="true">
+    <span
+      *ngFor="let b of accentBubbles; let i = index"
+      class="events-spot__bubble"
+      [class.events-spot__bubble--orange]="b.tone === 'orange'"
+      [class.events-spot__bubble--blue]="b.tone === 'blue'"
+      [class.events-spot__bubble--cream]="b.tone === 'cream'"
+      [class.events-spot__bubble--teal]="b.tone === 'teal'"
+      [style.left.%]="b.x"
+      [style.top.%]="b.y"
+      [style.width.px]="b.size"
+      [style.height.px]="b.size"
+      [style.animationDelay.s]="i * 0.5"
+    ></span>
+  </div>
+
+  <div class="events-spot__wrap">
+    <div class="events-spot__content">
+      <span class="events-spot__eyebrow">{{ 'bubbleEvents.eyebrow' | translate }}</span>
+      <h2 class="events-spot__title">
+        {{ 'bubbleEvents.titleLine1' | translate }}
+        <span class="events-spot__title-accent">{{ 'bubbleEvents.titleLine2' | translate }}</span>
+      </h2>
+      <p class="events-spot__text">{{ 'bubbleEvents.description' | translate }}</p>
+
+      <div class="events-spot__chips">
+        <span class="events-spot__chip">{{ 'bubbleEvents.chipBranch' | translate }}</span>
+        <span class="events-spot__chip">{{ 'bubbleEvents.chipCatering' | translate }}</span>
+      </div>
+
+      <a routerLink="/bubble-events" class="events-spot__cta">
+        {{ 'bubbleEvents.cta' | translate }}
+        <i class="bi bi-arrow-right" aria-hidden="true"></i>
+      </a>
+    </div>
+
+    <div class="events-spot__visual">
+      <div
+        class="events-orbit"
+        [style.--count]="orbitImages.length"
+        aria-hidden="true"
+      >
+        <div class="events-orbit__ring">
+          <figure
+            *ngFor="let img of orbitImages; let i = index"
+            class="events-orbit__card"
+            [style.--i]="i"
+          >
+            <img
+              [src]="img.src"
+              [alt]="('bubbleEvents.orbit.' + i) | translate"
+              loading="lazy"
+              decoding="async"
+              draggable="false"
+              (error)="onGalleryImageError($event, img.fallback)"
+            />
+            <span class="events-orbit__idx">{{ formatOrbitIndex(i) }}</span>
+          </figure>
+        </div>
+        <div class="events-orbit__core"></div>
+      </div>
+    </div>
+  </div>
+</section>

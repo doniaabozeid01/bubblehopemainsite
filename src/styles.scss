@@ -12,10 +12,31 @@ body {
   margin: 0;
   padding: 0;
   width: 100%;
+}
 
+/* Kids Area page: scrolling enabled, scrollbar hidden */
+html.kids-area-scroll {
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
 
+html.kids-area-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
 
+html.kids-area-scroll body {
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
 
+html.kids-area-scroll body::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 
