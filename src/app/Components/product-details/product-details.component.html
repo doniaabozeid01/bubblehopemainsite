@@ -1,171 +1,229 @@
-<div class=" product-details justify-content-center container-fluid py-0 py-lg-5" *ngIf="product as p; else loading">
-  <div class="row justify-content-center align-items-center gx-5 overflow-hidden ">
+<ng-container *ngIf="loading; else content">
+  <div class="pd-loading">
+    <span class="pd-loading__spinner" aria-hidden="true"></span>
+    <p>{{ 'productDetails.loading' | translate }}</p>
+  </div>
+</ng-container>
 
-    <!-- ========= Left: Image ========= -->
-    <div class="col-lg-4 col-md-5 text-center position-relative ">
+<ng-template #content>
+  <div class="pd-not-found" *ngIf="productNotFound; else details">
+    <h2>{{ 'productDetails.notFound' | translate }}</h2>
+    <a routerLink="/products" class="pd-not-found__link">
+      {{ 'productDetails.returnToMenu' | translate }}
+    </a>
+  </div>
 
-      <!-- <div class="d-flex align-items-center justify-content-center w-100"> -->
+  <ng-template #details>
+    <div class="pd-page" *ngIf="product as p">
+      <div class="pd-layout">
+        <!-- Image column (full card sticks together on scroll) -->
+        <div class="pd-gallery-col">
+          <div class="pd-gallery__frame">
+            <div class="pd-gallery__glow" aria-hidden="true"></div>
 
-      <div class="big-circle-disktop d-md-block d-none"></div>
+            <div class="pd-gallery__actions">
+              <button
+                type="button"
+                class="pd-icon-btn"
+                (click)="goBack()"
+                [attr.aria-label]="'productDetails.back' | translate"
+              >
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
+              </button>
 
-      <div class="out-img d-md-none d-flex">
-        <div class="big-circle"></div>
-        <img [src]="p?.images?.length ? p.images[0] : 'assets/placeholder.png'"
-          [alt]="(languageService.languageChanged$ | async) === 'ar' ? p?.name_ar : p?.name"
-          class="img-fluid w-50 m-auto mt-4 mb-3 " />
-      </div>
-
-
-      <img [src]="p?.images?.length ? p.images[0] : 'assets/placeholder.png'"
-        [alt]="(languageService.languageChanged$ | async) === 'ar' ? p?.name_ar : p?.name"
-        class="img-fluid w-50 m-auto mt-4 mb-3 d-md-block d-none" />
-      <!-- </div> -->
-    </div>
-
-    <!-- ========= Middle: Info & Add to Cart ========= -->
-
-
-    <!-- ========= Right: Options (Size / Ice / Sugar / Extras) ========= -->
-    <div class="col-lg-8 col-md-12  py-2 px-2">
-
-
-      <div class="d-flex flex-column justify-content-center">
-        <h1 class="second-color mb-1 d-none d-md-block">
-          {{ (languageService.languageChanged$ | async) === 'ar'
-          ? p?.category?.name_ar
-          : p?.category?.name }}
-        </h1>
-
-
-        <div class="d-block d-md-none">
-
-
-          <div class=" d-flex justify-content-between align-items-center w-100">
-            <h1 class="second-color mb-1 mt-5 ">
-              {{ (languageService.languageChanged$ | async) === 'ar'
-              ? p?.category?.name_ar
-              : p?.category?.name }}
-            </h1>
-
-            <p class=" mb-0 fw-bold fs-4 text-orange " *ngIf="product?.variants?.length && p?.groups?.length">
-              {{ p.oldPrice }}
-              <span class="ms-1 fs-5 ">{{ (languageService.languageChanged$ | async) === 'ar' ? p?.currency_ar :
-                p?.currency
-                }}</span>
-            </p>
-          </div>
-
-        </div>
-
-        <h2 class="fs-2 main-color mb-2">
-          {{ (languageService.languageChanged$ | async) === 'ar'
-          ? p?.name_ar
-          : p?.name }}
-        </h2>
-
-        <p class="description fs-5 text-muted mb-4">
-          {{ (languageService.languageChanged$ | async) === 'ar'
-          ? p?.ingredients_ar
-          : p?.ingredients }}
-          <!-- Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nobis laudantium officia deserunt ab provident? -->
-        </p>
-
-        <div class="scroll">
-          <!-- Size -->
-          <div #sizeRef class="row shadow-none justify-content-start mb-3 fs-3" *ngIf="product?.variants?.length">
-            <h4 class="p-0" [class.error]="isSizeMissing">
-              {{ 'cart.size' | translate }} <span class="req">*</span>
-            </h4>
-
-            <div class="col-6 col-md-3" *ngFor="let size of product.variants">
-              <div class="size mx-1 py-2 fs-6" [ngClass]="{ active: selectedSize === size.id }"
-                (click)="selectSize(size.id)" role="button" tabindex="0" (keydown.enter)="selectSize(size.id)"
-                (keydown.space)="selectSize(size.id)">
-                <img [src]="size.imageUrl" class="w-lg-50 w-25 mb-2" [alt]="size.name" />
-                <p class="mb-0 fs-6">{{ (languageService.languageChanged$ | async) === 'ar' ?
-                  size.nameAr : size.name }}
-                </p>
-
-                <!-- للعرض فقط: لو السعر اللي عندك هو فرق السايز -->
-                <p class="mb-0 fs-6">
-                  {{ (product?.oldPrice ?? 0) + (size?.price ?? 0) }}
-                  <span class="fs-6">{{ (languageService.languageChanged$ | async) ===
-                    'ar' ? product.currency_ar : product.currency }}</span>
-                </p>
+              <div class="pd-gallery__actions-end">
+                <button
+                  type="button"
+                  class="pd-icon-btn"
+                  [class.pd-icon-btn--active]="p.isFavourite"
+                  (click)="toggleFavourite(p)"
+                  [attr.aria-label]="
+                    p.isFavourite
+                      ? ('cart.removeFromWishlist' | translate)
+                      : ('cart.addToWishlist' | translate)
+                  "
+                >
+                  <i class="bi" [class.bi-heart-fill]="p.isFavourite" [class.bi-heart]="!p.isFavourite" aria-hidden="true"></i>
+                </button>
+                <button
+                  type="button"
+                  class="pd-icon-btn"
+                  (click)="shareProduct()"
+                  [attr.aria-label]="'productDetails.share' | translate"
+                >
+                  <i class="bi bi-share" aria-hidden="true"></i>
+                </button>
               </div>
             </div>
 
-            <div class="req-hint" *ngIf="isSizeMissing">
-              {{ 'details.sizeError' | translate }}
-            </div>
+            <img
+              class="pd-gallery__img"
+              [src]="productImage(p)"
+              [alt]="productName(p)"
+              loading="eager"
+              decoding="async"
+            />
           </div>
+        </div>
 
-          <!-- Groups -->
-          <div *ngIf="p?.groups?.length">
+        <!-- Info column -->
+        <div class="pd-info">
+          <header class="pd-info__header">
+            <span class="pd-info__badge">{{ categoryName(p) }}</span>
+            <h1 class="pd-info__title">{{ productName(p) }}</h1>
+            <p class="pd-info__desc">{{ productDescription(p) }}</p>
+            <div class="pd-info__base-price">
+              <span class="pd-info__price">{{ basePrice }}</span>
+              <span class="pd-info__currency">{{ currencyLabel(p) }}</span>
+              <span class="pd-info__price-note">{{ 'productDetails.basePrice' | translate }}</span>
+            </div>
+          </header>
+
+          <section class="pd-customize">
+            <h2 class="pd-customize__title">{{ 'productDetails.customize' | translate }}</h2>
+
+            <!-- Size / variants -->
+            <div
+              #sizeRef
+              class="pd-option-card"
+              *ngIf="p.variants?.length"
+              [class.pd-option-card--error]="isSizeMissing"
+            >
+              <div class="pd-option-card__head">
+                <div class="pd-option-card__label">
+                  <h3>{{ 'cart.size' | translate }}</h3>
+                  <span class="pd-option-card__dot" aria-hidden="true"></span>
+                </div>
+                <span class="pd-option-card__tag pd-option-card__tag--required">
+                  {{ 'productDetails.required' | translate }}
+                </span>
+              </div>
+
+              <div class="pd-option-grid">
+                <button
+                  type="button"
+                  *ngFor="let size of p.variants"
+                  class="pd-option-btn"
+                  [class.pd-option-btn--active]="selectedSize === size.id"
+                  (click)="selectSize(size.id)"
+                >
+                  <span class="pd-option-btn__text">
+                    <span class="pd-option-btn__name">{{ variantName(size) }}</span>
+                    <span class="pd-option-btn__modifier" *ngIf="size.price > 0">
+                      +{{ size.price }} {{ currencyLabel(p) }}
+                    </span>
+                  </span>
+                </button>
+              </div>
+
+              <p class="pd-error-hint" *ngIf="isSizeMissing">
+                {{ 'details.sizeError' | translate }}
+              </p>
+            </div>
+
+            <!-- Option groups -->
             <ng-container *ngFor="let group of p.groups">
-              <div class="group-block mb-4" [attr.data-group-id]="group.groupId">
-                <h4 class=" mb-2" [class.error]="isGroupMissing(group.groupId)">
-                  {{ (languageService.languageChanged$ | async) === 'ar' ? group.nameAr : group.name }}
-                  <span class="req" *ngIf="group.isRequired">*</span>
-                </h4>
-
-                <div class="chips">
-                  <div class="chip " *ngFor="let option of group.options"
-                    [ngClass]="{ active: isSelected(group.groupId, option.id) }" (click)="toggleOption(group, option)">
-                    <span class="label fw-normal">{{ (languageService.languageChanged$ | async) === 'ar' ? option.nameAr
-                      :
-                      option.name }}</span>
-                    <span class="count">({{ option.price }})</span>
+              <div
+                #groupBlock
+                class="pd-option-card"
+                [attr.data-group-id]="group.groupId"
+                [class.pd-option-card--error]="isGroupMissing(group.groupId)"
+              >
+                <div class="pd-option-card__head">
+                  <div class="pd-option-card__label">
+                    <h3>{{ groupName(group) }}</h3>
+                    <span
+                      class="pd-option-card__dot"
+                      *ngIf="group.isRequired"
+                      aria-hidden="true"
+                    ></span>
                   </div>
+                  <span
+                    class="pd-option-card__tag"
+                    [class.pd-option-card__tag--required]="group.isRequired"
+                    [class.pd-option-card__tag--optional]="!group.isRequired"
+                  >
+                    {{
+                      group.isRequired
+                        ? ('productDetails.required' | translate)
+                        : ('productDetails.optional' | translate)
+                    }}
+                  </span>
                 </div>
 
-                <div class="req-hint" *ngIf="isGroupMissing(group.groupId)">
-                  {{ 'details.additionError' | translate }}
+                <div
+                  class="pd-option-grid"
+                  [class.pd-option-grid--stack]="isMultiGroup(group)"
+                >
+                  <button
+                    type="button"
+                    *ngFor="let option of group.options"
+                    class="pd-option-btn"
+                    [class.pd-option-btn--active]="isSelected(group.groupId, option.id)"
+                    (click)="toggleOption(group, option)"
+                  >
+                    <span class="pd-option-btn__text">
+                      <span class="pd-option-btn__name">{{ optionName(option) }}</span>
+                      <span class="pd-option-btn__modifier" *ngIf="option.price > 0">
+                        +{{ option.price }} {{ currencyLabel(p) }}
+                      </span>
+                    </span>
+                  </button>
                 </div>
+
+                <p class="pd-error-hint" *ngIf="isGroupMissing(group.groupId)">
+                  {{ 'details.additionError' | translate }}
+                </p>
               </div>
             </ng-container>
-          </div>
-        </div>
+          </section>
 
+          <!-- Add to cart bar -->
+          <div class="pd-checkout">
+            <div class="pd-checkout__row">
+              <div class="pd-checkout__total-wrap">
+                <span class="pd-checkout__total-label">{{ 'cart.total' | translate }}</span>
+                <div class="pd-checkout__total">
+                  <span class="pd-checkout__amount-track">
+                    <span
+                      class="pd-checkout__amount"
+                      [class.pd-checkout__amount--tick]="priceAnimActive"
+                      (animationend)="onPriceAnimationEnd()"
+                    >{{ totalPrice }}</span>
+                  </span>
+                  <span class="pd-checkout__currency">{{ currencyLabel(p) }}</span>
+                </div>
+              </div>
 
-        <div class="d-flex align-items-center gap-3 mt-auto py-3">
-          <!-- <div class="price-cart d-flex align-items-center gap-3 mt-auto"> -->
-          <p class=" mb-0 fw-bold fs-2 text-orange"
-            [class.me-auto]="(languageService.languageChanged$ | async) === 'en'"
-            [class.ms-auto]="(languageService.languageChanged$ | async) === 'ar'">
-            {{ finalPrice }}
-            <span class="ms-1 fs-5">{{ (languageService.languageChanged$ | async) === 'ar' ? p?.currency_ar :
-              p?.currency
-              }}</span>
-          </p>
+              <div class="pd-stepper">
+                <button
+                  type="button"
+                  class="pd-stepper__btn"
+                  (click)="decreaseQuantity()"
+                  [disabled]="quantity <= 1"
+                  [attr.aria-label]="'productDetails.decreaseQty' | translate"
+                >
+                  <i class="bi bi-dash" aria-hidden="true"></i>
+                </button>
+                <span class="pd-stepper__value">{{ quantity }}</span>
+                <button
+                  type="button"
+                  class="pd-stepper__btn"
+                  (click)="increaseQuantity()"
+                  [disabled]="quantity >= 99"
+                  [attr.aria-label]="'productDetails.increaseQty' | translate"
+                >
+                  <i class="bi bi-plus" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
 
-          <div class="d-flex w-80 gap-2">
-            <button class="add-btn rounded btn-bg-color border-0 px-1 px-lg-4  py-2" (click)="addToCart(p)">
+            <button type="button" class="pd-checkout__cta" (click)="addToCart(p)">
               {{ 'cart.addToCart' | translate }}
             </button>
-
-            <button class="add-btn rounded btn-bg-color border-0 px-1 px-lg-4  py-2" *ngIf="!product.isFavourite"
-              (click)="toggleFavourite(p)">
-              {{ 'cart.addToWishlist' | translate }}
-            </button>
-
-            <button class="add-btn rounded btn-bg-color border-0 px-1 px-lg-4  py-2" *ngIf="product.isFavourite"
-              (click)="toggleFavourite(p)">
-              {{ 'cart.removeFromWishlist' | translate }}
-            </button>
-
-
           </div>
-
         </div>
       </div>
-
-
-
     </div>
-  </div>
-</div>
-
-<ng-template #loading>
-  <div class="container my-5 text-center">Loading…</div>
+  </ng-template>
 </ng-template>

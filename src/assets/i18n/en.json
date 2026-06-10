@@ -222,6 +222,20 @@
         "sizeError": "Size is required — please select a size to add to cart.",
         "additionError": "At least one option is required."
     },
+    "productDetails": {
+        "loading": "Loading product…",
+        "notFound": "Product not found",
+        "returnToMenu": "Return to menu",
+        "menu": "Menu",
+        "back": "Go back",
+        "share": "Share product",
+        "customize": "Customize your drink",
+        "basePrice": "Base price",
+        "required": "Required",
+        "optional": "Optional",
+        "decreaseQty": "Decrease quantity",
+        "increaseQty": "Increase quantity"
+    },
     "RAMADAN": {
       "GREETING": "Ramadan Kareem",
       "HIGHLIGHT": "Ramadan is better with Bubble Hope",
@@ -378,6 +392,224 @@
             "6": "Wedding celebration lights",
             "7": "Wedding party celebration",
             "8": "Wedding reception dancing"
+        },
+        "page": {
+            "seoTitle": "Bubble Events | Parties & Birthdays | Bubble Hope",
+            "seoDescription": "Celebrate with Bubble Hope — in-branch birthday parties and premium external catering across our locations.",
+            "hero": {
+                "ariaLabel": "Bubble Events hero",
+                "badge": "Bubble Hope — Premium Event Experiences",
+                "title": "Bubble",
+                "titleAccent": "Events",
+                "subtitle": "Unforgettable birthday parties, boba bars & catering — crafted with love in every bubble.",
+                "ctaBook": "Book Your Event",
+                "ctaGallery": "View Gallery",
+                "scroll": "Scroll to explore",
+                "scrollAria": "Scroll to explore",
+                "slides": {
+                    "0": "Children celebrating a birthday",
+                    "1": "Kids birthday party",
+                    "2": "Kids birthday party table",
+                    "3": "Wedding celebration lights",
+                    "4": "Wedding party celebration"
+                }
+            },
+            "split": {
+                "ariaLabel": "Event types",
+                "eyebrow": "Choose Your Experience",
+                "title": "Two Ways to",
+                "titleAccent": "Celebrate",
+                "branch": {
+                    "imageAlt": "Birthday party at a Bubble Hope branch",
+                    "badge": "In-Branch Parties",
+                    "title": "Birthday Parties at Our Branches",
+                    "text": "Celebrate in our vibrant, fully-decorated spaces. Let us handle the setup, drinks, and décor while you enjoy the moment.",
+                    "cta": "Book a Branch Party"
+                },
+                "catering": {
+                    "imageAlt": "Bubble Hope catering setup at an external venue",
+                    "badge": "External Catering",
+                    "title": "Catering & External Events",
+                    "text": "We bring the full Bubble Hope experience to your chosen venue. Perfect for gardens, halls, rooftops, and private spaces.",
+                    "cta": "Inquire About Catering"
+                },
+                "branches": {
+                    "hadayek": {
+                        "name": "Hadayek Al Ahram",
+                        "capacity": "Up to 40 guests"
+                    },
+                    "zewail": {
+                        "name": "Zewail City",
+                        "capacity": "Up to 60 guests"
+                    },
+                    "maslat": {
+                        "name": "waslet Dahshour",
+                        "capacity": "Up to 35 guests"
+                    }
+                },
+                "cateringHighlights": {
+                    "bobaBar": "Full Boba Bar Setup at Your Venue",
+                    "waffle": "Waffle & Dessert Station",
+                    "branded": "Branded Cups & Decor",
+                    "staff": "Professional Staff Included"
+                }
+            },
+            "gallery": {
+                "ariaLabel": "Event gallery",
+                "eyebrow": "— CELEBRATION GALLERY",
+                "title": "Moments we create",
+                "lead": "Real celebrations. Real joy. Every frame tells a story — explore the magic we create.",
+                "viewMoment": "View this moment",
+                "prev": "Previous moment",
+                "next": "Next moment",
+                "stats": {
+                    "eventsValue": "500+",
+                    "eventsLabel": "Events hosted",
+                    "stylesValue": "8",
+                    "stylesLabel": "Celebration styles",
+                    "branchesValue": "3",
+                    "branchesLabel": "Branches"
+                },
+                "marquee": {
+                    "birthdays": "Birthdays",
+                    "weddings": "Weddings",
+                    "kids": "Kids Parties",
+                    "catering": "Catering",
+                    "decor": "Dream Decor",
+                    "dj": "DJ & Music",
+                    "photo": "Photo Booth"
+                },
+                "g1": {
+                    "alt": "Children celebrating a birthday at Bubble Hope",
+                    "eventType": "Kids Birthday",
+                    "package": "Bubble Celebration",
+                    "location": "Hadayek Al Ahram"
+                },
+                "g2": {
+                    "alt": "Wedding celebration with fireworks and festive lights",
+                    "eventType": "Wedding / Afrah",
+                    "package": "Dream Decor",
+                    "location": "External Venue"
+                },
+                "g3": {
+                    "alt": "Kids party with balloons and colorful decorations",
+                    "eventType": "Kids Birthday",
+                    "package": "Joy & Play",
+                    "location": "Zewail City"
+                },
+                "g4": {
+                    "alt": "Wedding party celebration with guests dancing",
+                    "eventType": "Wedding / Afrah",
+                    "package": "Catering Deluxe",
+                    "location": "Hadayek Al Ahram"
+                },
+                "g5": {
+                    "alt": "Children's birthday party with cake and balloons",
+                    "eventType": "Kids Birthday",
+                    "package": "Bubble Celebration",
+                    "location": "Maslat Dahshour"
+                },
+                "g6": {
+                    "alt": "Wedding celebration with flowers and elegant décor",
+                    "eventType": "Wedding / Afrah",
+                    "package": "Dream Decor",
+                    "location": "Zewail City"
+                },
+                "g7": {
+                    "alt": "Kids birthday party table with treats and decorations",
+                    "eventType": "Kids Birthday",
+                    "package": "Premium Party Package",
+                    "location": "Hadayek Al Ahram"
+                },
+                "g8": {
+                    "alt": "Elegant wedding celebration with soft lighting and festive décor",
+                    "eventType": "Wedding / Afrah",
+                    "package": "Custom Boba Bar",
+                    "location": "External Venue"
+                }
+            },
+            "packages": {
+                "ariaLabel": "Event packages and services",
+                "eyebrow": "— PACKAGES & SERVICES",
+                "title": "Everything for an unforgettable party",
+                "boba": {
+                    "title": "Custom Boba Bar",
+                    "description": "Signature drinks, toppings, and a styled bar experience tailored to your theme."
+                },
+                "dj": {
+                    "title": "DJ & Sound",
+                    "description": "Professional sound setup with playlists curated for kids and family celebrations."
+                },
+                "decor": {
+                    "title": "Dream Decorations",
+                    "description": "Balloon arches, themed backdrops, and table styling that photographs beautifully."
+                },
+                "waffle": {
+                    "title": "Waffle Station",
+                    "description": "Fresh waffles with sauces and toppings — a crowd favorite at every party."
+                },
+                "catering": {
+                    "title": "Off-Site Catering",
+                    "description": "Full beverage and snack catering delivered to your venue with setup support."
+                },
+                "photo": {
+                    "title": "Photo Moments",
+                    "description": "Styled corners and props designed for reels, portraits, and family memories."
+                }
+            },
+            "badges": {
+                "branch": "In-Branch Only",
+                "catering": "Available for Catering",
+                "both": "In-Branch & Catering"
+            },
+            "booking": {
+                "ariaLabel": "Book your event",
+                "eyebrow": "— RESERVE YOUR DATE",
+                "title": "Start your celebration",
+                "sub": "Share your details and our events team will reach out within 24 hours.",
+                "contactGroup": "Your details",
+                "eventGroup": "Event details",
+                "submitting": "Sending request…",
+                "nameLabel": "Full name",
+                "namePlaceholder": "Your name",
+                "phoneLabel": "Phone number",
+                "phonePlaceholder": "+20 1XX XXX XXXX",
+                "eventTypeLabel": "Event type",
+                "eventTypePlaceholder": "Select event type",
+                "guestsLabel": "Guest count",
+                "guestsPlaceholder": "e.g. 25",
+                "venueLabel": "Venue / branch preference",
+                "venuePlaceholder": "Select venue or branch",
+                "notesLabel": "Additional notes (optional)",
+                "notesPlaceholder": "Theme, date ideas, dietary needs…",
+                "submit": "Request booking",
+                "note": "Secure request · No payment required to inquire",
+                "eventTypes": {
+                    "birthday": "Birthday Party",
+                    "kids": "Kids Celebration",
+                    "wedding": "Wedding / Afrah",
+                    "private": "Private Gathering",
+                    "corporate": "Corporate Event",
+                    "catering": "Custom Catering"
+                },
+                "venues": {
+                    "hadayek": "Hadayek Al Ahram",
+                    "zewail": "Zewail City",
+                    "maslat": "Maslat Dahshour",
+                    "external": "External / Catering"
+                }
+            },
+            "lightbox": {
+                "close": "Close",
+                "eyebrow": "Event spotlight",
+                "package": "Package",
+                "location": "Location",
+                "book": "Book a similar event"
+            },
+            "toast": {
+                "errorRequired": "Please fill in all required fields.",
+                "success": "Thanks {{name}}! Our events team will contact you shortly."
+            }
         }
     }
 }

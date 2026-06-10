@@ -1,11 +1,13 @@
-import { Component, ViewChild, ViewChildren } from '@angular/core';
+import { Component, DoCheck, ViewChild, ViewChildren } from '@angular/core';
+import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, of } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { BranchService } from 'src/app/services/branch.service';
 import { CartCountService } from 'src/app/services/cart-count.service';
-import { LanguageService } from 'src/app/services/language.service';    
+import { TranslateService } from '@ngx-translate/core';
+import { LanguageService } from 'src/app/services/language.service';
 import { SeoService } from 'src/app/services/seo.service';
 
 @Component({
@@ -13,22 +15,135 @@ import { SeoService } from 'src/app/services/seo.service';
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.scss'],
 })
-export class ProductDetailsComponent {
+export class ProductDetailsComponent implements DoCheck {
   product: any = null;
   cartId!: number;
   usreId!: string;
   branchId!: any;
+  loading = true;
+  productNotFound = false;
+  quantity = 1;
+  priceAnimActive = false;
+  private lastShownTotal = -1;
+  private priceAnimReady = false;
 
   constructor(
-    private cartCountService : CartCountService,
+    private cartCountService: CartCountService,
     private api: ApiService,
     private route: ActivatedRoute,
     private router: Router,
+    private location: Location,
     private branchService: BranchService,
     private toastr: ToastrService,
     private seoService: SeoService,
+    private translate: TranslateService,
     public languageService: LanguageService
   ) {}
+
+  get isAr(): boolean {
+    return this.translate.currentLang === 'ar';
+  }
+
+  productName(p: any): string {
+    return this.isAr ? p?.name_ar ?? p?.name : p?.name ?? p?.name_ar;
+  }
+
+  categoryName(p: any): string {
+    return this.isAr
+      ? p?.category?.name_ar ?? p?.category?.name
+      : p?.category?.name ?? p?.category?.name_ar;
+  }
+
+  productDescription(p: any): string {
+    return this.isAr
+      ? p?.ingredients_ar ?? p?.ingredients
+      : p?.ingredients ?? p?.ingredients_ar;
+  }
+
+  currencyLabel(p: any): string {
+    return this.isAr ? p?.currency_ar ?? p?.currency : p?.currency ?? p?.currency_ar;
+  }
+
+  productImage(p: any): string {
+    return p?.images?.length ? p.images[0] : 'assets/placeholder.png';
+  }
+
+  groupName(group: any): string {
+    return this.isAr ? group?.nameAr ?? group?.name : group?.name ?? group?.nameAr;
+  }
+
+  optionName(option: any): string {
+    return this.isAr ? option?.nameAr ?? option?.name : option?.name ?? option?.nameAr;
+  }
+
+  variantName(size: any): string {
+    return this.isAr ? size?.nameAr ?? size?.name : size?.name ?? size?.nameAr;
+  }
+
+  isMultiGroup(group: any): boolean {
+    return group?.selectionType === 1;
+  }
+
+  goBack(): void {
+    this.location.back();
+  }
+
+  shareProduct(): void {
+    const url = window.location.href;
+    const title = this.product ? this.productName(this.product) : 'Bubble Hope';
+
+    if (navigator.share) {
+      navigator.share({ title, url }).catch(() => undefined);
+      return;
+    }
+
+    navigator.clipboard?.writeText(url).then(() => {
+      this.toastr.success('Link copied to clipboard');
+    });
+  }
+
+  decreaseQuantity(): void {
+    if (this.quantity > 1) this.quantity--;
+  }
+
+  increaseQuantity(): void {
+    if (this.quantity < 99) this.quantity++;
+  }
+
+  ngDoCheck(): void {
+    if (!this.product || this.loading) return;
+    this.syncTotalPriceAnimation();
+  }
+
+  private syncTotalPriceAnimation(): void {
+    const next = this.totalPrice;
+    if (!this.priceAnimReady) {
+      this.lastShownTotal = next;
+      this.priceAnimReady = true;
+      return;
+    }
+    if (next === this.lastShownTotal) return;
+
+    this.lastShownTotal = next;
+    this.priceAnimActive = false;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        this.priceAnimActive = true;
+      });
+    });
+  }
+
+  onPriceAnimationEnd(): void {
+    this.priceAnimActive = false;
+  }
+
+  get totalPrice(): number {
+    return this.unitPrice * this.quantity;
+  }
+
+  get unitPrice(): number {
+    return this.finalPrice;
+  }
 
   ngOnInit() {
     const name = decodeURIComponent(
@@ -67,7 +182,10 @@ export class ProductDetailsComponent {
       }
 
       if (!name || !this.branchId) {
-        // console.log('no name or branchId'); // هنا مش هتدخلي بعد التصليح
+        this.loading = false;
+        if (name && !this.branchId) {
+          this.productNotFound = true;
+        }
         return;
       }
 
@@ -91,11 +209,30 @@ export class ProductDetailsComponent {
   loadProduct(name: string) {
     if (!name?.trim() || !this.branchId) return;
 
+    this.loading = true;
+    this.productNotFound = false;
+    this.priceAnimReady = false;
+    this.priceAnimActive = false;
+
     this.api.GetProductByName(name, this.branchId).subscribe({
       next: (response) => {
-        // console.log(response);
+        if (!response) {
+          this.product = null;
+          this.productNotFound = true;
+          this.loading = false;
+          return;
+        }
 
         this.product = response;
+        this.quantity = 1;
+        this.selectedByGroup.clear();
+        this.missingRequired.clear();
+        this.isSizeMissing = false;
+        this.initVariantDefault(this.product);
+        this.initGroupDefaults();
+        this.lastShownTotal = this.totalPrice;
+        this.priceAnimReady = true;
+        this.priceAnimActive = false;
 
         this.seoService.updateTitleAndDescription(
           `${this.product?.name ?? name} | Bubble Hope`,
@@ -112,11 +249,7 @@ export class ProductDetailsComponent {
               this.branchId
             )
             .pipe(
-              catchError((err) => {
-                // 404 معناها "مش موجود في المفضلة"
-                if (err?.status === 404) return of(null);
-                return of(null);
-              })
+              catchError(() => of(null))
             )
             .subscribe((res) => {
               this.product.isFavourite = !!res;
@@ -124,9 +257,13 @@ export class ProductDetailsComponent {
         } else {
           this.product.isFavourite = false;
         }
+
+        this.loading = false;
       },
-      error: (err) => {
-        // console.log('Error loading product:', err);
+      error: () => {
+        this.product = null;
+        this.productNotFound = true;
+        this.loading = false;
       },
     });
   }
@@ -161,7 +298,7 @@ export class ProductDetailsComponent {
     const selectedOptions = this.buildSelectedOptions(product); // [{ groupId, optionId }, ...]
 
     const payload = {
-      quantity: 1,
+      quantity: this.quantity,
       productId: product.id,
       branchId: this.branchId,
       userId: this.usreId,
@@ -287,10 +424,10 @@ export class ProductDetailsComponent {
     return this.missingRequired.has(groupId);
   }
 
-  // (اختياري) اسكرول لأول جروب ناقص
-  @ViewChildren('groupRef') groupRefs!: any; // QueryList<ElementRef>
+  @ViewChildren('groupBlock') groupBlocks!: any;
+
   private scrollToFirstMissing(firstMissingId: number) {
-    const el = this.groupRefs?.find(
+    const el = this.groupBlocks?.find(
       (r: any) => r?.nativeElement?.dataset?.groupId == String(firstMissingId)
     )?.nativeElement;
     el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -378,10 +515,12 @@ export class ProductDetailsComponent {
   initVariantDefault(product: any): void {
     const variants = product?.variants ?? [];
     const def = variants.find((v: any) => v.isDefault);
-    if (def) this.selectedSize = def.id;
-    else if (variants.length) {
-      // لو عايزة دايمًا فرض أول سايز كديفولت
-      // this.selectedSize = variants[0].id;
+    if (def) {
+      this.selectedSize = def.id;
+    } else if (variants.length) {
+      this.selectedSize = variants[0].id;
+    } else {
+      this.selectedSize = null;
     }
   }
 

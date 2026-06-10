@@ -5,13 +5,14 @@ import {
   HostListener,
   OnDestroy,
   OnInit,
-  QueryList,
   ViewChild,
-  ViewChildren,
 } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { LanguageService } from 'src/app/services/language.service';
 import { SeoService } from 'src/app/services/seo.service';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -21,23 +22,16 @@ export interface EventGalleryItem {
   type: 'image' | 'video';
   src: string;
   poster?: string;
-  alt: string;
-  depth: number;
-  eventType: string;
-  packageName: string;
-  location: string;
-  offsetX: number;
-  offsetY: number;
-  rotate: number;
-  width: number;
 }
 
 export interface EventPackage {
   id: string;
-  title: string;
-  description: string;
   icon: string;
   badge: 'branch' | 'catering' | 'both';
+}
+
+export interface SelectOption {
+  id: string;
 }
 
 const PEX = (id: number) =>
@@ -46,9 +40,20 @@ const PEX = (id: number) =>
 const PEX_HERO = (id: number) =>
   `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop`;
 
+const PEX_SPLIT = (id: number) =>
+  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=900&h=700&fit=crop`;
+
+const PEX_GALLERY = (id: number) =>
+  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=1100&h=825&fit=crop`;
+
+export interface SplitBranch {
+  id: string;
+  rating: number;
+}
+
 export interface HeroSlide {
   src: string;
-  alt: string;
+  slideKey: string;
 }
 
 export interface HeroBubble {
@@ -73,25 +78,49 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('heroContent') heroContent!: ElementRef<HTMLElement>;
   @ViewChild('heroBubblesLayer') heroBubblesLayer!: ElementRef<HTMLElement>;
   @ViewChild('gallerySection') gallerySection!: ElementRef<HTMLElement>;
-  @ViewChildren('galleryCard') galleryCards!: QueryList<ElementRef<HTMLElement>>;
+  @ViewChild('galleryRail') galleryRail!: ElementRef<HTMLElement>;
 
   private scrollTriggers: ScrollTrigger[] = [];
   private gsapCtx?: gsap.Context;
   private bubbleTweens: gsap.core.Tween[] = [];
+  private langSub?: Subscription;
+  private galleryAutoplayTimer?: ReturnType<typeof setInterval>;
+  private galleryProgressTimer?: ReturnType<typeof setInterval>;
+  private galleryAutoplayPaused = false;
+
+  readonly gallerySlideDuration = 5200;
+  readonly marqueeCopies = [0, 1];
+
+  galleryActiveIndex = 0;
+  galleryHeroFresh = true;
+  galleryProgress = 0;
+  galleryHeroHeight = 620;
 
   lightboxOpen = false;
   activeGalleryItem: EventGalleryItem | null = null;
   eventTypeMenuOpen = false;
   venueMenuOpen = false;
+  submittingBooking = false;
   splitHover: 'branch' | 'catering' | null = null;
+
+  readonly splitBranchImage = PEX_SPLIT(7155950);
+  readonly splitCateringImage = PEX_SPLIT(2526105);
+
+  readonly splitBranches: SplitBranch[] = [
+    { id: 'hadayek', rating: 4.9 },
+    { id: 'zewail', rating: 4.8 },
+    { id: 'maslat', rating: 4.9 },
+  ];
+
+  readonly cateringHighlightKeys = ['bobaBar', 'waffle', 'branded', 'staff'];
 
   /** Rotating hero backgrounds — kids birthdays & wedding/afrah. */
   readonly heroSlides: HeroSlide[] = [
-    { src: PEX_HERO(7155950), alt: 'Children celebrating a birthday' },
-    { src: PEX_HERO(799443), alt: 'Kids birthday party' },
-    { src: PEX_HERO(6220553), alt: 'Kids birthday party table' },
-    { src: PEX_HERO(1721833), alt: 'Wedding celebration lights' },
-    { src: PEX_HERO(2526105), alt: 'Wedding party celebration' },
+    { src: PEX_HERO(7155950), slideKey: '0' },
+    { src: PEX_HERO(799443), slideKey: '1' },
+    { src: PEX_HERO(6220553), slideKey: '2' },
+    { src: PEX_HERO(1721833), slideKey: '3' },
+    { src: PEX_HERO(2526105), slideKey: '4' },
   ];
 
   readonly heroSlideDuration = 5000;
@@ -116,151 +145,60 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
     { id: 13, size: 32, x: 67, delay: 2.5, duration: 10, opacity: 0.19, variant: 1, drift: -26 },
   ];
 
-  readonly branches = [
-    'Hadayek Al Ahram',
-    'Zewail City',
-    'Maslat Dahshour',
+  readonly venueOptions: SelectOption[] = [
+    { id: 'hadayek' },
+    { id: 'zewail' },
+    { id: 'maslat' },
+    { id: 'external' },
   ];
 
-  readonly eventTypes = [
-    'Birthday Party',
-    'Kids Celebration',
-    'Wedding / Afrah',
-    'Private Gathering',
-    'Corporate Event',
-    'Custom Catering',
+  readonly eventTypeOptions: SelectOption[] = [
+    { id: 'birthday' },
+    { id: 'kids' },
+    { id: 'wedding' },
+    { id: 'private' },
+    { id: 'corporate' },
+    { id: 'catering' },
   ];
 
+  /** Same themes as hero — 4 birthdays + 4 weddings/afrah (verified Pexels IDs). */
+  /** 4 kids birthdays + 4 wedding/afrah — verified Pexels IDs only. */
   readonly galleryItems: EventGalleryItem[] = [
-    {
-      id: 'g1',
-      type: 'image',
-      src: PEX(7155950),
-      alt: 'Children celebrating a birthday at Bubble Hope',
-      depth: 1,
-      eventType: 'Birthday Party',
-      packageName: 'Bubble Celebration',
-      location: 'Hadayek Al Ahram',
-      offsetX: -4,
-      offsetY: 0,
-      rotate: -4,
-      width: 280,
-    },
-    {
-      id: 'g2',
-      type: 'image',
-      src: PEX(6220553),
-      alt: 'Kids birthday party table setup',
-      depth: 2,
-      eventType: 'Kids Celebration',
-      packageName: 'Joy & Play',
-      location: 'Zewail City',
-      offsetX: 8,
-      offsetY: -24,
-      rotate: 3,
-      width: 240,
-    },
-    {
-      id: 'g3',
-      type: 'image',
-      src: PEX(6218441),
-      alt: 'Kids birthday celebration with cake',
-      depth: 3,
-      eventType: 'Birthday Party',
-      packageName: 'Premium Party Package',
-      location: 'Maslat Dahshour',
-      offsetX: -12,
-      offsetY: 18,
-      rotate: -2,
-      width: 220,
-    },
-    {
-      id: 'g4',
-      type: 'image',
-      src: PEX(1721833),
-      alt: 'Wedding celebration with lights',
-      depth: 2,
-      eventType: 'Wedding / Afrah',
-      packageName: 'Catering Deluxe',
-      location: 'External Venue',
-      offsetX: 14,
-      offsetY: 8,
-      rotate: 5,
-      width: 300,
-    },
-    {
-      id: 'g5',
-      type: 'image',
-      src: PEX(2526105),
-      alt: 'Wedding party celebration',
-      depth: 1,
-      eventType: 'Wedding / Afrah',
-      packageName: 'Custom Boba Bar',
-      location: 'Zewail City',
-      offsetX: 0,
-      offsetY: -12,
-      rotate: -3,
-      width: 260,
-    },
-    {
-      id: 'g6',
-      type: 'image',
-      src: PEX(265088),
-      alt: 'Wedding reception dancing',
-      depth: 3,
-      eventType: 'Wedding / Afrah',
-      packageName: 'Dream Decor',
-      location: 'Hadayek Al Ahram',
-      offsetX: 6,
-      offsetY: 22,
-      rotate: 2,
-      width: 250,
-    },
+    { id: 'g1', type: 'image', src: PEX_GALLERY(7155950) },
+    { id: 'g2', type: 'image', src: PEX_GALLERY(1721833) },
+    { id: 'g3', type: 'image', src: PEX_GALLERY(799443) },
+    { id: 'g4', type: 'image', src: PEX_GALLERY(2526105) },
+    { id: 'g5', type: 'image', src: PEX_GALLERY(5877417) },
+    { id: 'g6', type: 'image', src: PEX_GALLERY(3171837) },
+    { id: 'g7', type: 'image', src: PEX_GALLERY(6220553) },
+    { id: 'g8', type: 'image', src: PEX_GALLERY(265088) },
   ];
+
+  readonly galleryStats = [
+    { valueKey: 'bubbleEvents.page.gallery.stats.eventsValue', labelKey: 'bubbleEvents.page.gallery.stats.eventsLabel' },
+    { valueKey: 'bubbleEvents.page.gallery.stats.stylesValue', labelKey: 'bubbleEvents.page.gallery.stats.stylesLabel' },
+    { valueKey: 'bubbleEvents.page.gallery.stats.branchesValue', labelKey: 'bubbleEvents.page.gallery.stats.branchesLabel' },
+  ];
+
+  readonly galleryMarqueeKeys = [
+    'bubbleEvents.page.gallery.marquee.birthdays',
+    'bubbleEvents.page.gallery.marquee.weddings',
+    'bubbleEvents.page.gallery.marquee.kids',
+    'bubbleEvents.page.gallery.marquee.catering',
+    'bubbleEvents.page.gallery.marquee.decor',
+    'bubbleEvents.page.gallery.marquee.dj',
+    'bubbleEvents.page.gallery.marquee.photo',
+  ];
+
+  readonly galleryMarqueeKeysReversed = [...this.galleryMarqueeKeys].reverse();
 
   readonly packages: EventPackage[] = [
-    {
-      id: 'boba',
-      title: 'Custom Boba Bar',
-      description: 'Signature drinks, toppings, and a styled bar experience tailored to your theme.',
-      icon: 'bi-cup-straw',
-      badge: 'both',
-    },
-    {
-      id: 'dj',
-      title: 'DJ & Sound',
-      description: 'Professional sound setup with playlists curated for kids and family celebrations.',
-      icon: 'bi-music-note-beamed',
-      badge: 'both',
-    },
-    {
-      id: 'decor',
-      title: 'Dream Decorations',
-      description: 'Balloon arches, themed backdrops, and table styling that photographs beautifully.',
-      icon: 'bi-stars',
-      badge: 'branch',
-    },
-    {
-      id: 'waffle',
-      title: 'Waffle Station',
-      description: 'Fresh waffles with sauces and toppings — a crowd favorite at every party.',
-      icon: 'bi-grid-3x3-gap',
-      badge: 'branch',
-    },
-    {
-      id: 'catering',
-      title: 'Off-Site Catering',
-      description: 'Full beverage and snack catering delivered to your venue with setup support.',
-      icon: 'bi-truck',
-      badge: 'catering',
-    },
-    {
-      id: 'photo',
-      title: 'Photo Moments',
-      description: 'Styled corners and props designed for reels, portraits, and family memories.',
-      icon: 'bi-camera',
-      badge: 'both',
-    },
+    { id: 'boba', icon: 'bi-cup-straw', badge: 'both' },
+    { id: 'dj', icon: 'bi-music-note-beamed', badge: 'both' },
+    { id: 'decor', icon: 'bi-stars', badge: 'branch' },
+    { id: 'waffle', icon: 'bi-grid-3x3-gap', badge: 'branch' },
+    { id: 'catering', icon: 'bi-truck', badge: 'catering' },
+    { id: 'photo', icon: 'bi-camera', badge: 'both' },
   ];
 
   readonly bgBubbles = Array.from({ length: 12 }, (_, i) => ({
@@ -282,14 +220,14 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private seoService: SeoService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translate: TranslateService,
+    public languageService: LanguageService
   ) {}
 
   ngOnInit(): void {
-    this.seoService.updateTitleAndDescription(
-      'Bubble Events | Parties & Birthdays | Bubble Hope',
-      'Celebrate with Bubble Hope — in-branch birthday parties and premium external catering across our locations.'
-    );
+    this.updateSeo();
+    this.langSub = this.translate.onLangChange.subscribe(() => this.updateSeo());
 
     if (typeof window !== 'undefined' && this.heroSlides.length > 1) {
       this.heroSlideTimer = setInterval(() => {
@@ -393,9 +331,12 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
         });
       });
 
-      this.initGalleryParallax(!isCompact);
+      this.updateGalleryHeroHeight();
+      requestAnimationFrame(() => {
+        this.initGalleryAutoplay(!isCompact);
+        ScrollTrigger.refresh();
+      });
       this.initBgBubbles();
-      requestAnimationFrame(() => ScrollTrigger.refresh());
     });
   }
 
@@ -404,6 +345,7 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
+    this.langSub?.unsubscribe();
     if (this.heroSlideTimer) {
       clearInterval(this.heroSlideTimer);
     }
@@ -411,28 +353,120 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.scrollTriggers.forEach((t) => t.kill());
     this.scrollTriggers = [];
     this.bubbleTweens.forEach((t) => t.kill());
+    this.clearGalleryAutoplay();
   }
 
-  private initGalleryParallax(enabled = true): void {
-    if (!enabled) return;
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    this.updateGalleryHeroHeight();
+  }
 
-    this.galleryCards?.forEach((ref, i) => {
-      const el = ref.nativeElement;
-      const item = this.galleryItems[i];
-      if (!el || !item) return;
+  get featuredGalleryItem(): EventGalleryItem {
+    return this.galleryItems[this.galleryActiveIndex];
+  }
 
-      const st = ScrollTrigger.create({
-        trigger: this.gallerySection?.nativeElement,
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: 1,
-        animation: gsap.to(el, {
-          y: item.depth * 28 * (i % 2 === 0 ? -1 : 1),
-          ease: 'none',
-        }),
-      });
-      this.scrollTriggers.push(st);
+  private updateGalleryHeroHeight(): void {
+    const viewportH = window.innerHeight;
+    const viewportW = window.innerWidth;
+
+    if (viewportW < 768) {
+      this.galleryHeroHeight = Math.round(Math.min(440, Math.max(340, viewportH * 0.45)));
+      return;
+    }
+
+    if (viewportW < 1200) {
+      this.galleryHeroHeight = Math.round(Math.min(540, Math.max(480, viewportH * 0.5)));
+      return;
+    }
+
+    this.galleryHeroHeight = Math.round(Math.min(720, Math.max(620, viewportH * 0.6)));
+  }
+
+  get galleryStackItems(): EventGalleryItem[] {
+    return [1, 2, 3].map(
+      (offset) => this.galleryItems[(this.galleryActiveIndex + offset) % this.galleryItems.length]
+    );
+  }
+
+  selectGallerySlide(index: number): void {
+    if (index === this.galleryActiveIndex) return;
+    this.galleryActiveIndex = index;
+    this.pulseGalleryHero();
+    this.scrollGalleryThumbIntoView(index);
+    this.restartGalleryAutoplay();
+  }
+
+  selectGalleryByItem(item: EventGalleryItem): void {
+    const index = this.galleryItems.findIndex((entry) => entry.id === item.id);
+    if (index >= 0) {
+      this.selectGallerySlide(index);
+    }
+  }
+
+  nextGallerySlide(): void {
+    this.selectGallerySlide((this.galleryActiveIndex + 1) % this.galleryItems.length);
+  }
+
+  prevGallerySlide(): void {
+    this.selectGallerySlide(
+      (this.galleryActiveIndex - 1 + this.galleryItems.length) % this.galleryItems.length
+    );
+  }
+
+  pauseGalleryAutoplay(): void {
+    this.galleryAutoplayPaused = true;
+  }
+
+  resumeGalleryAutoplay(): void {
+    this.galleryAutoplayPaused = false;
+  }
+
+  private initGalleryAutoplay(enabled = true): void {
+    this.clearGalleryAutoplay();
+    this.galleryProgress = 0;
+
+    if (!enabled || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    const progressStep = 100 / (this.gallerySlideDuration / 100);
+    this.galleryProgressTimer = setInterval(() => {
+      if (this.galleryAutoplayPaused) return;
+      this.galleryProgress = Math.min(100, this.galleryProgress + progressStep);
+    }, 100);
+
+    this.galleryAutoplayTimer = setInterval(() => {
+      if (this.galleryAutoplayPaused) return;
+      this.nextGallerySlide();
+    }, this.gallerySlideDuration);
+  }
+
+  private restartGalleryAutoplay(): void {
+    this.galleryProgress = 0;
+  }
+
+  private clearGalleryAutoplay(): void {
+    if (this.galleryAutoplayTimer) {
+      clearInterval(this.galleryAutoplayTimer);
+      this.galleryAutoplayTimer = undefined;
+    }
+    if (this.galleryProgressTimer) {
+      clearInterval(this.galleryProgressTimer);
+      this.galleryProgressTimer = undefined;
+    }
+  }
+
+  private pulseGalleryHero(): void {
+    this.galleryHeroFresh = false;
+    requestAnimationFrame(() => {
+      this.galleryHeroFresh = true;
     });
+  }
+
+  private scrollGalleryThumbIntoView(index: number): void {
+    const rail = this.galleryRail?.nativeElement;
+    const thumb = rail?.children[index] as HTMLElement | undefined;
+    thumb?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
   }
 
   private initBgBubbles(): void {
@@ -466,20 +500,6 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     }
 
-    const section = this.gallerySection?.nativeElement;
-    if (!section) return;
-    const rect = section.getBoundingClientRect();
-    if (event.clientY < rect.top || event.clientY > rect.bottom) return;
-
-    const gx = (event.clientX / window.innerWidth - 0.5) * 2;
-    const gy = (event.clientY / window.innerHeight - 0.5) * 2;
-
-    gsap.to('.events-gallery__parallax-layer', {
-      x: gx * 18,
-      y: gy * 12,
-      duration: 1.2,
-      ease: 'power2.out',
-    });
   }
 
   openLightbox(item: EventGalleryItem): void {
@@ -494,15 +514,15 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
     document.body.style.overflow = '';
   }
 
-  badgeLabel(badge: EventPackage['badge']): string {
-    switch (badge) {
-      case 'branch':
-        return 'In-Branch Only';
-      case 'catering':
-        return 'Available for Catering';
-      default:
-        return 'In-Branch & Catering';
-    }
+  private updateSeo(): void {
+    this.seoService.updateTitleAndDescription(
+      this.translate.instant('bubbleEvents.page.seoTitle'),
+      this.translate.instant('bubbleEvents.page.seoDescription')
+    );
+  }
+
+  galleryKey(item: EventGalleryItem, field: 'alt' | 'eventType' | 'package' | 'location'): string {
+    return `bubbleEvents.page.gallery.${item.id}.${field}`;
   }
 
   toggleEventTypeMenu(event: Event): void {
@@ -543,20 +563,33 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   submitBooking(): void {
+    if (this.submittingBooking) return;
+
     const { name, phone, eventType, guestCount, venue } = this.booking;
-    if (!name || !phone || !eventType || !guestCount || !venue) {
-      this.toastr.error('Please fill in all required fields.');
+    if (!name?.trim() || !phone?.trim() || !eventType || !guestCount || !venue) {
+      this.toastr.error(this.translate.instant('bubbleEvents.page.toast.errorRequired'));
       return;
     }
-    this.toastr.success(`Thanks ${name}! Our events team will contact you shortly.`);
-    this.booking = {
-      name: '',
-      phone: '',
-      eventType: '',
-      guestCount: '',
-      venue: '',
-      notes: '',
-    };
+
+    this.submittingBooking = true;
+    this.eventTypeMenuOpen = false;
+    this.venueMenuOpen = false;
+
+    // Simulated request — replace with API when endpoint is available.
+    setTimeout(() => {
+      this.toastr.success(
+        this.translate.instant('bubbleEvents.page.toast.success', { name: name.trim() })
+      );
+      this.booking = {
+        name: '',
+        phone: '',
+        eventType: '',
+        guestCount: '',
+        venue: '',
+        notes: '',
+      };
+      this.submittingBooking = false;
+    }, 600);
   }
 
   setSplitHover(side: 'branch' | 'catering' | null): void {
