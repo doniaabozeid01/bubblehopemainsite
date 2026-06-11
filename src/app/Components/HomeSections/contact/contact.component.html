@@ -29,10 +29,10 @@
 
           <div class="text-center">
 
-            <button type="submit" class="btn btn-bg-secondcolor2 px-5 py-2"
+            <button type="submit" class="btn btn-bg-secondcolor2 px-5 py-2 btn-with-loader"
               [disabled]="contactForm.invalid || isLoading">
-              <span class="fs-4 ">{{'home.send' | translate}}</span>
-              <span *ngIf="isLoading" class="spinner-border spinner-border-sm mx-2" role="status"></span>
+              <span class="fs-4" *ngIf="!isLoading">{{'home.send' | translate}}</span>
+              <app-brand-loader *ngIf="isLoading" size="sm" label="Loading..."></app-brand-loader>
             </button>
 
 

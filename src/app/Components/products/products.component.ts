@@ -263,7 +263,10 @@ export class ProductsComponent {
   }
 
   gotodetails(product: any) {
-    this.router.navigate(['productdetails/', product.slug]);
+    const categoryId = this.route.snapshot.paramMap.get('id');
+    this.router.navigate(['productdetails/', product.slug], {
+      queryParams: categoryId ? { categoryId } : {},
+    });
   }
 
 

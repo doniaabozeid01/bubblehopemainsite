@@ -1,3 +1,7 @@
+<div class="page-loading page-loading--full" *ngIf="loading">
+  <app-brand-loader size="lg" [showLogo]="true" label="Loading..."></app-brand-loader>
+</div>
+
 <div class="profile" *ngIf="!loading && user">
 
   <div class="header">

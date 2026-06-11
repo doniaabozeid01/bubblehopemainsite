@@ -1,5 +1,13 @@
-import { Component, DoCheck, ViewChild, ViewChildren } from '@angular/core';
-import { Location } from '@angular/common';
+import { animate, style, transition, trigger } from '@angular/animations';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  OnDestroy,
+  ViewChild,
+  ViewChildren,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, of } from 'rxjs';
@@ -9,13 +17,52 @@ import { CartCountService } from 'src/app/services/cart-count.service';
 import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from 'src/app/services/language.service';
 import { SeoService } from 'src/app/services/seo.service';
+import {
+  hasOptionImage as optionHasImage,
+  hasVariantImage as variantHasImage,
+  resolveOptionImagePath,
+  resolveProductGalleryImage,
+  resolveVariantImagePath,
+} from 'src/app/utils/product-image.util';
 
 @Component({
   selector: 'app-product-details',
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.scss'],
+  animations: [
+    trigger('priceChange', [
+      transition(':enter', [
+        style({
+          transform: 'translateY(-12px)',
+          opacity: 0,
+          position: 'absolute',
+          insetInlineStart: 0,
+          insetBlockEnd: 0,
+        }),
+        animate(
+          '300ms 240ms ease-out',
+          style({ transform: 'translateY(0)', opacity: 1 })
+        ),
+      ]),
+      transition(':leave', [
+        style({
+          position: 'absolute',
+          insetInlineStart: 0,
+          insetBlockEnd: 0,
+        }),
+        animate(
+          '240ms ease-in',
+          style({ transform: 'translateY(12px)', opacity: 0 })
+        ),
+      ]),
+    ]),
+  ],
 })
-export class ProductDetailsComponent implements DoCheck {
+export class ProductDetailsComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('galleryTrack') galleryTrack?: ElementRef<HTMLElement>;
+  @ViewChild('gallerySticky') gallerySticky?: ElementRef<HTMLElement>;
+  @ViewChild('checkoutWrap') checkoutWrap?: ElementRef<HTMLElement>;
+  @ViewChild('checkoutBar') checkoutBar?: ElementRef<HTMLElement>;
   product: any = null;
   cartId!: number;
   usreId!: string;
@@ -23,16 +70,17 @@ export class ProductDetailsComponent implements DoCheck {
   loading = true;
   productNotFound = false;
   quantity = 1;
-  priceAnimActive = false;
-  private lastShownTotal = -1;
-  private priceAnimReady = false;
+  orderNote = '';
+  readonly maxOrderNoteLength = 250;
+  private returnCategoryId: number | null = null;
+  private returnTab: 'offers' | 'best' | null = null;
+  private galleryStickyFrame = 0;
 
   constructor(
     private cartCountService: CartCountService,
     private api: ApiService,
     private route: ActivatedRoute,
     private router: Router,
-    private location: Location,
     private branchService: BranchService,
     private toastr: ToastrService,
     private seoService: SeoService,
@@ -55,9 +103,10 @@ export class ProductDetailsComponent implements DoCheck {
   }
 
   productDescription(p: any): string {
-    return this.isAr
+    const text = this.isAr
       ? p?.ingredients_ar ?? p?.ingredients
       : p?.ingredients ?? p?.ingredients_ar;
+    return text?.trim() || '';
   }
 
   currencyLabel(p: any): string {
@@ -65,7 +114,7 @@ export class ProductDetailsComponent implements DoCheck {
   }
 
   productImage(p: any): string {
-    return p?.images?.length ? p.images[0] : 'assets/placeholder.png';
+    return resolveProductGalleryImage(p);
   }
 
   groupName(group: any): string {
@@ -80,12 +129,82 @@ export class ProductDetailsComponent implements DoCheck {
     return this.isAr ? size?.nameAr ?? size?.name : size?.name ?? size?.nameAr;
   }
 
+  getOptionPrice(option: any): number {
+    return Number(option?.price ?? 0);
+  }
+
+  hasOptionImage(option: any): boolean {
+    return optionHasImage(option);
+  }
+
+  getOptionImage(option: any): string {
+    return resolveOptionImagePath(option);
+  }
+
+  hasVariantImage(variant: any): boolean {
+    return variantHasImage(variant);
+  }
+
+  getSizeVariantImagePath(variant: any): string {
+    const fromApi = resolveVariantImagePath(variant, '');
+    if (fromApi && fromApi !== 'assets/img/placeholder.png') return fromApi;
+
+    const label = `${variant?.name || ''} ${variant?.nameAr || ''}`.toLowerCase();
+    if (/cone|كون/i.test(label)) {
+      return 'assets/images/ice-cream-cone.svg';
+    }
+    return 'assets/images/ice-cream-cup.svg';
+  }
+
+  getSizePrice(size: any): number {
+    return Number((this.basePrice + Number(size?.price ?? 0)).toFixed(2));
+  }
+
+  getVariantExtraPrice(size: any): number {
+    return Number(size?.price ?? 0);
+  }
+
+  isIceCreamProduct(product: any): boolean {
+    const category = `${product?.category?.name || ''} ${product?.category?.name_ar || ''}`.toLowerCase();
+    return /ice\s*cream|icecream|آيس\s*كريم|ايس\s*كريم/i.test(category);
+  }
+
   isMultiGroup(group: any): boolean {
-    return group?.selectionType === 1;
+    return group?.selectionType === 1 || this.isFlavorGroup(group);
+  }
+
+  isFlavorGroup(group: any): boolean {
+    const label = `${group?.name || ''} ${group?.nameAr || ''}`.toLowerCase();
+    return /flavor|فلافر|نكه|اختر النكه/i.test(label);
+  }
+
+  getCategoryProductsLink(): (string | number)[] {
+    const id = this.returnCategoryId ?? this.product?.category?.id;
+    return id ? ['/products', id] : ['/products'];
   }
 
   goBack(): void {
-    this.location.back();
+    this.router.navigate(this.getCategoryProductsLink());
+  }
+
+  private isAuthenticated(): boolean {
+    const token = localStorage.getItem('token');
+    return (
+      !!token &&
+      token !== 'null' &&
+      token !== 'undefined' &&
+      token.trim() !== ''
+    );
+  }
+
+  private requireLogin(): boolean {
+    if (this.isAuthenticated()) return true;
+
+    this.toastr.warning(this.translate.instant('productDetails.loginRequired'));
+    this.router.navigate(['/auth/login'], {
+      queryParams: { returnUrl: this.router.url },
+    });
+    return false;
   }
 
   shareProduct(): void {
@@ -110,72 +229,207 @@ export class ProductDetailsComponent implements DoCheck {
     if (this.quantity < 99) this.quantity++;
   }
 
-  ngDoCheck(): void {
-    if (!this.product || this.loading) return;
-    this.syncTotalPriceAnimation();
-  }
-
-  private syncTotalPriceAnimation(): void {
-    const next = this.totalPrice;
-    if (!this.priceAnimReady) {
-      this.lastShownTotal = next;
-      this.priceAnimReady = true;
-      return;
-    }
-    if (next === this.lastShownTotal) return;
-
-    this.lastShownTotal = next;
-    this.priceAnimActive = false;
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        this.priceAnimActive = true;
-      });
-    });
-  }
-
-  onPriceAnimationEnd(): void {
-    this.priceAnimActive = false;
+  trackByPrice(_index: number, price: number): number {
+    return price;
   }
 
   get totalPrice(): number {
-    return this.unitPrice * this.quantity;
+    return Number((this.unitPrice * this.quantity).toFixed(2));
   }
 
   get unitPrice(): number {
     return this.finalPrice;
   }
 
+  ngAfterViewInit(): void {
+    this.scheduleGalleryStickyUpdate();
+  }
+
+  ngOnDestroy(): void {
+    cancelAnimationFrame(this.galleryStickyFrame);
+    this.resetGallerySticky();
+    this.resetCheckoutDock();
+  }
+
+  @HostListener('window:scroll')
+  @HostListener('window:resize')
+  onGalleryViewportChange(): void {
+    this.scheduleGalleryStickyUpdate();
+  }
+
+  private scheduleGalleryStickyUpdate(): void {
+    cancelAnimationFrame(this.galleryStickyFrame);
+    this.galleryStickyFrame = requestAnimationFrame(() => {
+      this.updateGallerySticky();
+      this.updateCheckoutDock();
+    });
+  }
+
+  private isCheckoutDockEnabled(): boolean {
+    return window.matchMedia('(max-width: 1023px)').matches;
+  }
+
+  private getCheckoutBottomGap(): number {
+    const value = getComputedStyle(document.documentElement)
+      .getPropertyValue('env(safe-area-inset-bottom)')
+      .trim();
+    return 12 + (Number.parseFloat(value) || 0);
+  }
+
+  private getCheckoutSideGap(): number {
+    const container = this.checkoutWrap?.nativeElement.closest('.details-container');
+    if (!container) return 16;
+    const styles = getComputedStyle(container);
+    return Math.max(
+      Number.parseFloat(styles.paddingLeft) || 16,
+      Number.parseFloat(styles.paddingRight) || 16
+    );
+  }
+
+  private updateCheckoutDock(): void {
+    const wrap = this.checkoutWrap?.nativeElement;
+    const bar = this.checkoutBar?.nativeElement;
+    if (!wrap || !bar) return;
+
+    if (!this.isCheckoutDockEnabled()) {
+      this.resetCheckoutDock();
+      return;
+    }
+
+    const barHeight = bar.offsetHeight;
+    const bottomGap = this.getCheckoutBottomGap();
+    const sideGap = this.getCheckoutSideGap();
+    const stickLine = window.innerHeight - bottomGap - barHeight;
+    const wrapRect = wrap.getBoundingClientRect();
+
+    if (wrapRect.top <= stickLine) {
+      wrap.style.minHeight = '';
+      this.resetCheckoutDock();
+      return;
+    }
+
+    const container = wrap.closest('.details-container');
+    const containerRect = container?.getBoundingClientRect();
+
+    wrap.style.minHeight = `${barHeight}px`;
+    bar.classList.add('details-checkout--docked');
+    bar.style.position = 'fixed';
+    bar.style.bottom = `${bottomGap}px`;
+    bar.style.zIndex = '9000';
+
+    if (containerRect) {
+      bar.style.left = `${containerRect.left}px`;
+      bar.style.width = `${containerRect.width}px`;
+      bar.style.right = '';
+    } else {
+      bar.style.left = `${sideGap}px`;
+      bar.style.right = `${sideGap}px`;
+      bar.style.width = '';
+    }
+  }
+
+  private resetCheckoutDock(): void {
+    const wrap = this.checkoutWrap?.nativeElement;
+    const bar = this.checkoutBar?.nativeElement;
+    if (wrap) wrap.style.minHeight = '';
+    if (!bar) return;
+
+    bar.classList.remove('details-checkout--docked');
+    bar.style.position = '';
+    bar.style.left = '';
+    bar.style.right = '';
+    bar.style.bottom = '';
+    bar.style.width = '';
+    bar.style.zIndex = '';
+  }
+
+  private getGalleryStickyTop(): number {
+    const raw = getComputedStyle(this.galleryTrack?.nativeElement ?? document.documentElement)
+      .getPropertyValue('--app-header-height')
+      .trim();
+    const base = Number.parseFloat(raw) || 128;
+    return base + 16;
+  }
+
+  private isGalleryStickyEnabled(): boolean {
+    return window.matchMedia('(min-width: 1024px)').matches;
+  }
+
+  private updateGallerySticky(): void {
+    const track = this.galleryTrack?.nativeElement;
+    const sticky = this.gallerySticky?.nativeElement;
+    if (!track || !sticky) return;
+
+    if (!this.isGalleryStickyEnabled()) {
+      this.resetGallerySticky();
+      return;
+    }
+
+    const topOffset = this.getGalleryStickyTop();
+    const trackRect = track.getBoundingClientRect();
+    const stickyHeight = sticky.offsetHeight;
+    const bottomLimit = trackRect.bottom - stickyHeight;
+
+    if (trackRect.top >= topOffset) {
+      this.resetGallerySticky();
+      return;
+    }
+
+    if (bottomLimit <= topOffset) {
+      sticky.style.position = 'absolute';
+      sticky.style.top = `${track.offsetHeight - stickyHeight}px`;
+      sticky.style.left = '0';
+      sticky.style.right = '0';
+      sticky.style.width = '100%';
+      sticky.style.zIndex = '5';
+      return;
+    }
+
+    sticky.style.position = 'fixed';
+    sticky.style.top = `${topOffset}px`;
+    sticky.style.left = `${trackRect.left}px`;
+    sticky.style.width = `${trackRect.width}px`;
+    sticky.style.right = 'auto';
+    sticky.style.zIndex = '5';
+  }
+
+  private resetGallerySticky(): void {
+    const sticky = this.gallerySticky?.nativeElement;
+    if (!sticky) return;
+
+    sticky.style.position = '';
+    sticky.style.top = '';
+    sticky.style.left = '';
+    sticky.style.right = '';
+    sticky.style.width = '';
+    sticky.style.zIndex = '';
+  }
+
   ngOnInit() {
     const name = decodeURIComponent(
       this.route.snapshot.paramMap.get('name') ?? ''
     );
-    const token = localStorage.getItem('token');
+    const categoryIdParam = this.route.snapshot.queryParamMap.get('categoryId');
+    const tabParam = this.route.snapshot.queryParamMap.get('tab');
 
-    // if (!token) {
-    //   this.router.navigate(['/auth/login'], {
-    //     queryParams: { returnUrl: this.router.url }
-    //   });
-    //   return;
-    // }
-    if (token) {
+    if (categoryIdParam) {
+      this.returnCategoryId = +categoryIdParam;
+    }
+    if (tabParam === 'offers' || tabParam === 'best') {
+      this.returnTab = tabParam;
+    }
+
+    if (this.isAuthenticated()) {
       this.api.GetUserId().subscribe({
         next: (r) => {
-          // console.log(r);
-
           this.usreId = r.userId;
-          // console.log(this.usreId);
-        },
-        error: (err) => {
-          // console.log(err);
         },
       });
     }
 
     this.branchService.currentBranch$.subscribe((bid) => {
-      // احفظ قيمة الـ stream الأول
       this.branchId = bid;
 
-      // fallback من localStorage لو الـ stream رجّع null
       if (this.branchId == null) {
         const br = Number(localStorage.getItem('br'));
         this.branchId = Number.isFinite(br) ? br : null;
@@ -189,20 +443,7 @@ export class ProductDetailsComponent implements DoCheck {
         return;
       }
 
-      // if (token && token !== 'null' && token !== 'undefined' && token.trim() !== '') {
-      //   this.api.GetUserId().subscribe({
-      //     next: (r) => {
-      //       this.usreId = r.userId;
-      //       // this.api.GetOrCreateCart(this.usreId).subscribe({
-      //       //   next: (res) => this.cartId = res.id
-      //       // });
-      //       this.loadProduct(name);
-      //     }
-      //   });
-      // }
-      // else {
       this.loadProduct(name);
-      // }
     });
   }
 
@@ -211,8 +452,6 @@ export class ProductDetailsComponent implements DoCheck {
 
     this.loading = true;
     this.productNotFound = false;
-    this.priceAnimReady = false;
-    this.priceAnimActive = false;
 
     this.api.GetProductByName(name, this.branchId).subscribe({
       next: (response) => {
@@ -225,14 +464,14 @@ export class ProductDetailsComponent implements DoCheck {
 
         this.product = response;
         this.quantity = 1;
+        this.orderNote = '';
         this.selectedByGroup.clear();
+        this.optionQuantitiesByGroup.clear();
         this.missingRequired.clear();
         this.isSizeMissing = false;
+        this.selectedSize = null;
         this.initVariantDefault(this.product);
         this.initGroupDefaults();
-        this.lastShownTotal = this.totalPrice;
-        this.priceAnimReady = true;
-        this.priceAnimActive = false;
 
         this.seoService.updateTitleAndDescription(
           `${this.product?.name ?? name} | Bubble Hope`,
@@ -248,9 +487,7 @@ export class ProductDetailsComponent implements DoCheck {
               this.product.id,
               this.branchId
             )
-            .pipe(
-              catchError(() => of(null))
-            )
+            .pipe(catchError(() => of(null)))
             .subscribe((res) => {
               this.product.isFavourite = !!res;
             });
@@ -259,6 +496,7 @@ export class ProductDetailsComponent implements DoCheck {
         }
 
         this.loading = false;
+        setTimeout(() => this.scheduleGalleryStickyUpdate(), 0);
       },
       error: () => {
         this.product = null;
@@ -269,7 +507,8 @@ export class ProductDetailsComponent implements DoCheck {
   }
 
   addToCart(product: any): void {
-    // 1) تحققات المقاس (لو فيه Variants)
+    if (!this.requireLogin()) return;
+
     const hasVariants =
       Array.isArray(product?.variants) && product.variants.length > 0;
     if (hasVariants && this.selectedSize == null) {
@@ -285,7 +524,6 @@ export class ProductDetailsComponent implements DoCheck {
       return;
     }
 
-    // 2) تحققات الإضافات المطلوبة
     const missing = this.validateRequiredSelections(product);
     if (missing.length) {
       this.missingRequired = new Set(missing);
@@ -293,74 +531,57 @@ export class ProductDetailsComponent implements DoCheck {
       return;
     }
 
-    // 3) ابني الـ payload حسب الفورمات المطلوب
-    const variant = this.getSelectedVariant(product); // { id, name, price } أو undefined
-    const selectedOptions = this.buildSelectedOptions(product); // [{ groupId, optionId }, ...]
+    const variant = this.getSelectedVariant(product);
+    const optionIds = this.buildOptionIds(product);
+    const note = this.orderNote.trim();
 
     const payload = {
       quantity: this.quantity,
       productId: product.id,
       branchId: this.branchId,
       userId: this.usreId,
-      productVariantId: variant?.id ?? null, // لو مفيش variants هيبقى null
-      optionIds: selectedOptions.map((o) => o.optionId), // [1918, 1454, ...]
+      productVariantId: variant?.id ?? null,
+      optionIds,
+      note: note || null,
     };
 
-    // console.log(payload);
-
-    const token = localStorage.getItem('token');
-    if (!token) {
-      this.toastr.success("Please log in to add products to your cart.");
-      // لو لازم تسجّل قبل الإضافة على السيرفر:
-      this.router.navigate(['/auth/login'], {
-        queryParams: { returnUrl: this.router.url },
-      });
-      return;
-    }
-
-    // 4) الاتصال بالـ API
     this.api.addToCart(payload).subscribe({
       next: () => {
-            this.cartCountService.refresh(this.branchId, this.usreId); // تأكدي userId صح
+        this.cartCountService.refresh(this.branchId, this.usreId);
         this.toastr.success("Great choice! It's now in your cart.");
       },
-
       error: (err) =>
         this.toastr.error(err?.error?.message || 'Something went wrong'),
     });
   }
 
+  private buildOptionIds(product: any): number[] {
+    const optionIds: number[] = [];
+    product?.groups?.forEach((g: any) => {
+      if (this.isFlavorGroup(g)) {
+        const qtyMap = this.optionQuantitiesByGroup.get(g.groupId);
+        if (!qtyMap) return;
+        qtyMap.forEach((qty, optId) => {
+          for (let i = 0; i < qty; i++) optionIds.push(optId);
+        });
+        return;
+      }
+
+      const set = this.selectedByGroup.get(g.groupId);
+      if (!set) return;
+      set.forEach((optId: number) => optionIds.push(optId));
+    });
+    return optionIds;
+  }
+
   toggleFavourite(product: any) {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      this.router.navigate(['/auth/login'], {
-        queryParams: { returnUrl: this.router.url },
-      });
-      return;
-    }
-    // else{
-    //     this.api.GetUserId().subscribe({
-    //       next: (r) => {
-    //         console.log(r);
-
-    //         this.usreId = r.userId;
-    //         console.log(this.usreId);
-
-    //       },
-    //       error:(err)=>{
-    //         console.log(err);
-
-    //       }
-    //     });
-    // }
+    if (!this.requireLogin()) return;
 
     const data = {
       productId: product.id,
       userId: this.usreId,
       branchId: this.branchId,
     };
-
-    // console.log(data);
 
     if (product.isFavourite) {
       this.api
@@ -382,7 +603,6 @@ export class ProductDetailsComponent implements DoCheck {
                 this.toastr.success('Product removed from your wishlist.');
                 product.isFavourite = false;
               },
-              // error: (err) => console.log(err),
             });
         });
     } else {
@@ -391,7 +611,6 @@ export class ProductDetailsComponent implements DoCheck {
           this.toastr.success('Product Saved to your wishlist!');
           product.isFavourite = true;
         },
-        // error: (err) => console.log(err),
       });
     }
   }
@@ -406,9 +625,18 @@ export class ProductDetailsComponent implements DoCheck {
       : 0;
   }
 
+  private getMaxSelect(group: any): number {
+    if (typeof group.maxSelect === 'number') return group.maxSelect;
+    if (group.selectionType === 1 || this.isFlavorGroup(group)) {
+      return Number.POSITIVE_INFINITY;
+    }
+    return 1;
+  }
+
   private isGroupValid(group: any): boolean {
-    const set = this.selectedByGroup.get(group.groupId);
-    const count = set?.size ?? 0;
+    const count = this.isFlavorGroup(group)
+      ? this.getGroupTotalQuantity(group.groupId)
+      : this.selectedByGroup.get(group.groupId)?.size ?? 0;
     return count >= this.getMinSelect(group);
   }
 
@@ -433,24 +661,18 @@ export class ProductDetailsComponent implements DoCheck {
     el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
-  // عدّلي toggleOption: لما الجروب يصبح سليم شيل التحذير عنه
   toggleOption(group: any, option: any): void {
     const groupId = group.groupId;
     const set = this.ensureGroupSet(groupId);
 
     const isMulti = group.selectionType === 1;
     const minSelect = this.getMinSelect(group);
-    const maxSelect =
-      typeof group.maxSelect === 'number'
-        ? group.maxSelect
-        : isMulti
-        ? Number.POSITIVE_INFINITY
-        : 1;
+    const maxSelect = this.getMaxSelect(group);
 
     const already = set.has(option.id);
 
     if (already) {
-      if (set.size <= minSelect) return; // ماينفعش ننزل عن الحد الأدنى
+      if (set.size <= minSelect) return;
       set.delete(option.id);
     } else {
       if (set.size >= maxSelect) {
@@ -466,36 +688,7 @@ export class ProductDetailsComponent implements DoCheck {
     }
     this.selectedByGroup.set(groupId, set);
 
-    // لو بقى الجروب صالح، شيل وسم التحذير
     if (this.isGroupValid(group)) this.missingRequired.delete(groupId);
-  }
-
-  private buildSelectedOptions(product: any): Array<{
-    groupId: number;
-    groupName: string;
-    optionId: number;
-    optionName: string;
-    optionNameAr: string;
-    pricePerUnit: number;
-  }> {
-    const result: any[] = [];
-    product?.groups?.forEach((g: any) => {
-      const set = this.selectedByGroup.get(g.groupId);
-      if (!set) return;
-      set.forEach((optId: number) => {
-        const opt = g.options?.find((o: any) => o.id === optId);
-        if (!opt) return;
-        result.push({
-          groupId: g.groupId,
-          groupName: g.name,
-          optionId: opt.id,
-          optionName: opt.name,
-          optionNameAr: opt.nameAr,
-          pricePerUnit: Number(opt.price ?? 0),
-        });
-      });
-    });
-    return result;
   }
 
   private getSelectedVariant(
@@ -507,7 +700,7 @@ export class ProductDetailsComponent implements DoCheck {
     return {
       id: v.id,
       name: v.variantName ?? v.name,
-      nameAr: v.variantName ?? v.name,
+      nameAr: v.variantName ?? v.nameAr ?? v.name,
       price: Number(v.price ?? 0),
     };
   }
@@ -517,6 +710,11 @@ export class ProductDetailsComponent implements DoCheck {
     const def = variants.find((v: any) => v.isDefault);
     if (def) {
       this.selectedSize = def.id;
+      return;
+    }
+
+    if (variants.length && this.isIceCreamProduct(product)) {
+      this.selectedSize = variants[0].id;
     } else if (variants.length) {
       this.selectedSize = variants[0].id;
     } else {
@@ -524,41 +722,23 @@ export class ProductDetailsComponent implements DoCheck {
     }
   }
 
-  // السايز المختار بيتخزن كـ ID (مش index)
   selectedSize: number | null = null;
-
-  // وسم لو السايز ناقص
   isSizeMissing = false;
 
-  // مرجع للسكرول (هتستخدميه في الـ HTML)
   @ViewChild('sizeRef') sizeRef!: any;
 
   selectSize(id: number): void {
     this.selectedSize = id;
-    this.isSizeMissing = false; // أول ما يختار السايز، شيل الوسم الأحمر
+    this.isSizeMissing = false;
   }
 
-  selectedToppings = new Set<number>();
-
-  toggleTopping(i: number) {
-    if (this.selectedToppings.has(i)) {
-      this.selectedToppings.delete(i);
-    } else {
-      this.selectedToppings.add(i);
-    }
-  }
-
-  // 1) بدّل ده: selectedToppings = new Set<number>();
-  // بـ Map لكل جروب:
-  // private selectedByGroup = new Map<number, Set<number>>();
   private selectedByGroup = new Map<number, Set<number>>();
+  private optionQuantitiesByGroup = new Map<number, Map<number, number>>();
 
-  // هل الخيار محدد في الجروب؟
   isSelected(groupId: number, optionId: number): boolean {
     return this.selectedByGroup.get(groupId)?.has(optionId) ?? false;
   }
 
-  // التأكد من وجود Set لكل جروب
   private ensureGroupSet(groupId: number): Set<number> {
     if (!this.selectedByGroup.has(groupId)) {
       this.selectedByGroup.set(groupId, new Set<number>());
@@ -566,18 +746,109 @@ export class ProductDetailsComponent implements DoCheck {
     return this.selectedByGroup.get(groupId)!;
   }
 
-  // (اختياري) تهيئة الديفولتس بعد ما المنتج يوصل
-  // لو عندك موديلات، استخدمها. وإلا خليك على any
+  getOptionQuantity(groupId: number, optionId: number): number {
+    return this.optionQuantitiesByGroup.get(groupId)?.get(optionId) ?? 0;
+  }
+
+  getGroupTotalQuantity(groupId: number): number {
+    const qtyMap = this.optionQuantitiesByGroup.get(groupId);
+    if (!qtyMap) return 0;
+    let total = 0;
+    qtyMap.forEach((qty) => {
+      total += qty;
+    });
+    return total;
+  }
+
+  canIncreaseFlavorQuantity(group: any): boolean {
+    return this.getGroupTotalQuantity(group.groupId) < this.getMaxSelect(group);
+  }
+
+  increaseFlavorQuantity(group: any, option: any): void {
+    if (!this.canIncreaseFlavorQuantity(group)) return;
+
+    const qtyMap = this.ensureFlavorQuantities(group.groupId);
+    qtyMap.set(option.id, (qtyMap.get(option.id) ?? 0) + 1);
+
+    if (this.isGroupValid(group)) {
+      this.missingRequired.delete(group.groupId);
+    }
+  }
+
+  decreaseFlavorQuantity(group: any, option: any): void {
+    const groupId = group.groupId;
+    const qtyMap = this.ensureFlavorQuantities(groupId);
+    const current = qtyMap.get(option.id) ?? 0;
+    if (current <= 0) return;
+
+    const nextTotal = this.getGroupTotalQuantity(groupId) - 1;
+    if (group.isRequired && nextTotal < this.getMinSelect(group)) return;
+
+    const next = current - 1;
+    if (next <= 0) qtyMap.delete(option.id);
+    else qtyMap.set(option.id, next);
+
+    if (this.isGroupValid(group)) {
+      this.missingRequired.delete(groupId);
+    }
+  }
+
+  toggleFlavorOption(group: any, option: any): void {
+    const groupId = group.groupId;
+    const qtyMap = this.ensureFlavorQuantities(groupId);
+    const current = qtyMap.get(option.id) ?? 0;
+
+    if (current > 0) {
+      const nextTotal = this.getGroupTotalQuantity(groupId) - current;
+      if (group.isRequired && nextTotal < this.getMinSelect(group)) return;
+      qtyMap.delete(option.id);
+    } else {
+      if (!this.canIncreaseFlavorQuantity(group)) return;
+      qtyMap.set(option.id, 1);
+    }
+
+    if (this.isGroupValid(group)) {
+      this.missingRequired.delete(groupId);
+    }
+  }
+
+  private ensureFlavorQuantities(groupId: number): Map<number, number> {
+    if (!this.optionQuantitiesByGroup.has(groupId)) {
+      this.optionQuantitiesByGroup.set(groupId, new Map<number, number>());
+    }
+    return this.optionQuantitiesByGroup.get(groupId)!;
+  }
+
   initGroupDefaults(): void {
     this.product?.groups?.forEach((g: any) => {
+      if (this.isFlavorGroup(g)) {
+        const qtyMap = this.ensureFlavorQuantities(g.groupId);
+
+        g.options?.forEach((o: any) => {
+          if (o?.isDefault && typeof o.id === 'number') {
+            qtyMap.set(o.id, 1);
+          }
+        });
+
+        if (
+          g.isRequired &&
+          this.getGroupTotalQuantity(g.groupId) === 0 &&
+          Array.isArray(g.options) &&
+          g.options.length > 0
+        ) {
+          const firstId = g.options[0]?.id;
+          if (typeof firstId === 'number') qtyMap.set(firstId, 1);
+        }
+
+        return;
+      }
+
       const set = this.ensureGroupSet(g.groupId);
 
-      // أضف الـ defaults
       g.options?.forEach((o: any) => {
         if (o?.isDefault && typeof o.id === 'number') set.add(o.id);
       });
 
-      // لو الجروب Required ومفيش اختيار، اختار أول Option موجود
       if (
         g.isRequired &&
         set.size === 0 &&
@@ -588,7 +859,6 @@ export class ProductDetailsComponent implements DoCheck {
         if (typeof firstId === 'number') set.add(firstId);
       }
 
-      // لو Single-Select (selectionType === 0) وتسللنا لأكتر من اختيار
       if (g.selectionType === 0 && set.size > 1) {
         const it = set.values().next();
         const first = it.value as number | undefined;
@@ -600,56 +870,37 @@ export class ProductDetailsComponent implements DoCheck {
     });
   }
 
-  // السعر الأساسي
   get basePrice(): number {
     return Number(this.product?.newPrice ?? this.product?.oldPrice ?? 0);
   }
 
-  // 3) السعر النهائي
-  // get finalPrice(): number {
-  //   let total = this.basePrice;
-
-  //   // زيادة/استبدال السايز (لو عندك variants)
-  //   if (this.selectedSize != null && this.product?.variants?.[this.selectedSize - 1]) {
-  //     const size = this.product.variants[this.selectedSize - 1];
-  //     // total = Number(size.price);        // لو السايز يستبدل السعر
-  //     total += Number(size.price ?? 0);     // لو السايز يزيد على السعر
-  //   }
-
-  //   // جمع أسعار اختيارات الجروبات بحسب option.id
-  //   this.product?.groups?.forEach((g: any) => {
-  //     const set = this.selectedByGroup.get(g.groupId);
-  //     if (!set) return;
-  //     set.forEach((optId: number) => {
-  //       const opt = g.options?.find((o: any) => o.id === optId);
-  //       if (opt) total += Number(opt.price ?? 0);
-  //     });
-  //   });
-
-  //   return total;
-  // }
-
   get finalPrice(): number {
     let total = this.basePrice;
 
-    // ✅ هات الـ variant بالسليم
     const variant = this.getSelectedVariant(this.product);
     if (variant?.price) {
-      total += Number(variant.price); // زوّدي فرق سعر السايز
+      total += Number(variant.price);
     }
 
-    // ✅ جمع أسعار اختيارات الجروبات
     this.product?.groups?.forEach((g: any) => {
+      if (this.isFlavorGroup(g)) {
+        const qtyMap = this.optionQuantitiesByGroup.get(g.groupId);
+        if (!qtyMap) return;
+        qtyMap.forEach((qty, optId) => {
+          const opt = g.options?.find((o: any) => o.id === optId);
+          if (opt) total += Number(opt.price ?? 0) * qty;
+        });
+        return;
+      }
+
       const set = this.selectedByGroup.get(g.groupId);
       if (!set) return;
       set.forEach((optId: number) => {
         const opt = g.options?.find((o: any) => o.id === optId);
-        if (opt) total += Number(opt.price ?? 0); // أو pricePerUnit لو اسمك كده
+        if (opt) total += Number(opt.price ?? 0);
       });
     });
 
-    return total;
+    return Number(total.toFixed(2));
   }
-
-  // خريطة للاختيارات في كل جروب
 }

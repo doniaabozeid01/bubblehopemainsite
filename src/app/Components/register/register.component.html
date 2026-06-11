@@ -200,7 +200,9 @@
           <ng-container *ngIf="!loading; else loadingTpl">
             {{ 'auth.register' | translate }}
           </ng-container>
-          <ng-template #loadingTpl>Registering...</ng-template>
+          <ng-template #loadingTpl>
+            <app-brand-loader size="sm" label="Registering..."></app-brand-loader>
+          </ng-template>
         </button>
 
 

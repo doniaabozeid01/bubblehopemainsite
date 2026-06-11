@@ -178,7 +178,12 @@
         "confirmOrder": "تأكيد الطلب",
         "code": "كود الخصم",
         "addNewAddress": "إضافة عنوان جديد",
-        "selectAddress": "اختيار العنوان"
+        "selectAddress": "اختيار العنوان",
+        "fulfillmentType": "كيف تريد استلام طلبك؟",
+        "homeDelivery": "توصيل للمنزل",
+        "selfPickup": "سأستلم الطلب بنفسي",
+        "pickupAtBranch": "الاستلام من الفرع",
+        "noDeliveryFee": "مجاني (استلام)"
     },
     "appAdvertise": {
         "doneEasy": "أسهل طريقة",
@@ -234,7 +239,11 @@
         "required": "مطلوب",
         "optional": "اختياري",
         "decreaseQty": "تقليل الكمية",
-        "increaseQty": "زيادة الكمية"
+        "increaseQty": "زيادة الكمية",
+        "specialNote": "ملاحظات خاصة",
+        "specialNotePlaceholder": "أي طلبات خاصة لطلبك…",
+        "specialNoteHint": "سنبذل قصارى جهدنا لتنفيذ ملاحظتك.",
+        "loginRequired": "يرجى تسجيل الدخول لإضافة منتجات للسلة أو المفضلة."
     },
     "RAMADAN": {
       "GREETING": "رمضان كريم",

@@ -1,0 +1,87 @@
+<div
+  class="brand-loader"
+  [class.brand-loader--sm]="size === 'sm'"
+  [class.brand-loader--md]="size === 'md'"
+  [class.brand-loader--lg]="size === 'lg'"
+  [class.brand-loader--no-icon]="!showLogo"
+  role="status"
+  [attr.aria-label]="label"
+>
+  <span class="visually-hidden">{{ label }}</span>
+
+  <div class="brand-loader__ambient" aria-hidden="true"></div>
+
+  <div class="brand-loader__halo" aria-hidden="true">
+    <span class="brand-loader__halo-ring brand-loader__halo-ring--1"></span>
+    <span class="brand-loader__halo-ring brand-loader__halo-ring--2"></span>
+    <span class="brand-loader__halo-ring brand-loader__halo-ring--3"></span>
+  </div>
+
+  <svg class="brand-loader__ring brand-loader__ring--trail" viewBox="0 0 100 100" aria-hidden="true">
+    <defs>
+      <linearGradient [attr.id]="trailGradientId" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#fb923c" stop-opacity="0.15" />
+        <stop offset="100%" stop-color="#F47524" stop-opacity="0.45" />
+      </linearGradient>
+    </defs>
+    <circle
+      class="brand-loader__ring-arc brand-loader__ring-arc--trail"
+      cx="50"
+      cy="50"
+      r="42"
+      [attr.stroke]="'url(#' + trailGradientId + ')'"
+    />
+  </svg>
+
+  <svg class="brand-loader__ring" viewBox="0 0 100 100" aria-hidden="true">
+    <defs>
+      <linearGradient [attr.id]="arcGradientId" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#fdba74" />
+        <stop offset="45%" stop-color="#F47524" />
+        <stop offset="100%" stop-color="#ea580c" />
+      </linearGradient>
+      <filter [attr.id]="glowFilterId" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="1.8" result="blur" />
+        <feMerge>
+          <feMergeNode in="blur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+    <circle class="brand-loader__ring-track" cx="50" cy="50" r="42" />
+    <circle
+      class="brand-loader__ring-arc"
+      cx="50"
+      cy="50"
+      r="42"
+      [attr.stroke]="'url(#' + arcGradientId + ')'"
+      [attr.filter]="'url(#' + glowFilterId + ')'"
+    />
+  </svg>
+
+  <div class="brand-loader__icon" *ngIf="showLogo" aria-hidden="true">
+    <div class="brand-loader__icon-glass"></div>
+    <svg class="brand-loader__cup" viewBox="0 0 72 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M48 4L44 26"
+        stroke="currentColor"
+        stroke-width="3.5"
+        stroke-linecap="round"
+      />
+      <ellipse cx="36" cy="27" rx="17" ry="7.5" fill="currentColor" />
+      <path
+        d="M17 31h38c2.2 0 4 1.8 4 4v2.5c0 2.2-1.8 4-4 4H17c-2.2 0-4-1.8-4-4V35c0-2.2 1.8-4 4-4z"
+        fill="currentColor"
+      />
+      <path
+        d="M18 41h36l-4.5 28c-.5 3.2-3.2 5.5-6.5 5.5h-14c-3.3 0-6-2.3-6.5-5.5L18 41z"
+        fill="currentColor"
+      />
+      <circle class="brand-loader__eye brand-loader__eye--left" cx="29" cy="50" r="2.6" fill="#1f2937" />
+      <circle class="brand-loader__eye brand-loader__eye--right" cx="43" cy="50" r="2.6" fill="#1f2937" />
+      <circle class="brand-loader__pearl brand-loader__pearl--1" cx="27" cy="63" r="2.2" fill="#1f2937" />
+      <circle class="brand-loader__pearl brand-loader__pearl--2" cx="36" cy="66" r="2.2" fill="#1f2937" />
+      <circle class="brand-loader__pearl brand-loader__pearl--3" cx="45" cy="63" r="2.2" fill="#1f2937" />
+    </svg>
+  </div>
+</div>

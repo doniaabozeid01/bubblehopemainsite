@@ -16,17 +16,8 @@
   animation: float 2.2s ease-in-out infinite;
 }
 
-.spinner {
-  width: 44px; height: 44px;
-  border-radius: 50%;
-  border: 4px solid rgba(0,0,0,.12);
-  border-top-color: #ff7a00;        /* غيّري اللون للبرانـد */
-  animation: spin 1s linear infinite;
-}
-
 .hidden { display: none; }
 
-@keyframes spin { to { transform: rotate(360deg); } }
 @keyframes float {
   0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); }
 }

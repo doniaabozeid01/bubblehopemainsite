@@ -1,5 +1,7 @@
 <ng-container [ngSwitch]="loadState">
-  <div *ngSwitchCase="'loading'" class="container my-5 text-center">Loading…</div>
+  <div *ngSwitchCase="'loading'" class="page-loading page-loading--full">
+    <app-brand-loader size="lg" [showLogo]="true" label="Loading..."></app-brand-loader>
+  </div>
 
   <div *ngSwitchCase="'notfound'" class="container my-5 text-center">
     Product not found in this branch.

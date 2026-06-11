@@ -14,6 +14,11 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class CheckoutComponent implements OnInit {
 
+  readonly FulfillmentType = {
+    Delivery: 1,
+    Pickup: 2,
+  } as const;
+
   orderForm!: FormGroup;
   loading = false;
   submitted = false;
@@ -73,11 +78,16 @@ export class CheckoutComponent implements OnInit {
 
   ngOnInit(): void {
     this.orderForm = this.fb.group({
+      fulfillmentType: [this.FulfillmentType.Delivery, Validators.required],
       addressId: [null, Validators.required],
       paymentMethodId: [null, Validators.required],
       code: [''],
-      source: [1]
+      source: [1],
     });
+
+    this.orderForm
+      .get('fulfillmentType')
+      ?.valueChanges.subscribe((type) => this.onFulfillmentTypeChange(type));
 
     this.loadPaymentMethods();
     this.loadBranches();
@@ -153,8 +163,46 @@ export class CheckoutComponent implements OnInit {
     });
   }
 
+  get isSelfPickup(): boolean {
+    return (
+      Number(this.orderForm?.get('fulfillmentType')?.value) ===
+      this.FulfillmentType.Pickup
+    );
+  }
+
+  get pickupBranchName(): string {
+    const branch = this.branches.find((b: any) => b.id === Number(this.branchId));
+    if (!branch) return '';
+    return this.translate.currentLang === 'ar'
+      ? branch.name_ar ?? branch.name
+      : branch.name ?? branch.name_ar;
+  }
+
+  get effectiveDeliveryFee(): number {
+    return this.isSelfPickup ? 0 : this.deliveryFee;
+  }
+
+  onFulfillmentTypeChange(type: number): void {
+    const addressCtrl = this.orderForm.get('addressId');
+    if (!addressCtrl) return;
+
+    if (Number(type) === this.FulfillmentType.Pickup) {
+      addressCtrl.clearValidators();
+      addressCtrl.setValue(null);
+    } else {
+      addressCtrl.setValidators(Validators.required);
+      const defaultAddress =
+        this.addresses.find((a) => a.isDefault)?.id ??
+        this.addresses[0]?.id ??
+        null;
+      addressCtrl.setValue(defaultAddress);
+    }
+
+    addressCtrl.updateValueAndValidity();
+  }
+
   getFinalTotal() {
-    return this.totalamount + this.deliveryFee;
+    return this.totalamount + this.effectiveDeliveryFee;
   }
 
   // =============================
@@ -164,13 +212,15 @@ export class CheckoutComponent implements OnInit {
     this.api.GetUserAddresses().subscribe({
       next: (res) => {
         this.addresses = res;
-        this.orderForm.patchValue({
-          addressId: this.addresses.find(a => a.isDefault)?.id || null
-        });
+        if (!this.isSelfPickup) {
+          this.orderForm.patchValue({
+            addressId: this.addresses.find((a) => a.isDefault)?.id || null,
+          });
+        }
       },
       error: (err) => {
         console.error('Error loading addresses', err);
-      }
+      },
     });
   }
 
@@ -214,10 +264,11 @@ export class CheckoutComponent implements OnInit {
     this.loading = true;
 
     const request = {
-      addressId: this.orderForm.value.addressId,
+      addressId: this.isSelfPickup ? null : this.orderForm.value.addressId,
       paymentMethodId: this.orderForm.value.paymentMethodId,
       code: this.orderForm.value.code,
-      source: 1
+      source: 1,
+      fulfillmentType: this.orderForm.value.fulfillmentType,
     };
     // console.log(request);
     

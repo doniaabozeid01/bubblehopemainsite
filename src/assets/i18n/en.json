@@ -178,7 +178,12 @@
         "confirmOrder": "Confirm Order",
         "code": "Discount Code",
         "addNewAddress": "Add New Address",
-        "selectAddress": "Select Address"
+        "selectAddress": "Select Address",
+        "fulfillmentType": "How would you like to receive your order?",
+        "homeDelivery": "Home delivery",
+        "selfPickup": "I'll pick up the order myself",
+        "pickupAtBranch": "Pick up from branch",
+        "noDeliveryFee": "Free (pickup)"
     },
     "appAdvertise": {
         "doneEasy": "DONE EASY",
@@ -234,7 +239,11 @@
         "required": "Required",
         "optional": "Optional",
         "decreaseQty": "Decrease quantity",
-        "increaseQty": "Increase quantity"
+        "increaseQty": "Increase quantity",
+        "specialNote": "Special instructions",
+        "specialNotePlaceholder": "Any special requests for your order…",
+        "specialNoteHint": "We'll do our best to accommodate your note.",
+        "loginRequired": "Please log in to add items to your cart or wishlist."
     },
     "RAMADAN": {
       "GREETING": "Ramadan Kareem",

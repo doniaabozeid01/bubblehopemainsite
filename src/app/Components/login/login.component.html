@@ -47,7 +47,9 @@
                     <ng-container *ngIf="!loading; else loadingTpl">
                         {{ 'auth.login' | translate }}
                     </ng-container>
-                    <ng-template #loadingTpl>Logging...</ng-template>
+                    <ng-template #loadingTpl>
+                        <app-brand-loader size="sm" label="Logging..."></app-brand-loader>
+                    </ng-template>
                 </button>
 
                 <div class="divider"><span>or</span></div>
@@ -164,13 +166,18 @@
           <ng-container *ngIf="!loading; else loadingTpl">
             {{ 'auth.login' | translate }}
           </ng-container>
-          <ng-template #loadingTpl>Logging...</ng-template>
+          <ng-template #loadingTpl>
+            <app-brand-loader size="sm" label="Logging..."></app-brand-loader>
+          </ng-template>
         </button>
 
         <!-- ✅ Resend confirmation (optional UI) -->
         <button *ngIf="needEmailConfirmation" type="button" class="btn btn-outline-secondary w-100 mt-2"
           (click)="resendConfirmation()" [disabled]="resending">
-          {{ resending ? 'Resending...' : 'Resend confirmation email' }}
+          <ng-container *ngIf="!resending; else resendLoadingTpl">Resend confirmation email</ng-container>
+          <ng-template #resendLoadingTpl>
+            <app-brand-loader size="sm" label="Resending..."></app-brand-loader>
+          </ng-template>
         </button>
 
         <div class="divider"><span>or</span></div>

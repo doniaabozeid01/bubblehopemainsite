@@ -1,183 +1,170 @@
+$footer-orange: #ff7304;
+$footer-title-color: #fde08c;
+
 .footer-wave {
   position: relative;
-  overflow: hidden;
+  overflow-x: clip;
   color: #fff;
-
-
-  background: linear-gradient(to top,
-      #FF7304 0%,
-      #FF7304 80%,
-      #ffffff 80%,
-      #ffffff 100%);
-
-
-  // background: #FF7304;   
-
-  padding: 70px 0 60px;
+  font-family: 'Grandstander', cursive;
+  background: $footer-orange;
+  padding-bottom: 52px;
 }
 
-
-/* موجة بيضا فوق */
 .footer-wave::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 120px; // ارتفاع الموجة
-  background-image: url("../../../assets/Vector\ \(3\).png");
+  height: 110px;
+  background-image: url('../../../assets/Vector\ \(3\).png');
   background-repeat: no-repeat;
   background-position: top center;
   background-size: 100% 100%;
   z-index: 0;
+  pointer-events: none;
 }
 
 .footer-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
   position: relative;
   z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 96px 24px 0;
 }
 
 .footer-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); // ✅ بدل 3
-  gap: 48px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 36px 32px;
   align-items: start;
 }
 
-
-/* العناوين */
-.footer-title {
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: .5px;
-  margin: 0 0 14px;
-  text-transform: uppercase;
-  opacity: .95;
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
 }
 
-/* الروابط */
+.footer-title {
+  margin: 0 0 8px;
+  color: $footer-title-color;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
 .footer-link {
   display: block;
-  color: rgba(255, 255, 255, .95);
-  text-decoration: none;
-  font-size: 13px;
-  line-height: 1.8;
   width: fit-content;
+  max-width: 100%;
+  color: rgba(255, 255, 255, 0.94);
+  font-size: 15px !important;
+  font-weight: 500;
+  line-height: 1.55;
+  text-decoration: none;
   cursor: pointer;
+  transition: color 0.15s ease, opacity 0.15s ease;
+
+  &:hover {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
 }
 
-.footer-link:hover {
-  text-decoration: underline;
-}
-
-/* يمين */
 .footer-right {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
 }
 
 .footer-logo {
-  width: 190px;
-  height: auto;
   display: block;
+  width: min(180px, 72vw);
+  height: auto;
 }
 
-/* سوشيال (دوائر) */
 .footer-social {
   display: flex;
-  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
 }
 
 .social-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, .85);
   display: grid;
   place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.9);
   color: #f47524;
+  font-size: 16px !important;
   text-decoration: none;
-  box-shadow: 0 10px 18px rgba(0, 0, 0, .10);
-  transition: transform .18s ease, background .18s ease;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  transition: transform 0.18s ease, background 0.18s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    background: #fff;
+  }
 }
 
-.social-btn:hover {
-  transform: translateY(-2px);
-  background: #fff;
+@media (max-width: 1100px) {
+  .footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px 28px;
+  }
+
+  .footer-right {
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
 }
 
+@media (max-width: 768px) {
+  .footer-wave {
+    background: $footer-orange;
+    padding-bottom: 44px;
+  }
 
-.footer-title {
-  color: #FDE08C;
-}
+  .footer-inner {
+    padding: 88px 20px 0;
+  }
 
-/* Responsive */
-@media (max-width: 992px) {
   .footer-grid {
     grid-template-columns: 1fr;
+    gap: 28px;
     text-align: center;
   }
 
-  .footer-link {
-    margin: 0 auto;
-    font-size: 20px !important;
+  .footer-col {
+    align-items: center;
+    gap: 8px;
   }
 
   .footer-title {
-    font-size: 24px !important;
+    font-size: 19px !important;
+    margin-bottom: 6px;
   }
 
-  .footer-wave {
-    padding: 60px 0 50px;
+  .footer-link {
+    margin-inline: auto;
+    font-size: 16px !important;
+    line-height: 1.6;
   }
-
-
-
-  .footer-wave {
-    position: relative;
-    overflow: hidden;
-    color: #fff;
-
-
-    background: linear-gradient(to top,
-        #FF7304 0%,
-        #FF7304 80%,
-        #FF7304 90%,
-        #ffffff 100%);
-
-
-    // background: #FF7304;   
-
-    padding: 70px 0 60px;
-  }
-
-
-
-
-
 
   .social-btn {
-    width: 50px;
-    height: 50px;
-    border-radius: 9999px;
-    background: rgba(255, 255, 255, .85);
-    display: grid;
-    place-items: center;
-    color: #f47524;
-    text-decoration: none;
-    box-shadow: 0 10px 18px rgba(0, 0, 0, .10);
-    transition: transform .18s ease, background .18s ease;
-    i{
-      font-size: 28px;
+    width: 46px;
+    height: 46px;
+
+    i {
+      font-size: 20px;
     }
   }
-
-
-
-
 }

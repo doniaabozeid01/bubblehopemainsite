@@ -36,6 +36,7 @@ import { BestSellersComponent } from './Components/HomeSections/best-sellers/bes
 import { ContactComponent } from './Components/HomeSections/contact/contact.component';
 import { RawMaterialDetailsComponent } from './Components/raw-material-details/raw-material-details.component';
 import { PreloaderComponent } from './Components/preloader/preloader.component';
+import { BrandLoaderComponent } from './Components/brand-loader/brand-loader.component';
 import { LoadingInterceptor } from './Interceptors/loading.interceptor';
 import { PaymentCallbackComponent } from './Components/payment-callback/payment-callback.component';
 import { PaymentPendingComponent } from './Components/payment-pending/payment-pending.component';
@@ -89,6 +90,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ContactComponent,
     RawMaterialDetailsComponent,
     PreloaderComponent,
+    BrandLoaderComponent,
     PaymentCallbackComponent,
     PaymentPendingComponent,
     PendingSiteComponent,

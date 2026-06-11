@@ -11,8 +11,31 @@
 
             <form [formGroup]="orderForm" (ngSubmit)="submitOrder()">
 
-                <!-- Address -->
+                <!-- Fulfillment -->
                 <div class="checkout-section">
+                    <h4>{{ 'delivery.fulfillmentType' | translate }}</h4>
+
+                    <label class="address-row fulfillment-row"
+                        [class.active]="+orderForm.value.fulfillmentType === FulfillmentType.Delivery">
+                        <input type="radio" formControlName="fulfillmentType"
+                            [value]="FulfillmentType.Delivery" />
+                        <span>{{ 'delivery.homeDelivery' | translate }}</span>
+                    </label>
+
+                    <label class="address-row fulfillment-row"
+                        [class.active]="+orderForm.value.fulfillmentType === FulfillmentType.Pickup">
+                        <input type="radio" formControlName="fulfillmentType"
+                            [value]="FulfillmentType.Pickup" />
+                        <span>{{ 'delivery.selfPickup' | translate }}</span>
+                    </label>
+
+                    <p class="pickup-hint" *ngIf="isSelfPickup && pickupBranchName">
+                        {{ 'delivery.pickupAtBranch' | translate }}: <strong>{{ pickupBranchName }}</strong>
+                    </p>
+                </div>
+
+                <!-- Address -->
+                <div class="checkout-section" *ngIf="!isSelfPickup">
                     <h4>{{ 'delivery.selectAddress' | translate }}</h4>
 
                     <label class="address-row" [class.active]="orderForm.value.addressId === address.id"
@@ -57,8 +80,13 @@
                 </div>
 
                 <!-- Submit -->
-                <button class="btn btn-bg-color w-100" [disabled]="loading">
-                    {{ 'delivery.confirmOrder' | translate }}
+                <button class="btn btn-bg-color w-100 btn-with-loader" [disabled]="loading">
+                    <ng-container *ngIf="!loading; else checkoutLoadingTpl">
+                        {{ 'delivery.confirmOrder' | translate }}
+                    </ng-container>
+                    <ng-template #checkoutLoadingTpl>
+                        <app-brand-loader size="sm" label="Loading..."></app-brand-loader>
+                    </ng-template>
                 </button>
 
             </form>
@@ -89,11 +117,15 @@
                     cartItems[0].currency_ar :
                     cartItems[0].currency }}</span>
             </div>
-            <div class="summary-total" *ngIf="cartItems.length">
+            <div class="summary-total" *ngIf="cartItems.length && !isSelfPickup">
                 <span>{{ 'cart.deliveryFee' | translate }}</span>
                 <span>{{ deliveryFee }} {{ (languageService.languageChanged$ | async) === 'ar' ?
                     cartItems[0].currency_ar :
                     cartItems[0].currency }}</span>
+            </div>
+            <div class="summary-total summary-total--muted" *ngIf="cartItems.length && isSelfPickup">
+                <span>{{ 'cart.deliveryFee' | translate }}</span>
+                <span>{{ 'delivery.noDeliveryFee' | translate }}</span>
             </div>
             <div class="summary-total" *ngIf="cartItems.length">
                 <span>{{ 'cart.total' | translate }}</span>

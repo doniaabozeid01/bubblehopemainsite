@@ -91,7 +91,8 @@ interface OrderDto { paymentStatus: 0 | 1; }
 
 @Component({
   selector: 'app-payment-callback',
-  template: `<div class="py-5 text-center">جارِ التحقق من الدفع...</div>`
+  templateUrl: './payment-callback.component.html',
+  styleUrls: ['./payment-callback.component.scss']
 })
 export class PaymentCallbackComponent implements OnInit {
   private readonly ORDER_KEY = 'last_order_id';
