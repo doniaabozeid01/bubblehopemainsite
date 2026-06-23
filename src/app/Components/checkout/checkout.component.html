@@ -1,138 +1,184 @@
-<div class="container checkout-page py-5">
-
-    <h2 class="page-title">
-        {{ 'delivery.deliveryInformation' | translate }}
-    </h2>
+<div class="checkout-page">
+  <div class="checkout-page__inner">
+    <header class="checkout-header">
+      <h1 class="checkout-header__title">{{ 'delivery.deliveryInformation' | translate }}</h1>
+      <p class="checkout-header__subtitle">{{ 'delivery.fulfillmentType' | translate }}</p>
+    </header>
 
     <div class="checkout-grid">
+      <div class="checkout-card checkout-card--form">
+        <form [formGroup]="orderForm" (ngSubmit)="submitOrder()" class="checkout-form">
+          <!-- Fulfillment -->
+          <section class="checkout-section">
+            <h2 class="checkout-section__title">{{ 'delivery.fulfillmentType' | translate }}</h2>
+            <div class="fulfillment-options">
+              <label
+                class="fulfillment-option"
+                [class.fulfillment-option--active]="+orderForm.value.fulfillmentType === FulfillmentType.Delivery"
+              >
+                <input
+                  type="radio"
+                  formControlName="fulfillmentType"
+                  [value]="FulfillmentType.Delivery"
+                />
+                <span class="fulfillment-option__copy">
+                  <span class="fulfillment-option__label">{{ 'delivery.homeDelivery' | translate }}</span>
+                  <span class="fulfillment-option__hint" *ngIf="deliveryFee > 0">
+                    +{{ deliveryFee }} {{ currencyLabel }}
+                  </span>
+                </span>
+                <span class="fulfillment-option__icon" aria-hidden="true">
+                  <i class="fa-solid fa-truck"></i>
+                </span>
+              </label>
 
-        <!-- LEFT -->
-        <div class="checkout-left">
+              <label
+                class="fulfillment-option"
+                [class.fulfillment-option--active]="+orderForm.value.fulfillmentType === FulfillmentType.Pickup"
+              >
+                <input
+                  type="radio"
+                  formControlName="fulfillmentType"
+                  [value]="FulfillmentType.Pickup"
+                />
+                <span class="fulfillment-option__copy">
+                  <span class="fulfillment-option__label">{{ 'delivery.selfPickup' | translate }}</span>
+                  <span class="fulfillment-option__hint">{{ 'delivery.noDeliveryFee' | translate }}</span>
+                </span>
+                <span class="fulfillment-option__icon" aria-hidden="true">
+                  <i class="fa-solid fa-store"></i>
+                </span>
+              </label>
+            </div>
 
-            <form [formGroup]="orderForm" (ngSubmit)="submitOrder()">
+            <p class="pickup-banner" *ngIf="isSelfPickup && pickupBranchName">
+              <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+              {{ 'delivery.pickupAtBranch' | translate }}:
+              <strong>{{ pickupBranchName }}</strong>
+            </p>
+          </section>
 
-                <!-- Fulfillment -->
-                <div class="checkout-section">
-                    <h4>{{ 'delivery.fulfillmentType' | translate }}</h4>
+          <!-- Address (delivery only) -->
+          <section class="checkout-section" *ngIf="!isSelfPickup">
+            <div class="checkout-section__head">
+              <h2 class="checkout-section__title">{{ 'delivery.selectAddress' | translate }}</h2>
+              <button type="button" class="link-btn" (click)="goToAddAddress()">
+                + {{ 'delivery.addNewAddress' | translate }}
+              </button>
+            </div>
 
-                    <label class="address-row fulfillment-row"
-                        [class.active]="+orderForm.value.fulfillmentType === FulfillmentType.Delivery">
-                        <input type="radio" formControlName="fulfillmentType"
-                            [value]="FulfillmentType.Delivery" />
-                        <span>{{ 'delivery.homeDelivery' | translate }}</span>
-                    </label>
+            <div class="address-list" *ngIf="addresses.length; else noAddresses">
+              <label
+                class="address-option"
+                *ngFor="let address of addresses"
+                [class.address-option--active]="orderForm.value.addressId === address.id"
+              >
+                <input type="radio" formControlName="addressId" [value]="address.id" />
+                <span class="address-option__text">
+                  {{ address.street }} — {{ address.cityName }}, {{ address.governorateName }}
+                </span>
+              </label>
+            </div>
 
-                    <label class="address-row fulfillment-row"
-                        [class.active]="+orderForm.value.fulfillmentType === FulfillmentType.Pickup">
-                        <input type="radio" formControlName="fulfillmentType"
-                            [value]="FulfillmentType.Pickup" />
-                        <span>{{ 'delivery.selfPickup' | translate }}</span>
-                    </label>
+            <ng-template #noAddresses>
+              <p class="field-hint">{{ 'delivery.addNewAddress' | translate }}</p>
+            </ng-template>
 
-                    <p class="pickup-hint" *ngIf="isSelfPickup && pickupBranchName">
-                        {{ 'delivery.pickupAtBranch' | translate }}: <strong>{{ pickupBranchName }}</strong>
-                    </p>
-                </div>
+            <p
+              class="field-error"
+              *ngIf="submitted && orderForm.get('addressId')?.invalid"
+            >
+              {{ 'delivery.selectAddress' | translate }}
+            </p>
+          </section>
 
-                <!-- Address -->
-                <div class="checkout-section" *ngIf="!isSelfPickup">
-                    <h4>{{ 'delivery.selectAddress' | translate }}</h4>
+          <!-- Payment -->
+          <section class="checkout-section">
+            <h2 class="checkout-section__title">{{ 'delivery.paymentMethod' | translate }}</h2>
+            <select class="checkout-select" formControlName="paymentMethodId">
+              <option *ngFor="let method of paymentMethods" [ngValue]="method.id">
+                {{ method.name }}
+              </option>
+            </select>
+          </section>
 
-                    <label class="address-row" [class.active]="orderForm.value.addressId === address.id"
-                        *ngFor="let address of addresses">
+          <!-- Discount -->
+          <section class="checkout-section checkout-section--last">
+            <h2 class="checkout-section__title">{{ 'delivery.code' | translate }}</h2>
+            <div class="discount-row">
+              <input
+                type="text"
+                class="checkout-input"
+                formControlName="code"
+                [placeholder]="'delivery.code' | translate"
+              />
+              <button type="button" class="btn-apply" (click)="checkDiscountCode()">
+                {{ 'delivery.applyCode' | translate }}
+              </button>
+            </div>
+            <p class="field-error" *ngIf="discountError">{{ discountError }}</p>
+          </section>
 
-                        <input type="radio" formControlName="addressId" [value]="address.id" />
-                        <span>
-                            {{ address.street }} - {{ address.cityName }} - {{ address.governorateName }}
-                        </span>
-                    </label>
+          <button
+            type="submit"
+            class="btn-confirm btn-with-loader"
+            [disabled]="loading"
+          >
+            <ng-container *ngIf="!loading; else checkoutLoadingTpl">
+              {{ 'delivery.confirmOrder' | translate }}
+            </ng-container>
+            <ng-template #checkoutLoadingTpl>
+              <app-brand-loader size="sm" label="Loading..."></app-brand-loader>
+            </ng-template>
+          </button>
+        </form>
+      </div>
 
-                    <button type="button" class="add-address-btn" (click)="goToAddAddress()">
-                        + {{ 'delivery.addNewAddress' | translate }}
-                    </button>
-                </div>
+      <!-- Summary -->
+      <aside class="checkout-card checkout-card--summary">
+        <h2 class="summary-title">{{ 'delivery.orderSummary' | translate }}</h2>
 
-                <!-- Payment -->
-                <div class="checkout-section">
-                    <h4>{{ 'delivery.paymentMethod' | translate }}</h4>
-
-                    <select class="form-control" formControlName="paymentMethodId">
-                        <option *ngFor="let method of paymentMethods" [ngValue]="method.id">
-                            {{ method.name }}
-                        </option>
-                    </select>
-                </div>
-
-                <!-- Discount -->
-                <div class="checkout-section">
-                    <h4>{{ 'delivery.code' | translate }}</h4>
-
-                    <div class="discount-row">
-                        <input type="text" class="form-control" formControlName="code" />
-                        <button type="button" class="btn-apply" (click)="checkDiscountCode()">
-                            Apply
-                        </button>
-                    </div>
-
-                    <small class="error" *ngIf="discountError">
-                        {{ discountError }}
-                    </small>
-                </div>
-
-                <!-- Submit -->
-                <button class="btn btn-bg-color w-100 btn-with-loader" [disabled]="loading">
-                    <ng-container *ngIf="!loading; else checkoutLoadingTpl">
-                        {{ 'delivery.confirmOrder' | translate }}
-                    </ng-container>
-                    <ng-template #checkoutLoadingTpl>
-                        <app-brand-loader size="sm" label="Loading..."></app-brand-loader>
-                    </ng-template>
-                </button>
-
-            </form>
+        <div class="summary-items" *ngIf="cartItems.length; else emptyCart">
+          <article class="summary-item" *ngFor="let item of cartItems">
+            <div class="summary-item__info">
+              <p class="summary-item__name">
+                {{ (languageService.languageChanged$ | async) === 'ar' ? item.name_ar : item.name }}
+              </p>
+              <p class="summary-item__meta" *ngIf="item.variantName || item.optionsText">
+                <ng-container *ngIf="item.variantName">
+                  {{ (languageService.languageChanged$ | async) === 'ar' ? item.variantNameAr : item.variantName }}
+                </ng-container>
+                <ng-container *ngIf="item.variantName && item.optionsText"> · </ng-container>
+                <ng-container *ngIf="item.optionsText">
+                  {{ (languageService.languageChanged$ | async) === 'ar' ? item.optionsTextAr : item.optionsText }}
+                </ng-container>
+              </p>
+            </div>
+            <span class="summary-item__price">
+              {{ item.totalPrice }} {{ currencyLabel }}
+            </span>
+          </article>
         </div>
 
-        <!-- RIGHT -->
-        <div class="checkout-right d-flex flex-column">
-            <h3>{{ 'delivery.orderSummary' | translate }}</h3>
-            <div class="summary-item" *ngFor="let item of cartItems">
-                <div class="d-flex flex-column">
-                    <p class="fw-normal ">{{ (languageService.languageChanged$ | async) === 'ar' ? item.name_ar : item.name }}</p>
-                    <span> {{ (languageService.languageChanged$ | async) === 'ar' ? item.variantNameAr :
-                        item.variantName }}
+        <ng-template #emptyCart>
+          <p class="summary-empty">{{ 'cart.empty' | translate }}</p>
+        </ng-template>
 
-                        <span *ngIf=" item.variantName != null">,</span>
-
-                        {{ (languageService.languageChanged$ | async) === 'ar' ?
-                        item.optionsTextAr : item.optionsText }} </span>
-                </div>
-                <span>{{ item.totalPrice }} {{ (languageService.languageChanged$ | async) === 'ar' ? item.currency_ar :
-                    item.currency }}</span>
-                <!-- <span class="bg-info"></span> -->
-            </div>
-            <hr />
-            <div class="summary-total" *ngIf="cartItems.length">
-                <span>{{ 'delivery.totalAmount' | translate }}</span>
-                <span>{{ totalamount }} {{ (languageService.languageChanged$ | async) === 'ar' ?
-                    cartItems[0].currency_ar :
-                    cartItems[0].currency }}</span>
-            </div>
-            <div class="summary-total" *ngIf="cartItems.length && !isSelfPickup">
-                <span>{{ 'cart.deliveryFee' | translate }}</span>
-                <span>{{ deliveryFee }} {{ (languageService.languageChanged$ | async) === 'ar' ?
-                    cartItems[0].currency_ar :
-                    cartItems[0].currency }}</span>
-            </div>
-            <div class="summary-total summary-total--muted" *ngIf="cartItems.length && isSelfPickup">
-                <span>{{ 'cart.deliveryFee' | translate }}</span>
-                <span>{{ 'delivery.noDeliveryFee' | translate }}</span>
-            </div>
-            <div class="summary-total" *ngIf="cartItems.length">
-                <span>{{ 'cart.total' | translate }}</span>
-                <span>{{ getFinalTotal() }} {{ (languageService.languageChanged$ | async) === 'ar' ?
-                    cartItems[0].currency_ar :
-                    cartItems[0].currency }}</span>
-            </div>
+        <div class="summary-totals" *ngIf="cartItems.length">
+          <div class="summary-row">
+            <span>{{ 'delivery.totalAmount' | translate }}</span>
+            <span>{{ totalamount }} {{ currencyLabel }}</span>
+          </div>
+          <div class="summary-row" *ngIf="!isSelfPickup">
+            <span>{{ 'cart.deliveryFee' | translate }}</span>
+            <span>{{ deliveryFee }} {{ currencyLabel }}</span>
+          </div>
+          <div class="summary-row summary-row--grand">
+            <span>{{ 'cart.total' | translate }}</span>
+            <span>{{ getFinalTotal() }} {{ currencyLabel }}</span>
+          </div>
         </div>
+      </aside>
     </div>
+  </div>
 </div>

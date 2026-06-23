@@ -289,14 +289,51 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}/api/OnAndOff/IsMainsiteOn`);
   }
 
-  createKidsAreaBooking(payload: {
+  createKidsAreaActivityBooking(payload: {
+    activityId: number;
+    slotId: number;
+    bookingDate: string;
     parentName: string;
     parentNumber: string;
     childName: string;
     childOld: number;
     childBirthday: string;
   }): Observable<any> {
-    return this.http.post(`${this.baseUrl}/api/KidsArea`, payload);
+    return this.http.post(`${this.baseUrl}/api/KidsArea/activity-booking`, payload);
+  }
+
+  submitKidsAreaActivityBooking(payload: {
+    activityId: number;
+    slotId: number;
+    bookingDate: string;
+    parentName: string;
+    parentNumber: string;
+    childName: string;
+    childOld: number;
+    childBirthday: string;
+  }): Observable<any> {
+    return this.createKidsAreaActivityBooking(payload);
+  }
+
+  getKidsAreaActivities(branchId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/api/KidsArea/activities`, {
+      params: { branchId: String(branchId) },
+    });
+  }
+
+  getKidsAreaAvailability(
+    date: string,
+    branchId: number,
+    currentTime?: string
+  ): Observable<any> {
+    const params: Record<string, string> = {
+      date,
+      branchId: String(branchId),
+    };
+    if (currentTime) {
+      params['currentTime'] = currentTime;
+    }
+    return this.http.get(`${this.baseUrl}/api/KidsArea/availability`, { params });
   }
 
 }

@@ -1,4 +1,4 @@
-$orange: #ff7304; /* نفس kids-area-section والهيرو */
+$orange: #ff7304;
 $brand-blue: #2f9bc0;
 $brand-cream: #f5ca54;
 $brand-teal: #2bb6cf;
@@ -6,26 +6,14 @@ $cream: #ffffff;
 $ink: #1f1b16;
 $muted: #8a8178;
 
-@mixin kids-hide-scrollbar {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-    width: 0;
-    height: 0;
-    background: transparent;
-  }
-}
-
 :host {
+  --font-brand: 'Grandstander', cursive;
   display: block;
-  background: $cream;
-  /* اسحب الصفحة لأعلى تحت موجة النافبار حتى يبدو الـ nav واقف على السكشن */
   margin-top: -44px;
   position: relative;
   z-index: 1;
   overflow-x: hidden;
+  background: $cream;
 }
 
 .kids-page {
@@ -33,10 +21,9 @@ $muted: #8a8178;
   margin: 0 auto;
   background: $cream;
   color: $ink;
-  font-family: 'Grandstander', cursive;
+  font-family: var(--font-brand);
 }
 
-/* Shared bits */
 .kids-eyebrow {
   display: inline-block;
   font-size: 14px !important;
@@ -45,37 +32,37 @@ $muted: #8a8178;
   text-transform: uppercase;
   color: $orange;
   margin-bottom: 14px;
-
-  &--light { color: #ffd9b8; }
 }
 
 .accent {
   color: $orange;
-  font-size: inherit;
-  line-height: inherit;
-  font-weight: inherit;
 }
 
-.kids-hero__title .accent,
-.kids-panel__title .accent {
-  display: inline;
+.accent-blue {
+  color: $brand-blue;
 }
 
-/* ===================== HERO ===================== */
-.kids-hero {
+.kids-page[dir='rtl'] .kids-eyebrow {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.kids-shell {
+  min-height: 100vh;
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
   align-items: stretch;
-  min-height: 620px;
+  background: $cream;
+  font-family: var(--font-brand);
 }
 
-/* Left media panel */
 .kids-hero__media {
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  min-height: 100vh;
   padding: 82px 48px 48px;
   color: #fff;
   background-color: #1a1208;
@@ -102,6 +89,7 @@ $muted: #8a8178;
   0% {
     transform: translate(0, -12vh);
   }
+
   100% {
     transform: translate(var(--drift, 0px), 112vh);
   }
@@ -176,6 +164,7 @@ $muted: #8a8178;
     font-weight: 800;
     letter-spacing: 1px;
   }
+
   &-sub {
     font-size: 12px !important;
     opacity: 0.85;
@@ -188,12 +177,20 @@ $muted: #8a8178;
   max-width: 560px;
 }
 
+.kids-eyebrow--light {
+  color: #ffd9b8;
+}
+
 .kids-hero__title {
   font-weight: 800;
   font-size: clamp(40px, 4.6vw, 72px) !important;
   line-height: 1.02;
   margin: 0 0 18px;
   color: #fff;
+
+  .accent {
+    color: $orange;
+  }
 }
 
 .kids-hero__lead {
@@ -217,6 +214,7 @@ $muted: #8a8178;
       font-weight: 800;
       line-height: 1;
     }
+
     &__label {
       font-size: 13px !important;
       opacity: 0.85;
@@ -225,421 +223,997 @@ $muted: #8a8178;
   }
 }
 
-/* Right registration panel */
-.kids-hero__panel {
-  background: $cream;
-  padding: 88px 64px 56px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.kids-panel__title {
-  font-weight: 800;
-  font-size: clamp(34px, 3.2vw, 50px) !important;
-  line-height: 1.05;
-  margin: 0 0 10px;
-}
-
-.kids-panel__sub {
-  font-size: 15px !important;
-  color: $muted;
-  margin: 0 0 26px;
-}
-
-/* Form */
-.kids-form {
-  background: #fff;
-  border: 1px solid #efe7da;
-  border-radius: 18px;
-  padding: 26px 26px 24px;
-  box-shadow: 0 24px 60px -34px rgba(60, 40, 20, 0.4);
-  overflow-x: hidden;
-}
-
-.kids-form__group-title {
-  font-size: 12px !important;
-  letter-spacing: 1.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: $orange;
-  margin: 14px 0 12px;
-
-  &:first-child { margin-top: 0; }
-}
-
-.kids-form__row {
+.kids-form-panel {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 6px;
-
-  &--full {
-    grid-template-columns: 1fr;
-  }
+  place-items: center;
+  padding: 32px 24px;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
-.kids-field {
+.form-card {
+  width: 100%;
+  max-width: 620px;
+  padding: 28px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(249, 115, 22, 0.12);
+  box-shadow:
+    0 30px 80px rgba(194, 65, 12, 0.08),
+    0 12px 30px rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(10px);
+  overflow: visible;
+  box-sizing: border-box;
+}
+
+.back-link {
+  margin-bottom: 18px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #03799d;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.form-header {
+  margin-bottom: 22px;
+}
+
+.form-title {
+  margin: 0 0 8px;
+  font-family: var(--font-brand);
+  font-size: clamp(28px, 4vw, 34px);
+  font-weight: 800;
+  color: #c2410c;
+}
+
+.form-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.55;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
+  border: 1px solid #ffedd5;
+}
+
+.step {
   display: flex;
   flex-direction: column;
-  margin-bottom: 12px;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  text-align: center;
+  opacity: 0.45;
+  transition: opacity 0.2s ease;
 
-  label {
-    font-size: 11px !important;
-    letter-spacing: 0.6px;
-    font-weight: 700;
-    color: #9a9389;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
-  input,
-  select {
-    box-sizing: border-box;
-    width: 100%;
-    min-height: 44px;
-    border: 1px solid #e3dccf;
-    border-radius: 10px;
-    padding: 11px 14px;
-    font-size: 15px !important;
-    line-height: 1.35;
-    font-family: inherit;
-    color: $ink;
-    background: #fff;
-    transition: border-color 0.15s, box-shadow 0.15s;
-
-    &::placeholder {
-      color: #a39b90;
-      font-size: 15px !important;
-      line-height: 1.35;
-      opacity: 1;
-    }
-
-    &:focus {
-      outline: none;
-      border-color: $orange;
-      box-shadow: 0 0 0 3px rgba($orange, 0.15);
-    }
-  }
-
-  &--date .kids-date-field {
-    position: relative;
-    width: 100%;
-  }
-
-  &--sm { max-width: 100%; }
-}
-
-.kids-date-field {
-  position: relative;
-
-  .kids-input--date {
-    width: 100%;
-    direction: ltr;
-    text-align: start;
-    padding-inline: 14px;
-    appearance: none;
-    -webkit-appearance: none;
-    color-scheme: light;
-
-    &::-webkit-calendar-picker-indicator {
-      opacity: 0;
-      position: absolute;
-      width: 0;
-      height: 0;
-      pointer-events: none;
-    }
-  }
-
-  .kids-input--date-empty {
-    color: transparent;
-    cursor: pointer;
-
-    &::-webkit-datetime-edit,
-    &::-webkit-datetime-edit-fields-wrapper,
-    &::-webkit-datetime-edit-text,
-    &::-webkit-datetime-edit-month-field,
-    &::-webkit-datetime-edit-day-field,
-    &::-webkit-datetime-edit-year-field {
-      color: transparent;
-    }
-  }
-
-  .kids-input--date:not(.kids-input--date-empty) {
-    padding-inline: 14px 44px;
-    color: $ink;
-    cursor: pointer;
-    text-align: start;
-
-    &::-webkit-datetime-edit,
-    &::-webkit-datetime-edit-fields-wrapper,
-    &::-webkit-datetime-edit-text,
-    &::-webkit-datetime-edit-month-field,
-    &::-webkit-datetime-edit-day-field,
-    &::-webkit-datetime-edit-year-field {
-      color: $ink;
-    }
+  &--active,
+  &--done {
+    opacity: 1;
   }
 }
 
-/* Placeholder at start of input, calendar icon at the end */
-.kids-date-field__face {
-  position: absolute;
-  inset: 0;
+.step__dot {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: #fff;
+  border: 2px solid #fdba74;
+  color: #c2410c;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.step--active .step__dot,
+.step--done .step__dot {
+  background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+  border-color: #f97316;
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(249, 115, 22, 0.28);
+}
+
+.step__label {
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #9a3412;
+}
+
+[dir='rtl'] .step__label {
+  font-size: 11px;
+}
+
+.step__line {
+  width: 100%;
+  height: 2px;
+  border-radius: 999px;
+  background: #fed7aa;
+  transition: background 0.2s ease;
+
+  &--done {
+    background: linear-gradient(90deg, #fb923c, #f97316);
+  }
+}
+
+.form-block {
+  margin-bottom: 22px;
+  padding: 18px;
+  border-radius: 20px;
+  background: #fff;
+  border: 1px solid #f3f4f6;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.03);
+}
+
+.form-block__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding-inline: 14px;
-  cursor: pointer;
-  pointer-events: auto;
-
-  &:hover .kids-date-field__icon-btn {
-    color: $orange;
-  }
+  margin-bottom: 14px;
 }
 
-.kids-date-field__hint {
-  flex: 0 1 auto;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: #a39b90;
-  font-size: 15px !important;
-  line-height: 1.35;
-  text-align: start;
+.section-label {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #03799d;
 }
 
-.kids-date-field__icon-btn {
+[dir='rtl'] .section-label {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 13px;
+}
+
+.section-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  width: auto;
-  height: auto;
-  color: #9a9389;
-  font-size: 17px;
-  line-height: 1;
-
-  &--solo {
-    position: absolute;
-    inset-inline-end: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 28px;
-    height: 28px;
-    margin: 0;
-    padding: 0;
-    border: none;
-    border-radius: 6px;
-    background: transparent;
-    cursor: pointer;
-    transition: color 0.15s, background 0.15s;
-
-    &:hover {
-      color: $orange;
-      background: rgba($orange, 0.1);
-    }
-  }
+  min-width: 34px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #fff7ed;
+  color: #c2410c;
+  font-size: 11px;
+  font-weight: 800;
 }
 
-.kids-page[dir='rtl'] {
-  .kids-date-field__hint {
-    direction: rtl;
-  }
-
-  .kids-input--date:not(.kids-input--date-empty) {
-    text-align: end;
-  }
+.subsection-label {
+  margin: 0 0 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #6b7280;
 }
 
-/* Custom age dropdown */
-.kids-field--select {
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+  align-items: start;
+}
+
+form {
   position: relative;
-  z-index: 2;
-
-  &:has(.kids-age-select--open) {
-    z-index: 30;
-  }
+  z-index: 0;
 }
 
-.kids-age-select {
+.field {
   position: relative;
+  z-index: 1;
 
-  &--open {
-    z-index: 40;
-
-    .kids-age-select__trigger {
-      border-color: $orange;
-      box-shadow: 0 0 0 3px rgba($orange, 0.15);
-    }
-
-    .kids-age-select__icon {
-      transform: rotate(180deg);
-      color: $orange;
-    }
-  }
-
-  &--filled .kids-age-select__trigger {
-    border-color: #d8d0c4;
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #374151;
   }
 }
 
-.kids-age-select__trigger {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  width: 100%;
-  min-height: 44px;
-  box-sizing: border-box;
-  padding: 11px 12px 11px 14px;
-  border: 1px solid #e3dccf;
-  border-radius: 10px;
-  background: #fff;
-  font-family: inherit;
-  font-size: 15px !important;
-  line-height: 1.35;
-  color: $ink;
-  cursor: pointer;
-  transition: border-color 0.15s, box-shadow 0.15s;
-
-  &:hover {
-    border-color: #cfc6b8;
-  }
+[dir='rtl'] .field label {
+  letter-spacing: 0;
+  text-transform: none;
 }
 
-.kids-age-select__value {
-  flex: 1;
-  min-width: 0;
-  text-align: start;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-  &--placeholder {
-    color: #a39b90;
-    font-size: 15px !important;
-    line-height: 1.35;
-  }
+.field--full {
+  grid-column: 1 / -1;
 }
 
-.kids-age-select__icon {
-  flex-shrink: 0;
-  font-size: 14px;
-  color: #9a9389;
-  transition: transform 0.2s ease, color 0.15s;
+.age-options {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
 }
 
-.kids-age-select__menu {
-  position: absolute;
-  top: calc(100% + 6px);
-  inset-inline: 0;
-  z-index: 50;
-  margin: 0;
-  padding: 6px;
-  list-style: none;
-  max-height: 240px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
+.age-option {
+  display: grid;
+  place-items: center;
+  min-height: 46px;
+  padding: 10px 8px;
+  border: 1.5px solid #e5e7eb;
   border-radius: 12px;
-  border: 1px solid #ebe4d8;
   background: #fff;
-  box-shadow:
-    0 4px 6px rgba(40, 28, 12, 0.04),
-    0 16px 40px -12px rgba(40, 28, 12, 0.22);
-  animation: kids-age-menu-in 0.18s ease-out;
-  @include kids-hide-scrollbar;
-}
-
-.kids-age-select__option {
-  padding: 10px 12px;
-  border-radius: 8px;
-  font-size: 15px !important;
-  color: $ink;
+  font-family: var(--font-brand);
+  font-size: 15px;
+  font-weight: 700;
+  color: #374151;
   cursor: pointer;
-  transition: background 0.12s, color 0.12s;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:hover {
-    background: rgba($orange, 0.1);
-    color: darken($orange, 6%);
+    border-color: #fdba74;
+    background: #fffaf5;
   }
 
   &--active {
-    background: rgba($orange, 0.14);
-    color: $orange;
-    font-weight: 700;
+    border-color: #f97316;
+    background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
+    color: #c2410c;
+    box-shadow: 0 8px 20px rgba(249, 115, 22, 0.12);
   }
 }
 
-@keyframes kids-age-menu-in {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
+.activity-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.activity-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 14px;
+  width: 100%;
+  padding: 16px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #fffaf5 100%);
+  text-align: start;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+
+  &:hover {
+    border-color: #fdba74;
+    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.1);
+    transform: translateY(-1px);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  &--active {
+    border-color: #f97316;
+    background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
+    box-shadow: 0 16px 34px rgba(249, 115, 22, 0.14);
   }
 }
 
-.kids-form:has(.kids-age-select--open) {
-  overflow: visible;
+.activity-card__icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+  font-size: 24px;
 }
 
-.kids-check {
+.activity-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.activity-card__header {
   display: flex;
   align-items: flex-start;
+  justify-content: space-between;
   gap: 10px;
-  margin: 8px 0 18px;
-  cursor: pointer;
+  width: 100%;
+}
 
-  input {
-    margin-top: 3px;
-    width: 16px;
-    height: 16px;
-    accent-color: $orange;
-    flex: 0 0 auto;
+.activity-card__title {
+  flex: 1;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: #c2410c;
+  overflow-wrap: anywhere;
+}
+
+.activity-card__desc {
+  font-size: 12px;
+  line-height: 1.45;
+  color: #6b7280;
+  overflow-wrap: anywhere;
+}
+
+.activity-card__price {
+  flex-shrink: 0;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #047857;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.session-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.session-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  width: 100%;
+  padding: 14px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 14px;
+  background: #fff;
+  text-align: start;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease,
+    background 0.2s ease;
+
+  &:hover:not(:disabled) {
+    border-color: #fdba74;
+    box-shadow: 0 8px 20px rgba(249, 115, 22, 0.1);
+    transform: translateY(-1px);
   }
-  span {
-    font-size: 13px !important;
-    line-height: 1.5;
-    color: #7c756b;
+
+  &--active {
+    border-color: #f97316;
+    background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
+    box-shadow: 0 10px 24px rgba(249, 115, 22, 0.14);
+  }
+
+  &--full,
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
   }
 }
 
-.kids-submit {
+.session-btn__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
   width: 100%;
-  height: 52px;
-  border: none;
-  border-radius: 12px;
-  background: $orange;
-  color: #fff;
-  font-family: inherit;
-  font-size: 17px !important;
+}
+
+.session-btn__day {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: #111827;
+}
+
+.session-btn--active .session-btn__day {
+  color: #c2410c;
+}
+
+.session-btn__time {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #6b7280;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.session-btn--active .session-btn__time {
+  color: #9a3412;
+}
+
+.session-btn__spots {
+  flex-shrink: 0;
+  margin-top: 0;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #047857;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  line-height: 1.2;
+
+  &--full {
+    background: #fef2f2;
+    color: #b91c1c;
+  }
+
+  &--open {
+    background: #ecfdf5;
+    color: #047857;
+  }
+}
+
+.session-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 4px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.session-loading__spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 2px solid #fed7aa;
+  border-top-color: #f97316;
+  animation: spin 0.8s linear infinite;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 24px 12px;
+  text-align: center;
+  color: #6b7280;
+
+  &--inline {
+    align-items: flex-start;
+    padding: 8px 0 12px;
+    text-align: start;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}
+
+.empty-state__icon {
+  font-size: 34px;
+}
+
+.btn-retry {
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff7ed;
+  color: #c2410c;
+  font-family: var(--font-brand);
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition: filter 0.15s, transform 0.05s;
+}
 
-  &:hover:not(:disabled) { filter: brightness(1.05); }
-  &:active:not(:disabled) { transform: translateY(1px); }
+.booking-today {
+  margin: 0 0 14px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #f0fdfa;
+  border: 1px solid #ccfbf1;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: #0f766e;
+}
 
-  &:disabled {
-    opacity: 0.72;
-    cursor: not-allowed;
+.capacity-note {
+  margin: 4px 0 16px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: #6b7280;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #fafafa;
+  font-family: var(--font-brand);
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    border-color: #f97316;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.12);
+    background: #fff;
   }
 }
 
-.kids-form__note {
-  text-align: center;
-  font-size: 12px !important;
-  color: #b3aca1;
-  margin: 14px 0 0;
+.error {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #dc2626;
 }
 
+.btn-submit {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  margin-top: 8px;
+  padding: 15px;
+  border: 0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fb923c 0%, #f97316 55%, #ea580c 100%);
+  color: #fff;
+  font-family: var(--font-brand);
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: filter 0.2s, transform 0.08s;
+  box-shadow: 0 16px 30px rgba(249, 115, 22, 0.28);
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+}
+
+.btn-submit__shine {
+  position: absolute;
+  inset: 0 auto 0 -40%;
+  width: 28%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+  transform: skewX(-18deg);
+  animation: shine 2.8s ease-in-out infinite;
+}
+
+.footer-note {
+  margin: 14px 0 0;
+  text-align: center;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.invoice-id {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: #111827;
+
+  strong {
+    color: #c2410c;
+    letter-spacing: 0.02em;
+  }
+}
+
+.birthday-celebration {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 4px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #fcd34d;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 55%, #fde68a 100%);
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.12);
+  animation: birthday-pop 0.45s ease-out;
+}
+
+.birthday-celebration__icon {
+  font-size: 28px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.birthday-celebration__text {
+  font-size: 13px;
+  color: #78350f;
+  line-height: 1.5;
+
+  strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 15px;
+    color: #c2410c;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+@keyframes birthday-pop {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shine {
+  0%,
+  100% {
+    left: -40%;
+  }
+
+  50% {
+    left: 110%;
+  }
+}
+
+@media (max-width: 960px) {
+  .kids-shell {
+    grid-template-columns: 1fr;
+    overflow-x: clip;
+    min-height: auto;
+  }
+
+  .kids-hero__media {
+    order: -1;
+    min-height: min(500px, 82svh);
+    padding: 76px 20px 28px;
+    justify-content: flex-end;
+    background-position: center 32%;
+    border-end-end-radius: 0;
+    border-radius: 0 0 20px 20px;
+  }
+
+  .kids-hero__overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(20, 12, 6, 0.55) 0%,
+      rgba(20, 12, 6, 0.5) 40%,
+      rgba(20, 12, 6, 0.72) 100%
+    );
+  }
+
+  .kids-hero__badge {
+    position: relative;
+    top: auto;
+    inset-inline-start: auto;
+    align-self: flex-start;
+    margin: 0 0 14px;
+    padding: 10px 14px;
+    border-radius: 12px;
+  }
+
+  .kids-hero__content {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .kids-eyebrow--light {
+    font-size: 11px !important;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+
+  .kids-hero__title {
+    font-size: clamp(28px, 8vw, 40px) !important;
+    line-height: 1.08;
+
+    .accent {
+      display: block;
+      margin-top: 5px;
+    }
+  }
+
+  .kids-hero__lead {
+    font-size: 15px !important;
+    line-height: 1.55;
+    max-width: 100%;
+    margin-bottom: 22px;
+  }
+
+  .kids-hero__stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px 8px;
+    width: 100%;
+
+    .stat {
+      align-items: center;
+      text-align: center;
+      min-width: 0;
+
+      &__num {
+        font-size: clamp(22px, 6.2vw, 28px) !important;
+      }
+
+      &__label {
+        font-size: 10px !important;
+        line-height: 1.3;
+        margin-top: 3px;
+      }
+    }
+  }
+
+  .kids-form-panel {
+    place-items: stretch;
+    align-content: start;
+    width: 100%;
+    min-width: 0;
+    padding: 16px 20px 32px;
+    box-sizing: border-box;
+  }
+
+  .form-card {
+    max-width: none;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 400px) {
+  .kids-hero__media {
+    min-height: min(460px, 80svh);
+    padding: 72px 16px 24px;
+  }
+
+  .kids-hero__badge-sub {
+    max-width: 14rem;
+  }
+
+  .kids-hero__stats .stat__label {
+    font-size: 9px !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .kids-shell {
+    overflow-x: clip;
+  }
+
+  .kids-form-panel {
+    padding: 12px 16px calc(28px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .form-card {
+    padding: 22px 18px 24px;
+    border-radius: 22px;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.07);
+  }
+
+  .form-header {
+    margin-bottom: 18px;
+  }
+
+  .form-title {
+    font-size: clamp(26px, 7vw, 32px);
+    line-height: 1.12;
+  }
+
+  .form-subtitle {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .back-link {
+    margin-bottom: 14px;
+    font-size: 14px;
+  }
+
+  .steps {
+    gap: 6px;
+    padding: 12px 12px;
+    margin-bottom: 20px;
+    border-radius: 16px;
+  }
+
+  .step {
+    gap: 5px;
+  }
+
+  .step__dot {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .step__label {
+    font-size: 10px;
+    line-height: 1.25;
+    max-width: none;
+    overflow: visible;
+    text-overflow: unset;
+    white-space: normal;
+  }
+
+  [dir='rtl'] .step__label {
+    font-size: 11px;
+    max-width: none;
+  }
+
+  .form-block {
+    padding: 16px 14px;
+    margin-bottom: 18px;
+    border-radius: 18px;
+  }
+
+  .form-block__head {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .section-label {
+    font-size: 12px;
+  }
+
+  .section-badge {
+    max-width: 100%;
+    height: auto;
+    min-height: 30px;
+    padding: 7px 12px;
+    font-size: 11px;
+    line-height: 1.3;
+    white-space: normal;
+    text-align: end;
+  }
+
+  .booking-today {
+    font-size: 13px;
+    padding: 10px 12px;
+    line-height: 1.45;
+  }
+
+  .field-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .activity-grid {
+    gap: 12px;
+  }
+
+  .activity-card {
+    padding: 16px;
+    gap: 14px;
+    border-radius: 16px;
+  }
+
+  .activity-card__icon {
+    width: 50px;
+    height: 50px;
+    font-size: 23px;
+    border-radius: 14px;
+  }
+
+  .activity-card__header {
+    gap: 12px;
+  }
+
+  .activity-card__title {
+    font-size: 16px;
+    line-height: 1.3;
+  }
+
+  .activity-card__desc {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .activity-card__price {
+    font-size: 12px;
+    padding: 7px 11px;
+  }
+
+  .session-buttons {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .session-btn {
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .session-btn__day {
+    font-size: 13px;
+  }
+
+  .session-btn__time {
+    font-size: 12px;
+  }
+
+  .input {
+    min-height: 48px;
+    font-size: 16px;
+    padding: 11px 12px;
+  }
+
+  .age-options {
+    gap: 10px;
+  }
+
+  .age-option {
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  .btn-submit {
+    min-height: 50px;
+    padding: 14px;
+    font-size: 15px;
+    border-radius: 14px;
+  }
+
+  .capacity-note,
+  .footer-note {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .birthday-celebration {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .birthday-celebration__text {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 380px) {
+  .kids-form-panel {
+    padding-inline: 12px;
+  }
+
+  .form-card {
+    padding: 20px 16px 22px;
+  }
+
+  .steps {
+    padding: 10px 8px;
+    gap: 4px;
+  }
+}
+
+/* ===================== LANDING SECTIONS ===================== */
 /* ===================== FLOATING BRAND CIRCLES ===================== */
 .kids-sections {
   position: relative;
@@ -1475,160 +2049,17 @@ $blue: $brand-blue;
   box-shadow: 0 12px 26px -10px rgba($orange, 0.7);
 }
 
-/* ===================== RESPONSIVE ===================== */
 @media (max-width: 1100px) {
-  .kids-hero { grid-template-columns: 1fr; }
-  .kids-hero__media {
-    min-height: 440px;
-    padding: 72px 28px 40px;
-    background-position: center 38%;
-    border-end-end-radius: 0;
-  }
-  .kids-hero__panel { padding: 48px 32px; }
   .kids-cards { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 768px) {
-  .kids-hero__media {
-    min-height: min(500px, 82svh);
-    padding: 76px 20px 28px;
-    justify-content: flex-end;
-    background-position: center 32%;
-    border-radius: 0 0 20px 20px;
-  }
-
-  .kids-hero__overlay {
-    background: linear-gradient(
-      180deg,
-      rgba(20, 12, 6, 0.55) 0%,
-      rgba(20, 12, 6, 0.5) 40%,
-      rgba(20, 12, 6, 0.72) 100%
-    );
-  }
-
-  .kids-hero__badge {
-    position: relative;
-    top: auto;
-    inset-inline-start: auto;
-    align-self: flex-start;
-    margin: 0 0 14px;
-    padding: 10px 14px;
-    border-radius: 12px;
-
-    &-title {
-      font-size: 13px !important;
-      letter-spacing: 0.6px;
-    }
-
-    &-sub {
-      font-size: 11px !important;
-      line-height: 1.35;
-    }
-  }
-
-  .kids-hero__content {
-    max-width: 100%;
-    width: 100%;
-  }
-
-  .kids-eyebrow--light {
-    font-size: 11px !important;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-  }
-
-  .kids-hero__lead {
-    font-size: 15px !important;
-    line-height: 1.55;
-    max-width: 100%;
-    margin-bottom: 22px;
-  }
-
-  .kids-hero__stats {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px 8px;
-    width: 100%;
-
-    .stat {
-      align-items: center;
-      text-align: center;
-      min-width: 0;
-
-      &__num {
-        font-size: clamp(22px, 6.2vw, 28px) !important;
-      }
-
-      &__label {
-        font-size: 10px !important;
-        line-height: 1.3;
-        margin-top: 3px;
-      }
-    }
-  }
-
-  .kids-hero__panel { padding: 56px 20px 40px; }
-  .kids-form__row { grid-template-columns: 1fr; gap: 0; }
   .kids-features { padding: 64px 22px 80px; }
   .kids-cards { grid-template-columns: 1fr; }
-
-  .kids-hero__title {
-    font-size: clamp(28px, 8vw, 40px) !important;
-    line-height: 1.08;
-
-    .accent {
-      display: block;
-      margin-top: 5px;
-    }
-  }
-
-  .kids-panel__title {
-    font-size: clamp(26px, 7vw, 34px) !important;
-    line-height: 1.1;
-
-    .accent {
-      display: block;
-      margin-top: 5px;
-    }
-  }
 
   .kids-features__title {
     font-size: clamp(24px, 6.5vw, 32px) !important;
     line-height: 1.12;
     padding: 0 4px;
-
-    .accent {
-      display: inline;
-    }
   }
-}
-
-@media (max-width: 400px) {
-  .kids-hero__media {
-    min-height: min(460px, 80svh);
-    padding: 72px 16px 24px;
-  }
-
-  .kids-hero__badge-sub {
-    max-width: 14rem;
-  }
-
-  .kids-hero__stats .stat__label {
-    font-size: 9px !important;
-  }
-}
-
-/* RTL typography & layout tweaks */
-.kids-page[dir='rtl'] {
-  .kids-eyebrow,
-  .kids-form__group-title,
-  .kids-field label {
-    letter-spacing: 0;
-    text-transform: none;
-  }
-
-  .kids-age-select__trigger {
-    padding: 11px 14px 11px 12px;
-  }
-
 }

@@ -35,7 +35,7 @@
     "subtitle": "حدد فرعك وخلي الباقي علينا! ✨",
     "branches": {
       "ahram": "حدائق الأهرام",
-      "dahshour": "وصلة دهشور",
+      "dahshour": "محطة فيول اب",
       "zeweil": "فرع زويل"
     }
   },
@@ -183,7 +183,8 @@
         "homeDelivery": "توصيل للمنزل",
         "selfPickup": "سأستلم الطلب بنفسي",
         "pickupAtBranch": "الاستلام من الفرع",
-        "noDeliveryFee": "مجاني (استلام)"
+        "noDeliveryFee": "مجاني (استلام)",
+        "applyCode": "تطبيق"
     },
     "appAdvertise": {
         "doneEasy": "أسهل طريقة",
@@ -253,6 +254,51 @@
       "VIEW_OFFERS": "شوف العروض"
     },
     "kidsArea": {
+        "title": "سجّل طفلك",
+        "subtitle": "اختر النشاط، ثم الموعد، ثم املأ البيانات.",
+        "back": "رجوع",
+        "stepActivity": "النشاط",
+        "stepSession": "الموعد",
+        "stepDetails": "البيانات",
+        "workshopSection": "اختر النشاط",
+        "bookingToday": "الحجز لليوم · {{date}}",
+        "loadingActivities": "جاري تحميل الأنشطة…",
+        "noActivities": "لا توجد أنشطة متاحة اليوم.",
+        "retry": "حاول مرة أخرى",
+        "sessionSection": "اختر الموعد",
+        "noSessionsForDate": "لا توجد مواعيد لهذا النشاط اليوم.",
+        "capacityNote": "المواعيد قد تمتلئ بسرعة. يبقى حجزك قيد الانتظار حتى التأكيد عند الكاشير.",
+        "parentSection": "بيانات ولي الأمر",
+        "childSection": "بيانات الطفل",
+        "parentName": "اسم ولي الأمر",
+        "parentNamePlaceholder": "الاسم الكامل لولي الأمر",
+        "phone": "رقم الهاتف",
+        "phonePlaceholder": "+20 1XX XXX XXXX",
+        "phoneRequired": "أدخل رقم هاتف صحيحًا",
+        "childName": "اسم الطفل",
+        "childNamePlaceholder": "اسم الطفل",
+        "childAge": "العمر",
+        "childBirthday": "تاريخ الميلاد",
+        "select": "اختر",
+        "required": "هذا الحقل مطلوب",
+        "submit": "إتمام التسجيل",
+        "submitting": "جاري الإرسال…",
+        "footerNote": "طلبك يظهر عند الكاشير · الحالة: قيد الانتظار حتى التأكيد",
+        "referenceLabel": "رقم المرجع",
+        "success": "تم إرسال الحجز بنجاح!",
+        "error": "تعذّر تحميل أو إرسال الحجز. حاول مرة أخرى.",
+        "branchRequired": "يرجى اختيار الفرع أولاً.",
+        "workshopRequired": "يرجى اختيار موعد.",
+        "allSessionsFull": "كل المواعيد ممتلئة. حاول لاحقًا.",
+        "sessionReassigned": "الموعد المختار كان ممتلئًا — اخترنا الموعد المتاح التالي.",
+        "sessionClosed": "ممتلئ",
+        "sessionOpen": "متاح",
+        "sessionOpenNow": "مفتوح الآن",
+        "sessionNotStarted": "لم يبدأ بعد",
+        "spotsLeft": "{{count}} أماكن متبقية",
+        "sessionEnded": "انتهى هذا الموعد بالفعل.",
+        "birthdayCelebrationTitle": "عيد ميلاد سعيد!",
+        "birthdayCelebrationMessage": "عيد ميلاد سعيد {{name}}! نتمنى لك يومًا رائعًا في بابل هوب.",
         "titleLine1": "بابل هوب،",
         "titleLine2": "منطقة الأطفال",
         "description": "مساحة مريحة وآمنة وممتعة للأطفال يلعبوا فيها بينما الآباء يستمتعون بلحظاتهم مع بابل هوب.",
@@ -293,6 +339,18 @@
                 "ageYears": "{{age}} سنوات",
                 "birthDate": "تاريخ الميلاد",
                 "birthDateHint": "اختر التاريخ",
+                "bookingGroup": "تفاصيل الحجز",
+                "bookingDate": "تاريخ الزيارة",
+                "selectActivity": "اختر النشاط",
+                "selectSlot": "اختر الموعد",
+                "noActivities": "لا توجد أنشطة متاحة في هذا التاريخ.",
+                "noSlots": "لا توجد مواعيد متاحة لهذا النشاط.",
+                "slotAllDay": "طوال اليوم",
+                "slotUnavailable": "غير متاح",
+                "activityFullyBooked": "مكتمل الحجز",
+                "allSlotsBooked": "كل المواعيد محجوزة في هذا التاريخ. جرّب يومًا آخر.",
+                "slotsCount": "مواعيد",
+                "priceLabel": "{{price}} جنيه",
                 "submit": "إتمام التسجيل",
                 "submitting": "جاري الإرسال للكاشير…",
                 "note": "طلبك يظهر عند الكاشير · الحالة: قيد الانتظار حتى التأكيد"
@@ -377,6 +435,8 @@
             "scrollTop": "العودة للأعلى",
             "toast": {
                 "errorRequired": "يرجى تعبئة جميع الحقول المطلوبة.",
+                "errorBooking": "يرجى اختيار نشاط وموعد متاح.",
+                "errorBranch": "يرجى اختيار الفرع أولاً.",
                 "errorSubmit": "تعذّر إرسال التسجيل. حاول مرة أخرى.",
                 "success": "شكرًا {{name}}! تم إرسال الحجز للكاشير (قيد الانتظار)."
             }
@@ -452,7 +512,7 @@
                         "capacity": "حتى 60 ضيف"
                     },
                     "maslat": {
-                        "name": "وصلة دهشور",
+                        "name": "محطة فيول اب",
                         "capacity": "حتى 35 ضيف"
                     }
                 },
@@ -516,7 +576,7 @@
                     "alt": "حفلة عيد ميلاد أطفال بكيكة وبالونات",
                     "eventType": "عيد ميلاد أطفال",
                     "package": "احتفال بابل",
-                    "location": "مصلط دهشور"
+                    "location": "محطة فيول اب"
                 },
                 "g6": {
                     "alt": "احتفال زفاف بالورود والديكور الأنيق",
@@ -604,7 +664,7 @@
                 "venues": {
                     "hadayek": "حدايق الأهرام",
                     "zewail": "مدينة زويل",
-                    "maslat": "مصلط دهشور",
+                    "maslat": "محطة فيول اب",
                     "external": "خارجي / كاترينج"
                 }
             },

@@ -1,11 +1,5 @@
-<div
-  class="kids-page"
-  [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'">
-
-  <!-- ===================== HERO ===================== -->
-  <section class="kids-hero">
-
-    <!-- Media panel -->
+<div class="kids-page" [attr.dir]="isArabic() ? 'rtl' : 'ltr'">
+  <div class="kids-shell">
     <div class="kids-hero__media">
       <div class="kids-hero__overlay" aria-hidden="true"></div>
       <div class="kids-hero__bubbles" aria-hidden="true">
@@ -58,148 +52,280 @@
       </div>
     </div>
 
-    <!-- Registration form -->
-    <div class="kids-hero__panel" id="kids-register">
-      <span class="kids-eyebrow">{{ 'kidsArea.page.form.eyebrow' | translate }}</span>
-      <h2 class="kids-panel__title">
-        {{ 'kidsArea.page.form.titleLine1' | translate }}
-        <span class="accent">{{ 'kidsArea.page.form.titleAccent' | translate }}</span>
-      </h2>
-      <p class="kids-panel__sub">
-        {{ 'kidsArea.page.form.sub' | translate }}
-      </p>
+  <section class="kids-form-panel" id="kids-register">
+    <div class="form-card">
+      <button type="button" class="back-link" (click)="back()">
+        ← {{ 'kidsArea.back' | translate }}
+      </button>
 
-      <form class="kids-form" (ngSubmit)="submitRegistration()" #regForm="ngForm">
+      <div class="form-header">
+        <h2 class="form-title">{{ 'kidsArea.title' | translate }}</h2>
+        <p class="form-subtitle">{{ 'kidsArea.subtitle' | translate }}</p>
+      </div>
 
-        <p class="kids-form__group-title">{{ 'kidsArea.page.form.parentGroup' | translate }}</p>
-        <div class="kids-form__row">
-          <div class="kids-field">
-            <label>{{ 'kidsArea.page.form.parentName' | translate }}</label>
-            <input class="kids-input" type="text" name="parentName"
-                   [placeholder]="'kidsArea.page.form.parentNamePlaceholder' | translate"
-                   [(ngModel)]="registration.parentName" required />
-          </div>
-          <div class="kids-field">
-            <label>{{ 'kidsArea.page.form.phone' | translate }}</label>
-            <input class="kids-input" type="tel" name="phone"
-                   [placeholder]="'kidsArea.page.form.phonePlaceholder' | translate"
-                   [(ngModel)]="registration.phone" required />
-          </div>
+      <div class="steps">
+        <div
+          class="step"
+          [class.step--active]="isStepActive('activity')"
+          [class.step--done]="isStepDone('activity')"
+        >
+          <span class="step__dot">1</span>
+          <span class="step__label">{{ 'kidsArea.stepActivity' | translate }}</span>
         </div>
+        <span class="step__line" [class.step__line--done]="isStepDone('activity')"></span>
+        <div
+          class="step"
+          [class.step--active]="isStepActive('session')"
+          [class.step--done]="isStepDone('session')"
+        >
+          <span class="step__dot">2</span>
+          <span class="step__label">{{ 'kidsArea.stepSession' | translate }}</span>
+        </div>
+        <span class="step__line" [class.step__line--done]="isStepDone('session')"></span>
+        <div
+          class="step"
+          [class.step--active]="isStepActive('details')"
+          [class.step--done]="isStepDone('details')"
+        >
+          <span class="step__dot">3</span>
+          <span class="step__label">{{ 'kidsArea.stepDetails' | translate }}</span>
+        </div>
+      </div>
 
-        <p class="kids-form__group-title">{{ 'kidsArea.page.form.childGroup' | translate }}</p>
-        <div class="kids-form__row">
-          <div class="kids-field">
-            <label>{{ 'kidsArea.page.form.childName' | translate }}</label>
-            <input class="kids-input" type="text" name="childName"
-                   [placeholder]="'kidsArea.page.form.childNamePlaceholder' | translate"
-                   [(ngModel)]="registration.childName" required />
+      <!-- Step 1: Activity -->
+      <div *ngIf="currentStep === 'activity'">
+        <div class="form-block">
+          <div class="form-block__head">
+            <p class="section-label">{{ 'kidsArea.workshopSection' | translate }}</p>
           </div>
-          <div class="kids-field kids-field--sm kids-field--select">
-            <label for="childAgeSelect">{{ 'kidsArea.page.form.age' | translate }}</label>
-            <div
-              class="kids-age-select"
-              [class.kids-age-select--open]="ageMenuOpen"
-              [class.kids-age-select--filled]="registration.childAge"
+
+          <p class="booking-today">
+            {{ 'kidsArea.bookingToday' | translate : { date: getTodayLabel() } }}
+          </p>
+
+          <div class="session-loading" *ngIf="loadingActivities">
+            <span class="session-loading__spinner" aria-hidden="true"></span>
+            {{ 'kidsArea.loadingActivities' | translate }}
+          </div>
+
+          <div class="empty-state" *ngIf="!loadingActivities && !activities.length">
+            <span class="empty-state__icon" aria-hidden="true">🎈</span>
+            <p>{{ 'kidsArea.noActivities' | translate }}</p>
+            <button type="button" class="btn-retry" (click)="loadAvailability()">
+              {{ 'kidsArea.retry' | translate }}
+            </button>
+          </div>
+
+          <div class="activity-grid" *ngIf="!loadingActivities && activities.length">
+            <button
+              type="button"
+              class="activity-card"
+              *ngFor="let activity of activities"
+              (click)="selectActivity(activity)"
             >
-              <button
-                type="button"
-                id="childAgeSelect"
-                class="kids-age-select__trigger"
-                (click)="toggleAgeMenu($event)"
-                [attr.aria-expanded]="ageMenuOpen"
-                aria-haspopup="listbox"
-              >
-                <span
-                  class="kids-age-select__value"
-                  [class.kids-age-select__value--placeholder]="!registration.childAge"
-                >
-                  <ng-container *ngIf="registration.childAge; else agePlaceholder">
-                    {{ 'kidsArea.page.form.ageYears' | translate:{ age: registration.childAge } }}
-                  </ng-container>
-                  <ng-template #agePlaceholder>
-                    {{ 'kidsArea.page.form.selectAge' | translate }}
-                  </ng-template>
+              <span class="activity-card__icon" aria-hidden="true">{{
+                getActivityIcon(getActivityName(activity))
+              }}</span>
+              <span class="activity-card__body">
+                <span class="activity-card__header">
+                  <span class="activity-card__title">{{ getActivityName(activity) }}</span>
+                  <span class="activity-card__price" *ngIf="activity.price">
+                    {{ activity.price }} EGP
+                  </span>
                 </span>
-                <i class="bi bi-chevron-down kids-age-select__icon" aria-hidden="true"></i>
-              </button>
-              <ul
-                *ngIf="ageMenuOpen"
-                class="kids-age-select__menu"
-                role="listbox"
-                [attr.aria-label]="'kidsArea.page.form.age' | translate"
-              >
-                <li
-                  *ngFor="let a of ages"
-                  class="kids-age-select__option"
-                  role="option"
-                  [attr.aria-selected]="registration.childAge === a + ''"
-                  [class.kids-age-select__option--active]="registration.childAge === a + ''"
-                  (click)="selectAge(a, $event)"
-                >
-                  {{ 'kidsArea.page.form.ageYears' | translate:{ age: a } }}
-                </li>
-              </ul>
-            </div>
-            <input type="hidden" name="childAge" [(ngModel)]="registration.childAge" required />
+                <span class="activity-card__desc" *ngIf="getActivityDescription(activity)">{{
+                  getActivityDescription(activity)
+                }}</span>
+              </span>
+            </button>
           </div>
         </div>
-        <div class="kids-form__row kids-form__row--full">
-          <div class="kids-field kids-field--date">
-            <label for="childBirthDate">{{ 'kidsArea.page.form.birthDate' | translate }}</label>
-            <div class="kids-date-field">
+      </div>
+
+      <!-- Step 2: Session -->
+      <div *ngIf="currentStep === 'session'">
+        <div class="form-block">
+          <div class="form-block__head">
+            <p class="section-label">{{ 'kidsArea.sessionSection' | translate }}</p>
+            <span class="section-badge" *ngIf="getSelectedActivity() as activity">{{
+              getActivityName(activity)
+            }}</span>
+          </div>
+
+          <div class="empty-state empty-state--inline" *ngIf="!visibleSessions.length">
+            <p>{{ 'kidsArea.noSessionsForDate' | translate }}</p>
+            <button type="button" class="btn-retry" (click)="goToStep('activity')">
+              {{ 'kidsArea.back' | translate }}
+            </button>
+          </div>
+
+          <div class="session-buttons" *ngIf="visibleSessions.length">
+            <button
+              type="button"
+              class="session-btn"
+              *ngFor="let session of visibleSessions"
+              [class.session-btn--active]="selectedSessionKey === session.sessionKey"
+              [class.session-btn--full]="session.isFull"
+              [disabled]="session.isFull"
+              (click)="selectSession(session)"
+            >
+              <span class="session-btn__header">
+                <span class="session-btn__day">{{ getSessionDayLabel(session) }}</span>
+                <span
+                  class="session-btn__spots"
+                  [class.session-btn__spots--full]="session.isFull"
+                  [class.session-btn__spots--open]="!session.isFull && !session.hasCapacityLimit"
+                >
+                  {{ getSpotsLabel(session) }}
+                </span>
+              </span>
+              <span class="session-btn__time" dir="ltr">{{
+                getSessionTimeLabel(session)
+              }}</span>
+            </button>
+          </div>
+        </div>
+
+        <p class="capacity-note">{{ 'kidsArea.capacityNote' | translate }}</p>
+      </div>
+
+      <!-- Step 3: Details -->
+      <form
+        *ngIf="currentStep === 'details'"
+        [formGroup]="form"
+        (ngSubmit)="submit()"
+        novalidate
+      >
+        <div class="form-block">
+          <div class="form-block__head">
+            <p class="section-label">{{ 'kidsArea.childSection' | translate }}</p>
+            <span class="section-badge" *ngIf="getSelectedSession() as session">{{
+              getSessionTimeLabel(session)
+            }}</span>
+          </div>
+
+          <p class="subsection-label">{{ 'kidsArea.parentSection' | translate }}</p>
+
+          <div class="field-grid">
+            <div class="field">
+              <label>{{ 'kidsArea.parentName' | translate }}</label>
               <input
-                id="childBirthDate"
-                class="kids-input kids-input--date"
-                type="date"
-                name="birthDate"
-                [(ngModel)]="registration.birthDate"
-                [class.kids-input--date-empty]="!registration.birthDate"
-                [attr.max]="maxBirthDate"
-                required
+                class="input"
+                type="text"
+                formControlName="parentName"
+                [placeholder]="'kidsArea.parentNamePlaceholder' | translate"
               />
               <div
-                class="kids-date-field__face"
-                *ngIf="!registration.birthDate"
-                (click)="openBirthDatePicker($event)"
-                aria-hidden="true"
+                class="error"
+                *ngIf="form.get('parentName')?.touched && form.get('parentName')?.invalid"
               >
-                <span class="kids-date-field__hint">
-                  {{ 'kidsArea.page.form.birthDateHint' | translate }}
-                </span>
-                <span class="kids-date-field__icon-btn" role="presentation">
-                  <i class="bi bi-calendar3" aria-hidden="true"></i>
-                </span>
+                {{ 'kidsArea.required' | translate }}
               </div>
-              <button
-                *ngIf="registration.birthDate"
-                type="button"
-                class="kids-date-field__icon-btn kids-date-field__icon-btn--solo"
-                (click)="openBirthDatePicker($event)"
-                [attr.aria-label]="'kidsArea.page.form.birthDate' | translate"
+            </div>
+
+            <div class="field">
+              <label>{{ 'kidsArea.phone' | translate }}</label>
+              <input
+                class="input"
+                type="tel"
+                formControlName="phone"
+                [placeholder]="'kidsArea.phonePlaceholder' | translate"
+              />
+              <div
+                class="error"
+                *ngIf="form.get('phone')?.touched && form.get('phone')?.invalid"
               >
-                <i class="bi bi-calendar3" aria-hidden="true"></i>
-              </button>
+                {{ 'kidsArea.phoneRequired' | translate }}
+              </div>
+            </div>
+          </div>
+
+          <p class="subsection-label">{{ 'kidsArea.childSection' | translate }}</p>
+
+          <div class="field-grid">
+            <div class="field">
+              <label>{{ 'kidsArea.childName' | translate }}</label>
+              <input
+                class="input"
+                type="text"
+                formControlName="childName"
+                [placeholder]="'kidsArea.childNamePlaceholder' | translate"
+              />
+              <div
+                class="error"
+                *ngIf="form.get('childName')?.touched && form.get('childName')?.invalid"
+              >
+                {{ 'kidsArea.required' | translate }}
+              </div>
+            </div>
+
+            <div class="field field--full">
+              <label id="childAge-label">{{ 'kidsArea.childAge' | translate }}</label>
+              <div class="age-options" role="group" aria-labelledby="childAge-label">
+                <button
+                  type="button"
+                  class="age-option"
+                  *ngFor="let age of ageOptions"
+                  [class.age-option--active]="form.get('childAge')?.value === age"
+                  [attr.aria-pressed]="form.get('childAge')?.value === age"
+                  (click)="selectChildAge(age)"
+                >
+                  {{ age }}
+                </button>
+              </div>
+              <div
+                class="error"
+                *ngIf="form.get('childAge')?.touched && form.get('childAge')?.invalid"
+              >
+                {{ 'kidsArea.required' | translate }}
+              </div>
+            </div>
+
+            <div class="field field--full">
+              <label>{{ 'kidsArea.childBirthday' | translate }}</label>
+              <input class="input" type="date" formControlName="birthDate" />
+              <div
+                class="error"
+                *ngIf="form.get('birthDate')?.touched && form.get('birthDate')?.invalid"
+              >
+                {{ 'kidsArea.required' | translate }}
+              </div>
+            </div>
+
+            <div
+              class="birthday-celebration field--full"
+              *ngIf="showBirthdayCelebration"
+              role="status"
+              aria-live="polite"
+            >
+              <span class="birthday-celebration__icon" aria-hidden="true">🎉</span>
+              <div class="birthday-celebration__text">
+                <strong>{{ 'kidsArea.birthdayCelebrationTitle' | translate }}</strong>
+                <p>
+                  {{
+                    'kidsArea.birthdayCelebrationMessage'
+                      | translate : { name: celebrationChildName }
+                  }}
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
-        <button
-          type="submit"
-          class="kids-submit"
-          [disabled]="submittingRegistration"
-          [attr.aria-busy]="submittingRegistration"
-        >
-          {{
-            submittingRegistration
-              ? ('kidsArea.page.form.submitting' | translate)
-              : ('kidsArea.page.form.submit' | translate)
-          }}
+        <button class="btn-submit" type="submit" [disabled]="loading">
+          <span class="btn-submit__shine" aria-hidden="true"></span>
+          {{ loading ? ('kidsArea.submitting' | translate) : ('kidsArea.submit' | translate) }}
         </button>
-        <p class="kids-form__note">{{ 'kidsArea.page.form.note' | translate }}</p>
+
+        <p class="invoice-id" *ngIf="submitted && invoiceId">
+          {{ 'kidsArea.referenceLabel' | translate }}: <strong>#{{ invoiceId }}</strong>
+        </p>
+
+        <p class="footer-note">{{ 'kidsArea.footerNote' | translate }}</p>
       </form>
     </div>
   </section>
+  </div>
 
   <div class="kids-sections">
     <div class="kids-sections__deco" aria-hidden="true">
@@ -225,153 +351,149 @@
       <span class="kids-float-circle kids-float-circle--t4"></span>
     </div>
 
-  <!-- ===================== ACTIVITIES (BENTO) ===================== -->
-  <section class="kids-activities">
-    <div class="kids-activities__head">
-      <div>
-        <span class="kids-eyebrow">{{ 'kidsArea.page.activities.eyebrow' | translate }}</span>
-        <h2 class="kids-activities__title">
-          {{ 'kidsArea.page.activities.titleLine1' | translate }}
-          <span class="accent-blue">{{ 'kidsArea.page.activities.titleAccent' | translate }}</span>
+    <section class="kids-activities">
+      <div class="kids-activities__head">
+        <div>
+          <span class="kids-eyebrow">{{ 'kidsArea.page.activities.eyebrow' | translate }}</span>
+          <h2 class="kids-activities__title">
+            {{ 'kidsArea.page.activities.titleLine1' | translate }}
+            <span class="accent-blue">{{ 'kidsArea.page.activities.titleAccent' | translate }}</span>
+          </h2>
+        </div>
+        <p class="kids-activities__desc">
+          {{ 'kidsArea.page.activities.desc' | translate }}
+        </p>
+      </div>
+
+      <div class="kids-bento">
+        <article
+          *ngFor="let zone of activityZones"
+          class="bento"
+          [ngClass]="'bento--' + zone.id">
+          <img
+            class="bento__photo"
+            [src]="zone.image"
+            [alt]="('kidsArea.page.zones.' + zone.id + '.alt') | translate"
+            [style.object-position]="zone.imagePosition || 'center'"
+            loading="lazy"
+            (error)="onActivityImageError($event, zone.id)" />
+          <i class="bi bento__watermark" [ngClass]="zone.icon"></i>
+          <div class="bento__body">
+            <h3>{{ ('kidsArea.page.zones.' + zone.id + '.title') | translate }}</h3>
+            <span class="bento__caption">{{ ('kidsArea.page.zones.' + zone.id + '.caption') | translate }}</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="kids-parents">
+      <div class="kids-parents__head">
+        <span class="kids-eyebrow">{{ 'kidsArea.page.parents.eyebrow' | translate }}</span>
+        <h2 class="kids-parents__title">
+          {{ 'kidsArea.page.parents.titleLine1' | translate }}
+          <span class="accent-blue">{{ 'kidsArea.page.parents.titleAccent' | translate }}</span>
         </h2>
       </div>
-      <p class="kids-activities__desc">
-        {{ 'kidsArea.page.activities.desc' | translate }}
-      </p>
-    </div>
 
-    <div class="kids-bento">
-      <article
-        *ngFor="let zone of activityZones"
-        class="bento"
-        [ngClass]="'bento--' + zone.id">
-        <img
-          class="bento__photo"
-          [src]="zone.image"
-          [alt]="('kidsArea.page.zones.' + zone.id + '.alt') | translate"
-          [style.object-position]="zone.imagePosition || 'center'"
-          loading="lazy"
-          (error)="onActivityImageError($event, zone.id)" />
-        <i class="bi bento__watermark" [ngClass]="zone.icon"></i>
-        <div class="bento__body">
-          <h3>{{ ('kidsArea.page.zones.' + zone.id + '.title') | translate }}</h3>
-          <span class="bento__caption">{{ ('kidsArea.page.zones.' + zone.id + '.caption') | translate }}</span>
+      <div class="kids-parents__grid">
+        <div class="kids-parents__media">
+          <div class="parents-media-stack">
+            <div class="lounge lounge--primary">
+              <img
+                class="lounge__photo"
+                src="/assets/4_V1.jpg"
+                [alt]="'kidsArea.page.parents.loungeAlt' | translate"
+                loading="lazy"
+                decoding="async" />
+            </div>
+          </div>
         </div>
-      </article>
-    </div>
-  </section>
 
-  <!-- ===================== PARENTS LOUNGE ===================== -->
-  <section class="kids-parents">
-    <div class="kids-parents__head">
-      <span class="kids-eyebrow">{{ 'kidsArea.page.parents.eyebrow' | translate }}</span>
-      <h2 class="kids-parents__title">
-        {{ 'kidsArea.page.parents.titleLine1' | translate }}
-        <span class="accent-blue">{{ 'kidsArea.page.parents.titleAccent' | translate }}</span>
-      </h2>
-    </div>
+        <div class="kids-parents__content">
+          <div class="parents-lead">
+            <i class="bi bi-quote parents-lead__mark" aria-hidden="true"></i>
+            <p>{{ 'kidsArea.page.parents.lead' | translate }}</p>
+          </div>
 
-    <div class="kids-parents__grid">
+          <div class="parents-block">
+            <h3 class="parents-block__label">
+              <span>{{ 'kidsArea.page.parents.menuEyebrow' | translate }}</span>
+            </h3>
+            <div class="parents-menu__grid">
+              <article *ngFor="let item of parentsMenuItems" class="parents-menu__card">
+                <span class="parents-menu__icon" aria-hidden="true">
+                  <i class="bi" [ngClass]="item.icon"></i>
+                </span>
+                <div class="parents-menu__copy">
+                  <h4>{{ item.titleKey | translate }}</h4>
+                  <p>{{ item.subKey | translate }}</p>
+                </div>
+              </article>
+            </div>
+          </div>
 
-      <div class="kids-parents__media">
-        <div class="parents-media-stack">
-          <div class="lounge lounge--primary">
-            <img
-              class="lounge__photo"
-              src="/assets/4_V1.jpg"
-              [alt]="'kidsArea.page.parents.loungeAlt' | translate"
-              loading="lazy"
-              decoding="async" />
+          <div class="parents-block">
+            <h3 class="parents-block__label">
+              <span>{{ 'kidsArea.page.parents.perksEyebrow' | translate }}</span>
+            </h3>
+            <div class="parents-perks__grid">
+              <article *ngFor="let perk of parentsPerks" class="parents-perk">
+                <span class="parents-perk__icon" aria-hidden="true">
+                  <i class="bi" [ngClass]="perk.icon"></i>
+                </span>
+                <div class="parents-perk__copy">
+                  <h4>{{ perk.titleKey | translate }}</h4>
+                  <p>{{ perk.textKey | translate }}</p>
+                </div>
+              </article>
+            </div>
           </div>
         </div>
       </div>
+    </section>
 
-      <div class="kids-parents__content">
-        <div class="parents-lead">
-          <i class="bi bi-quote parents-lead__mark" aria-hidden="true"></i>
-          <p>{{ 'kidsArea.page.parents.lead' | translate }}</p>
-        </div>
-
-        <div class="parents-block">
-          <h3 class="parents-block__label">
-            <span>{{ 'kidsArea.page.parents.menuEyebrow' | translate }}</span>
-          </h3>
-          <div class="parents-menu__grid">
-            <article *ngFor="let item of parentsMenuItems" class="parents-menu__card">
-              <span class="parents-menu__icon" aria-hidden="true">
-                <i class="bi" [ngClass]="item.icon"></i>
-              </span>
-              <div class="parents-menu__copy">
-                <h4>{{ item.titleKey | translate }}</h4>
-                <p>{{ item.subKey | translate }}</p>
-              </div>
-            </article>
-          </div>
-        </div>
-
-        <div class="parents-block">
-          <h3 class="parents-block__label">
-            <span>{{ 'kidsArea.page.parents.perksEyebrow' | translate }}</span>
-          </h3>
-          <div class="parents-perks__grid">
-            <article *ngFor="let perk of parentsPerks" class="parents-perk">
-              <span class="parents-perk__icon" aria-hidden="true">
-                <i class="bi" [ngClass]="perk.icon"></i>
-              </span>
-              <div class="parents-perk__copy">
-                <h4>{{ perk.titleKey | translate }}</h4>
-                <p>{{ perk.textKey | translate }}</p>
-              </div>
-            </article>
-          </div>
-        </div>
+    <section class="kids-features">
+      <div class="kids-features__head">
+        <span class="kids-eyebrow">{{ 'kidsArea.page.features.eyebrow' | translate }}</span>
+        <h2 class="kids-features__title">
+          {{ 'kidsArea.page.features.titlePrefix' | translate }}
+          <span class="accent">{{ 'kidsArea.page.features.titleAccent' | translate }}</span>
+        </h2>
+        <p class="kids-features__sub">
+          {{ 'kidsArea.page.features.sub' | translate }}
+        </p>
       </div>
-    </div>
-  </section>
 
-  <!-- ===================== EXPERIENCE ===================== -->
-  <section class="kids-features">
-    <div class="kids-features__head">
-      <span class="kids-eyebrow">{{ 'kidsArea.page.features.eyebrow' | translate }}</span>
-      <h2 class="kids-features__title">
-        {{ 'kidsArea.page.features.titlePrefix' | translate }}
-        <span class="accent">{{ 'kidsArea.page.features.titleAccent' | translate }}</span>
-      </h2>
-      <p class="kids-features__sub">
-        {{ 'kidsArea.page.features.sub' | translate }}
-      </p>
-    </div>
+      <div class="kids-cards">
+        <article class="kids-card">
+          <div class="kids-card__icon"><i class="bi bi-balloon-heart"></i></div>
+          <h3>{{ 'kidsArea.page.features.card1Title' | translate }}</h3>
+          <p>{{ 'kidsArea.page.features.card1Text' | translate }}</p>
+        </article>
+        <article class="kids-card">
+          <div class="kids-card__icon"><i class="bi bi-shield-check"></i></div>
+          <h3>{{ 'kidsArea.page.features.card2Title' | translate }}</h3>
+          <p>{{ 'kidsArea.page.features.card2Text' | translate }}</p>
+        </article>
+        <article class="kids-card">
+          <div class="kids-card__icon"><i class="bi bi-stars"></i></div>
+          <h3>{{ 'kidsArea.page.features.card3Title' | translate }}</h3>
+          <p>{{ 'kidsArea.page.features.card3Text' | translate }}</p>
+        </article>
+        <article class="kids-card">
+          <div class="kids-card__icon"><i class="bi bi-cup-straw"></i></div>
+          <h3>{{ 'kidsArea.page.features.card4Title' | translate }}</h3>
+          <p>{{ 'kidsArea.page.features.card4Text' | translate }}</p>
+        </article>
+      </div>
 
-    <div class="kids-cards">
-      <article class="kids-card">
-        <div class="kids-card__icon"><i class="bi bi-balloon-heart"></i></div>
-        <h3>{{ 'kidsArea.page.features.card1Title' | translate }}</h3>
-        <p>{{ 'kidsArea.page.features.card1Text' | translate }}</p>
-      </article>
-      <article class="kids-card">
-        <div class="kids-card__icon"><i class="bi bi-shield-check"></i></div>
-        <h3>{{ 'kidsArea.page.features.card2Title' | translate }}</h3>
-        <p>{{ 'kidsArea.page.features.card2Text' | translate }}</p>
-      </article>
-      <article class="kids-card">
-        <div class="kids-card__icon"><i class="bi bi-stars"></i></div>
-        <h3>{{ 'kidsArea.page.features.card3Title' | translate }}</h3>
-        <p>{{ 'kidsArea.page.features.card3Text' | translate }}</p>
-      </article>
-      <article class="kids-card">
-        <div class="kids-card__icon"><i class="bi bi-cup-straw"></i></div>
-        <h3>{{ 'kidsArea.page.features.card4Title' | translate }}</h3>
-        <p>{{ 'kidsArea.page.features.card4Text' | translate }}</p>
-      </article>
-    </div>
-
-    <div class="kids-cta">
-      <button class="kids-cta__btn" (click)="scrollToForm()">{{ 'kidsArea.page.cta' | translate }}</button>
-    </div>
-  </section>
-
+      <div class="kids-cta">
+        <button type="button" class="kids-cta__btn" (click)="scrollToForm()">
+          {{ 'kidsArea.page.cta' | translate }}
+        </button>
+      </div>
+    </section>
   </div>
-
 </div>
 
 <button

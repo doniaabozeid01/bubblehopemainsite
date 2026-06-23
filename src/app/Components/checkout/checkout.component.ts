@@ -89,6 +89,8 @@ export class CheckoutComponent implements OnInit {
       .get('fulfillmentType')
       ?.valueChanges.subscribe((type) => this.onFulfillmentTypeChange(type));
 
+    this.onFulfillmentTypeChange(this.orderForm.get('fulfillmentType')?.value);
+
     this.loadPaymentMethods();
     this.loadBranches();
 
@@ -163,11 +165,15 @@ export class CheckoutComponent implements OnInit {
     });
   }
 
+  // get isSelfPickup(): boolean {
+  //   return (
+  //     Number(this.orderForm?.get('fulfillmentType')?.value) ===
+  //     this.FulfillmentType.Pickup
+  //   );
+  // }
+
   get isSelfPickup(): boolean {
-    return (
-      Number(this.orderForm?.get('fulfillmentType')?.value) ===
-      this.FulfillmentType.Pickup
-    );
+    return Number(this.orderForm.get('fulfillmentType')?.value) === this.FulfillmentType.Pickup;
   }
 
   get pickupBranchName(): string {
@@ -178,30 +184,59 @@ export class CheckoutComponent implements OnInit {
       : branch.name ?? branch.name_ar;
   }
 
+  get currencyLabel(): string {
+    const item = this.cartItems[0];
+    if (!item) return '';
+    return this.translate.currentLang === 'ar'
+      ? item.currency_ar ?? item.currency
+      : item.currency ?? item.currency_ar;
+  }
+
   get effectiveDeliveryFee(): number {
     return this.isSelfPickup ? 0 : this.deliveryFee;
   }
 
-  onFulfillmentTypeChange(type: number): void {
-    const addressCtrl = this.orderForm.get('addressId');
-    if (!addressCtrl) return;
+  // onFulfillmentTypeChange(type: number): void {
+  //   const addressCtrl = this.orderForm.get('addressId');
+  //   if (!addressCtrl) return;
 
+  //   if (Number(type) === this.FulfillmentType.Pickup) {
+  //     addressCtrl.clearValidators();
+  //     addressCtrl.setValue(null);
+  //   } else {
+  //     addressCtrl.setValidators(Validators.required);
+  //     const defaultAddress =
+  //       this.addresses.find((a) => a.isDefault)?.id ??
+  //       this.addresses[0]?.id ??
+  //       null;
+  //     addressCtrl.setValue(defaultAddress);
+  //   }
+
+  //   addressCtrl.updateValueAndValidity();
+  // }
+
+  onFulfillmentTypeChange(type: number): void {
+    const addressCtrl = this.orderForm.get('addressId')!;
+    
     if (Number(type) === this.FulfillmentType.Pickup) {
       addressCtrl.clearValidators();
       addressCtrl.setValue(null);
     } else {
       addressCtrl.setValidators(Validators.required);
-      const defaultAddress =
-        this.addresses.find((a) => a.isDefault)?.id ??
-        this.addresses[0]?.id ??
-        null;
-      addressCtrl.setValue(defaultAddress);
+      if (!addressCtrl.value && this.addresses.length) {
+        const defaultAddress = this.addresses.find(a => a.isDefault)?.id || this.addresses[0].id;
+        addressCtrl.setValue(defaultAddress);
+      }
     }
-
     addressCtrl.updateValueAndValidity();
   }
 
-  getFinalTotal() {
+  // getFinalTotal() {
+  //   return this.totalamount + this.effectiveDeliveryFee;
+  // }
+
+
+  getFinalTotal(): number {
     return this.totalamount + this.effectiveDeliveryFee;
   }
 

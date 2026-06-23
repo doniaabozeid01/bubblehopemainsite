@@ -35,7 +35,7 @@
     "subtitle": "Pick your branch and leave the rest to us! ✨",
     "branches": {
       "ahram": "Hadayek Al Ahram",
-      "dahshour": "Waslet Dahshour",
+      "dahshour": "Fuel Up Station",
       "zeweil": "Zewail Branch"
     }
   },
@@ -183,7 +183,8 @@
         "homeDelivery": "Home delivery",
         "selfPickup": "I'll pick up the order myself",
         "pickupAtBranch": "Pick up from branch",
-        "noDeliveryFee": "Free (pickup)"
+        "noDeliveryFee": "Free (pickup)",
+        "applyCode": "Apply"
     },
     "appAdvertise": {
         "doneEasy": "DONE EASY",
@@ -253,6 +254,51 @@
       "VIEW_OFFERS": "View Offers"
     },
     "kidsArea": {
+        "title": "Register your little one",
+        "subtitle": "Choose an activity, pick a time slot, then fill in your details.",
+        "back": "Back",
+        "stepActivity": "Activity",
+        "stepSession": "Time slot",
+        "stepDetails": "Details",
+        "workshopSection": "Choose an activity",
+        "bookingToday": "Booking for today · {{date}}",
+        "loadingActivities": "Loading activities…",
+        "noActivities": "No activities available today.",
+        "retry": "Try again",
+        "sessionSection": "Choose a time slot",
+        "noSessionsForDate": "No time slots for this activity today.",
+        "capacityNote": "Slots may fill up quickly. Your booking stays pending until confirmed at the cashier.",
+        "parentSection": "Parent's info",
+        "childSection": "Child's info",
+        "parentName": "Parent name",
+        "parentNamePlaceholder": "Parent's full name",
+        "phone": "Phone number",
+        "phonePlaceholder": "+20 1XX XXX XXXX",
+        "phoneRequired": "Enter a valid phone number",
+        "childName": "Child's name",
+        "childNamePlaceholder": "Child's name",
+        "childAge": "Age",
+        "childBirthday": "Date of birth",
+        "select": "Select",
+        "required": "This field is required",
+        "submit": "Complete registration",
+        "submitting": "Sending…",
+        "footerNote": "Your request appears at the cashier · Status: Pending until confirmed",
+        "referenceLabel": "Reference",
+        "success": "Booking sent successfully!",
+        "error": "Could not load or submit booking. Please try again.",
+        "branchRequired": "Please select a branch first.",
+        "workshopRequired": "Please choose a time slot.",
+        "allSessionsFull": "All sessions are full. Please try again later.",
+        "sessionReassigned": "Your selected slot was full — we picked the next available one.",
+        "sessionClosed": "Full",
+        "sessionOpen": "Open",
+        "sessionOpenNow": "Open now",
+        "sessionNotStarted": "Not started yet",
+        "spotsLeft": "{{count}} spots left",
+        "sessionEnded": "This time slot has already ended.",
+        "birthdayCelebrationTitle": "Happy Birthday!",
+        "birthdayCelebrationMessage": "Happy birthday {{name}}! We hope you have an amazing day at Bubble Hope.",
         "titleLine1": "Bubble Hope,",
         "titleLine2": "Kids Area",
         "description": "A cozy, safe and exciting space where kids can play while parents enjoy their Bubble Hope moments.",
@@ -293,6 +339,18 @@
                 "ageYears": "{{age}} years old",
                 "birthDate": "DATE OF BIRTH",
                 "birthDateHint": "Select date",
+                "bookingGroup": "BOOKING DETAILS",
+                "bookingDate": "VISIT DATE",
+                "selectActivity": "Choose an activity",
+                "selectSlot": "Choose a time slot",
+                "noActivities": "No activities available for this date.",
+                "noSlots": "No available slots for this activity.",
+                "slotAllDay": "All day",
+                "slotUnavailable": "Unavailable",
+                "activityFullyBooked": "Fully booked",
+                "allSlotsBooked": "All time slots are booked for this date. Try another day.",
+                "slotsCount": "time slots",
+                "priceLabel": "{{price}} EGP",
                 "submit": "Complete Registration",
                 "submitting": "Sending to cashier…",
                 "note": "Your request appears at the cashier · Status: Pending until confirmed"
@@ -377,6 +435,8 @@
             "scrollTop": "Back to top",
             "toast": {
                 "errorRequired": "Please fill in all the required fields.",
+                "errorBooking": "Please choose an activity and an available time slot.",
+                "errorBranch": "Please select a branch first.",
                 "errorSubmit": "Could not submit registration. Please try again.",
                 "success": "Thanks {{name}}! Your booking was sent to the cashier (Pending)."
             }
@@ -452,7 +512,7 @@
                         "capacity": "Up to 60 guests"
                     },
                     "maslat": {
-                        "name": "waslet Dahshour",
+                        "name": "Fuel Up Station",
                         "capacity": "Up to 35 guests"
                     }
                 },
@@ -516,7 +576,7 @@
                     "alt": "Children's birthday party with cake and balloons",
                     "eventType": "Kids Birthday",
                     "package": "Bubble Celebration",
-                    "location": "Maslat Dahshour"
+                    "location": "Fuel Up Station"
                 },
                 "g6": {
                     "alt": "Wedding celebration with flowers and elegant décor",
@@ -604,7 +664,7 @@
                 "venues": {
                     "hadayek": "Hadayek Al Ahram",
                     "zewail": "Zewail City",
-                    "maslat": "Maslat Dahshour",
+                    "maslat": "Fuel Up Station",
                     "external": "External / Catering"
                 }
             },
