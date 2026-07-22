@@ -32,6 +32,8 @@ export class ProductsComponent implements OnDestroy {
   loading = true;
 
   activeTab = 'all';
+  /** Sidebar highlight while viewing all categories (scroll spy). */
+  spyKey = 'all';
   searchQuery = '';
   searchPlaceholder = '';
   routeCategoryId: number | null = null;
@@ -45,6 +47,10 @@ export class ProductsComponent implements OnDestroy {
   private routeSub?: Subscription;
   private langSub?: Subscription;
   private searchTimer?: ReturnType<typeof setTimeout>;
+  private spyUnlockTimer?: ReturnType<typeof setTimeout>;
+  /** Skip spy updates while smooth-scrolling from a tab click. */
+  private suppressSpy = false;
+  private readonly spyOffset = 145;
 
   constructor(
     private apiService: ApiService,
@@ -89,6 +95,7 @@ export class ProductsComponent implements OnDestroy {
     this.routeSub?.unsubscribe();
     this.langSub?.unsubscribe();
     if (this.searchTimer) clearTimeout(this.searchTimer);
+    if (this.spyUnlockTimer) clearTimeout(this.spyUnlockTimer);
   }
 
   private updateSearchPlaceholder(): void {
@@ -141,8 +148,30 @@ export class ProductsComponent implements OnDestroy {
   }
 
   setActiveTab(key: string): void {
+    if (key === 'all') {
+      this.activeTab = 'all';
+      this.spyKey = 'all';
+      this.applyFilters();
+      this.scrollToMenuTop();
+      return;
+    }
+
+    // Viewing all categories → jump to that section (keep full list).
+    if (this.activeTab === 'all') {
+      this.scrollToCategory(key);
+      return;
+    }
+
     this.activeTab = key;
+    this.spyKey = key;
     this.applyFilters();
+  }
+
+  isTabActive(key: string): boolean {
+    if (this.activeTab === 'all') {
+      return this.spyKey === key;
+    }
+    return this.activeTab === key;
   }
 
   trackByTab = (_: number, tab: { key: string }) => tab.key;
@@ -195,6 +224,17 @@ export class ProductsComponent implements OnDestroy {
             }),
       }))
       .filter((g) => g.products.length > 0);
+
+    if (this.activeTab !== 'all') {
+      this.spyKey = this.activeTab;
+    } else if (!this.filteredGroups.some((g) => g.key === this.spyKey)) {
+      this.spyKey = 'all';
+    }
+
+    // Re-sync spy after DOM updates when showing all sections.
+    if (this.activeTab === 'all') {
+      setTimeout(() => this.updateSpyFromScroll(), 0);
+    }
   }
 
   private enrichProduct(p: any): any {
@@ -295,10 +335,76 @@ export class ProductsComponent implements OnDestroy {
       document.body.scrollTop ||
       0;
     this.showScrollButton = scrollPosition > 300;
+    this.updateSpyFromScroll();
   }
 
   scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  private scrollToMenuTop(): void {
+    const content = document.querySelector('.menu-content') as HTMLElement | null;
+    if (!content) {
+      this.scrollToTop();
+      return;
+    }
+    const top = content.getBoundingClientRect().top + window.scrollY - this.spyOffset;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  }
+
+  private scrollToCategory(key: string): void {
+    const el = document.getElementById(`menu-section-${key}`);
+    if (!el) return;
+
+    this.suppressSpy = true;
+    this.spyKey = key;
+    this.scrollSidebarTabIntoView(key);
+
+    const top = el.getBoundingClientRect().top + window.scrollY - this.spyOffset;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+
+    if (this.spyUnlockTimer) clearTimeout(this.spyUnlockTimer);
+    this.spyUnlockTimer = setTimeout(() => {
+      this.suppressSpy = false;
+      this.updateSpyFromScroll();
+    }, 700);
+  }
+
+  private updateSpyFromScroll(): void {
+    if (this.suppressSpy || this.activeTab !== 'all') return;
+
+    const sections = Array.from(
+      document.querySelectorAll<HTMLElement>('.menu-section[data-cat]')
+    );
+    if (!sections.length) {
+      this.setSpyKey('all');
+      return;
+    }
+
+    let current = 'all';
+    for (const section of sections) {
+      const top = section.getBoundingClientRect().top;
+      if (top - this.spyOffset <= 8) {
+        current = section.dataset['cat'] || current;
+      } else {
+        break;
+      }
+    }
+
+    this.setSpyKey(current);
+  }
+
+  private setSpyKey(key: string): void {
+    if (this.spyKey === key) return;
+    this.spyKey = key;
+    this.scrollSidebarTabIntoView(key);
+  }
+
+  private scrollSidebarTabIntoView(key: string): void {
+    const btn = document.querySelector(
+      `.menu-tab[data-key="${key}"]`
+    ) as HTMLElement | null;
+    btn?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
   }
 
   addToFavourite(item: any) {

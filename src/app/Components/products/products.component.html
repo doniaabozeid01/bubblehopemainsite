@@ -25,8 +25,9 @@
               type="button"
               class="menu-tab"
               *ngFor="let tab of tabs; trackBy: trackByTab"
-              [class.menu-tab--active]="activeTab === tab.key"
-              [attr.aria-pressed]="activeTab === tab.key"
+              [attr.data-key]="tab.key"
+              [class.menu-tab--active]="isTabActive(tab.key)"
+              [attr.aria-pressed]="isTabActive(tab.key)"
               (click)="setActiveTab(tab.key)"
             >
               {{ tabLabel(tab) }}
@@ -43,6 +44,8 @@
         <section
           class="menu-section"
           *ngFor="let group of filteredGroups; trackBy: trackByGroup"
+          [id]="'menu-section-' + group.key"
+          [attr.data-cat]="group.key"
           [attr.aria-labelledby]="'cat-' + group.key"
         >
           <h2 class="menu-section__title" [id]="'cat-' + group.key">

@@ -1,46 +1,79 @@
 .profile {
-  max-width: 700px;
-  margin: 40px auto;
-  padding: 0 16px;
+  max-width: 1120px;
+  margin: 28px auto 40px;
+  padding: 0 16px calc(4rem + clamp(2.5rem, 4.5vw, 3.25rem));
+}
+
+.profile__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: 1.5rem 1.75rem;
+  align-items: start;
+}
+
+.profile__col--static {
+  position: sticky;
+  top: calc(var(--app-header-height, 100px) + 0.75rem);
+}
+
+.profile__col--dynamic {
+  min-width: 0;
 }
 
 .title {
   font-size: 28px;
-  margin-bottom: 20px;
+  margin: 0;
+  font-weight: 800;
+  color: #ff7304;
 }
 
 .subtitle {
-  margin: 30px 0 12px;
+  margin: 0;
   font-size: 20px;
+  font-weight: 800;
+  color: #1e293b;
 }
 
 .card {
   background: #fff;
   border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, .06);
+  box-shadow: 0 8px 20px -16px rgba(15, 23, 42, 0.18);
 }
 
 .row {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
   margin-bottom: 14px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 
   span {
     color: #777;
+    font-size: 0.9rem;
+  }
+
+  strong {
+    font-size: 1.05rem;
+    color: #1e293b;
+    word-break: break-word;
   }
 }
 
 .address-list {
   display: grid;
-  gap: 16px;
+  gap: 14px;
 }
 
 .address-card {
   background: #fff;
   border-radius: 14px;
   padding: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, .05);
+  box-shadow: 0 6px 16px -14px rgba(15, 23, 42, 0.16);
   position: relative;
 }
 
@@ -78,6 +111,7 @@
 
 .empty {
   color: #888;
+  margin: 0.5rem 0 0;
 }
 
 .header,
@@ -86,6 +120,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  margin-bottom: 14px;
 }
 
 .actions {
@@ -141,21 +176,43 @@
   margin: 10px 0;
 }
 
+@media (max-width: 900px) {
+  .profile__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile__col--static {
+    position: static;
+  }
+}
+
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, .35);
+  background: rgba(10, 10, 10, 0.42);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   display: grid;
   place-items: center;
-  z-index: 50;
+  z-index: 10060;
+  padding: 18px;
 }
 
 .modal-card {
-  width: min(520px, 92%);
+  width: min(620px, 94%);
+  max-height: min(90dvh, 760px);
   background: #fff;
-  padding: 18px;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, .2);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  animation: pop .16s ease-out;
+}
+
+.modal-body {
+  padding: 16px 20px 20px;
+  overflow: visible;
 }
 
 .modal-actions {
@@ -164,16 +221,6 @@
   gap: 10px;
   margin-top: 14px;
 }
-
-
-
-
-
-
-
-
-
-
 
 
 :root {
@@ -186,26 +233,7 @@
 }
 
 /* ====== Modal ====== */
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(10, 10, 10, 0.42);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  display: grid;
-  place-items: center;
-  z-index: 50;
-  padding: 18px;
-}
-
-.modal-card {
-  width: min(620px, 94%);
-  background: #fff;
-  border-radius: 22px;
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  animation: pop .16s ease-out;
-}
+/* (base .modal / .modal-card defined above) */
 
 @keyframes pop {
   from { transform: translateY(10px) scale(.98); opacity: .7; }
@@ -224,21 +252,14 @@
   border-bottom: 1px solid var(--border);
 }
 
-/* Body spacing */
-.modal-card [formGroup],
-.modal-card form,
-.modal-card {
-  padding: 16px 20px 20px;
-}
-
 /* لو عندك h3 زي ما هو فوق، خليه header فقط */
-.modal-card h3 + * {
-  margin-top: 14px;
+.modal-card h3 {
+  flex-shrink: 0;
+  border-radius: 22px 22px 0 0;
 }
 
 /* ====== Inputs & Selects ====== */
-.input,
-select.input {
+.input {
   width: 100%;
   height: 48px;
   border-radius: 14px;
@@ -256,37 +277,127 @@ select.input {
   color: rgba(0, 0, 0, 0.35);
 }
 
-/* Focus */
-.input:focus,
-select.input:focus {
+.input:focus {
   border-color: rgba(255, 106, 42, 0.55);
   box-shadow: 0 0 0 5px rgba(255, 106, 42, 0.12);
 }
 
-/* Disabled select */
-select.input:disabled {
-  background: rgba(0,0,0,.03);
-  color: rgba(0,0,0,.45);
-  cursor: not-allowed;
+/* Modern custom dropdown */
+.nice-select {
+  position: relative;
+  z-index: 1;
+  width: 100%;
 }
 
-/* Make selects nicer arrow spacing */
-select.input {
-  appearance: none;
-  background-image:
-    linear-gradient(45deg, transparent 50%, rgba(0,0,0,.55) 50%),
-    linear-gradient(135deg, rgba(0,0,0,.55) 50%, transparent 50%),
-    linear-gradient(to right, transparent, transparent);
-  background-position:
-    calc(100% - 18px) 19px,
-    calc(100% - 12px) 19px,
-    0 0;
-  background-size:
-    6px 6px,
-    6px 6px,
-    100% 100%;
-  background-repeat: no-repeat;
-  padding-right: 40px;
+.nice-select.open {
+  z-index: 40;
+}
+
+.nice-select.disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.nice-select__trigger {
+  width: 100%;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  background: #fff;
+  padding: 0 14px;
+  font-size: 15px;
+  color: rgba(0, 0, 0, 0.38);
+  cursor: pointer;
+  transition: .18s ease;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+  text-align: start;
+}
+
+.nice-select.has-value .nice-select__trigger {
+  color: var(--text);
+}
+
+.nice-select.open .nice-select__trigger,
+.nice-select__trigger:hover:not(:disabled) {
+  border-color: rgba(255, 106, 42, 0.55);
+  box-shadow: 0 0 0 5px rgba(255, 106, 42, 0.12);
+}
+
+.nice-select__trigger i {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+  transition: transform .18s ease;
+  flex-shrink: 0;
+}
+
+.nice-select.open .nice-select__trigger i {
+  transform: rotate(180deg);
+  color: var(--accent);
+}
+
+.nice-select__trigger span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nice-select__menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  inset-inline: 0;
+  margin: 0;
+  padding: 8px;
+  list-style: none;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
+  max-height: 220px;
+  overflow-y: auto;
+  animation: menuIn .14s ease-out;
+  z-index: 50;
+}
+
+@keyframes menuIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.nice-select__menu li {
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: background .14s ease, color .14s ease;
+}
+
+.nice-select__menu li:hover {
+  background: rgba(255, 106, 42, 0.08);
+  color: var(--accent);
+}
+
+.nice-select__menu li.active {
+  background: rgba(255, 106, 42, 0.14);
+  color: var(--accent);
+}
+
+.nice-select__menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.nice-select__menu::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 8px;
+}
+
+:host-context([dir='rtl']) .nice-select__trigger {
+  text-align: right;
 }
 
 /* ====== Layout grids ====== */

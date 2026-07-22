@@ -59,6 +59,14 @@ html.kids-area-scroll body::-webkit-scrollbar {
   --page-cream: #fff8ef;
   --brand-orange: #ff7f00;
   --brand-sunny: #ffe18d;
+  /* Matches compact top navbar + spacer */
+  --app-header-height: 80px;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --app-header-height: 86px;
+  }
 }
 
 /* Soft “pulled” transitions between sections (React-style scoops) */
@@ -179,6 +187,19 @@ body {
   font-family: 'Grandstander', cursive;
 
 
+}
+
+/* Profile address modal must sit above footer scoop stacking */
+body.profile-modal-open {
+  overflow: hidden;
+}
+
+body.profile-modal-open app-footer {
+  z-index: 0 !important;
+}
+
+body.profile-modal-open app-page-transition {
+  z-index: 10050 !important;
 }
 
 .btn-bg-color {

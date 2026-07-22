@@ -10,7 +10,7 @@
 }
 
 .menu-page__inner {
-  width: min(1280px, calc(100% - 2rem));
+  width: min(1380px, calc(100% - 2rem));
   margin: 0 auto;
   /* Leave cream space for the shared footer scoop */
   padding-bottom: calc(5rem + clamp(2.5rem, 4.5vw, 3.25rem));
@@ -207,7 +207,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 1.35rem 1.25rem 1.25rem;
+  padding: 1.45rem 1.3rem 1.35rem;
   border-radius: 28px;
   cursor: pointer;
   background: #fff;
@@ -216,7 +216,7 @@
   transition: box-shadow 0.25s ease, transform 0.25s ease;
   transform-style: preserve-3d;
   content-visibility: auto;
-  contain-intrinsic-size: 360px;
+  contain-intrinsic-size: 400px;
 
   &:hover,
   &--tilting {
@@ -244,9 +244,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 11rem;
+  height: 13.25rem;
   margin-bottom: 1rem;
-  padding: 0.85rem 0.75rem;
+  padding: 0.55rem 0.45rem;
   box-sizing: border-box;
   overflow: hidden;
   border-radius: 1.15rem;
@@ -369,14 +369,25 @@
 .product-card__quick {
   display: flex;
   align-items: center;
+  justify-content: center;
   overflow: hidden;
+  width: auto;
+  max-width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
   border: 0;
   border-radius: 999px;
   background: #ff7f00;
   color: #fff;
   cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.15s ease;
+  transition:
+    background 0.35s ease,
+    max-width 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+
+  .product-card:hover & {
+    max-width: 8.5rem;
+  }
 
   &:hover {
     background: #e86f00;
@@ -390,20 +401,26 @@
   height: 2.25rem;
   font-size: 1rem;
   flex-shrink: 0;
+  line-height: 1;
 }
 
 .product-card__quick-label {
   max-width: 0;
   overflow: hidden;
   white-space: nowrap;
+  opacity: 0;
   padding-inline-end: 0;
   font-size: 0.75rem;
   font-weight: 700;
-  transition: max-width 0.25s ease, padding-inline-end 0.25s ease;
+  transition:
+    max-width 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    padding-inline-end 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.35s ease 0.12s;
 
   .product-card:hover & {
     max-width: 5.625rem;
     padding-inline-end: 1rem;
+    opacity: 1;
   }
 }
 
@@ -416,6 +433,7 @@
 @media (prefers-reduced-motion: reduce) {
   .product-card,
   .product-card__media img,
+  .product-card__quick,
   .product-card__quick-label {
     transition: none;
   }
@@ -521,6 +539,13 @@
 
 @media (min-width: 1280px) {
   .menu-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.65rem;
+  }
+}
+
+@media (min-width: 1500px) {
+  .menu-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
@@ -535,12 +560,12 @@
   }
 
   .product-card {
-    padding: 1.15rem 1rem 1.1rem;
+    padding: 1.2rem 1.05rem 1.15rem;
   }
 
   .product-card__media {
-    height: 11rem;
-    padding: 0.7rem 0.55rem;
+    height: 12.5rem;
+    padding: 0.5rem 0.4rem;
   }
 
   .product-card__name {

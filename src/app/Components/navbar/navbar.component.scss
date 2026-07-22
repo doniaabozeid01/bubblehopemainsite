@@ -7,12 +7,13 @@ $ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
 
 .bh-navbar {
   --nav-pad-x: 0.5rem;
-  /* Balanced inset so logo/links aren't clipped top or bottom */
-  --nav-pad-y: 0.85rem;
+  /* Equal top & bottom spacing */
+  --nav-pad-y: 0.4rem;
   --shell-max: min(1400px, calc(100% - 1rem));
   --inner-radius: 0px;
-  --inner-pad-y: 0.7rem;
-  --inner-pad-x: 1.25rem;
+  --inner-pad-y: 0.25rem;
+  --inner-pad-x: 1.15rem;
+  --nav-logo-h: 46px;
   /* Blend with page cream at top */
   --inner-bg: transparent;
   --inner-border: transparent;
@@ -25,38 +26,54 @@ $ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
   z-index: 9500;
   padding: var(--nav-pad-y) var(--nav-pad-x);
   pointer-events: none;
-  background: transparent;
+  /* Solid cream so the bar height IS the visible band (no extra strip below) */
+  background: $cream;
   overflow: visible;
   animation: bh-nav-in 0.6s $ease-soft both;
-  transition: padding 0.55s $ease-soft;
+  transition: padding 0.55s $ease-soft, background 0.55s $ease-soft;
 
   @media (min-width: 640px) {
-    --nav-pad-x: 0.85rem;
-    --nav-pad-y: 1rem;
+    --nav-pad-x: 0.75rem;
+    --nav-pad-y: 0.45rem;
     --shell-max: min(1440px, calc(100% - 1.7rem));
+    --inner-pad-y: 0.28rem;
+    --nav-logo-h: 52px;
   }
 
+  /* Home only: slightly more equal inset */
+  &.is-home:not(.is-scrolled) {
+    --nav-pad-y: 0.5rem;
+
+    @media (min-width: 640px) {
+      --nav-pad-y: 0.55rem;
+    }
+  }
+
+  /* After scroll — pill floats; bar bg goes transparent (pill has its own) */
   &.is-scrolled {
-    --nav-pad-x: 0.75rem;
+    --nav-pad-x: 0.65rem;
     --nav-pad-y: 0.75rem;
-    --shell-max: min(1180px, calc(100% - 0rem));
+    --shell-max: min(1240px, calc(100% - 0.5rem));
     --inner-radius: 999px;
     --inner-pad-y: 0.65rem;
     --inner-pad-x: 1rem;
-    --inner-bg: rgba(255, 251, 245, 0.82);
-    --inner-border: rgba(255, 255, 255, 0.7);
+    --nav-logo-h: 52px;
+    --inner-bg: rgba(255, 251, 245, 0.92);
+    --inner-border: rgba(255, 255, 255, 0.75);
     --inner-blur: 16px;
     --inner-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.35),
-      0 16px 40px -20px rgba(255, 127, 0, 0.16),
-      0 10px 28px -18px rgba(15, 23, 42, 0.1);
+      0 0 0 1px rgba(255, 255, 255, 0.3),
+      0 16px 40px -20px rgba(255, 127, 0, 0.15),
+      0 10px 28px -18px rgba(15, 23, 42, 0.09);
+    background: transparent;
 
     @media (min-width: 640px) {
-      --nav-pad-x: 1.25rem;
+      --nav-pad-x: 1.05rem;
       --nav-pad-y: 1rem;
-      --shell-max: min(1200px, calc(100% - 2.5rem));
+      --shell-max: min(1280px, calc(100% - 2rem));
       --inner-pad-y: 0.72rem;
       --inner-pad-x: 1.35rem;
+      --nav-logo-h: 60px;
     }
   }
 }
@@ -108,12 +125,23 @@ $ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .bh-navbar-spacer {
-  /* Must clear full fixed navbar (pad-y + inner + logo) */
-  height: 7.25rem;
-  background: transparent;
+  /*
+   * Exact match to fixed navbar height:
+   * pad-y×2 + inner-pad-y×2 + logo — no leftover cream under the links
+   */
+  height: calc(0.4rem * 2 + 0.25rem * 2 + 46px);
+  background: $cream;
 
   @media (min-width: 640px) {
-    height: 8rem;
+    height: calc(0.45rem * 2 + 0.28rem * 2 + 52px);
+  }
+
+  &.is-home {
+    height: calc(0.5rem * 2 + 0.25rem * 2 + 46px);
+
+    @media (min-width: 640px) {
+      height: calc(0.55rem * 2 + 0.28rem * 2 + 52px);
+    }
   }
 }
 
@@ -127,22 +155,10 @@ $ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
   transition: transform 0.55s $ease-soft;
 
   img {
-    height: 52px;
+    height: var(--nav-logo-h, 46px);
     width: auto;
     display: block;
     transition: height 0.55s $ease-soft;
-
-    @media (min-width: 640px) {
-      height: 60px;
-    }
-  }
-
-  .bh-navbar.is-scrolled & img {
-    height: 46px;
-
-    @media (min-width: 640px) {
-      height: 52px;
-    }
   }
 
   &--drawer img {
@@ -167,8 +183,8 @@ $nav-desktop-max: 1379.98px;
 
   > a {
     border-radius: 999px;
-    padding: 0.45rem 0.65rem;
-    font-size: 0.8125rem;
+    padding: 0.45rem 0.7rem;
+    font-size: 0.9rem;
     font-weight: 700;
     color: $ink-muted;
     text-decoration: none;
@@ -270,6 +286,16 @@ $nav-desktop-max: 1379.98px;
     transform: translateX(-50%) translateY(0);
   }
 
+  /* Stay closed after a category/CTA click even while still hovered */
+  &.is-closed .nav-mega__panel,
+  &.is-closed:hover .nav-mega__panel,
+  &.is-closed:focus-within .nav-mega__panel {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateX(-50%) translateY(10px);
+  }
+
   &:hover .nav-mega__trigger,
   &:focus-within .nav-mega__trigger,
   .nav-mega__trigger.active {
@@ -280,6 +306,16 @@ $nav-desktop-max: 1379.98px;
       transform: rotate(180deg);
     }
   }
+
+  &.is-closed:hover .nav-mega__trigger:not(.active),
+  &.is-closed:focus-within .nav-mega__trigger:not(.active) {
+    background: transparent;
+    color: $ink-muted;
+
+    i {
+      transform: none;
+    }
+  }
 }
 
 .nav-mega__trigger {
@@ -288,8 +324,8 @@ $nav-desktop-max: 1379.98px;
   gap: 0.35rem;
   border: 0;
   border-radius: 999px;
-  padding: 0.45rem 0.65rem;
-  font-size: 0.8125rem;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.9rem;
   font-weight: 700;
   font-family: inherit;
   color: $ink-muted;
@@ -299,7 +335,7 @@ $nav-desktop-max: 1379.98px;
   transition: background 0.2s ease, color 0.2s ease;
 
   i {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     transition: transform 0.25s ease;
   }
 }
@@ -445,6 +481,24 @@ $nav-desktop-max: 1379.98px;
 }
 
 :host-context([dir='rtl']) {
+  .bh-links {
+    gap: 0.55rem;
+  }
+
+  .bh-links > a {
+    font-size: 1rem;
+    padding-inline: 0.85rem;
+  }
+
+  .nav-mega__trigger {
+    font-size: 1rem;
+    padding-inline: 0.85rem;
+
+    i {
+      font-size: 0.75rem;
+    }
+  }
+
   .nav-mega__cta {
     align-items: stretch;
   }

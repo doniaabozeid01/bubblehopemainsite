@@ -72,21 +72,25 @@
         "eyebrow": "Crafted with care",
         "title": "What Goes Into Every Cup",
         "pillars": {
-            "tea": {
-                "title": "Premium Tea Leaves",
-                "desc": "We brew bold, aromatic teas as the heart of every Bubble Hope cup — smooth, rich, and never bitter."
+            "coconut": {
+                "title": "Coconut Concentrate",
+                "desc": "Rich coconut concentrated juice — creamy tropical depth for signature Bubble Hope drinks."
             },
-            "pearls": {
-                "title": "Chewy Tapioca Pearls",
-                "desc": "Freshly cooked pearls with the perfect bounce — sweet, soft, and made for that signature sip."
+            "kiwi": {
+                "title": "Kiwi Concentrate",
+                "desc": "Bright kiwi fruit concentrate with a fresh zing that wakes up every sip."
             },
-            "milk": {
-                "title": "Creamy Milk Blends",
-                "desc": "Silky milk and cream bases that wrap every flavor in comfort — from classic milk tea to signature lattes."
+            "lychee": {
+                "title": "Lychee Concentrate",
+                "desc": "Delicate lychee concentrate — floral, sweet, and made for refreshing fruit teas."
             },
-            "fruit": {
-                "title": "Real Fruit Flavors",
-                "desc": "Bright mango, berry, and tropical notes that taste fresh and playful — never artificial or flat."
+            "blueberry": {
+                "title": "Blueberry Concentrate",
+                "desc": "Bold blueberry concentrate packed with berry flavor for vibrant, colorful cups."
+            },
+            "mango": {
+                "title": "Special Mango Concentrate",
+                "desc": "Ripe special mango concentrate — sweet, tropical, and made for sunny Bubble Hope cups."
             }
         }
     },
@@ -122,12 +126,12 @@
         }
     },
     "aboutus": {
-        "eyebrow": "ABOUT US",
         "title": "About Us",
         "tagline": "Joyful sips, warm welcomes, and flavors worth sharing.",
         "storyEyebrow": "Our story",
         "storyTitle": "More than bubble tea",
-        "aboutusDescribtion": "At Bubble Hope, we don’t just serve delicious bubble tea — we create joyful moments in every cup! We started with passion to deliver a unique experience that combines rich flavors, high quality, and friendly service. From the heart of the city, we founded Bubble Hope as a place for people who love discovering new flavors and enjoying cheerful moments throughout their day. We use the finest natural ingredients and prepare every drink with care and love.",
+        "aboutusDescribtion": "At Bubble Hope, we don’t just serve delicious bubble tea — we create joyful moments in every cup. We started with passion to deliver rich flavors, high quality, and friendly service.",
+        "storyExtra": "From the heart of the city, Bubble Hope is a place for people who love discovering new flavors. We use the finest ingredients and prepare every drink with care and love.",
         "ctaMenu": "Explore the menu",
         "ctaHome": "Back to home",
         "valuesEyebrow": "What we stand for",

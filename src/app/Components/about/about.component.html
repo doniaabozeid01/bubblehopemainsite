@@ -3,16 +3,28 @@
   [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'"
 >
   <header class="about-hero">
-    <div class="about-hero__glow" aria-hidden="true"></div>
-    <p class="about-hero__eyebrow">{{ 'aboutus.eyebrow' | translate }}</p>
-    <h1 class="about-hero__title">{{ 'aboutus.title' | translate }}</h1>
-    <p class="about-hero__tagline">{{ 'aboutus.tagline' | translate }}</p>
+    <div class="about-hero__orbs" aria-hidden="true">
+      <span class="about-hero__orb about-hero__orb--a"></span>
+      <span class="about-hero__orb about-hero__orb--b"></span>
+      <span class="about-hero__orb about-hero__orb--c"></span>
+    </div>
+
+    <div class="about-hero__inner">
+      <p class="about-hero__brand">Bubble Hope</p>
+      <h1 class="about-hero__title">{{ 'aboutus.title' | translate }}</h1>
+      <p class="about-hero__tagline">{{ 'aboutus.tagline' | translate }}</p>
+      <a routerLink="/products" class="about-btn about-btn--light">
+        {{ 'aboutus.ctaMenu' | translate }}
+      </a>
+    </div>
+
+    <div class="about-hero__scoop" aria-hidden="true"></div>
   </header>
 
-  <div class="about-story">
+  <section class="about-story">
     <div class="about-story__media">
       <img
-        src="assets/about us-01 (1).png"
+        src="assets/Drinks 2 (1).png"
         [alt]="'aboutus.title' | translate"
         loading="lazy"
         decoding="async"
@@ -20,11 +32,39 @@
     </div>
 
     <div class="about-story__copy">
-      <p class="about-story__eyebrow">{{ 'aboutus.storyEyebrow' | translate }}</p>
+      <p class="about-kicker">{{ 'aboutus.storyEyebrow' | translate }}</p>
       <h2 class="about-story__title">{{ 'aboutus.storyTitle' | translate }}</h2>
       <p class="about-story__text">{{ 'aboutus.aboutusDescribtion' | translate }}</p>
+      <p class="about-story__text">{{ 'aboutus.storyExtra' | translate }}</p>
+    </div>
+  </section>
 
-      <div class="about-story__actions">
+  <section class="about-pillars" aria-labelledby="about-pillars-title">
+    <div class="about-pillars__head">
+      <p class="about-kicker">{{ 'aboutus.valuesEyebrow' | translate }}</p>
+      <h2 id="about-pillars-title" class="about-pillars__title">
+        {{ 'aboutus.valuesTitle' | translate }}
+      </h2>
+    </div>
+
+    <ul class="about-pillars__list">
+      <li class="about-pillar" *ngFor="let key of valueKeys">
+        <span class="about-pillar__mark" aria-hidden="true">
+          <i [class]="valueIcons[key]"></i>
+        </span>
+        <div>
+          <h3 class="about-pillar__title">{{ 'aboutus.values.' + key + '.title' | translate }}</h3>
+          <p class="about-pillar__text">{{ 'aboutus.values.' + key + '.text' | translate }}</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <section class="about-close">
+    <div class="about-close__panel">
+      <h2 class="about-close__title">{{ 'aboutus.promiseTitle' | translate }}</h2>
+      <p class="about-close__text">{{ 'aboutus.promiseText' | translate }}</p>
+      <div class="about-close__actions">
         <a routerLink="/products" class="about-btn about-btn--primary">
           {{ 'aboutus.ctaMenu' | translate }}
         </a>
@@ -32,36 +72,6 @@
           {{ 'aboutus.ctaHome' | translate }}
         </a>
       </div>
-    </div>
-  </div>
-
-  <section class="about-values" aria-labelledby="about-values-title">
-    <div class="about-values__intro">
-      <p class="about-values__eyebrow">{{ 'aboutus.valuesEyebrow' | translate }}</p>
-      <h2 id="about-values-title" class="about-values__title">
-        {{ 'aboutus.valuesTitle' | translate }}
-      </h2>
-    </div>
-
-    <div class="about-values__grid">
-      <article class="about-value" *ngFor="let key of valueKeys">
-        <span class="about-value__icon" aria-hidden="true">
-          <i [class]="valueIcons[key]"></i>
-        </span>
-        <h3 class="about-value__title">{{ 'aboutus.values.' + key + '.title' | translate }}</h3>
-        <p class="about-value__text">{{ 'aboutus.values.' + key + '.text' | translate }}</p>
-      </article>
-    </div>
-  </section>
-
-  <section class="about-promise">
-    <div class="about-promise__inner">
-      <h2 class="about-promise__title">{{ 'aboutus.promiseTitle' | translate }}</h2>
-      <p class="about-promise__text">{{ 'aboutus.promiseText' | translate }}</p>
-      <a routerLink="/products" class="about-btn about-btn--light">
-        {{ 'aboutus.ctaMenu' | translate }}
-        <i class="bi bi-arrow-right" aria-hidden="true"></i>
-      </a>
     </div>
   </section>
 </section>

@@ -6,19 +6,18 @@ $line: rgba(30, 41, 59, 0.08);
 
 :host {
   display: block;
-  min-height: calc(100dvh - var(--app-header-height, 100px) - 12rem);
   background: $cream;
 }
 
 .wishlist-page {
   max-width: 1120px;
   margin: 0 auto;
-  padding: 1.25rem 1.15rem calc(2.5rem + clamp(2.5rem, 4.5vw, 3.25rem));
+  padding: 1rem 1.15rem calc(3.5rem + clamp(2.5rem, 4.5vw, 3.25rem));
 }
 
 .wishlist-page__header {
   text-align: center;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.9rem;
 }
 
 .wishlist-page__title {
@@ -203,8 +202,8 @@ $line: rgba(30, 41, 59, 0.08);
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  min-height: 48vh;
-  padding: 3rem 1.25rem;
+  min-height: 28vh;
+  padding: 2rem 1.25rem;
   text-align: center;
 }
 
@@ -230,7 +229,7 @@ $line: rgba(30, 41, 59, 0.08);
 
 @media (max-width: 767.98px) {
   .wishlist-page {
-    padding: 1rem 1rem 2rem;
+    padding: 1rem 1rem calc(3.5rem + clamp(2.5rem, 4.5vw, 3.25rem));
   }
 
   .wl-head {

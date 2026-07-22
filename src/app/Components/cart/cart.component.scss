@@ -12,8 +12,7 @@ $card-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
 }
 
 .cart-page {
-  min-height: calc(100dvh - var(--app-header-height, 100px));
-  padding: calc(var(--app-header-height, 100px) + 2rem) clamp(1.25rem, 4vw, 2.5rem) calc(3rem + clamp(2.5rem, 4.5vw, 3.25rem));
+  padding: calc(var(--app-header-height, 100px) + 0.75rem) clamp(1.25rem, 4vw, 2.5rem) calc(3.5rem + clamp(2.5rem, 4.5vw, 3.25rem));
   background: var(--page-bg, $page-bg);
 
   // Override global inflated typography scoped to this page
@@ -33,7 +32,7 @@ $card-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
 }
 
 .cart-header {
-  margin-bottom: 1.35rem;
+  margin-bottom: 1rem;
   text-align: center;
 }
 
@@ -100,6 +99,12 @@ $card-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
 
   @media (min-width: 768px) {
     display: grid;
+  }
+
+  /* Quantity + Total headers centered over their columns */
+  > span:nth-child(3),
+  > span:nth-child(4) {
+    text-align: center;
   }
 }
 
@@ -212,6 +217,10 @@ $card-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
   border-radius: 999px;
   background: $page-bg;
 
+  @media (min-width: 768px) {
+    justify-self: center;
+  }
+
   @media (max-width: 767px) {
     justify-self: start;
   }
@@ -247,11 +256,16 @@ $card-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
 .cart-row__total {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 0.75rem;
+
+  @media (min-width: 768px) {
+    justify-self: center;
+  }
 
   @media (max-width: 767px) {
     justify-self: end;
+    justify-content: flex-end;
   }
 }
 
@@ -338,7 +352,7 @@ $card-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
 .cart-empty {
   max-width: 560px;
   margin: 0 auto;
-  padding: 4rem 1.25rem;
+  padding: 2.5rem 1.25rem;
   text-align: center;
 }
 

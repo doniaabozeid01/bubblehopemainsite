@@ -3,192 +3,320 @@
 </div>
 
 <div class="profile" *ngIf="!loading && user">
+  <div class="profile__grid">
+    <!-- Static: account details -->
+    <section class="profile__col profile__col--static">
+      <div class="header">
+        <h2 class="title">{{ 'profile.title' | translate }}</h2>
 
-  <div class="header">
-    <h2 class="title">{{ 'profile.title' | translate }}</h2>
+        <button class="btn-outline" type="button" (click)="toggleEdit()" *ngIf="!editing">
+          {{ 'profile.edit' | translate }}
+        </button>
 
-    <button class="btn-outline" (click)="toggleEdit()" *ngIf="!editing">
-      {{ 'profile.edit' | translate }}
-    </button>
+        <div class="actions" *ngIf="editing">
+          <button class="btn-outline" type="button" (click)="toggleEdit()" [disabled]="actionLoading">
+            {{ 'profile.cancel' | translate }}
+          </button>
+          <button
+            class="btn-solid"
+            type="button"
+            (click)="saveProfile()"
+            [disabled]="actionLoading || profileForm.invalid"
+          >
+            {{ 'profile.save' | translate }}
+          </button>
+        </div>
+      </div>
 
-    <div class="actions" *ngIf="editing">
-      <button class="btn-outline" (click)="toggleEdit()" [disabled]="actionLoading">{{ 'profile.cancel' | translate }}</button>
-      <button class="btn-solid" (click)="saveProfile()" [disabled]="actionLoading || profileForm.invalid">
-        {{ 'profile.save' | translate }}
-      </button>
-    </div>
-  </div>
+      <div class="card" [class.editing]="editing" [formGroup]="profileForm">
+        <div class="row">
+          <span>{{ 'profile.name' | translate }}</span>
 
+          <ng-container *ngIf="!editing; else editName">
+            <strong>{{ user.name }}</strong>
+          </ng-container>
 
-  
-  <!-- Profile Card -->
-  <!-- <div class="card" [class.editing]="editing">
-
-    <div class="row">
-      <span>{{ 'profile.name' | translate }}</span>
-
-      <ng-container *ngIf="!editing; else editName">
-        <strong>{{ user.name }}</strong>
-      </ng-container>
-
-      <ng-template #editName>
-        <input class="input" type="text" formControlName="name" [formGroup]="profileForm" />
-      </ng-template>
-    </div>
-
-    <div class="row">
-      <span>{{ 'profile.email' | translate }}</span>
-      <strong>{{ user.email }}</strong>
-    </div>
-
-    <div class="row">
-      <span>{{ 'profile.phone' | translate }}</span>
-
-      <ng-container *ngIf="!editing; else editPhone">
-        <strong>{{ user.phoneNumber || ('profile.notAdded' | translate) }}</strong>
-      </ng-container>
-
-      <ng-template #editPhone>
-        <input class="input" type="text" formControlName="phoneNumber" [formGroup]="profileForm"
-          placeholder="01xxxxxxxxx" />
-      </ng-template>
-    </div>
-
-  </div> -->
-
-
-
-  <div class="card" [class.editing]="editing" [formGroup]="profileForm">
-
-    <div class="row">
-      <span>{{ 'profile.name' | translate }}</span>
-
-      <ng-container *ngIf="!editing; else editName">
-        <strong>{{ user.name }}</strong>
-      </ng-container>
-
-      <ng-template #editName>
-        <input class="input" type="text" formControlName="name" />
-      </ng-template>
-    </div>
-
-    <div class="row">
-      <span>{{ 'profile.email' | translate }}</span>
-      <strong>{{ user.email }}</strong>
-    </div>
-
-    <div class="row">
-      <span>{{ 'profile.phone' | translate }}</span>
-
-      <ng-container *ngIf="!editing; else editPhone">
-        <strong>{{ user.phoneNumber || ('profile.notAdded' | translate) }}</strong>
-      </ng-container>
-
-      <ng-template #editPhone>
-        <input class="input" type="text" formControlName="phoneNumber" [placeholder]="'profile.phonePlaceholder' | translate" />
-      </ng-template>
-    </div>
-
-  </div>
-
-  <!-- Addresses -->
-  <div class="addr-head">
-    <h3 class="subtitle">{{ 'profile.addresses' | translate }}</h3>
-    <button class="btn-solid " (click)="openAddAddress()">+ {{ 'profile.addAddress' | translate }}</button>
-  </div>
-
-  <div class="address-list" *ngIf="user.address.length; else noAddress">
-    <div class="address-card" *ngFor="let addr of user.address">
-
-      <div class="top">
-        <div class="line">
-          {{ addr.street }}, {{ 'profile.building' | translate }} {{ addr.buildingNumber }},
-          {{ 'profile.floor' | translate }} {{ addr.floor }}, {{ 'profile.apartment' | translate }} {{ addr.apartment }}
+          <ng-template #editName>
+            <input class="input" type="text" formControlName="name" />
+          </ng-template>
         </div>
 
-        <span class="badge" *ngIf="addr.isDefault">{{ 'profile.default' | translate }}</span>
+        <div class="row">
+          <span>{{ 'profile.email' | translate }}</span>
+          <strong>{{ user.email }}</strong>
+        </div>
+
+        <div class="row">
+          <span>{{ 'profile.phone' | translate }}</span>
+
+          <ng-container *ngIf="!editing; else editPhone">
+            <strong>{{ user.phoneNumber || ('profile.notAdded' | translate) }}</strong>
+          </ng-container>
+
+          <ng-template #editPhone>
+            <input
+              class="input"
+              type="text"
+              formControlName="phoneNumber"
+              [placeholder]="'profile.phonePlaceholder' | translate"
+            />
+          </ng-template>
+        </div>
       </div>
+    </section>
 
-      <small>
-        {{ addr.districtName }} - {{ addr.cityName }},
-        {{ addr.governorateName }}, {{ addr.countryName }}
-      </small>
-
-      <div class="landmark" *ngIf="addr.landmark">
-        {{ 'profile.landmark' | translate }}: {{ addr.landmark }}
-      </div>
-
-      <div class="addr-actions">
-        <button class="btn-outline" (click)="setDefault(addr.id)" [disabled]="addr.isDefault || actionLoading">
-          {{ 'profile.makeDefault' | translate }}
+    <!-- Dynamic: addresses -->
+    <section class="profile__col profile__col--dynamic">
+      <div class="addr-head">
+        <h3 class="subtitle">{{ 'profile.addresses' | translate }}</h3>
+        <button class="btn-solid" type="button" (click)="openAddAddress()">
+          + {{ 'profile.addAddress' | translate }}
         </button>
-
-        <button class="btn-danger" (click)="deleteAddress(addr.id)" [disabled]="actionLoading">
-          {{ 'profile.delete' | translate }}
-        </button>
       </div>
 
-    </div>
+      <div class="address-list" *ngIf="user.address.length; else noAddress">
+        <div class="address-card" *ngFor="let addr of user.address">
+          <div class="top">
+            <div class="line">
+              {{ addr.street }}, {{ 'profile.building' | translate }} {{ addr.buildingNumber }},
+              {{ 'profile.floor' | translate }} {{ addr.floor }},
+              {{ 'profile.apartment' | translate }} {{ addr.apartment }}
+            </div>
+
+            <span class="badge" *ngIf="addr.isDefault">{{ 'profile.default' | translate }}</span>
+          </div>
+
+          <small>
+            {{ addr.districtName }} - {{ addr.cityName }}, {{ addr.governorateName }},
+            {{ addr.countryName }}
+          </small>
+
+          <div class="landmark" *ngIf="addr.landmark">
+            {{ 'profile.landmark' | translate }}: {{ addr.landmark }}
+          </div>
+
+          <div class="addr-actions">
+            <button
+              class="btn-outline"
+              type="button"
+              (click)="setDefault(addr.id)"
+              [disabled]="addr.isDefault || actionLoading"
+            >
+              {{ 'profile.makeDefault' | translate }}
+            </button>
+
+            <button
+              class="btn-danger"
+              type="button"
+              (click)="deleteAddress(addr.id)"
+              [disabled]="actionLoading"
+            >
+              {{ 'profile.delete' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noAddress>
+        <p class="empty">{{ 'profile.noAddresses' | translate }}</p>
+      </ng-template>
+    </section>
   </div>
 
-  <ng-template #noAddress>
-    <p class="empty">{{ 'profile.noAddresses' | translate }}</p>
-  </ng-template>
-
-  <!-- Add Address Modal (Simple) -->
-  <div class="modal" *ngIf="showAddAddress">
-    <div class="modal-card" [formGroup]="addressForm">
+  <!-- Add Address Modal -->
+  <div class="modal" *ngIf="showAddAddress" (click)="openSelect = null">
+    <div class="modal-card" [formGroup]="addressForm" (click)="$event.stopPropagation()">
       <h3>{{ 'profile.addAddress' | translate }}</h3>
 
+      <div class="modal-body">
+        <div class="grid2 mb-0">
+          <!-- Country -->
+          <div
+            class="nice-select"
+            [class.open]="openSelect === 'country'"
+            [class.has-value]="addressForm.value.countryId"
+          >
+            <button
+              type="button"
+              class="nice-select__trigger"
+              (click)="toggleSelect('country', $event)"
+            >
+              <span>
+                {{
+                  selectedLabel(
+                    countries,
+                    addressForm.value.countryId || 0,
+                    'country_name',
+                    'country_name_ar',
+                    ('profile.selectCountry' | translate)
+                  )
+                }}
+              </span>
+              <i class="bi bi-chevron-down"></i>
+            </button>
+            <ul class="nice-select__menu" *ngIf="openSelect === 'country'" (click)="$event.stopPropagation()">
+              <li
+                *ngFor="let c of countries"
+                [class.active]="c.id === addressForm.value.countryId"
+                (click)="pickCountry(c.id, $event)"
+              >
+                {{ isAr ? (c.country_name_ar || c.country_name) : (c.country_name || c.country_name_ar) }}
+              </li>
+            </ul>
+          </div>
 
-      <div class="grid2 mb-0">
-        <select class="input mb-0" formControlName="countryId">
-          <option [ngValue]="0">{{ 'profile.selectCountry' | translate }}</option>
-          <option *ngFor="let c of countries" [ngValue]="c.id">{{ c.country_name }}</option>
-        </select>
+          <!-- Governorate -->
+          <div
+            class="nice-select"
+            [class.open]="openSelect === 'governorate'"
+            [class.has-value]="addressForm.value.governorateId"
+            [class.disabled]="governorates.length === 0"
+          >
+            <button
+              type="button"
+              class="nice-select__trigger"
+              [disabled]="governorates.length === 0"
+              (click)="toggleSelect('governorate', $event)"
+            >
+              <span>
+                {{
+                  selectedLabel(
+                    governorates,
+                    addressForm.value.governorateId || 0,
+                    'governorate_name',
+                    'governorate_name_ar',
+                    ('profile.selectGovernorate' | translate)
+                  )
+                }}
+              </span>
+              <i class="bi bi-chevron-down"></i>
+            </button>
+            <ul
+              class="nice-select__menu"
+              *ngIf="openSelect === 'governorate'"
+              (click)="$event.stopPropagation()"
+            >
+              <li
+                *ngFor="let g of governorates"
+                [class.active]="g.id === addressForm.value.governorateId"
+                (click)="pickGovernorate(g.id, $event)"
+              >
+                {{ locLabel(g) }}
+              </li>
+            </ul>
+          </div>
 
-        <select class="input mt-0" formControlName="governorateId" [disabled]="governorates.length === 0">
-          <option [ngValue]="0">{{ 'profile.selectGovernorate' | translate }}</option>
-          <option *ngFor="let g of governorates" [ngValue]="g.id">{{ g.governorate_name }}</option>
-        </select>
+          <!-- City -->
+          <div
+            class="nice-select"
+            [class.open]="openSelect === 'city'"
+            [class.has-value]="addressForm.value.cityId"
+            [class.disabled]="cities.length === 0"
+          >
+            <button
+              type="button"
+              class="nice-select__trigger"
+              [disabled]="cities.length === 0"
+              (click)="toggleSelect('city', $event)"
+            >
+              <span>
+                {{
+                  selectedLabel(
+                    cities,
+                    addressForm.value.cityId || 0,
+                    'city_name',
+                    'city_name_ar',
+                    ('profile.selectCity' | translate)
+                  )
+                }}
+              </span>
+              <i class="bi bi-chevron-down"></i>
+            </button>
+            <ul class="nice-select__menu" *ngIf="openSelect === 'city'" (click)="$event.stopPropagation()">
+              <li
+                *ngFor="let c of cities"
+                [class.active]="c.id === addressForm.value.cityId"
+                (click)="pickCity(c.id, $event)"
+              >
+                {{ locLabel(c) }}
+              </li>
+            </ul>
+          </div>
 
-        <select class="input" formControlName="cityId" [disabled]="cities.length === 0">
-          <option [ngValue]="0">{{ 'profile.selectCity' | translate }}</option>
-          <option *ngFor="let c of cities" [ngValue]="c.id">{{ c.city_name }}</option>
-        </select>
+          <!-- District -->
+          <div
+            class="nice-select"
+            [class.open]="openSelect === 'district'"
+            [class.has-value]="addressForm.value.districtId"
+            [class.disabled]="districts.length === 0"
+          >
+            <button
+              type="button"
+              class="nice-select__trigger"
+              [disabled]="districts.length === 0"
+              (click)="toggleSelect('district', $event)"
+            >
+              <span>
+                {{
+                  selectedLabel(
+                    districts,
+                    addressForm.value.districtId || 0,
+                    'district_name',
+                    'district_name_ar',
+                    ('profile.selectDistrict' | translate)
+                  )
+                }}
+              </span>
+              <i class="bi bi-chevron-down"></i>
+            </button>
+            <ul
+              class="nice-select__menu"
+              *ngIf="openSelect === 'district'"
+              (click)="$event.stopPropagation()"
+            >
+              <li
+                *ngFor="let d of districts"
+                [class.active]="d.id === addressForm.value.districtId"
+                (click)="pickDistrict(d.id, $event)"
+              >
+                {{ locLabel(d) }}
+              </li>
+            </ul>
+          </div>
+        </div>
 
-        <select class="input" formControlName="districtId" [disabled]="districts.length === 0">
-          <option [ngValue]="0">{{ 'profile.selectDistrict' | translate }}</option>
-          <option *ngFor="let d of districts" [ngValue]="d.id">{{ d.district_name }}</option>
-        </select>
-      </div>
+        <div class="grid2">
+          <input class="input" formControlName="street" [placeholder]="'profile.street' | translate" />
+          <input
+            class="input"
+            formControlName="buildingNumber"
+            [placeholder]="'profile.buildingNumber' | translate"
+          />
+          <input class="input" formControlName="floor" [placeholder]="'profile.floor' | translate" />
+          <input class="input" formControlName="apartment" [placeholder]="'profile.apartment' | translate" />
+        </div>
 
+        <input class="input" formControlName="landmark" [placeholder]="'profile.landmark' | translate" />
 
-      <!-- ✅ باقي الداتا -->
-      <div class="grid3">
-        <input class="input mt-2" formControlName="street" [placeholder]="'profile.street' | translate" />
-        <input class="input mt-2" formControlName="buildingNumber" [placeholder]="'profile.buildingNumber' | translate" />
-        <input class="input mt-2" formControlName="floor" [placeholder]="'profile.floor' | translate" />
-        <input class="input mt-2" formControlName="apartment" [placeholder]="'profile.apartment' | translate" />
-      </div>
+        <label class="check">
+          <input type="checkbox" formControlName="isDefault" />
+          {{ 'profile.makeAddressDefault' | translate }}
+        </label>
 
-
-      <input class="input" formControlName="landmark" [placeholder]="'profile.landmark' | translate" />
-
-
-      <label class="check">
-        <input type="checkbox" formControlName="isDefault" />
-        {{ 'profile.makeAddressDefault' | translate }}
-      </label>
-
-
-      <div class="modal-actions">
-        <button class="btn-outline" (click)="closeAddAddress()" [disabled]="actionLoading">{{ 'profile.cancel' | translate }}</button>
-        <button class="btn-solid btn-bg-color" (click)="addAddress()" [disabled]="actionLoading || addressForm.invalid">
-          {{ 'profile.add' | translate }}
-        </button>
+        <div class="modal-actions">
+          <button class="btn-outline" type="button" (click)="closeAddAddress()" [disabled]="actionLoading">
+            {{ 'profile.cancel' | translate }}
+          </button>
+          <button
+            class="btn-solid btn-bg-color"
+            type="button"
+            (click)="addAddress()"
+            [disabled]="actionLoading || addressForm.invalid"
+          >
+            {{ 'profile.add' | translate }}
+          </button>
+        </div>
       </div>
     </div>
   </div>
-
 </div>

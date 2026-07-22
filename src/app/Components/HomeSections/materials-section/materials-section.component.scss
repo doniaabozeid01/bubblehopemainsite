@@ -2,7 +2,7 @@ $orange: #f47524;
 $teal: #2bb6cf;
 $navy: #243a63;
 $cream: #fffbf5;
-$muted: #6b7280;
+$muted: #64748b;
 
 :host {
   display: block;
@@ -13,11 +13,10 @@ $muted: #6b7280;
   position: relative;
   width: 100%;
   background:
-    radial-gradient(ellipse 80% 50% at 10% 20%, rgba(244, 117, 36, 0.08), transparent 55%),
-    radial-gradient(ellipse 70% 45% at 90% 80%, rgba(43, 182, 207, 0.08), transparent 50%),
+    radial-gradient(ellipse 70% 45% at 8% 18%, rgba(244, 117, 36, 0.08), transparent 58%),
+    radial-gradient(ellipse 60% 40% at 92% 78%, rgba(43, 182, 207, 0.07), transparent 52%),
     $cream;
 
-  // Override global inflated typography
   h2,
   h3,
   p,
@@ -27,26 +26,43 @@ $muted: #6b7280;
   }
 }
 
+/*
+  Critical: sticky fails when ancestors have overflow-x: clip (html/body).
+  We force a sticky-friendly containing block via JS-free sticky +
+  a local overflow visible, and use position sticky with top:0.
+  Also patch: materials section creates its own scroll container height.
+*/
+.materials--desktop {
+  /* height set inline: N * 100vh — same as React */
+}
+
 .materials__sticky {
-  position: sticky;
-  top: 0;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
+  background: $cream;
+  box-sizing: border-box;
+  /* position/top/left/right applied via ngStyle (JS sticky) */
 }
 
 .materials__header {
   flex-shrink: 0;
-  padding: calc(var(--app-header-height, 90px) + 1.25rem) 1.25rem 0.75rem;
+  padding: calc(var(--app-header-height, 88px) + 0.85rem) 1.25rem 0.35rem;
   text-align: center;
+
+  &--stack {
+    padding: 0 0 0.5rem;
+  }
 }
 
 .materials__eyebrow {
-  margin: 0 0 0.4rem;
-  font-size: 0.85rem;
+  margin: 0 0 0.35rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: $orange;
 }
@@ -54,16 +70,16 @@ $muted: #6b7280;
 .materials__title {
   margin: 0;
   font-family: var(--font-brand, 'Grandstander', cursive);
-  font-size: clamp(1.75rem, 3.5vw, 2.6rem);
+  font-size: clamp(1.75rem, 3.4vw, 2.5rem) !important;
   font-weight: 800;
   color: $navy;
   line-height: 1.15;
 }
 
 .materials__rule {
-  width: 3.5rem;
-  height: 4px;
-  margin: 0.85rem auto 0;
+  width: 3.25rem;
+  height: 3px;
+  margin: 0.7rem auto 0;
   border-radius: 999px;
   background: linear-gradient(135deg, $orange 0%, $teal 100%);
 }
@@ -74,6 +90,8 @@ $muted: #6b7280;
   display: flex;
   align-items: center;
   min-height: 0;
+  width: 100%;
+  overflow: hidden;
 }
 
 .materials__track {
@@ -81,7 +99,7 @@ $muted: #6b7280;
   height: 100%;
   align-items: center;
   will-change: transform;
-  transition: none;
+  transition: transform 0.08s linear;
 }
 
 .materials__panel {
@@ -92,34 +110,28 @@ $muted: #6b7280;
   justify-content: center;
   width: 100vw;
   height: 100%;
-  padding: 1rem clamp(1.5rem, 5vw, 4rem) 3.5rem;
+  padding: 0.75rem clamp(1.75rem, 6vw, 5rem) 3.5rem;
   box-sizing: border-box;
-}
-
-.materials__panel--stacked {
-  width: 100%;
-  height: auto;
-  padding: 0;
 }
 
 .materials__watermark {
   position: absolute;
-  top: 6%;
+  top: 8%;
   inset-inline-start: 6%;
   z-index: 0;
   font-family: var(--font-brand, 'Grandstander', cursive);
-  font-size: clamp(7rem, 16vw, 12.5rem);
+  font-size: clamp(7rem, 15vw, 12rem);
   font-weight: 900;
   line-height: 1;
   color: $teal;
-  opacity: 0.12;
+  opacity: 0.1;
   pointer-events: none;
   user-select: none;
 
-  &--stacked {
-    top: -0.5rem;
-    inset-inline-start: 0;
-    font-size: 5.5rem;
+  &--sm {
+    top: 0.25rem;
+    inset-inline-start: 0.75rem;
+    font-size: 4.25rem;
   }
 }
 
@@ -128,45 +140,61 @@ $muted: #6b7280;
   z-index: 1;
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-  gap: clamp(1.5rem, 4vw, 3rem);
+  gap: clamp(1.75rem, 4.5vw, 3.5rem);
   align-items: center;
-  width: 100%;
-  max-width: 1100px;
+  width: min(100%, 1080px);
 
-  &--stacked {
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
+  &--flip {
+    .materials__media {
+      order: 2;
+    }
+    .materials__copy {
+      order: 1;
+    }
   }
 }
 
 .materials__media {
-  overflow: hidden;
-  border-radius: 1.5rem;
-  background: #fff;
-  border: 1px solid rgba(244, 117, 36, 0.14);
-  box-shadow: 0 18px 40px rgba(36, 58, 99, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 
   img {
     display: block;
-    width: 100%;
-    aspect-ratio: 4 / 3;
+    width: auto;
+    max-width: min(100%, 280px);
+    height: auto;
+    max-height: min(52vh, 460px);
+    aspect-ratio: auto;
     object-fit: contain;
-    object-position: center;
-    padding: 1.25rem;
-    background:
-      radial-gradient(circle at 30% 20%, rgba(244, 117, 36, 0.1), transparent 55%),
-      #fff;
+    padding: 0;
+    background: transparent;
+    filter: drop-shadow(0 18px 32px rgba(36, 58, 99, 0.18));
+  }
+
+  &--stack {
+    img {
+      max-width: min(100%, 170px);
+      max-height: 240px;
+      margin-inline: auto;
+    }
   }
 }
 
 .materials__copy {
   text-align: start;
+  max-width: 28rem;
 }
 
 .materials__num {
   display: inline-block;
   font-family: var(--font-brand, 'Grandstander', cursive);
-  font-size: 1.15rem;
+  font-size: 1.1rem !important;
   font-weight: 800;
   color: $orange;
 }
@@ -174,16 +202,15 @@ $muted: #6b7280;
 .materials__panel-title {
   margin: 0.45rem 0 0;
   font-family: var(--font-brand, 'Grandstander', cursive);
-  font-size: clamp(1.55rem, 2.6vw, 2.15rem);
+  font-size: clamp(1.5rem, 2.5vw, 2.1rem) !important;
   font-weight: 800;
   color: $navy;
   line-height: 1.2;
 }
 
 .materials__panel-desc {
-  margin: 0.85rem 0 0;
-  max-width: 34ch;
-  font-size: 1.05rem;
+  margin: 0.8rem 0 0;
+  font-size: 1.05rem !important;
   line-height: 1.65;
   color: $muted;
 }
@@ -192,8 +219,8 @@ $muted: #6b7280;
   position: absolute;
   bottom: 1.75rem;
   left: 50%;
-  z-index: 2;
-  width: min(16rem, 70vw);
+  z-index: 3;
+  width: min(16rem, 60vw);
   height: 4px;
   overflow: hidden;
   border-radius: 999px;
@@ -209,24 +236,34 @@ $muted: #6b7280;
 }
 
 .materials__stack {
-  padding: 3.5rem 1.15rem 3.75rem;
+  padding: 3.25rem 1.15rem 3.5rem;
 }
 
 .materials__stack-list {
   display: flex;
   flex-direction: column;
-  gap: 2.75rem;
-  margin-top: 2rem;
-  max-width: 520px;
-  margin-inline: auto;
+  gap: 1.35rem;
+  max-width: 480px;
+  margin: 1.75rem auto 0;
 }
 
-@media (max-width: 1023px) {
-  .materials__header {
-    padding-top: 0.25rem;
+.materials__card {
+  position: relative;
+  overflow: hidden;
+  padding: 1.35rem 1.2rem 1.4rem;
+  border-radius: 1.25rem;
+  background: #fff;
+  border: 1px solid rgba(244, 117, 36, 0.12);
+  box-shadow: 0 12px 28px rgba(36, 58, 99, 0.06);
+  text-align: center;
+
+  .materials__copy {
+    max-width: none;
+    margin-inline: auto;
+    text-align: center;
   }
 
-  .materials__panel-desc {
-    max-width: none;
+  .materials__media {
+    margin-bottom: 0.9rem;
   }
 }

@@ -68,14 +68,14 @@ $orange: #ff7304;
   max-width: 340px;
   height: 100%;
   margin-inline: auto;
-  padding-top: 250px;
+  padding-top: 230px;
   overflow: visible;
   cursor: pointer;
   --accent: #ff7304;
 
   &:hover .bev-card__panel {
     transform: translateY(-3px);
-    box-shadow: 0 22px 44px -24px rgba(15, 23, 42, 0.32);
+    box-shadow: 0 10px 22px -18px rgba(15, 23, 42, 0.16);
   }
 
   &:hover .bev-card__img {
@@ -86,7 +86,7 @@ $orange: #ff7304;
 /* Cup absolutely centered on the card */
 .bev-card__media {
   position: absolute;
-  top: 0;
+  top: 40px;
   left: 50%;
   z-index: 3;
   display: flex;
@@ -124,7 +124,7 @@ $orange: #ff7304;
   padding: 3.25rem 1.2rem 1.2rem;
   border-radius: 1.65rem;
   background: #fff;
-  box-shadow: 0 18px 40px -28px rgba(15, 23, 42, 0.28);
+  box-shadow: 0 8px 18px -16px rgba(15, 23, 42, 0.14);
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
@@ -251,10 +251,11 @@ $orange: #ff7304;
 
   .bev-card {
     max-width: 290px;
-    padding-top: 220px;
+    padding-top: 200px;
   }
 
   .bev-card__media {
+    top: 32px;
     height: 270px;
     width: min(100%, 230px);
   }
@@ -268,10 +269,11 @@ $orange: #ff7304;
 @media (max-width: 575.98px) {
   .bev-card {
     max-width: 320px;
-    padding-top: 230px;
+    padding-top: 210px;
   }
 
   .bev-card__media {
+    top: 35px;
     height: 280px;
     width: min(100%, 240px);
   }

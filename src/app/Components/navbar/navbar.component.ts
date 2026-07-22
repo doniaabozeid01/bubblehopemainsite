@@ -22,6 +22,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   user: any;
   isMenuOpen = false;
   scrolled = false;
+  isHome = false;
+  /** Force-hide Products mega after a click until the mouse leaves */
+  megaClosed = false;
 
   selectedBranchName: string = '';
   branchId: number | null = null;
@@ -44,11 +47,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.scrolled = window.scrollY > 24;
+    this.updateHomeFlag();
 
     this.routerSub = this.router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe(() => {
+        this.updateHomeFlag();
         this.closeMenu();
+        this.closeMega();
       });
 
     this.authService.currentUser$.subscribe((u) => {
@@ -156,6 +162,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
   closeMenu(): void {
     this.isMenuOpen = false;
     document.body.style.overflow = '';
+  }
+
+  closeMega(): void {
+    this.megaClosed = true;
+    const active = document.activeElement as HTMLElement | null;
+    active?.blur?.();
+  }
+
+  onMegaLeave(): void {
+    this.megaClosed = false;
   }
 
   // ngOnInit(): void {
@@ -367,6 +383,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   get isProductsRoute(): boolean {
     const path = this.router.url.split('?')[0];
     return path === '/products' || path.startsWith('/products/');
+  }
+
+  private updateHomeFlag(): void {
+    const path = this.router.url.split('?')[0];
+    this.isHome = path === '/' || path === '/home' || path === '';
   }
 
   /** Keep mega menu short — first 6 drink categories only. */

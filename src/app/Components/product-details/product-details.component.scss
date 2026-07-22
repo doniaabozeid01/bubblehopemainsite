@@ -42,12 +42,12 @@ $footer-wave-height: 100px;
   position: relative;
   z-index: 1;
   overflow: visible;
-  --app-header-height: 140px;
+  --app-header-height: 86px;
   --font-brand: 'Grandstander', cursive;
 
   @media (max-width: $details-tablet-max) {
     margin-top: -4px;
-    --app-header-height: 120px;
+    --app-header-height: 80px;
   }
 }
 
