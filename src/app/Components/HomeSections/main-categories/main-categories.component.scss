@@ -1,208 +1,287 @@
-.categoriesSwiperCustom {
-  max-width: 1600px;
-  margin: 50px 150px 0 150px !important;
-}
-
-.category-slide {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-.category-card {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  --b: clamp(16px, 2vw, 34px);
-  --circle-size: 235px;
-}
-
-.category-card::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: var(--circle-size);
-  height: var(--circle-size);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background-color: var(--bg-color, #e60000);
-  z-index: 0;
-}
-
-.category-card img {
-  position: relative;
-  z-index: 1;
-  width: 260px;
-  height: 430px;
-  object-fit: contain;
-  display: block;
-}
-
-.cat-name {
-  width: 100%;
-  margin-bottom: 0;
-}
-
-:host ::ng-deep .categories-carousel .owl-stage-outer {
-  overflow: hidden;
-}
-
-:host ::ng-deep .categories-carousel .owl-stage {
-  display: flex;
-}
-
-:host ::ng-deep .categories-carousel .owl-item {
-  display: flex;
-}
-
-:host ::ng-deep .categories-carousel .owl-item > * {
-  width: 100%;
-}
-
-.bubble {
-  position: absolute;
-  border-radius: 50%;
-  z-index: 1;
-  box-shadow:
-    0 10px 18px rgba(0, 0, 0, 0.18),
-    inset 0 10px 5px rgba(255, 255, 255, 0.22),
-    inset 0 -12px 8px rgba(0, 0, 0, 0.2);
-}
-
-.b1 {
-  width: calc(var(--b) * 1.6);
-  height: calc(var(--b) * 1.6);
-  background: #0b7c8f;
-  left: 10%;
-  top: 18%;
-}
-
-.b4 {
-  width: calc(var(--b) * 1.4);
-  height: calc(var(--b) * 1.4);
-  background: #ff7a00;
-  right: 10%;
-  bottom: 24%;
-}
-
-.b5 {
-  width: calc(var(--b) * 1.5);
-  height: calc(var(--b) * 1.5);
-  background: #ff3b3b;
-  left: 12%;
-  bottom: 18%;
-}
-
-.b6 {
-  width: calc(var(--b) * 1.9);
-  height: calc(var(--b) * 1.9);
-  background: #ffe18d;
-  right: 4%;
-  top: 12%;
-}
-
-@media (min-width: 1200px) {
-  .categoriesSwiperCustom {
-    margin: 50px 150px 0 150px !important;
-  }
-}
-
-@media (max-width: 1199.98px) {
-  .categoriesSwiperCustom {
-    margin: auto !important;
-    padding-left: 15px !important;
-    padding-right: 15px !important;
-  }
-}
-
-@media (min-width: 576px) and (max-width: 1199.98px) {
-  .category-card {
-    --b: clamp(14px, 1.8vw, 24px);
-    --circle-size: 148px;
-  }
-
-  .category-card img {
-    width: auto;
-    max-width: 150px;
-    height: 220px;
-  }
-
-  .cat-name {
-    font-size: 1.1rem !important;
-    margin-top: 6px !important;
-    line-height: 1.2;
-  }
-
-  .bubble {
-    transform: scale(0.88);
-  }
-
-  .b1 {
-    left: 14%;
-    top: 22%;
-  }
-
-  .b4 {
-    right: 12%;
-    bottom: 28%;
-  }
-
-  .b6 {
-    right: 6%;
-    top: 16%;
-  }
-
-  .b2,
-  .b3,
-  .b5 {
-    display: none;
-  }
-}
-
-@media (max-width: 575.98px) {
-  .category-card {
-    --circle-size: 205px;
-    --b: clamp(14px, 2.2vw, 28px);
-  }
-
-  .category-card img {
-    height: 280px !important;
-    width: 180px !important;
-  }
-
-  .cat-name {
-    font-size: 25px !important;
-    margin-top: 5px !important;
-  }
-
-  .bubble {
-    transform: scale(0.92);
-  }
-
-  .b1 {
-    left: 5%;
-    top: 25%;
-  }
-
-  .b4 {
-    right: 5%;
-    bottom: 30%;
-  }
-
-  .b6 {
-    right: 2%;
-    top: 20%;
-  }
-
-  .b2,
-  .b3,
-  .b5 {
-    display: none;
-  }
-}
-
+$cream: #fffbf5;
+$ink: #1e293b;
+$muted: #64748b;
+$orange: #ff7304;
+
+:host {
+  display: block;
+  background: $cream;
+}
+
+.beverages {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 2.75rem;
+}
+
+.beverages__header {
+  text-align: center;
+  max-width: 36rem;
+  margin: 0 auto 1.5rem;
+}
+
+.beverages__eyebrow {
+  margin: 0;
+  font-size: 0.78rem !important;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: $orange;
+}
+
+.beverages__title {
+  margin: 0.55rem 0 0;
+  font-size: clamp(1.85rem, 4vw, 2.75rem) !important;
+  font-weight: 800;
+  color: $ink;
+  line-height: 1.15;
+}
+
+.beverages__slogan {
+  margin: 0.75rem 0 0;
+  font-size: 1.05rem !important;
+  font-weight: 500;
+  color: $muted;
+  line-height: 1.45;
+}
+
+.beverages__track {
+  padding-top: 1rem;
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+.bev-slide {
+  width: 100%;
+  padding: 0 0 0.85rem;
+  overflow: visible;
+  display: flex;
+  justify-content: center;
+}
+
+.bev-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  max-width: 340px;
+  height: 100%;
+  margin-inline: auto;
+  padding-top: 250px;
+  overflow: visible;
+  cursor: pointer;
+  --accent: #ff7304;
+
+  &:hover .bev-card__panel {
+    transform: translateY(-3px);
+    box-shadow: 0 22px 44px -24px rgba(15, 23, 42, 0.32);
+  }
+
+  &:hover .bev-card__img {
+    transform: translateY(-4px) scale(1.02);
+  }
+}
+
+/* Cup absolutely centered on the card */
+.bev-card__media {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  width: min(100%, 260px);
+  height: 300px;
+  margin: 0;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.bev-card__img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  object-fit: contain;
+  object-position: center bottom;
+  -webkit-user-drag: none;
+  user-select: none;
+  transition: transform 0.2s ease;
+}
+
+/* White panel holds blob + text; clips only the ornament */
+.bev-card__panel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 100%;
+  min-height: 210px;
+  padding: 3.25rem 1.2rem 1.2rem;
+  border-radius: 1.65rem;
+  background: #fff;
+  box-shadow: 0 18px 40px -28px rgba(15, 23, 42, 0.28);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -22%;
+    inset-inline-end: -24%;
+    width: 78%;
+    height: 70%;
+    border-radius: 42% 48% 38% 52%;
+    background: var(--accent);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 12%;
+    inset-inline-end: 14%;
+    width: 0.85rem;
+    height: 0.85rem;
+    border-radius: 50%;
+    background: #fff;
+    z-index: 1;
+    pointer-events: none;
+  }
+}
+
+.bev-card__body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.bev-card__copy {
+  min-width: 0;
+  text-align: start;
+}
+
+.bev-card__name {
+  margin: 0;
+  font-size: 1.2rem !important;
+  font-weight: 800;
+  color: $ink;
+  line-height: 1.2;
+}
+
+.bev-card__hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.9rem !important;
+  font-weight: 500;
+  color: $muted;
+  line-height: 1.35;
+}
+
+.bev-card__cta {
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff4e8;
+  color: $orange;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+
+  &:hover {
+    background: #ffe8d1;
+    transform: translateY(-1px);
+  }
+}
+
+:host ::ng-deep .beverages-carousel .owl-stage-outer {
+  overflow: hidden;
+  padding-top: 0.35rem;
+}
+
+:host ::ng-deep .beverages-carousel .owl-stage {
+  display: flex;
+  align-items: stretch;
+}
+
+:host ::ng-deep .beverages-carousel .owl-item {
+  display: flex;
+  justify-content: center;
+  overflow: visible;
+}
+
+:host ::ng-deep .beverages-carousel .owl-item > * {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  overflow: visible;
+}
+
+:host ::ng-deep .beverages-carousel .bev-slide {
+  width: 100%;
+  overflow: visible;
+}
+
+:host ::ng-deep .beverages-carousel .bev-card {
+  overflow: visible;
+}
+
+@media (max-width: 1199.98px) {
+  .bev-card {
+    max-width: 310px;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .beverages {
+    padding: 2rem 1rem 2.25rem;
+  }
+
+  .bev-card {
+    max-width: 290px;
+    padding-top: 220px;
+  }
+
+  .bev-card__media {
+    height: 270px;
+    width: min(100%, 230px);
+  }
+
+  .bev-card__panel {
+    min-height: 200px;
+    padding-top: 3rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .bev-card {
+    max-width: 320px;
+    padding-top: 230px;
+  }
+
+  .bev-card__media {
+    height: 280px;
+    width: min(100%, 240px);
+  }
+
+  .bev-card__panel {
+    min-height: 190px;
+    padding: 3rem 1rem 1rem;
+  }
+
+  .bev-card__name {
+    font-size: 1.1rem !important;
+  }
+}

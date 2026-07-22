@@ -35,49 +35,31 @@ $footer-wave-height: 100px;
   }
 }
 
-@mixin details-wave-cap-bottom($bg) {
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -$footer-wave-height;
-    height: $footer-wave-height;
-    background: $bg;
-    -webkit-mask: $bh-wave-mask no-repeat center / 100% 100%;
-    mask: $bh-wave-mask no-repeat center / 100% 100%;
-    pointer-events: none;
-    z-index: 0;
-  }
-}
-
 :host {
   display: block;
-  margin-top: -44px;
-  margin-bottom: -80px;
-  padding-bottom: 80px;
+  /* Slight tuck for wave blend — never overlap nav logo/links */
+  margin-top: -8px;
   position: relative;
   z-index: 1;
   overflow: visible;
-  --app-header-height: 128px;
+  --app-header-height: 140px;
   --font-brand: 'Grandstander', cursive;
 
   @media (max-width: $details-tablet-max) {
-    margin-top: -36px;
-    --app-header-height: 108px;
+    margin-top: -4px;
+    --app-header-height: 120px;
   }
 }
 
 .details-page {
   position: relative;
   min-height: 100dvh;
-  padding-bottom: 2rem;
+  /* Extra bottom pad so shared footer scoop has cream to cut into */
+  padding-bottom: calc(2rem + #{$footer-wave-height});
   overflow: visible;
   background:
     radial-gradient(ellipse 90% 50% at 50% -8%, rgba($orange, 0.06), transparent 60%),
     linear-gradient(180deg, $cream-warm 0%, $cream 45%, $cream-deep 100%);
-
-  @include details-wave-cap-bottom($cream-deep);
 }
 
 $breadcrumbs-bg: rgb(243, 243, 243);
@@ -980,11 +962,10 @@ $breadcrumbs-bg: rgb(243, 243, 243);
   min-height: 100dvh;
   padding: 3rem 1.5rem;
   padding-top: calc(var(--app-header-height, 100px) + 2rem);
+  padding-bottom: calc(3rem + #{$footer-wave-height});
   text-align: center;
   overflow: visible;
   background: linear-gradient(180deg, $cream-warm 0%, $cream-deep 100%);
-
-  @include details-wave-cap-bottom($cream-deep);
 }
 
 .details-not-found {
@@ -996,11 +977,10 @@ $breadcrumbs-bg: rgb(243, 243, 243);
   min-height: 100dvh;
   padding: 3rem 1.5rem;
   padding-top: calc(var(--app-header-height, 100px) + 2rem);
+  padding-bottom: calc(3rem + #{$footer-wave-height});
   text-align: center;
-  overflow: hidden;
+  overflow: visible;
   background: linear-gradient(180deg, $cream-warm 0%, $cream-deep 100%);
-
-  @include details-wave-cap-bottom($cream-deep);
 }
 
 .details-loading app-brand-loader {

@@ -1,0 +1,22 @@
+:host {
+  display: inline-flex;
+  align-items: baseline;
+  line-height: 1;
+}
+
+.animated-price {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.2em;
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: #ff7f00;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.animated-price__currency {
+  font-size: 0.7em;
+  font-weight: 700;
+  color: #008b8b;
+}

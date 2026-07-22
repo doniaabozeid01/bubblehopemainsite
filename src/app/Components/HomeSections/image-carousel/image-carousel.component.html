@@ -1,48 +1,46 @@
-<div class=" mt-5 pt-5 position-relative ">
-    <h2 class="mb-0 raw-material text-center main-color d-flex justify-content-center second-color">
-        {{'home.rawMaterial.raw'|translate}} {{'home.rawMaterial.material'|translate}}
+<section class="our-material" aria-labelledby="our-material-title">
+  <div class="our-material__intro">
+    <h2 id="our-material-title" class="our-material__title">
+      {{ 'home.rawMaterial.raw' | translate }} {{ 'home.rawMaterial.material' | translate }}
     </h2>
-    <p class="w-100 px-1 mb-3 text-center m-auto fs-5 text-secondary">
-        {{ 'home.rawmaterialsSlogan' | translate }}
+    <p class="our-material__subtitle">
+      {{ 'home.rawmaterialsSlogan' | translate }}
     </p>
+  </div>
 
+  <svg
+    class="our-material__wave"
+    viewBox="0 0 1440 60"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    <path
+      d="M0,32 C240,64 480,0 720,24 C960,48 1200,8 1440,32 L1440,60 L0,60 Z"
+    />
+  </svg>
 
-
-
-    <div class="scroller mt-4" dir="ltr"> <!-- لو عايزة عربي خليه dir="rtl" -->
-
-
-        <ul class="scroller__track">
-            <!-- الصف الأصلي -->
-            <li><img class="img1" src="../../../../assets/image carousel/Frame (1).png" alt=""></li>
-            <li><img class="img2" src="../../../../assets/image carousel/Isolation_Mode.png" alt=""></li>
-            <li><img class="img1" src="../../../../assets/image carousel/Frame (1).png" alt=""></li>
-            <li><img class="img2" src="../../../../assets/image carousel/Isolation_Mode.png" alt=""></li>
-            <li><img class="img1" src="../../../../assets/image carousel/Frame (1).png" alt=""></li>
-            <li><img class="img2" src="../../../../assets/image carousel/Isolation_Mode.png" alt=""></li>
-            <li><img class="img1" src="../../../../assets/image carousel/Frame (1).png" alt=""></li>
-            <li><img class="img2" src="../../../../assets/image carousel/Isolation_Mode.png" alt=""></li>
-            <li><img class="img1" src="../../../../assets/image carousel/Frame (1).png" alt=""></li>
-            <li><img class="img2" src="../../../../assets/image carousel/Isolation_Mode.png" alt=""></li>
-            <li><img class="img1" src="../../../../assets/image carousel/Frame (1).png" alt=""></li>
-            <li><img class="img2" src="../../../../assets/image carousel/Isolation_Mode.png" alt=""></li>
-            <li><img class="img1" src="../../../../assets/image carousel/Frame (1).png" alt=""></li>
-            <li><img class="img2" src="../../../../assets/image carousel/Isolation_Mode.png" alt=""></li>
-            <li><img class="img1" src="../../../../assets/image carousel/Frame (1).png" alt=""></li>
-            <li><img class="img2" src="../../../../assets/image carousel/Isolation_Mode.png" alt=""></li>
-            <li><img class="img1" src="../../../../assets/image carousel/Frame (1).png" alt=""></li>
-            <li><img class="img2" src="../../../../assets/image carousel/Isolation_Mode.png" alt=""></li>
-
-
-            <li aria-hidden="true"><img class="img1" src="../../../../assets/image carousel/Frame (1).png" alt="">
-            </li>
-            <li aria-hidden="true"><img class="img2" src="../../../../assets/image carousel/Isolation_Mode.png" alt="">
-            </li>
-
-        </ul>
+  <div class="our-material__band" dir="ltr">
+    <div class="our-material__track our-material__track--a" aria-hidden="true">
+      <div class="our-material__item" *ngFor="let src of track; trackBy: trackByIndex">
+        <img [src]="src" alt="" />
+      </div>
     </div>
 
+    <div class="our-material__track our-material__track--b" aria-hidden="true">
+      <div class="our-material__item" *ngFor="let src of trackAlt; trackBy: trackByIndex">
+        <img [src]="src" alt="" />
+      </div>
+    </div>
+  </div>
 
-
-
-</div>
+  <svg
+    class="our-material__wave our-material__wave--flip"
+    viewBox="0 0 1440 60"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    <path
+      d="M0,32 C240,64 480,0 720,24 C960,48 1200,8 1440,32 L1440,60 L0,60 Z"
+    />
+  </svg>
+</section>

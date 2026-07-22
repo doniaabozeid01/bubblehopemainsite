@@ -5,41 +5,45 @@ import { ToastrService } from 'ngx-toastr';
 import { ApiService } from 'src/app/services/api.service';
 import { BranchService } from 'src/app/services/branch.service';
 import { LanguageService } from 'src/app/services/language.service';
+import { WishlistCountService } from 'src/app/services/wishlist-count.service';
 
 @Component({
   selector: 'app-best-sellers',
   templateUrl: './best-sellers.component.html',
-  styleUrls: ['./best-sellers.component.scss']
+  styleUrls: ['./best-sellers.component.scss'],
 })
 export class BestSellersComponent {
-
   @ViewChild('bestCarousel', { static: false }) bestCarousel!: CarouselComponent;
 
   isRTL = false;
   bestSellerProducts: any[] = [];
-  dragging = false;                  // 👈 نعرف لو في سحب
+  dragging = false;
   cartId!: number;
   userId!: string;
   branchId!: any;
 
-  // 1 على الصغير، 2 على التابلت، 3 على اللابتوب، 4 على الكبير
+  private readonly badgeKeys = [
+    'home.bestSellersBadgeFan',
+    'home.bestSellersBadgeBest',
+    'home.bestSellersBadgeSignature',
+  ];
+
   bestOptions: OwlOptions = {
-    loop: true,          // لازم عشان center يشتغل كويس
-    center: true,        // 👈 الأساس
-    dots: false,
+    loop: false,
+    center: false,
+    dots: true,
     nav: false,
-    // margin: 280,
+    margin: 18,
     mouseDrag: true,
     touchDrag: true,
     rtl: this.isRTL,
     responsive: {
-      0: { items: 1, },
-      576: { items: 2, },
-      992: { items: 3, },   // 👈 3 عناصر = سنتر واضح
-      1200: { items: 3,  }
-    }
+      0: { items: 1, margin: 14 },
+      640: { items: 2, margin: 18 },
+      992: { items: 3, margin: 20 },
+      1200: { items: 3, margin: 24 },
+    },
   };
-
 
   trackById = (_: number, p: any) => p.productId ?? p.id;
 
@@ -48,81 +52,58 @@ export class BestSellersComponent {
     private router: Router,
     private toastr: ToastrService,
     public languageService: LanguageService,
-    private branchService: BranchService
-  ) { }
+    private branchService: BranchService,
+    private wishlistCountService: WishlistCountService
+  ) {}
 
   ngOnInit() {
-    // this.branchId = localStorage.getItem('br');
-
     const token = localStorage.getItem('token');
 
     if (token) {
       this.api.GetUserId().subscribe({
         next: (response) => {
-          // console.log(response);
-
           this.userId = response.userId;
           this.api.GetUserBranch(response.userId).subscribe({
             next: (res) => {
-              // console.log(res);
-
+              this.branchId = res.id;
               this.GetBestSellerProducts(res.id, this.userId);
 
-
-              this.branchService.currentBranch$.subscribe(branchId => {
+              this.branchService.currentBranch$.subscribe((branchId) => {
                 if (branchId && branchId !== this.branchId) {
                   this.branchId = branchId;
-                  this.GetBestSellerProducts(branchId);
+                  this.GetBestSellerProducts(branchId, this.userId);
                 }
               });
             },
             error: () => {
               this.bestSellerProducts = [];
-            }
-
-          })
-
-
+            },
+          });
         },
         error: () => {
-
           this.api.GetDefaultBranch().subscribe({
             next: (res) => {
-              // console.log(res);
-
+              this.branchId = res.id;
               this.GetBestSellerProducts(res.id);
             },
             error: () => {
               this.bestSellerProducts = [];
-
-            }
-          })
-
-
-
-        }
-
-
-
+            },
+          });
+        },
       });
-    }
-    else {
+    } else {
       this.api.GetDefaultBranch().subscribe({
         next: (res) => {
+          this.branchId = res.id;
           this.GetBestSellerProducts(res.id);
-          // console.log(res);
-
         },
         error: () => {
           this.bestSellerProducts = [];
+        },
+      });
 
-        }
-
-
-
-      })
-
-      this.branchService.currentBranch$.subscribe(branchId => {
+      this.branchService.currentBranch$.subscribe((branchId) => {
         if (branchId && branchId !== this.branchId) {
           this.branchId = branchId;
           this.GetBestSellerProducts(branchId);
@@ -130,30 +111,38 @@ export class BestSellersComponent {
       });
     }
 
-
-
-    this.languageService.languageChanged$.subscribe(lang => {
-      this.isRTL = (lang === 'ar');
-      // عشان الـ rtl يتطبق بعد التغيير:
+    this.languageService.languageChanged$.subscribe((lang) => {
+      this.isRTL = lang === 'ar';
       this.bestOptions = { ...this.bestOptions, rtl: this.isRTL };
     });
+  }
 
+  badgeKey(index: number): string {
+    return this.badgeKeys[index % this.badgeKeys.length];
+  }
 
-
-
+  productShort(product: any): string {
+    const isAr = this.isRTL;
+    return (
+      (isAr
+        ? product?.shortDescription_ar ||
+          product?.description_ar ||
+          product?.productDescription_ar
+        : product?.shortDescription ||
+          product?.description ||
+          product?.productDescription) || ''
+    );
   }
 
   GetBestSellerProducts(branchId: number, userId?: string) {
     this.api.GetBestSellerProducts(branchId, userId).subscribe({
       next: (products) => {
-        // console.log(products);
-
-        this.bestSellerProducts = products
+        this.bestSellerProducts = products;
       },
       error: (err) => {
         this.bestSellerProducts = [];
-        console.error('Error loading', err)
-      }
+        console.error('Error loading', err);
+      },
     });
   }
 
@@ -170,20 +159,20 @@ export class BestSellersComponent {
     this.router.navigate(['productdetails/', product.productSlug]);
   }
 
+  onAddClick(product: any, e: MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.addToCart(product);
+  }
+
   addToCart(data: any) {
     const token = localStorage.getItem('token');
     if (!token) {
       this.router.navigate(['/auth/login'], {
-        queryParams: { returnUrl: this.router.url }
+        queryParams: { returnUrl: this.router.url },
       });
       return;
     }
-
-
-
-
-
-    // console.log(data);
 
     const dataToAdded = {
       quantity: 1,
@@ -191,27 +180,31 @@ export class BestSellersComponent {
       branchId: this.branchId,
       userId: this.userId,
     };
-    // console.log(dataToAdded);
-
 
     this.api.addToCart(dataToAdded).subscribe({
-      next: (response) => {
+      next: () => {
         this.toastr.success("Great choice! It's now in your cart.");
-
-        // console.log("add to cart", response);
       },
-      error: (err) => {
-        // console.log(err);
-      }
+      error: () => {},
     });
+  }
 
+  toggleFavourite(item: any, e: MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (item.isFavorite) {
+      this.removeFromFavourite(item);
+    } else {
+      this.addToFavourite(item);
+    }
   }
 
   addToFavourite(item: any) {
     const token = localStorage.getItem('token');
     if (!token) {
       this.router.navigate(['/auth/login'], {
-        queryParams: { returnUrl: this.router.url }
+        queryParams: { returnUrl: this.router.url },
       });
       return;
     }
@@ -219,19 +212,16 @@ export class BestSellersComponent {
     const dataToAdded = {
       productId: item.productId,
       userId: this.userId,
-      branchId: this.branchId
-
+      branchId: this.branchId,
     };
 
     this.api.addToFavourite(dataToAdded).subscribe({
       next: () => {
-        this.toastr.success("Product Saved to your wishlist!");
-
+        this.toastr.success('Product Saved to your wishlist!');
         item.isFavorite = true;
+        this.wishlistCountService.increment();
       },
-      error: (err) => {
-        // console.log(err)
-      }
+      error: () => {},
     });
   }
 
@@ -239,33 +229,19 @@ export class BestSellersComponent {
     const token = localStorage.getItem('token');
     if (!token) {
       this.router.navigate(['/auth/login'], {
-        queryParams: { returnUrl: this.router.url }
+        queryParams: { returnUrl: this.router.url },
       });
       return;
     }
 
-
-
-
-    this.api.removeFromFavourite(item.id, this.branchId, this.userId).subscribe({
-      next: () => {
-        this.toastr.success("Product removed from your wishlist.");
-
-        item.isFavorite = false;
-      },
-      // error: (err) => console.log(err)
-    });
-
-
-
-
-
-
-
+    this.api
+      .removeFromFavourite(item.id, this.branchId, this.userId)
+      .subscribe({
+        next: () => {
+          this.toastr.success('Product removed from your wishlist.');
+          item.isFavorite = false;
+          this.wishlistCountService.decrement();
+        },
+      });
   }
-
-
 }
-
-
-

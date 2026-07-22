@@ -11,6 +11,19 @@ import { LanguageService } from 'src/app/services/language.service';
 export class AdvertiseCarouselComponent {
   advertisements: any[] = [];
 
+  /** Floating pearls — same idea as React FloatingPearls (bob y: 0 → -18 → 0). */
+  floatingPearls = [
+    { top: '18%', left: '10%', size: 42, color: '#FF7F00', duration: 6 },
+    { top: '30%', left: '4%', size: 28, color: '#008B8B', duration: 5.2 },
+    { top: '62%', left: '14%', size: 34, color: '#FFC340', duration: 6.5 },
+    { top: '22%', left: '38%', size: 30, color: '#008B8B', duration: 5.6 },
+    { top: '20%', left: '72%', size: 28, color: '#008B8B', duration: 6.2 },
+    { top: '55%', left: '86%', size: 30, color: '#008B8B', duration: 5.8 },
+    { top: '74%', left: '80%', size: 40, color: '#FF7F00', duration: 6.8 },
+    { top: '72%', left: '40%', size: 28, color: '#FF7F00', duration: 5.4 },
+    { top: '78%', left: '16%', size: 30, color: '#008B8B', duration: 6.4 },
+  ];
+
   customOptions: OwlOptions = {
     loop: true,
     autoplay: true,

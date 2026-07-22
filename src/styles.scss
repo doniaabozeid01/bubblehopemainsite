@@ -1,14 +1,16 @@
 
-
-
-
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 
 
 html,
 body {
-  overflow-x: hidden;
+  overflow-x: clip;
   margin: 0;
   padding: 0;
   width: 100%;
@@ -53,6 +55,52 @@ html.kids-area-scroll body::-webkit-scrollbar {
 :root {
   --color: #d19981;
   --brand-primary: #f47524;
+  --page-bg: #fffbf5;
+  --page-cream: #fff8ef;
+  --brand-orange: #ff7f00;
+  --brand-sunny: #ffe18d;
+}
+
+/* Soft “pulled” transitions between sections (React-style scoops) */
+.bh-scoop {
+  position: absolute;
+  inset-inline: -1px;
+  width: calc(100% + 2px);
+  height: clamp(2.5rem, 5vw, 3.75rem);
+  pointer-events: none;
+  z-index: 6;
+
+  &--top {
+    top: -1px;
+    border-radius: 0 0 50% 50% / 0 0 100% 100%;
+  }
+
+  &--bottom {
+    bottom: -1px;
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  }
+
+  &--cream {
+    /* Must match body / page cream exactly — avoids seam glow */
+    background: #fffbf5;
+  }
+
+  &--orange {
+    background: var(--brand-orange, #ff7f00);
+  }
+
+  &--sunny {
+    background: #ffe18d;
+  }
+
+  &--lg {
+    height: clamp(2.75rem, 5vw, 4rem);
+  }
+}
+
+.bh-section-pull {
+  position: relative;
+  overflow: hidden;
 }
 
 .visually-hidden {
@@ -104,7 +152,7 @@ html.kids-area-scroll body::-webkit-scrollbar {
 } */
 
 html[dir="ltr"] body {
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 1950px;
   margin: auto;
   /* font-family: "AraHamahHoms", sans-serif;
@@ -112,7 +160,7 @@ html[dir="ltr"] body {
 }
 
 html[dir="rtl"] body {
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 1950px;
   margin: auto;
   /* font-size: 25px;
@@ -126,8 +174,8 @@ html[dir="rtl"] body {
 
 body {
   // color: #117c9f !important;
-  overflow-x: hidden;
-  /* background-color: aquamarine; */
+  overflow-x: clip;
+  background-color: var(--page-bg, #fffbf5);
   font-family: 'Grandstander', cursive;
 
 

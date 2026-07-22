@@ -43,9 +43,11 @@ currentBranch$ = this.selectedBranchId.asObservable();
 
 
   getCurrentBranch() {
-  const fromStorage = localStorage.getItem('br');
-  return fromStorage ? Number(fromStorage) : null;
-}
+    const current = this.selectedBranchId.value;
+    if (current != null) return current;
+    const fromStorage = localStorage.getItem('br');
+    return fromStorage ? Number(fromStorage) : null;
+  }
 
 
 }

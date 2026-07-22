@@ -53,6 +53,10 @@ import { KidsAreaComponent } from './Components/kids-area/kids-area.component';
 import { KidsAreaSectionComponent } from './Components/HomeSections/kids-area-section/kids-area-section.component';
 import { BubbleEventsComponent } from './Components/bubble-events/bubble-events.component';
 import { BubbleEventsSectionComponent } from './Components/HomeSections/bubble-events-section/bubble-events-section.component';
+import { PageTransitionComponent } from './Components/page-transition/page-transition.component';
+import { AnimatedPriceComponent } from './Components/animated-price/animated-price.component';
+import { ProductCardTiltDirective } from './Components/products/product-card-tilt.directive';
+import { MaterialsSectionComponent } from './Components/HomeSections/materials-section/materials-section.component';
 
 
 
@@ -104,7 +108,11 @@ export function HttpLoaderFactory(http: HttpClient) {
     KidsAreaComponent,
     KidsAreaSectionComponent,
     BubbleEventsComponent,
-    BubbleEventsSectionComponent
+    BubbleEventsSectionComponent,
+    PageTransitionComponent,
+    AnimatedPriceComponent,
+    ProductCardTiltDirective,
+    MaterialsSectionComponent,
   ],
   imports: [
     BrowserModule,

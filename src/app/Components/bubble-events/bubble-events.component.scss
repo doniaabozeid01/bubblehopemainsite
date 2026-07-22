@@ -78,13 +78,13 @@ $muted: #7c756b;
 
 :host {
   display: block;
-  margin-top: -44px;
+  margin-top: -8px;
   position: relative;
   z-index: 1;
   font-family: 'Grandstander', cursive;
 
   @media (max-width: 880px) {
-    margin-top: -36px;
+    margin-top: -4px;
   }
 
   &:has(.events-lightbox) {
@@ -96,6 +96,8 @@ $muted: #7c756b;
   background: #fffaf5;
   color: $ink;
   overflow-x: clip;
+  /* Room for shared footer scoop */
+  padding-bottom: clamp(2.5rem, 4.5vw, 3.25rem);
 }
 
 .events-reveal {

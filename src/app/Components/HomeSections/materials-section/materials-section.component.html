@@ -1,0 +1,97 @@
+<section
+  #sectionRef
+  id="quality"
+  class="materials"
+  [class.materials--desktop]="isDesktop"
+  [style.height]="isDesktop ? pillars.length * 100 + 'vh' : null"
+  [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'"
+>
+  <!-- Desktop: pinned horizontal scroll -->
+  <ng-container *ngIf="isDesktop; else mobileStack">
+    <div class="materials__sticky">
+      <header class="materials__header">
+        <p class="materials__eyebrow">{{ 'materials.eyebrow' | translate }}</p>
+        <h2 class="materials__title">{{ 'materials.title' | translate }}</h2>
+        <div class="materials__rule" aria-hidden="true"></div>
+      </header>
+
+      <div class="materials__viewport">
+        <div
+          class="materials__track"
+          [style.width]="trackWidthVw + 'vw'"
+          [style.transform]="
+            (languageService.languageChanged$ | async) === 'ar'
+              ? 'translateX(' + translatePercent + 'vw)'
+              : 'translateX(-' + translatePercent + 'vw)'
+          "
+        >
+          <article
+            class="materials__panel"
+            *ngFor="let pillar of pillars"
+          >
+            <span class="materials__watermark" aria-hidden="true">{{ pillar.num }}</span>
+
+            <div class="materials__grid">
+              <div class="materials__media">
+                <img
+                  [src]="pillar.image"
+                  [alt]="pillar.titleKey | translate"
+                  loading="lazy"
+                />
+              </div>
+              <div class="materials__copy">
+                <span class="materials__num">{{ pillar.num }}</span>
+                <h3 class="materials__panel-title">{{ pillar.titleKey | translate }}</h3>
+                <p class="materials__panel-desc">{{ pillar.descKey | translate }}</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="materials__progress" aria-hidden="true">
+        <div
+          class="materials__progress-fill"
+          [style.width.%]="progress * 100"
+        ></div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Mobile / tablet vertical stack -->
+  <ng-template #mobileStack>
+    <div class="materials__stack">
+      <header class="materials__header">
+        <p class="materials__eyebrow">{{ 'materials.eyebrow' | translate }}</p>
+        <h2 class="materials__title">{{ 'materials.title' | translate }}</h2>
+        <div class="materials__rule" aria-hidden="true"></div>
+      </header>
+
+      <div class="materials__stack-list">
+        <article
+          class="materials__panel materials__panel--stacked"
+          *ngFor="let pillar of pillars"
+        >
+          <span class="materials__watermark materials__watermark--stacked" aria-hidden="true">
+            {{ pillar.num }}
+          </span>
+
+          <div class="materials__grid materials__grid--stacked">
+            <div class="materials__media">
+              <img
+                [src]="pillar.image"
+                [alt]="pillar.titleKey | translate"
+                loading="lazy"
+              />
+            </div>
+            <div class="materials__copy">
+              <span class="materials__num">{{ pillar.num }}</span>
+              <h3 class="materials__panel-title">{{ pillar.titleKey | translate }}</h3>
+              <p class="materials__panel-desc">{{ pillar.descKey | translate }}</p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </ng-template>
+</section>

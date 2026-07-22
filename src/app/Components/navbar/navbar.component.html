@@ -1,119 +1,210 @@
-<header class="bh-navbar">
-  <div class="bh-inner d-flex align-items-center pt-3 justify-content-between">
-    <!-- Logo -->
-    <a class="bh-brand" routerLink="/">
-      <img src="../../../assets/Group 73.png" alt="Bubble Hope" />
+<header class="bh-navbar" [class.is-scrolled]="scrolled" [class.is-menu-open]="isMenuOpen">
+  <div class="bh-shell">
+    <div class="bh-inner">
+      <a class="bh-brand" routerLink="/" (click)="closeMenu()">
+        <img src="../../../assets/Group 73.png" alt="Bubble Hope" />
+      </a>
 
-    </a>
+      <nav class="bh-links" [class.is-open]="isMenuOpen" aria-label="Main">
+        <!-- Products mega menu (desktop hover) -->
+        <div class="nav-mega hide-on-mobile-nav">
+          <button
+            type="button"
+            class="nav-mega__trigger"
+            [class.active]="isProductsRoute"
+            [attr.aria-expanded]="false"
+          >
+            {{ 'navbar.products' | translate }}
+            <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+          </button>
 
-    <!-- Desktop links -->
-      <nav class="bh-links" [class.is-open]="isMenuOpen">
-          <a routerLink="/tapioca" routerLinkActive="active">{{ "navbar.tapioca" | translate }}</a>
-          <a href="https://t4tea.shop" routerLinkActive="active">{{ "navbar.teas" | translate }}</a>
-          <a routerLink="/juice" routerLinkActive="active">{{ "navbar.juice" | translate }}</a>
-          <a routerLink="/sauce" routerLinkActive="active">{{ "navbar.sauce" | translate }}</a>
-          <a routerLink="/popping" routerLinkActive="active">{{ "navbar.popping" | translate }}</a>
-          <a routerLink="/powders" routerLinkActive="active">{{ "navbar.powders" | translate }}</a>
+          <div class="nav-mega__panel" role="menu">
+            <div class="nav-mega__cta">
+              <p class="nav-mega__eyebrow">{{ 'navbar.productsMega.eyebrow' | translate }}</p>
+              <h3 class="nav-mega__heading">{{ 'navbar.productsMega.heading' | translate }}</h3>
+              <a class="nav-mega__btn" routerLink="/products" (click)="closeMenu()">
+                {{ 'navbar.productsMega.cta' | translate }}
+              </a>
+              <span class="nav-mega__dot nav-mega__dot--a" aria-hidden="true"></span>
+              <span class="nav-mega__dot nav-mega__dot--b" aria-hidden="true"></span>
+            </div>
+
+            <ul class="nav-mega__list">
+              <li *ngFor="let cat of megaCategories; trackBy: trackByCategoryId">
+                <a
+                  [routerLink]="['/products', cat.id]"
+                  role="menuitem"
+                  (click)="closeMenu()"
+                >
+                  {{ categoryLabel(cat) }}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Products link for mobile menu -->
+        <a
+          class="show-on-mobile-nav"
+          routerLink="/products"
+          routerLinkActive="active"
+          (click)="closeMenu()"
+        >
+          {{ 'navbar.products' | translate }}
+        </a>
+
+        <a routerLink="/tapioca" routerLinkActive="active" (click)="closeMenu()">{{
+          'navbar.tapioca' | translate
+        }}</a>
+        <a href="https://t4tea.shop" (click)="closeMenu()">{{ 'navbar.teas' | translate }}</a>
+        <a routerLink="/juice" routerLinkActive="active" (click)="closeMenu()">{{
+          'navbar.juice' | translate
+        }}</a>
+        <a routerLink="/sauce" routerLinkActive="active" (click)="closeMenu()">{{
+          'navbar.sauce' | translate
+        }}</a>
+        <a routerLink="/popping" routerLinkActive="active" (click)="closeMenu()">{{
+          'navbar.popping' | translate
+        }}</a>
 
         <div class="mobile-only-menu">
           <div class="menu-divider"></div>
 
-            <div class="mobile-account-section">
-                <ng-container *ngIf="isLoggedIn; else guestMobile">
-                    <p class="welcome-text">{{ "navbar.hello" | translate }}, {{ firstName }}</p>
-                    <div class="mobile-action-grid">
-                        <a routerLink="/profile" (click)="isMenuOpen=false"><i class="bi bi-person"></i> {{ "navbar.profile" | translate }}</a>
-                        <button (click)="logout(); isMenuOpen=false" class="logout-btn"><i class="bi bi-box-arrow-right"></i> {{ "navbar.logout" | translate }}</button>
-                    </div>
-                </ng-container>
-                <ng-template #guestMobile>
-                    <div class="mobile-action-grid">
-                        <a routerLink="/auth/login" (click)="isMenuOpen=false"><i class="bi bi-box-arrow-in-right"></i> {{ "navbar.login" | translate }}</a>
-                        <a routerLink="/auth/register" (click)="isMenuOpen=false"><i class="bi bi-person-plus"></i> {{ "navbar.register" | translate }}</a>
-                    </div>
-                </ng-template>
-            </div>
+          <div class="mobile-account-section">
+            <p class="welcome-text" *ngIf="isLoggedIn">
+              {{ 'navbar.hello' | translate }}, {{ firstName }}
+            </p>
 
-          <div class="menu-divider"></div>
-            <div class="mobile-footer-actions">
-              <button (click)="changeLanguage(); isMenuOpen=false">
-                <i class="fa-solid fa-globe"></i> {{ "navbar.language" | translate }}
+            <div class="mobile-action-grid" *ngIf="isLoggedIn; else guestMobile">
+              <a routerLink="/profile" (click)="closeMenu()">
+                <i class="bi bi-person"></i> {{ 'navbar.profile' | translate }}
+              </a>
+              <button type="button" class="logout-btn" (click)="logout(); closeMenu()">
+                <i class="bi bi-box-arrow-right"></i> {{ 'navbar.logout' | translate }}
               </button>
-
-              <button routerLink="/wishlist" (click)="isMenuOpen=false">
-                <i class="bi bi-heart"></i> {{ "navbar.fafvorites" | translate }}
+              <button type="button" (click)="changeLanguage(); closeMenu()">
+                <i class="fa-solid fa-globe"></i> {{ 'navbar.language' | translate }}
+              </button>
+              <button type="button" routerLink="/wishlist" (click)="closeMenu()">
+                <i
+                  class="bi"
+                  [ngClass]="wishlistCount > 0 ? 'bi-heart-fill menu-heart--active' : 'bi-heart'"
+                ></i>
+                {{ 'navbar.fafvorites' | translate }}
               </button>
             </div>
+
+            <ng-template #guestMobile>
+              <div class="mobile-action-grid">
+                <a routerLink="/auth/login" (click)="closeMenu()">
+                  <i class="bi bi-box-arrow-in-right"></i> {{ 'navbar.login' | translate }}
+                </a>
+                <a routerLink="/auth/register" (click)="closeMenu()">
+                  <i class="bi bi-person-plus"></i> {{ 'navbar.register' | translate }}
+                </a>
+                <button type="button" (click)="changeLanguage(); closeMenu()">
+                  <i class="fa-solid fa-globe"></i> {{ 'navbar.language' | translate }}
+                </button>
+                <button type="button" routerLink="/wishlist" (click)="closeMenu()">
+                  <i
+                    class="bi"
+                    [ngClass]="wishlistCount > 0 ? 'bi-heart-fill menu-heart--active' : 'bi-heart'"
+                  ></i>
+                  {{ 'navbar.fafvorites' | translate }}
+                </button>
+              </div>
+            </ng-template>
+          </div>
         </div>
       </nav>
 
-
-    <!-- Icons -->
       <div class="bh-actions">
-            <div class="dropdown account-dd hide-on-mobile">
-              <button
-                class="icon-btn dropdown-toggle"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-                aria-label="Account"
-              >
-                <i class="bi bi-person fs-3"></i>
-              </button>
-                  <ul class="dropdown-menu dropdown-menu-end account-menu">
-                      <ng-container *ngIf="isLoggedIn; else guestMenu">
-                          <li class="px-3 py-2 text-muted small">{{ "navbar.hello" | translate }}, {{ firstName }}</li>
-                          <li><a class="dropdown-item" routerLink="/profile">{{ "navbar.profile" | translate }}</a></li>
-                          <li>
-                              <a class="dropdown-item" routerLink="/change-password">{{ "navbar.changepassword" | translate }}</a>
-                          </li>
-                          <li><hr class="dropdown-divider" /></li>
-                          <li>
-                              <button class="dropdown-item text-danger" (click)="logout()">{{ "navbar.logout" | translate }}</button>
-                          </li>
-                      </ng-container>
-                      <ng-template #guestMenu>
-                          <li><a class="dropdown-item" routerLink="/auth/login">{{ "navbar.login" | translate }}</a></li>
-                          <li><a class="dropdown-item" routerLink="/auth/register">{{ "navbar.register" | translate }}</a></li>
-                      </ng-template>
-                  </ul>
-            </div>
-        <button class="icon-btn" aria-label="Cart" routerLink="/cart">
+        <div class="dropdown account-dd hide-on-mobile">
+          <button
+            class="icon-btn dropdown-toggle"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            aria-label="Account"
+          >
+            <i class="bi bi-person"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end account-menu">
+            <ng-container *ngIf="isLoggedIn; else guestMenu">
+              <li class="account-hello">{{ 'navbar.hello' | translate }}, {{ firstName }}</li>
+              <li>
+                <a class="dropdown-item" routerLink="/profile">{{ 'navbar.profile' | translate }}</a>
+              </li>
+              <li>
+                <a class="dropdown-item" routerLink="/change-password">{{
+                  'navbar.changepassword' | translate
+                }}</a>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <button class="dropdown-item text-danger" type="button" (click)="logout()">
+                  {{ 'navbar.logout' | translate }}
+                </button>
+              </li>
+            </ng-container>
+            <ng-template #guestMenu>
+              <li>
+                <a class="dropdown-item" routerLink="/auth/login">{{ 'navbar.login' | translate }}</a>
+              </li>
+              <li>
+                <a class="dropdown-item" routerLink="/auth/register">{{
+                  'navbar.register' | translate
+                }}</a>
+              </li>
+            </ng-template>
+          </ul>
+        </div>
+
+        <button class="icon-btn" type="button" aria-label="Cart" routerLink="/cart">
           <i class="bi bi-bag"></i>
           <span class="badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
         </button>
-        <button class="icon-btn hide-on-mobile" routerLink="/wishlist">
-          <i class="bi bi-heart"></i>
+
+        <button
+          class="icon-btn hide-on-mobile"
+          type="button"
+          routerLink="/wishlist"
+          aria-label="Wishlist"
+          [class.icon-btn--wishlist-active]="wishlistCount > 0"
+        >
+          <i class="bi" [ngClass]="wishlistCount > 0 ? 'bi-heart-fill' : 'bi-heart'"></i>
+          <span class="badge" *ngIf="wishlistCount > 0">{{ wishlistCount }}</span>
         </button>
-        <button class="icon-btn hide-on-mobile">
-          <i class="fa-solid fa-globe fs-4" (click)="changeLanguage()"></i>
+
+        <button
+          class="icon-btn hide-on-mobile"
+          type="button"
+          (click)="changeLanguage()"
+          aria-label="Language"
+        >
+          <i class="fa-solid fa-globe"></i>
         </button>
-        <div class="branch-switcher-nav" (click)="openBranchSelector()">
+
+        <button class="branch-switcher-nav" type="button" (click)="openBranchSelector()">
           <i class="fa-solid fa-location-dot"></i>
-          <span class="current-branch-text">{{ selectedBranchName || "..." }}</span>
+          <span class="current-branch-text">{{ selectedBranchName || '...' }}</span>
           <i class="fa-solid fa-chevron-down arrow"></i>
-        </div>
-        <button class="menu-btn" type="button" (click)="isMenuOpen = !isMenuOpen">
+        </button>
+
+        <button
+          class="menu-btn"
+          type="button"
+          (click)="toggleMenu()"
+          [attr.aria-expanded]="isMenuOpen"
+          [attr.aria-label]="isMenuOpen ? 'Close menu' : 'Open menu'"
+        >
           <span></span><span></span><span></span>
         </button>
+      </div>
     </div>
   </div>
-
-  <!-- Wave (pure CSS) -->
-  <div class="bh-wave" aria-hidden="true"></div>
 </header>
 
-<div class="bh-overlay" *ngIf="isMenuOpen" (click)="isMenuOpen = false"></div>
+<div class="bh-navbar-spacer" aria-hidden="true"></div>
 
-
-
-
-
-
-
-
-
-
-
-
-
+<div class="bh-overlay" *ngIf="isMenuOpen" (click)="closeMenu()"></div>

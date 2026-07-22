@@ -25,9 +25,10 @@ export class ApiService {
 
 
   GetAllProducts(branchId: number, userId?: string, groupCategoryId?: number): Observable<any> {
-    //return this.http.get(`${this.baseUrl}/api/Products/GetAllProducts`);
-    //return this.http.get(`${this.baseUrl}/api/Stock/GetProductsForBranch?branchId=${branchId}`);
-    return this.http.get(`${this.baseUrl}/api/Stock/GetProductsForBranch?branchId=${branchId}&userId=${userId}&groupCategoryId=${groupCategoryId}`);
+    let params = new HttpParams().set('branchId', String(branchId));
+    if (userId) params = params.set('userId', userId);
+    if (groupCategoryId != null) params = params.set('groupCategoryId', String(groupCategoryId));
+    return this.http.get(`${this.baseUrl}/api/Stock/GetProductsForBranch`, { params });
   }
 
 
@@ -217,7 +218,9 @@ export class ApiService {
 
 
   GetBestSellerProducts(branchId: number, userId?: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/api/Products/GetBestSellerProducts?branchId=${branchId}&userId=${userId}`);
+    let params = new HttpParams().set('branchId', String(branchId));
+    if (userId) params = params.set('userId', userId);
+    return this.http.get(`${this.baseUrl}/api/Products/GetBestSellerProducts`, { params });
   }
 
 

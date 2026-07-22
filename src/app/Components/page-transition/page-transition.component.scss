@@ -1,0 +1,30 @@
+:host {
+  display: block;
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.page-transition {
+  position: relative;
+  z-index: 1;
+  min-height: 50vh;
+}
+
+/* Framer: fixed inset-0 z-[95] origin-left bg-brand-orange */
+.page-transition__wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 10050; /* must sit above navbar (z-index ~9500–9999) */
+  pointer-events: none;
+  background-color: #ff7f00;
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.page-transition__wipe.is-blocking {
+  pointer-events: auto;
+}

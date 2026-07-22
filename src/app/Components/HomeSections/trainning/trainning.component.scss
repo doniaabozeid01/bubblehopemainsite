@@ -1,167 +1,107 @@
+/* Continuous Group 74 wave — one piece, shorter than section so
+   left bulge isn’t oversized; drink image size stays unchanged. */
+
 .training {
-    max-width: 1950px;
-    margin: auto;
-    position: relative;
-    overflow: hidden;
-    padding: 60px 0;
+  max-width: 1950px;
+  margin: auto;
+  position: relative;
+  overflow: hidden;
+  padding: 96px 0 8px;
+  background: transparent;
 }
 
-
-.training::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: url('../../../../assets/Group 74.png');
-    background-repeat: no-repeat;
-    background-position: top center;
-    background-size: 100% auto;
-    z-index: 0;
+.training-wave {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 42%;
+  z-index: 0;
+  height: 72%;
+  transform: translateY(-50%);
+  background-image: url('../../../../assets/Group 74.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  pointer-events: none;
 }
 
-/* خلي المحتوى فوق الخلفية */
 .training .row {
-    position: relative;
-    z-index: 1;
+  position: relative;
+  z-index: 1;
 }
 
-/* المحتوى */
 .content {
-    width: 70%;
+  width: 70%;
+  position: relative;
+  top: -80px;
 }
 
-/* موبايل */
+.img-content {
+  position: relative;
+  top: -110px;
+}
+
+.img-content img {
+  max-width: 100%;
+  height: auto;
+}
+
 @media (max-width: 999px) {
-    .training {
-        min-height: auto;
-        padding-top: 140px;
-        padding-bottom: 60px;
-        background-size: 100% auto;
-    }
+  .training {
+    min-height: auto;
+    padding-top: 36px;
+    padding-bottom: 28px;
+  }
 
-    .content {
-        width: 100%;
-        padding-left: 20px;
+  .training-wave {
+    height: 58%;
+  }
 
-      .h1{
-          font-size: 35px !important;
-        }
-      .h3{
-          font-size: 22px !important;
-        }
-      .p{
-          font-size: 15px !important;
-        }
-    }
+  .content {
+    width: 100%;
+    padding-left: 20px;
+  }
 
-    .training img {
-        width: 95%;
-    }
+  .training img {
+    width: 95%;
+  }
 }
 
-
-
-
-.training {
-    position: relative;
-    overflow: hidden;
-}
-
-/* Desktop / default: الخلفية عادي */
-.training::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    /* تغطي السكشن كله على الشاشات الكبيرة */
-    background-image: url('../../../../assets/Group 74.png');
-    background-repeat: no-repeat;
-    background-position: top center;
-    background-size: 100% auto;
-    z-index: 0;
-}
-
-.training .row {
-    position: relative;
-    z-index: 1;
-}
-
-
-
-
-
-@media (max-width: 1600px) {
-    .training {
-        padding-top: 120px;
-        /* مساحة للكلام */
-        padding-bottom: 60px;
-        /* مساحة للصورة */
-        // background-color: green;
-    }
-
-    .training::before {
-        inset: auto;
-        /* مهم: نشيل inset:0 */
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        // height: clamp(260px, 45vh, 420px); /* تغطي النص فقط */
-        background-size: cover;
-        background-position: center;
-    }
-
-}
-
-
-
-
-
-
-/* ✅ Mobile فقط: الخلفية تغطي الكلام بس */
 @media (max-width: 768px) {
-    .training {
-        padding-top: 120px;
-        /* مساحة للكلام */
-        padding-bottom: 60px;
-        /* مساحة للصورة */
+  .training {
+    padding-top: 28px;
+    padding-bottom: 24px;
+  }
+
+  .training-wave {
+    height: 52%;
+  }
+
+  .content {
+    padding-top: 0;
+    padding-left: 20px;
+    top: -40px;
+
+    h1 {
+      font-size: 35px !important;
     }
 
-    .training::before {
-        inset: auto;
-        /* مهم: نشيل inset:0 */
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 80vh;
-        // height: clamp(260px, 45vh, 420px); /* تغطي النص فقط */
-        background-size: cover;
-        background-position: right top;
+    h3 {
+      font-size: 22px !important;
     }
 
-    .content {
-        padding-top: 40px;
-        padding-left: 20px;
-
-        .h1{
-          font-size: 35px !important;
-        }
-        .h3{
-          font-size: 25px !important;
-        }
-        .p{
-          font-size: 10px !important;
-        }
+    p {
+      font-size: 14px !important;
     }
+  }
 
-    .img-content{
-      margin-left: 10px !important;
-      padding: 20px !important;
-      img{
-        width: 90% !important;
-      }
+  .img-content {
+    top: -48px;
+    margin-left: 10px !important;
+    padding: 20px !important;
+
+    img {
+      width: 90% !important;
     }
+  }
 }
-
-
-
-
-

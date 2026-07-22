@@ -1,79 +1,69 @@
 <section
-  class="kids-joy"
-  [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'">
+  class="kids-shell"
+  [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'"
+>
+  <!-- Cream caps share the same fill as page bg — no color seam -->
+  <div class="kids-shell__scoop kids-shell__scoop--top" aria-hidden="true"></div>
 
-  <!-- موجة بيضا فوق -->
-  <svg class="kids-joy__wave kids-joy__wave--top" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M0,0 L1440,0 L1440,38 C1180,86 980,8 720,42 C470,74 230,4 0,44 Z" fill="#ffffff" />
-  </svg>
+  <div class="kids-joy">
+    <svg class="kids-joy__deco kids-joy__deco--bear" viewBox="0 0 100 110" fill="none" aria-hidden="true">
+      <g stroke="#e7a06a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="28" cy="20" r="11" />
+        <circle cx="72" cy="20" r="11" />
+        <circle cx="50" cy="38" r="26" />
+        <circle cx="40" cy="34" r="3" />
+        <circle cx="60" cy="34" r="3" />
+        <circle cx="50" cy="44" r="6" />
+        <path d="M44 48 Q50 53 56 48" />
+        <ellipse cx="50" cy="82" rx="28" ry="24" />
+        <circle cx="22" cy="70" r="9" />
+        <circle cx="78" cy="70" r="9" />
+        <ellipse cx="36" cy="102" rx="11" ry="7" />
+        <ellipse cx="64" cy="102" rx="11" ry="7" />
+      </g>
+    </svg>
 
-  <!-- دبدوب outline -->
-  <svg class="kids-joy__deco kids-joy__deco--bear" viewBox="0 0 100 110" fill="none" aria-hidden="true">
-    <g stroke="#e7a06a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="28" cy="20" r="11" />
-      <circle cx="72" cy="20" r="11" />
-      <circle cx="50" cy="38" r="26" />
-      <circle cx="40" cy="34" r="3" />
-      <circle cx="60" cy="34" r="3" />
-      <circle cx="50" cy="44" r="6" />
-      <path d="M44 48 Q50 53 56 48" />
-      <ellipse cx="50" cy="82" rx="28" ry="24" />
-      <circle cx="22" cy="70" r="9" />
-      <circle cx="78" cy="70" r="9" />
-      <ellipse cx="36" cy="102" rx="11" ry="7" />
-      <ellipse cx="64" cy="102" rx="11" ry="7" />
-    </g>
-  </svg>
+    <div class="kids-joy__wrap">
+      <div class="kids-joy__content">
+        <h2 class="kids-joy__title">
+          {{ 'kidsArea.titleLine1' | translate }}<br />
+          {{ 'kidsArea.titleLine2' | translate }}
+        </h2>
+        <p class="kids-joy__text">
+          {{ 'kidsArea.description' | translate }}
+        </p>
 
-  <div class="kids-joy__wrap">
+        <div class="kids-joy__actions">
+          <a routerLink="/kids-area" class="joy-btn joy-btn--price">
+            {{ 'kidsArea.cta' | translate }}
+            <span class="joy-btn__icon"><i class="bi bi-flower1"></i></span>
+          </a>
+        </div>
+      </div>
 
-    <!-- النص -->
-    <div class="kids-joy__content">
-      <h2 class="kids-joy__title">{{ 'kidsArea.titleLine1' | translate }}<br />{{ 'kidsArea.titleLine2' | translate }}</h2>
-      <p class="kids-joy__text">
-        {{ 'kidsArea.description' | translate }}
-      </p>
-
-      <div class="kids-joy__actions">
-        <!-- <a routerLink="/kids-area" class="joy-btn joy-btn--book">
-          {{ 'kidsArea.cta' | translate }} <span class="joy-btn__icon"><i class="bi bi-heart-fill"></i></span>
-        </a> -->
-        <a routerLink="/kids-area" class="joy-btn joy-btn--price">
-          {{ 'kidsArea.cta' | translate }} <span class="joy-btn__icon"><i class="bi bi-flower1"></i></span>
-        </a>
+      <div class="kids-joy__media">
+        <img
+          src="../../../../assets/Untitled10.png"
+          alt="Kids playing with a big pile of colorful toys"
+          class="kids-joy__img"
+        />
       </div>
     </div>
 
-    <!-- صورة كومة الألعاب -->
-    <div class="kids-joy__media">
-      <img src="../../../../assets/Untitled10.png" alt="Kids playing with a big pile of colorful toys"
-        class="kids-joy__img" />
-    </div>
-
+    <svg class="kids-joy__deco kids-joy__deco--horse" viewBox="0 0 120 72" fill="none" aria-hidden="true">
+      <g stroke="#e0584b" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path
+          d="M12 52 L12 45 C12 42 14 40 17 40 L33 40 L45 26 C47 23 50 22 53 22 L73 22 C77 22 80 24 82 27 L91 40 L104 40 C108 40 110 42 110 45 L110 52"
+        />
+        <path d="M12 52 L24 52 M42 52 L79 52 M97 52 L110 52" />
+        <path d="M63 23 L63 40 M46 40 L90 40" />
+        <circle cx="33" cy="55" r="9" />
+        <circle cx="88" cy="55" r="9" />
+        <circle cx="33" cy="55" r="2.4" fill="#e0584b" />
+        <circle cx="88" cy="55" r="2.4" fill="#e0584b" />
+      </g>
+    </svg>
   </div>
 
-  <!-- عربية لعبة outline -->
-  <svg class="kids-joy__deco kids-joy__deco--horse" viewBox="0 0 120 72" fill="none" aria-hidden="true">
-    <g stroke="#e0584b" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-      <!-- جسم العربية -->
-      <path d="M12 52 L12 45 C12 42 14 40 17 40 L33 40 L45 26 C47 23 50 22 53 22 L73 22 C77 22 80 24 82 27 L91 40 L104 40 C108 40 110 42 110 45 L110 52" />
-      <!-- خط القاعدة مع فتحات العجل -->
-      <path d="M12 52 L24 52 M42 52 L79 52 M97 52 L110 52" />
-      <!-- فاصل الشبابيك -->
-      <path d="M63 23 L63 40 M46 40 L90 40" />
-      <!-- العجل -->
-      <circle cx="33" cy="55" r="9" />
-      <circle cx="88" cy="55" r="9" />
-      <circle cx="33" cy="55" r="2.4" fill="#e0584b" />
-      <circle cx="88" cy="55" r="2.4" fill="#e0584b" />
-    </g>
-  </svg>
-
-  <!-- موجة تحت: حد متموّج بين الكريمي والبرتقالي -->
-  <svg class="kids-joy__wave kids-joy__wave--bottom" viewBox="0 0 1440 170" preserveAspectRatio="none"
-    aria-hidden="true">
-    <path d="M0,64 C220,98 380,34 600,66 C820,100 980,36 1200,66 C1320,90 1380,52 1440,66
-             L1440,170 L0,170 Z" fill="#ff7304" />
-  </svg>
-
+  <div class="kids-shell__scoop kids-shell__scoop--bottom" aria-hidden="true"></div>
 </section>

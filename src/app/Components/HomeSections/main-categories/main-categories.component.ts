@@ -25,13 +25,13 @@ export class MainCategoriesComponent {
     touchDrag: true,
     pullDrag: true,
     freeDrag: false,
-    margin: 16,
+    margin: 18,
     rtl: document.documentElement.dir === 'rtl',
     responsive: {
-      0: { items: 1, margin: 10 },
-      576: { items: 2, margin: 12 },
-      900: { items: 3, margin: 14 },
-      1200: { items: 3, margin: 18 },
+      0: { items: 1, margin: 12 },
+      576: { items: 2, margin: 14 },
+      900: { items: 3, margin: 18 },
+      1200: { items: 4, margin: 20 },
     },
   };
 

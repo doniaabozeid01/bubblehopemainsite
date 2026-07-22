@@ -1,70 +1,137 @@
-<div class="second py-5 mb-0 mt-0" *ngIf="bestSellerProducts.length > 0">
-  <section class="categories-section ">
-    <div class="categories-wrapper ">
-      <h1 class="text-center mb-0 second-color ">
-        {{ 'home.bestSellers' | translate }}
-        {{ 'home.bestSellers-complete' | translate }}
-      </h1>
-      <p class="text-center mb-2 fs-5">{{ 'home.recomendedSlogan' | translate }}</p>
+<section
+  class="picks"
+  *ngIf="bestSellerProducts.length > 0"
+  [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'"
+>
+  <div class="picks__ambient" aria-hidden="true">
+    <span class="picks__orb picks__orb--a"></span>
+    <span class="picks__orb picks__orb--b"></span>
+    <span class="picks__orb picks__orb--c"></span>
+  </div>
 
-      <div class="position-relative px-5 my-5">
+  <div class="picks__inner">
+    <header class="picks__header">
+      <div class="picks__intro">
+        <div class="picks__topline">
+          <p class="picks__eyebrow">{{ 'home.bestSellersEyebrow' | translate }}</p>
 
+          <div class="picks__actions">
+            <a routerLink="/products" class="picks__menu-link">
+              {{ 'home.bestSellersViewMenu' | translate }}
+              <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            </a>
 
-
-        <!-- ✅ Decor bubbles (ثابتة) -->
-        <div class="bubbles-decor" aria-hidden="true">
-          <span class="bubble b1" style="--c:#ff7a00;"></span>
-          <span class="bubble b2" style="--c:#ff7a00;"></span>
-          <span class="bubble b3" style="--c:#0aa6c6;"></span>
-          <span class="bubble b4" style="--c:#0aa6c6;"></span>
-          <span class="bubble b5" style="--c:#ff7a00;"></span>
-          <span class="bubble b6" style="--c:#0aa6c6;"></span>
-          <span class="bubble b7" style="--c:#fdff78;"></span>
+            <div class="picks__nav" *ngIf="bestSellerProducts.length > 1">
+              <button
+                type="button"
+                class="picks__nav-btn"
+                (click)="bestCarousel.prev()"
+                [attr.aria-label]="'Previous'"
+              >
+                <i class="bi bi-chevron-left" aria-hidden="true"></i>
+              </button>
+              <button
+                type="button"
+                class="picks__nav-btn picks__nav-btn--primary"
+                (click)="bestCarousel.next()"
+                [attr.aria-label]="'Next'"
+              >
+                <i class="bi bi-chevron-right" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
         </div>
 
+        <h2 class="picks__title">{{ 'home.bestSellersHeading' | translate }}</h2>
+        <p class="picks__slogan">{{ 'home.recomendedSlogan' | translate }}</p>
+      </div>
+    </header>
 
+    <div class="picks__track">
+      <owl-carousel-o
+        *ngIf="bestSellerProducts?.length"
+        #bestCarousel
+        class="picks-carousel"
+        [options]="bestOptions"
+        (drag)="dragging = true"
+        (dragged)="dragging = false"
+      >
+        <ng-template
+          carouselSlide
+          *ngFor="let product of bestSellerProducts; let i = index; trackBy: trackById"
+        >
+          <article class="pick-card" (click)="onProductClick(product, $event)">
+            <div class="pick-card__media">
+              <span class="pick-card__badge">{{ badgeKey(i) | translate }}</span>
 
-        <!-- سهم يسار -->
-        <button class="slider-arrow left" (click)="bestCarousel.prev()">
-          <i class="bi bi-chevron-left"></i>
-        </button>
+              <button
+                type="button"
+                class="pick-card__wish"
+                [class.pick-card__wish--on]="product.isFavorite"
+                (click)="toggleFavourite(product, $event)"
+                [attr.aria-pressed]="!!product.isFavorite"
+              >
+                <i
+                  class="fa-heart"
+                  [ngClass]="product.isFavorite ? 'fa-solid' : 'fa-regular'"
+                  aria-hidden="true"
+                ></i>
+              </button>
 
-        <owl-carousel-o *ngIf="bestSellerProducts?.length" #bestCarousel class="mt-2" [options]="bestOptions"
-          (drag)="dragging = true" (dragged)="dragging = false">
+              <img
+                class="pick-card__img"
+                [src]="product.productImages?.[0]"
+                [alt]="
+                  (languageService.languageChanged$ | async) === 'ar'
+                    ? product.productName_ar
+                    : product.productName
+                "
+                draggable="false"
+                (dragstart)="$event.preventDefault()"
+              />
+            </div>
 
-          <ng-template carouselSlide *ngFor="let product of bestSellerProducts; trackBy: trackById">
-            <div class="product-card h-100 d-flex flex-column justify-content-between pointer text-center"
-              (click)="onProductClick(product, $event)">
-
-              <div class="image-wrapper">
-                <img [src]="product.productImages[0]" class="product-image" [attr.draggable]="false"
-                  (dragstart)="$event.preventDefault()" />
+            <div class="pick-card__body">
+              <div class="pick-card__copy">
+                <h3 class="pick-card__name">
+                  {{
+                    (languageService.languageChanged$ | async) === 'ar'
+                      ? product.productName_ar
+                      : product.productName
+                  }}
+                </h3>
+                <p class="pick-card__hint">
+                  {{
+                    productShort(product) || ('home.bestSellersCardHint' | translate)
+                  }}
+                </p>
               </div>
 
-              <p class="product-name main-color">
-                {{ (languageService.languageChanged$ | async) === 'ar'
-                ? product.productName_ar
-                : product.productName }}
-              </p>
-
-              <div class="price second-color">
-                <span>{{ product.oldPrice }}
-                  <span>
-                    {{ (languageService.languageChanged$ | async) === 'ar'
-                    ? product.currency_ar
-                    : product.currency }}
+              <div class="pick-card__footer">
+                <p class="pick-card__price">
+                  <span class="pick-card__amount">{{ product.oldPrice }}</span>
+                  <span class="pick-card__currency">
+                    {{
+                      (languageService.languageChanged$ | async) === 'ar'
+                        ? product.currency_ar
+                        : product.currency
+                    }}
                   </span>
-                </span>
+                </p>
+
+                <button
+                  type="button"
+                  class="pick-card__add"
+                  (click)="onAddClick(product, $event)"
+                >
+                  <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                  {{ 'home.bestSellersAdd' | translate }}
+                </button>
               </div>
             </div>
-          </ng-template>
-        </owl-carousel-o>
-
-        <!-- سهم يمين -->
-        <button class="slider-arrow right" (click)="bestCarousel.next()">
-          <i class="bi bi-chevron-right"></i>
-        </button>
-      </div>
+          </article>
+        </ng-template>
+      </owl-carousel-o>
     </div>
-  </section>
-</div>
+  </div>
+</section>

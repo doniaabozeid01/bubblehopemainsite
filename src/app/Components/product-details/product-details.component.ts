@@ -14,6 +14,7 @@ import { catchError, of } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { BranchService } from 'src/app/services/branch.service';
 import { CartCountService } from 'src/app/services/cart-count.service';
+import { WishlistCountService } from 'src/app/services/wishlist-count.service';
 import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from 'src/app/services/language.service';
 import { SeoService } from 'src/app/services/seo.service';
@@ -78,6 +79,7 @@ export class ProductDetailsComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     private cartCountService: CartCountService,
+    private wishlistCountService: WishlistCountService,
     private api: ApiService,
     private route: ActivatedRoute,
     private router: Router,
@@ -602,6 +604,7 @@ export class ProductDetailsComponent implements AfterViewInit, OnDestroy {
               next: () => {
                 this.toastr.success('Product removed from your wishlist.');
                 product.isFavourite = false;
+                this.wishlistCountService.decrement();
               },
             });
         });
@@ -610,6 +613,7 @@ export class ProductDetailsComponent implements AfterViewInit, OnDestroy {
         next: () => {
           this.toastr.success('Product Saved to your wishlist!');
           product.isFavourite = true;
+          this.wishlistCountService.increment();
         },
       });
     }

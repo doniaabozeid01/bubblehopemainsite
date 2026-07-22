@@ -41,20 +41,54 @@
   },
     "home": {
         "catergories": "Beverages",
+        "categoriesEyebrow": "Beverages",
+        "categoriesHeading": "Find your perfect flavor",
         "categoriesSlogan": "Explore our wide range of drinks and find your perfect flavor today.",
+        "categoriesCardHint": "Explore the collection",
         "rawMaterial": {
             "raw": "Our",
             "material": "Material"
         },
-        "rawmaterialsSlogan": "As Bubblehope, you can consume our products we offer to our valued customers as you wish. Which one did you choose?",
+        "rawmaterialsSlogan": "At Bubblehope, you can consume our products we offer to our valued customers as you wish. Which one did you choose?",
         "contactus": "Contact US",
+        "contactHeading": "Let's talk boba",
         "contactslogan": "Get in touch with one of our dedicated sales team members to help you with your needs.",
         "contactMsg": "Your Message",
         "send": "Send",
         "followus": "Follow Us",
-        "bestSellers": "Recomended For",
-        "bestSellers-complete": "  You!",
-        "recomendedSlogan": "Discover our handpicked favorites, crafted to delight your taste buds."
+        "bestSellers": "Recommended For",
+        "bestSellers-complete": " You!",
+        "bestSellersEyebrow": "Recommended for you",
+        "bestSellersHeading": "Handpicked favorites",
+        "recomendedSlogan": "Crafted to delight your taste buds — these are the cups our regulars can’t stop ordering.",
+        "bestSellersViewMenu": "View full menu",
+        "bestSellersAdd": "Add",
+        "bestSellersCardHint": "A Bubble Hope classic, made fresh.",
+        "bestSellersBadgeFan": "Fan favorite",
+        "bestSellersBadgeBest": "Best seller",
+        "bestSellersBadgeSignature": "Signature"
+    },
+    "materials": {
+        "eyebrow": "Crafted with care",
+        "title": "What Goes Into Every Cup",
+        "pillars": {
+            "tea": {
+                "title": "Premium Tea Leaves",
+                "desc": "We brew bold, aromatic teas as the heart of every Bubble Hope cup — smooth, rich, and never bitter."
+            },
+            "pearls": {
+                "title": "Chewy Tapioca Pearls",
+                "desc": "Freshly cooked pearls with the perfect bounce — sweet, soft, and made for that signature sip."
+            },
+            "milk": {
+                "title": "Creamy Milk Blends",
+                "desc": "Silky milk and cream bases that wrap every flavor in comfort — from classic milk tea to signature lattes."
+            },
+            "fruit": {
+                "title": "Real Fruit Flavors",
+                "desc": "Bright mango, berry, and tropical notes that taste fresh and playful — never artificial or flat."
+            }
+        }
     },
     "navbar": {
         "home": "Home",
@@ -78,10 +112,42 @@
         "waffle-mix": "Waffle Mix",
         "teas": "Teas",
         "fafvorites": "Favorites",
-        "language": "Language"
+        "language": "Language",
+        "orderNow": "Order Now",
+        "products": "Products",
+        "productsMega": {
+            "eyebrow": "PICK YOUR PLEASURE",
+            "heading": "A drink for every moment.",
+            "cta": "Explore the full menu"
+        }
     },
     "aboutus": {
-        "aboutusDescribtion": "At Bubble Hope, we don’t just serve delicious bubble tea  we create  joyful moments in every cup! We started with passion to deliver a unique experience that combines rich flavors, high quality, and friendly service.From the heart of the city, we founded Bubble Hope as a place for people who love discovering new flavors and enjoying cheerful moments throughout their day.We use the finest natural ingredients and prepare every drink with care and love."
+        "eyebrow": "ABOUT US",
+        "title": "About Us",
+        "tagline": "Joyful sips, warm welcomes, and flavors worth sharing.",
+        "storyEyebrow": "Our story",
+        "storyTitle": "More than bubble tea",
+        "aboutusDescribtion": "At Bubble Hope, we don’t just serve delicious bubble tea — we create joyful moments in every cup! We started with passion to deliver a unique experience that combines rich flavors, high quality, and friendly service. From the heart of the city, we founded Bubble Hope as a place for people who love discovering new flavors and enjoying cheerful moments throughout their day. We use the finest natural ingredients and prepare every drink with care and love.",
+        "ctaMenu": "Explore the menu",
+        "ctaHome": "Back to home",
+        "valuesEyebrow": "What we stand for",
+        "valuesTitle": "Crafted with flavor, served with heart",
+        "values": {
+            "quality": {
+                "title": "Quality first",
+                "text": "Fresh ingredients and careful prep in every cup — no shortcuts on taste."
+            },
+            "joy": {
+                "title": "Everyday joy",
+                "text": "A cheerful space for friends, families, and little celebrations."
+            },
+            "care": {
+                "title": "Friendly care",
+                "text": "Warm service and details that make your visit feel personal."
+            }
+        },
+        "promiseTitle": "Come taste the hope in every bubble",
+        "promiseText": "Whether it’s your first sip or your usual order, we’re here to make it memorable."
     },
     "wishlist": {
         "slogan": "Everything you crave… saved at Bubble Hope!",
@@ -114,7 +180,14 @@
     },
     "Products": {
         "NoProductsFound": "No Products Were Found In This Branch Or Category",
-        "NoOffersFound": "No Products Were Found In This Offer"
+        "NoOffersFound": "No Products Were Found In This Offer",
+        "menuTitle": "Our Menu",
+        "menuSubtitle": "Fresh, hand-crafted drinks for every mood.",
+        "searchPlaceholder": "Search drinks...",
+        "categoriesAria": "Categories",
+        "noMatch": "No drinks match your search.",
+        "loading": "Loading menu…",
+        "quickAdd": "Quick Add"
     },
     "orders": {
         "prevorder": "My Previous Orders",

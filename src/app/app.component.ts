@@ -93,34 +93,48 @@ export class AppComponent implements OnInit {
 
   constructor(
     public translate: TranslateService,
-    loading: LoadingService,
+    private loadingService: LoadingService,
     private api: ApiService,
     private branchService: BranchService,
     private toastr: ToastrService
   ) {
     translate.setDefaultLang('en');
-    this.isLoading$ = loading.isLoading$;
+    this.isLoading$ = loadingService.isLoading$;
   }
 
 ngOnInit() {
   this.api.getAllBranches().subscribe({
     next: (data) => {
-      this.branches = data; // تخزين الفروع لعرضها
-      console.log(data);
+      this.branches = Array.isArray(data) ? data : [];
       const savedBranchId = this.branchService.getCurrentBranch();
-      if (!savedBranchId) {
-        this.branchService.openModal(); // تظهر أول ما الصفحة تحمل لو مفيش فرع
+      const isValid =
+        !!savedBranchId &&
+        this.branches.some((b: any) => Number(b?.id) === Number(savedBranchId));
+
+      if (isValid) return;
+
+      // Old/deleted branch ids (e.g. 1) break product APIs — fall back to default.
+      const fallback =
+        this.branches.find((b: any) => b?.isDefault) || this.branches[0];
+      if (fallback?.id != null) {
+        this.branchService.setBranch(Number(fallback.id));
+      } else {
+        this.branchService.openModal();
       }
-    }
+    },
+    error: () => {
+      this.branches = [];
+    },
   });
 
-  // مراقبة الـ Service عشان تفتح لما ندوس من الناف بار
   this.branchService.showModal$.subscribe((isOpen) => {
     this.showBranchModal = isOpen;
   });
 
-
   this.checkSiteStatus();
+
+  // Never block the app if a request counter gets stuck (e.g. dev HMR)
+  setTimeout(() => this.loadingService.hideNow(), 8000);
 }
 
   // 4. إرسال الـ ID الصحيح عند الضغط على الفرع

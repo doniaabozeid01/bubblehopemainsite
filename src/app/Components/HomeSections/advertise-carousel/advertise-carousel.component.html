@@ -27,15 +27,17 @@
 
           </div>
 
-          <span class="b b1"></span>
-          <span class="b b2"></span>
-          <span class="b b3"></span>
-          <span class="b b4"></span>
-          <span class="b b5"></span>
-          <span class="b b6"></span>
-          <span class="b b7"></span>
-          <span class="b b8"></span>
-          <span class="b b9"></span>
+          <span
+            *ngFor="let pearl of floatingPearls; let i = index"
+            class="floating-pearl"
+            [style.top]="pearl.top"
+            [style.left]="pearl.left"
+            [style.width.px]="pearl.size"
+            [style.height.px]="pearl.size"
+            [style.background]="pearl.color"
+            [style.animation-delay.s]="i * 0.45"
+            [style.animation-duration.s]="pearl.duration"
+          ></span>
 
         </section>
 

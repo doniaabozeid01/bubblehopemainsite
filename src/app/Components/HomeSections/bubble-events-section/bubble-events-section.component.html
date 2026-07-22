@@ -1,7 +1,7 @@
 <section
   class="events-spot"
-  [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'">
-
+  [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'"
+>
   <div class="events-spot__ambient" aria-hidden="true">
     <span
       *ngFor="let b of accentBubbles; let i = index"

@@ -1,10 +1,13 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { ApiService } from 'src/app/services/api.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { BranchService } from 'src/app/services/branch.service';
 import { CartCountService } from 'src/app/services/cart-count.service';
+import { WishlistCountService } from 'src/app/services/wishlist-count.service';
 import { LanguageService } from 'src/app/services/language.service';
 
 @Component({
@@ -12,39 +15,47 @@ import { LanguageService } from 'src/app/services/language.service';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit, OnDestroy {
   categories: any;
   branches: any;
   userId!: string;
-  // branchId!: number;
   user: any;
   isMenuOpen = false;
+  scrolled = false;
 
   selectedBranchName: string = '';
   branchId: number | null = null;
+  cartCount = 0;
+  wishlistCount = 0;
+
+  private routerSub?: Subscription;
 
   constructor(
     private cartCountService: CartCountService,
+    private wishlistCountService: WishlistCountService,
     private authService: AuthService,
     private apiService: ApiService,
     private router: Router,
     private branchService: BranchService,
     private toastr: ToastrService,
     public languageService: LanguageService,
-    public api: ApiService,
+    public api: ApiService
   ) {}
-  cartCount = 0;
 
   ngOnInit(): void {
-    this.router.events.subscribe(() => {
-      this.isMenuOpen = false;
-    });
+    this.scrolled = window.scrollY > 24;
+
+    this.routerSub = this.router.events
+      .pipe(filter((e) => e instanceof NavigationEnd))
+      .subscribe(() => {
+        this.closeMenu();
+      });
 
     this.authService.currentUser$.subscribe((u) => {
       this.user = u;
-      // console.log('user', this.user);
     });
     this.cartCountService.cartCount$.subscribe((c) => (this.cartCount = c));
+    this.wishlistCountService.wishlistCount$.subscribe((c) => (this.wishlistCount = c));
 
     const token = localStorage.getItem('token');
     if (token) {
@@ -53,22 +64,18 @@ export class NavbarComponent {
           this.userId = typeof res === 'string' ? res : res?.userId;
 
           if (this.userId) {
-            const initialBranchId = Number(
-              this.branchService.getCurrentBranch(),
-            );
+            const initialBranchId = Number(this.branchService.getCurrentBranch());
             if (initialBranchId) {
               this.branchId = initialBranchId;
-
-              // ✅ بدل ما تنده getCart هنا بس… خلّيها تعمل refresh للـ count
               this.cartCountService.refresh(this.branchId, this.userId);
+              this.wishlistCountService.refresh(this.branchId, this.userId);
             }
 
             this.branchService.currentBranch$.subscribe((branchId) => {
               if (branchId && branchId !== this.branchId) {
                 this.branchId = branchId;
-
-                // ✅ يحدث العداد لما الفرع يتغير
                 this.cartCountService.refresh(branchId, this.userId);
+                this.wishlistCountService.refresh(branchId, this.userId);
               }
             });
           }
@@ -76,14 +83,14 @@ export class NavbarComponent {
         error: (err) => {
           console.error('❌ Error getting userId:', err);
           this.cartCountService.setCount(0);
+          this.wishlistCountService.clear();
         },
       });
     } else {
       this.GetDefaultBranch();
-      // this.selectIdFromPathIfExist()
+      this.wishlistCountService.clear();
     }
 
-    // ✅ Listen to branch changes from BranchService (when user switches branch from Navbar)
     this.branchService.currentBranch$.subscribe((branchId) => {
       if (branchId) {
         this.branchId = branchId;
@@ -92,17 +99,18 @@ export class NavbarComponent {
 
     this.apiService.getAllCategories(this.apiService.drinks).subscribe({
       next: (data) => {
-        this.categories = data;
+        this.categories = Array.isArray(data)
+          ? data
+          : data?.data || data?.result || data?.categories || [];
       },
       error: (err) => {
         console.error('Error loading categories:', err);
+        this.categories = [];
       },
     });
 
     this.apiService.getAllBranches().subscribe({
       next: (data) => {
-        // console.log(data);
-
         this.branches = data;
       },
       error: (err) => {
@@ -112,23 +120,42 @@ export class NavbarComponent {
 
     this.branchService.currentBranch$.subscribe((id) => {
       if (id) {
-        this.branchId = id; //
-        this.updateBranchName(id); // تحديث الاسم فوراً في الناف بار
+        this.branchId = id;
+        this.updateBranchName(id);
       }
     });
 
-    // جوه ngOnInit في الـ navbar.component.ts
     this.apiService.getAllBranches().subscribe({
       next: (data) => {
-        this.branches = data; // تخزين الفروع
-
-        // لو فيه فرع محفوظ في الـ Service، نحدث اسمه فوراً
+        this.branches = data;
         const currentId = this.branchService.getCurrentBranch();
         if (currentId) {
           this.updateBranchName(Number(currentId));
         }
       },
     });
+  }
+
+  ngOnDestroy(): void {
+    this.routerSub?.unsubscribe();
+    document.body.style.overflow = '';
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    const next = window.scrollY > 24;
+    if (next === this.scrolled) return;
+    this.scrolled = next;
+  }
+
+  toggleMenu(): void {
+    this.isMenuOpen = !this.isMenuOpen;
+    document.body.style.overflow = this.isMenuOpen ? 'hidden' : '';
+  }
+
+  closeMenu(): void {
+    this.isMenuOpen = false;
+    document.body.style.overflow = '';
   }
 
   // ngOnInit(): void {
@@ -217,6 +244,7 @@ export class NavbarComponent {
   logout() {
     this.authService.logout();
     this.cartCountService.setCount(0);
+    this.wishlistCountService.clear();
     this.router.navigate(['/home']);
   }
 
@@ -282,15 +310,18 @@ export class NavbarComponent {
   }
 
   GetDefaultBranch() {
+    // Don't overwrite a user-selected branch; only fill in when missing/invalid.
+    const current = this.branchService.getCurrentBranch();
+    if (current) return;
+
     this.apiService.GetDefaultBranch().subscribe({
       next: (response) => {
-        // console.log('Default Branch : ', response);
-        this.branchId = response.id;
-        localStorage.setItem('br', response.id);
+        const id = Number(response?.id);
+        if (!id) return;
+        this.branchId = id;
+        this.branchService.setBranch(id);
       },
-      error: (err) => {
-        // console.log(err);
-      },
+      error: () => {},
     });
   }
 
@@ -317,10 +348,6 @@ export class NavbarComponent {
     return this.user.fullName.split(' ')[0]; // أول كلمة بس
   }
 
-  closeMenu() {
-    this.isMenuOpen = false;
-  }
-
   openBranchSelector() {
     // هنا بننادي على ميثود في الـ BranchService تفتح المودال في الـ AppComponent
     this.branchService.openModal();
@@ -335,5 +362,26 @@ export class NavbarComponent {
         }
       },
     });
+  }
+
+  get isProductsRoute(): boolean {
+    const path = this.router.url.split('?')[0];
+    return path === '/products' || path.startsWith('/products/');
+  }
+
+  /** Keep mega menu short — first 6 drink categories only. */
+  get megaCategories(): any[] {
+    return (this.categories || []).slice(0, 6);
+  }
+
+  trackByCategoryId = (_: number, cat: any) => cat?.id ?? cat?.name;
+
+  categoryLabel(cat: any): string {
+    if (!cat) return '';
+    const isAr =
+      (this.languageService as any).translate?.currentLang === 'ar' ||
+      (this.languageService as any).currentLang === 'ar' ||
+      document.documentElement.dir === 'rtl';
+    return isAr ? cat.name_ar || cat.name : cat.name;
   }
 }

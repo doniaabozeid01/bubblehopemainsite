@@ -1,47 +1,68 @@
 $navy: #243a63;
 $teal: #2bb6cf;
 $green: #6cc24a;
-$orange: #FF7304;
+$orange: #ff7304;
+$page-cream: #fffbf5;
+$sunny: #ffe18d;
+$scoop-h: clamp(2rem, 4vw, 2.75rem);
+
+:host {
+  display: block;
+  background: $page-cream;
+}
+
+.kids-shell {
+  position: relative;
+  background: $page-cream;
+  overflow: hidden;
+}
+
+.kids-shell__scoop {
+  position: relative;
+  z-index: 4;
+  width: 100%;
+  height: $scoop-h;
+  background: $page-cream;
+  pointer-events: none;
+
+  &--top {
+    border-radius: 0 0 50% 50% / 0 0 100% 100%;
+    /* Pull down over yellow so curved cutouts sit on sunny, not on next section */
+    margin-bottom: calc(#{$scoop-h} * -1);
+  }
+
+  &--bottom {
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    margin-top: calc(#{$scoop-h} * -1);
+  }
+}
 
 .kids-joy {
   position: relative;
-  z-index: 3;
-  width: 100%;
-  background: #FFE18D;
-  padding: 96px 16px 120px;
-  /* اسحب السكشن اللي بعده لفوق عشان الموجة تبقى آخر حاجة تحت من غير فراغ أبيض (لازم تفضل سالبة) */
-  margin-bottom: 150px;
-  margin-top: 150px;
-}
-
-/* الموجات */
-.kids-joy__wave {
-  position: absolute;
-  left: 0;
-  width: 100%;
   z-index: 1;
-  display: block;
-
-  &--top { top: -1px; height: 70px; }
-  &--bottom { bottom: -52px; height: 172px; }
+  width: 100%;
+  background: $sunny;
+  /* Extra pad so yellow fills behind scoop corners (no straight seam) */
+  padding: calc(2.75rem + #{$scoop-h}) 16px calc(2.5rem + #{$scoop-h});
+  margin: 0;
 }
 
-/* الرسومات الزخرفية */
 .kids-joy__deco {
   position: absolute;
   z-index: 1;
   opacity: 0.75;
 
   &--bear {
-    top: 70px;
+    top: 48px;
     inset-inline-start: 48px;
-    width: 92px;
+    width: 72px;
     height: auto;
   }
+
   &--horse {
-    bottom: 86px;
+    bottom: 52px;
     inset-inline-end: 60px;
-    width: 96px;
+    width: 76px;
     height: auto;
   }
 }
@@ -57,7 +78,6 @@ $orange: #FF7304;
   align-items: center;
 }
 
-/* النص */
 .kids-joy__content {
   padding-inline-start: 40px;
   text-align: start;
@@ -66,18 +86,18 @@ $orange: #FF7304;
 .kids-joy__title {
   font-family: 'Grandstander', cursive;
   font-weight: 800;
-  font-size: clamp(32px, 3.4vw, 46px) !important;
+  font-size: clamp(28px, 3vw, 40px) !important;
   line-height: 1.12;
   color: $navy;
-  margin: 0 0 18px;
+  margin: 0 0 12px;
 }
 
 .kids-joy__text {
-  font-size: 16px !important;
-  line-height: 1.7;
+  font-size: 15px !important;
+  line-height: 1.6;
   color: #7c8499;
   max-width: 380px;
-  margin: 0 0 30px;
+  margin: 0 0 22px;
 }
 
 .kids-joy__actions {
@@ -118,15 +138,19 @@ $orange: #FF7304;
 
   &--book {
     background: $teal;
-    .joy-btn__icon { color: $teal; }
+    .joy-btn__icon {
+      color: $teal;
+    }
   }
+
   &--price {
     background: $orange;
-    .joy-btn__icon { color: $orange; }
+    .joy-btn__icon {
+      color: $orange;
+    }
   }
 }
 
-/* الصورة */
 .kids-joy__media {
   position: relative;
   display: flex;
@@ -136,38 +160,63 @@ $orange: #FF7304;
 
 .kids-joy__img {
   width: 100%;
-  max-width: 620px;
+  max-width: 480px;
   height: auto;
   display: block;
-  /* تطلع برّه حدود السكشن من فوق */
-  margin-top: -150px;
-  margin-bottom: -40px;
-  filter: drop-shadow(0 24px 30px rgba(60, 50, 20, 0.22));
+  margin-top: 0;
+  margin-bottom: 0;
+  filter: drop-shadow(0 18px 24px rgba(60, 50, 20, 0.2));
 }
 
-/* Responsive */
 @media (max-width: 992px) {
-  .kids-joy { padding: 80px 16px 92px; margin-bottom: -120px; }
-  .kids-joy__wave--bottom { bottom: -40px; height: 140px; }
+  .kids-joy {
+    padding: calc(2.25rem + #{$scoop-h}) 16px calc(2rem + #{$scoop-h});
+  }
+
   .kids-joy__wrap {
     grid-template-columns: 1fr;
-    gap: 18px;
+    gap: 12px;
     text-align: center;
   }
-  .kids-joy__content { padding-inline-start: 0; }
-  .kids-joy__text { margin-left: auto; margin-right: auto; }
-  .kids-joy__actions { justify-content: center; }
-  .kids-joy__deco--bear { inset-inline-start: 16px; top: 60px; width: 70px; }
-  .kids-joy__deco--horse { inset-inline-end: 16px; bottom: 70px; width: 74px; }
-  /* على الشاشات الصغيرة: الصورة متطلعش لبرّه ولا تركب على الأزرار */
+
+  .kids-joy__content {
+    padding-inline-start: 0;
+  }
+
+  .kids-joy__text {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .kids-joy__actions {
+    justify-content: center;
+  }
+
+  .kids-joy__deco--bear {
+    inset-inline-start: 16px;
+    top: 40px;
+    width: 56px;
+  }
+
+  .kids-joy__deco--horse {
+    inset-inline-end: 16px;
+    bottom: 44px;
+    width: 58px;
+  }
+
   .kids-joy__img {
-    max-width: 440px;
-    margin-top: 16px;
+    max-width: 340px;
+    margin-top: 8px;
     margin-bottom: 0;
   }
 }
 
 @media (max-width: 768px) {
-  .kids-joy__title { font-size: 32px !important; }
-  .kids-joy__deco { opacity: 0.5; }
+  .kids-joy__title {
+    font-size: 32px !important;
+  }
+
+  .kids-joy__deco {
+    opacity: 0.5;
+  }
 }
