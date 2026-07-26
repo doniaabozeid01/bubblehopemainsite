@@ -1,108 +1,127 @@
 <main class="wishlist-page" [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'">
-  <ng-container *ngIf="wishlist.length > 0; else wlEmpty">
-    <header class="wishlist-page__header">
-      <h1 class="wishlist-page__title">
-        {{ 'wishlist.WishListTitle' | translate }}
-      </h1>
-      <p class="wishlist-page__count">
-        {{ wishlist.length }}
-        {{ wishlist.length === 1 ? ('wishlist.item' | translate) : ('wishlist.item' | translate) }}
-      </p>
-    </header>
+  <ng-container *ngIf="!loading; else wlLoading">
+    <ng-container *ngIf="wishlist.length > 0; else wlEmpty">
+      <header class="wishlist-page__header">
+        <h1 class="wishlist-page__title">
+          {{ 'wishlist.WishListTitle' | translate }}
+          <span class="wishlist-page__count">
+            ({{ wishlist.length }}
+            {{
+              wishlist.length === 1
+                ? ('wishlist.item' | translate)
+                : ('wishlist.items' | translate)
+            }})
+          </span>
+        </h1>
+      </header>
 
-    <div class="wl-list">
-      <div class="wl-head" aria-hidden="true">
-        <span class="col-item">{{ 'wishlist.item' | translate }}</span>
-        <span class="col-price">{{ 'wishlist.price' | translate }}</span>
-        <span class="col-actions"></span>
-      </div>
+      <div class="wl-list">
+        <div class="wl-head" aria-hidden="true">
+          <span class="col-item">{{ 'wishlist.item' | translate }}</span>
+          <span class="col-price">{{ 'wishlist.price' | translate }}</span>
+          <span class="col-actions"></span>
+        </div>
 
-      <article
-        class="wl-row"
-        *ngFor="let item of wishlist; trackBy: trackById"
-      >
-        <div class="col-item">
-          <button
-            type="button"
-            class="wl-thumb"
-            [routerLink]="['/productdetails', item.slug]"
-            [attr.aria-label]="productName(item)"
-          >
-            <img [src]="item.imagePath" [alt]="productName(item)" loading="lazy" />
-          </button>
+        <article
+          class="wl-row"
+          *ngFor="let item of wishlist; trackBy: trackById"
+        >
+          <div class="col-item">
+            <button
+              type="button"
+              class="wl-thumb"
+              [routerLink]="['/productdetails', item.slug]"
+              [attr.aria-label]="productName(item)"
+            >
+              <img [src]="item.imagePath" [alt]="productName(item)" loading="lazy" />
+            </button>
 
-          <div class="wl-meta">
-            <h2 class="wl-name">
-              <a [routerLink]="['/productdetails', item.slug]">{{ productName(item) }}</a>
-            </h2>
+            <div class="wl-meta">
+              <div class="wl-meta__top">
+                <h2 class="wl-name">
+                  <a [routerLink]="['/productdetails', item.slug]">{{ productName(item) }}</a>
+                </h2>
+                <button
+                  type="button"
+                  class="wl-remove wl-remove--mobile"
+                  (click)="removeFromFavourite(item)"
+                  [attr.aria-label]="'cart.delete' | translate"
+                >
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+              </div>
 
-            <p class="wl-price wl-price--mobile">
-              <span class="wl-price__new">
-                {{ displayPrice(item) | number: '1.0-2' }}
-                {{ currencyLabel(item) }}
-              </span>
-              <span class="wl-price__old" *ngIf="item.discount > 0">
-                {{ item.oldPrice | number: '1.0-2' }}
-                {{ currencyLabel(item) }}
-              </span>
-            </p>
+              <p class="wl-price wl-price--mobile">
+                <span class="wl-price__new">
+                  {{ displayPrice(item) | number: '1.0-2' }}
+                  {{ currencyLabel(item) }}
+                </span>
+                <span class="wl-price__old" *ngIf="item.discount > 0">
+                  {{ item.oldPrice | number: '1.0-2' }}
+                  {{ currencyLabel(item) }}
+                </span>
+              </p>
 
-            <div class="wl-actions wl-actions--mobile">
-              <a
-                class="wl-btn wl-btn--primary"
-                [routerLink]="['/productdetails', item.slug]"
-              >
-                {{ 'cart.moredetails' | translate }}
-              </a>
-              <button
-                type="button"
-                class="wl-btn wl-btn--ghost"
-                (click)="removeFromFavourite(item)"
-              >
-                {{ 'cart.delete' | translate }}
-              </button>
+              <div class="wl-actions wl-actions--mobile">
+                <a
+                  class="wl-btn wl-btn--primary"
+                  [routerLink]="['/productdetails', item.slug]"
+                >
+                  {{ 'cart.moredetails' | translate }}
+                </a>
+                <button
+                  type="button"
+                  class="wl-btn wl-btn--ghost"
+                  (click)="removeFromFavourite(item)"
+                >
+                  {{ 'cart.delete' | translate }}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="col-price">
-          <span class="wl-price__new">
-            {{ displayPrice(item) | number: '1.0-2' }}
-            {{ currencyLabel(item) }}
-          </span>
-          <span class="wl-price__old" *ngIf="item.discount > 0">
-            {{ item.oldPrice | number: '1.0-2' }}
-            {{ currencyLabel(item) }}
-          </span>
-        </div>
+          <div class="col-price">
+            <span class="wl-price__new">
+              {{ displayPrice(item) | number: '1.0-2' }}
+              {{ currencyLabel(item) }}
+            </span>
+            <span class="wl-price__old" *ngIf="item.discount > 0">
+              {{ item.oldPrice | number: '1.0-2' }}
+              {{ currencyLabel(item) }}
+            </span>
+          </div>
 
-        <div class="col-actions">
-          <a
-            class="wl-btn wl-btn--primary"
-            [routerLink]="['/productdetails', item.slug]"
-          >
-            {{ 'cart.moredetails' | translate }}
-          </a>
-          <button
-            type="button"
-            class="wl-btn wl-btn--ghost"
-            (click)="removeFromFavourite(item)"
-          >
-            {{ 'cart.delete' | translate }}
-          </button>
-          <button
-            type="button"
-            class="wl-remove"
-            (click)="removeFromFavourite(item)"
-            [attr.aria-label]="'cart.delete' | translate"
-          >
-            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-          </button>
-        </div>
-      </article>
-    </div>
+          <div class="col-actions">
+            <a
+              class="wl-btn wl-btn--primary"
+              [routerLink]="['/productdetails', item.slug]"
+            >
+              {{ 'cart.moredetails' | translate }}
+            </a>
+            <button
+              type="button"
+              class="wl-btn wl-btn--ghost"
+              (click)="removeFromFavourite(item)"
+            >
+              {{ 'cart.delete' | translate }}
+            </button>
+          </div>
+        </article>
+      </div>
+    </ng-container>
   </ng-container>
 </main>
+
+<ng-template #wlLoading>
+  <div class="wishlist-loading">
+    <app-brand-loader
+      size="lg"
+      [showLogo]="true"
+      [label]="'wishlist.loading' | translate"
+    ></app-brand-loader>
+    <p>{{ 'wishlist.loading' | translate }}</p>
+  </div>
+</ng-template>
 
 <ng-template #wlEmpty>
   <div class="wishlist-empty">

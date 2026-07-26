@@ -11,40 +11,36 @@
 
   <div class="picks__inner">
     <header class="picks__header">
-      <div class="picks__intro">
-        <div class="picks__topline">
-          <p class="picks__eyebrow">{{ 'home.bestSellersEyebrow' | translate }}</p>
+      <p class="picks__eyebrow">{{ 'home.bestSellersEyebrow' | translate }}</p>
 
-          <div class="picks__actions">
-            <a routerLink="/products" class="picks__menu-link">
-              {{ 'home.bestSellersViewMenu' | translate }}
-              <i class="bi bi-arrow-right" aria-hidden="true"></i>
-            </a>
+      <div class="picks__actions">
+        <a routerLink="/products" class="picks__menu-link">
+          <span class="picks__menu-link-text">{{ 'home.bestSellersViewMenu' | translate }}</span>
+          <i class="bi bi-arrow-right" aria-hidden="true"></i>
+        </a>
 
-            <div class="picks__nav" *ngIf="bestSellerProducts.length > 1">
-              <button
-                type="button"
-                class="picks__nav-btn"
-                (click)="bestCarousel.prev()"
-                [attr.aria-label]="'Previous'"
-              >
-                <i class="bi bi-chevron-left" aria-hidden="true"></i>
-              </button>
-              <button
-                type="button"
-                class="picks__nav-btn picks__nav-btn--primary"
-                (click)="bestCarousel.next()"
-                [attr.aria-label]="'Next'"
-              >
-                <i class="bi bi-chevron-right" aria-hidden="true"></i>
-              </button>
-            </div>
-          </div>
+        <div class="picks__nav" *ngIf="bestSellerProducts.length > 1">
+          <button
+            type="button"
+            class="picks__nav-btn"
+            (click)="bestCarousel.prev()"
+            [attr.aria-label]="'Previous'"
+          >
+            <i class="bi bi-chevron-left" aria-hidden="true"></i>
+          </button>
+          <button
+            type="button"
+            class="picks__nav-btn picks__nav-btn--primary"
+            (click)="bestCarousel.next()"
+            [attr.aria-label]="'Next'"
+          >
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+          </button>
         </div>
-
-        <h2 class="picks__title">{{ 'home.bestSellersHeading' | translate }}</h2>
-        <p class="picks__slogan">{{ 'home.recomendedSlogan' | translate }}</p>
       </div>
+
+      <h2 class="picks__title">{{ 'home.bestSellersHeading' | translate }}</h2>
+      <p class="picks__slogan">{{ 'home.recomendedSlogan' | translate }}</p>
     </header>
 
     <div class="picks__track">

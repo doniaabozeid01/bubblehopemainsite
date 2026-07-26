@@ -52,6 +52,17 @@ export class ProductsComponent implements OnDestroy {
   private suppressSpy = false;
   private readonly spyOffset = 145;
 
+  private getScrollOffset(): number {
+    const sticky = document.querySelector(
+      '.menu-sidebar__sticky'
+    ) as HTMLElement | null;
+    if (sticky) {
+      const top = parseFloat(getComputedStyle(sticky).top) || 0;
+      return Math.ceil(top + sticky.offsetHeight + 12);
+    }
+    return this.spyOffset;
+  }
+
   constructor(
     private apiService: ApiService,
     private route: ActivatedRoute,
@@ -148,23 +159,16 @@ export class ProductsComponent implements OnDestroy {
   }
 
   setActiveTab(key: string): void {
-    if (key === 'all') {
-      this.activeTab = 'all';
-      this.spyKey = 'all';
-      this.applyFilters();
-      this.scrollToMenuTop();
-      return;
-    }
-
-    // Viewing all categories → jump to that section (keep full list).
-    if (this.activeTab === 'all') {
-      this.scrollToCategory(key);
-      return;
-    }
-
     this.activeTab = key;
     this.spyKey = key;
     this.applyFilters();
+    // Center after the active class paints; RTL scroll math needs the updated layout.
+    requestAnimationFrame(() => {
+      this.scrollSidebarTabIntoView(key);
+      setTimeout(() => this.scrollSidebarTabIntoView(key), 40);
+    });
+    // Wait a tick so filtered sections render, then land under the sticky bar
+    setTimeout(() => this.scrollToMenuTop(), 0);
   }
 
   isTabActive(key: string): boolean {
@@ -348,7 +352,8 @@ export class ProductsComponent implements OnDestroy {
       this.scrollToTop();
       return;
     }
-    const top = content.getBoundingClientRect().top + window.scrollY - this.spyOffset;
+    const top =
+      content.getBoundingClientRect().top + window.scrollY - this.getScrollOffset();
     window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
   }
 
@@ -360,7 +365,8 @@ export class ProductsComponent implements OnDestroy {
     this.spyKey = key;
     this.scrollSidebarTabIntoView(key);
 
-    const top = el.getBoundingClientRect().top + window.scrollY - this.spyOffset;
+    const top =
+      el.getBoundingClientRect().top + window.scrollY - this.getScrollOffset();
     window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
 
     if (this.spyUnlockTimer) clearTimeout(this.spyUnlockTimer);
@@ -381,10 +387,11 @@ export class ProductsComponent implements OnDestroy {
       return;
     }
 
+    const offset = this.getScrollOffset();
     let current = 'all';
     for (const section of sections) {
       const top = section.getBoundingClientRect().top;
-      if (top - this.spyOffset <= 8) {
+      if (top - offset <= 8) {
         current = section.dataset['cat'] || current;
       } else {
         break;
@@ -400,11 +407,39 @@ export class ProductsComponent implements OnDestroy {
     this.scrollSidebarTabIntoView(key);
   }
 
+  /** Scroll only the tabs strip — never use scrollIntoView (it jumps the page). */
   private scrollSidebarTabIntoView(key: string): void {
     const btn = document.querySelector(
       `.menu-tab[data-key="${key}"]`
     ) as HTMLElement | null;
-    btn?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+    const scroller = document.querySelector('.menu-tabs') as HTMLElement | null;
+    if (!btn || !scroller) return;
+
+    const horizontal = getComputedStyle(scroller).flexDirection !== 'column';
+
+    if (horizontal) {
+      // Visual delta works in both LTR and RTL (avoid clamping scrollLeft to 0 —
+      // RTL engines often use negative scrollLeft).
+      const btnRect = btn.getBoundingClientRect();
+      const scrollerRect = scroller.getBoundingClientRect();
+      const delta =
+        btnRect.left +
+        btnRect.width / 2 -
+        (scrollerRect.left + scroller.clientWidth / 2);
+      scroller.scrollBy({ left: delta, behavior: 'smooth' });
+      return;
+    }
+
+    const sidebar = scroller.closest('.menu-sidebar__sticky') as HTMLElement | null;
+    if (!sidebar) return;
+
+    const btnRect = btn.getBoundingClientRect();
+    const sidebarRect = sidebar.getBoundingClientRect();
+    const top =
+      sidebar.scrollTop +
+      (btnRect.top - sidebarRect.top) -
+      (sidebar.clientHeight - btnRect.height) / 2;
+    sidebar.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
   }
 
   addToFavourite(item: any) {

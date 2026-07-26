@@ -59,6 +59,13 @@ html.kids-area-scroll body::-webkit-scrollbar {
   --page-cream: #fff8ef;
   --brand-orange: #ff7f00;
   --brand-sunny: #ffe18d;
+  /* App chrome — one voice across Menu / Cart / Checkout / Wishlist */
+  --font-app: 'Nunito', system-ui, sans-serif;
+  --app-title-size: 1.4rem;
+  --app-title-weight: 800;
+  --app-title-color: #ff7f00;
+  --app-page-pad-x: 0.85rem;
+  --app-page-pad-top: 1.1rem;
   /* Matches compact top navbar + spacer */
   --app-header-height: 80px;
 }
@@ -414,3 +421,58 @@ label {
 .text-orange {
   color: #f28c28;
 }
+
+/* =========================================================
+   Unified mobile shop pages — one title style, left-aligned
+   (overrides the global 35px Grandstander h1/h2 rule)
+   ========================================================= */
+@media (max-width: 768px) {
+  .menu-page,
+  .cart-page,
+  .checkout-page,
+  .wishlist-page {
+    padding-top: var(--app-page-pad-top, 1.1rem) !important;
+  }
+
+  .menu-page__header,
+  .cart-header,
+  .checkout-header,
+  .wishlist-page__header {
+    text-align: start !important;
+    margin: 0 0 0.65rem !important;
+    padding: 0 !important;
+  }
+
+  .menu-page__title,
+  .cart-header__title,
+  .checkout-header__title,
+  .wishlist-page__title,
+  :host .menu-page__title,
+  :host .cart-header__title,
+  :host .checkout-header__title,
+  :host .wishlist-page__title {
+    font-family: var(--font-app, 'Nunito', system-ui, sans-serif) !important;
+    font-size: 1.4rem !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.02em !important;
+    color: var(--app-title-color, #ff7f00) !important;
+    text-align: start !important;
+    margin: 0 !important;
+  }
+
+  .cart-header__count,
+  .wishlist-page__count,
+  :host .cart-header__count,
+  :host .wishlist-page__count {
+    display: inline !important;
+    margin: 0 0 0 0.2rem !important;
+    padding: 0 !important;
+    font-family: inherit !important;
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+    color: inherit !important;
+  }
+}
+

@@ -1,20 +1,20 @@
 .nav-link:hover,
 .nav-link:focus {
-  color: #F47421 !important; /* برتقالي */
+  color: #f47421 !important;
 }
 
 .navbar .dropdown-menu {
   background-color: #ffffff;
   border: none;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .dropdown-menu a {
-  color: #0F7C9E;
+  color: #0f7c9e;
 }
 
 .dropdown-menu a:hover {
-  background-color: #F47421;
+  background-color: #f47421;
   color: #fff;
 }
 
@@ -22,145 +22,205 @@
   border-color: rgba(255, 255, 255, 0.3);
 }
 
+$orange: #f47524;
+$navy: #243a63;
+$cream: #fffbf5;
+$muted: #6b7280;
+$line: #eceff3;
 
-/*  الطبقه اللي بتغطي الشاشة */
 .branch-selector-overlay {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(10px);
+  inset: 0;
+  z-index: 1000000;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000000;
+  padding: 1.25rem;
+  background: rgba(36, 58, 99, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
-/* كارت الموديل الأبيض */
 .branch-selector-card {
-  background: #ffffff;
-  padding: 40px 30px;
-  border-radius: 30px;
+  width: min(100%, 420px);
+  max-height: min(92dvh, 640px);
+  overflow: auto;
+  padding: 2rem 1.5rem 1.75rem;
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(244, 117, 36, 0.1), transparent 60%),
+    $cream;
+  border: 1px solid rgba(244, 117, 36, 0.12);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
   text-align: center;
-  width: 90%;
-  max-width: 450px;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-  animation: fadeInPop 0.4s ease-out;
+  animation: fadeInPop 0.35s ease-out;
 
-  .logo-section img {
-    width: 150px;
-    margin-bottom: 20px;
+  // Beat global inflated typography
+  h2,
+  p,
+  span,
+  button {
+    font-size: inherit;
+    letter-spacing: normal;
+  }
+
+  scrollbar-width: thin;
+}
+
+.logo-section {
+  margin-bottom: 1.15rem;
+
+  img {
+    display: block;
+    width: min(148px, 42vw);
+    height: auto;
+    margin: 0 auto;
     animation: bounce 2s infinite;
   }
+}
 
 .hero-title {
-  font-size: 28px;
-  font-weight: 900;
-  color: #333;
-  line-height: 1.4;
-  margin-bottom: 15px;
-  direction: rtl;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin: 0 0 0.85rem;
+  font-family: var(--font-brand, 'Grandstander', cursive);
+  font-size: clamp(1.35rem, 3.6vw, 1.7rem) !important;
+  font-weight: 800;
+  line-height: 1.3;
+  color: $navy;
+  text-align: center;
+}
 
-  .highlight {
-    color: #f28c28;
-    display: inline-block;
-    margin-bottom: 5px;
+.hero-title__line {
+  display: block;
+  color: $navy;
+}
 
-    i {
-      margin-right: 5px;
-      font-size: 0.9em;
-    }
-  }
+.hero-title__muted {
+  color: $muted;
+  font-weight: 700;
+}
 
-  .highlight-alt {
-    color: #00769d;
-    text-decoration: line-through;
-    opacity: 0.7;
-  }
+.hero-title__brand {
+  display: block;
+  margin: 0.15rem 0;
+  color: $orange;
+  font-size: 1.05em;
 }
 
 .hero-subtitle {
-  font-size: 15px;
-  color: #666;
+  margin: 0 0 1.5rem;
+  font-size: 0.95rem !important;
   font-weight: 600;
-  margin-bottom: 30px;
+  line-height: 1.45;
+  color: $muted;
 }
 
-}
-
-/*   قايمة الفروع   */
 .branch-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-
-  .branch-btn {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 18px 25px;
-    border: 2px solid #f0f0f0;
-    border-radius: 20px;
-    background: #fdfdfd;
-    font-size: 18px;
-    font-weight: 700;
-    color: #333;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    direction: rtl;
-
-    .icon {
-      margin-left: 15px;
-      font-size: 20px;
-    }
-
-    &:hover {
-      border-color: #f28c28;
-      background: #f28c28;
-      color: white;
-      transform: translateY(-5px) scale(1.02);
-      box-shadow: 0 10px 20px rgba(242, 140, 40, 0.3);
-
-      .icon { filter: brightness(0) invert(1); }
-    }
-  }
-}
-
-
-.hero-title {
-  text-align: center;
-  direction: inherit;
-
-  .highlight-alt {
-    display: inline-block;
-    margin: 0 5px;
-  }
+  gap: 0.7rem;
 }
 
 .branch-btn {
-
   display: flex;
-  flex-direction: row;
-  gap: 15px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  width: 100%;
+  padding: 0.95rem 1.1rem;
+  border: 1.5px solid $line;
+  border-radius: 0.95rem;
+  background: #fff;
+  color: $navy;
+  font-size: 1rem !important;
+  font-weight: 700;
+  text-align: start;
+  cursor: pointer;
+  transition:
+    transform 0.16s ease,
+    border-color 0.16s ease,
+    background 0.16s ease,
+    box-shadow 0.16s ease,
+    color 0.16s ease;
+
+  &__name {
+    flex: 1;
+    min-width: 0;
+    font-size: inherit !important;
+  }
+
+  &__icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(244, 117, 36, 0.1);
+    color: $orange;
+    transition: background 0.16s ease, color 0.16s ease;
+
+    i {
+      font-size: 0.95rem;
+      color: inherit;
+    }
+  }
+
+  &:hover,
+  &:focus-visible {
+    outline: none;
+    border-color: $orange;
+    background: $orange;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(244, 117, 36, 0.28);
+
+    .branch-btn__icon {
+      background: rgba(255, 255, 255, 0.22);
+      color: #fff;
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
 }
 
-
-
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-
-
-/* أنيميشن الظهور */
 @keyframes fadeInPop {
-  0% { opacity: 0; transform: scale(0.9) translateY(20px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
+  0% {
+    opacity: 0;
+    transform: scale(0.94) translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
-/* انيميشن اللوجو */
 @keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@media (max-width: 480px) {
+  .branch-selector-card {
+    padding: 1.6rem 1.15rem 1.4rem;
+    border-radius: 1.25rem;
+  }
+
+  .hero-title {
+    font-size: 1.28rem !important;
+  }
+
+  .branch-btn {
+    padding: 0.85rem 1rem;
+    font-size: 0.95rem !important;
+  }
 }

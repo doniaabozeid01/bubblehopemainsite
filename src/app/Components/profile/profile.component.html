@@ -3,97 +3,123 @@
 </div>
 
 <div class="profile" *ngIf="!loading && user">
-  <div class="profile__grid">
-    <!-- Static: account details -->
-    <section class="profile__col profile__col--static">
-      <div class="header">
-        <h2 class="title">{{ 'profile.title' | translate }}</h2>
-
-        <button class="btn-outline" type="button" (click)="toggleEdit()" *ngIf="!editing">
-          {{ 'profile.edit' | translate }}
+  <header class="profile-hero">
+    <p class="profile-hero__brand">Bubble Hope</p>
+    <div class="profile-hero__row">
+      <h1 class="title">{{ 'profile.title' | translate }}</h1>
+      <button class="btn-outline btn-edit" type="button" (click)="toggleEdit()" *ngIf="!editing">
+        <i class="bi bi-pencil" aria-hidden="true"></i>
+        {{ 'profile.edit' | translate }}
+      </button>
+      <div class="actions" *ngIf="editing">
+        <button class="btn-outline" type="button" (click)="toggleEdit()" [disabled]="actionLoading">
+          {{ 'profile.cancel' | translate }}
         </button>
+        <button
+          class="btn-solid"
+          type="button"
+          (click)="saveProfile()"
+          [disabled]="actionLoading || profileForm.invalid"
+        >
+          {{ 'profile.save' | translate }}
+        </button>
+      </div>
+    </div>
+  </header>
 
-        <div class="actions" *ngIf="editing">
-          <button class="btn-outline" type="button" (click)="toggleEdit()" [disabled]="actionLoading">
-            {{ 'profile.cancel' | translate }}
-          </button>
-          <button
-            class="btn-solid"
-            type="button"
-            (click)="saveProfile()"
-            [disabled]="actionLoading || profileForm.invalid"
-          >
-            {{ 'profile.save' | translate }}
-          </button>
+  <div class="profile__grid">
+    <!-- Account -->
+    <section class="account-panel" [class.editing]="editing" [formGroup]="profileForm">
+      <div class="account-panel__identity">
+        <div class="avatar" aria-hidden="true">{{ initials(user.name) }}</div>
+        <div class="account-panel__who">
+          <h2 class="account-panel__name">{{ user.name }}</h2>
+          <p class="account-panel__email">{{ user.email }}</p>
         </div>
       </div>
 
-      <div class="card" [class.editing]="editing" [formGroup]="profileForm">
-        <div class="row">
-          <span>{{ 'profile.name' | translate }}</span>
-
-          <ng-container *ngIf="!editing; else editName">
-            <strong>{{ user.name }}</strong>
-          </ng-container>
-
-          <ng-template #editName>
-            <input class="input" type="text" formControlName="name" />
-          </ng-template>
+      <div class="account-fields">
+        <div class="field">
+          <span class="field__icon"><i class="bi bi-person" aria-hidden="true"></i></span>
+          <div class="field__body">
+            <span class="field__label">{{ 'profile.name' | translate }}</span>
+            <ng-container *ngIf="!editing; else editName">
+              <strong class="field__value">{{ user.name }}</strong>
+            </ng-container>
+            <ng-template #editName>
+              <input class="input" type="text" formControlName="name" />
+            </ng-template>
+          </div>
         </div>
 
-        <div class="row">
-          <span>{{ 'profile.email' | translate }}</span>
-          <strong>{{ user.email }}</strong>
+        <div class="field">
+          <span class="field__icon"><i class="bi bi-envelope" aria-hidden="true"></i></span>
+          <div class="field__body">
+            <span class="field__label">{{ 'profile.email' | translate }}</span>
+            <strong class="field__value">{{ user.email }}</strong>
+          </div>
         </div>
 
-        <div class="row">
-          <span>{{ 'profile.phone' | translate }}</span>
-
-          <ng-container *ngIf="!editing; else editPhone">
-            <strong>{{ user.phoneNumber || ('profile.notAdded' | translate) }}</strong>
-          </ng-container>
-
-          <ng-template #editPhone>
-            <input
-              class="input"
-              type="text"
-              formControlName="phoneNumber"
-              [placeholder]="'profile.phonePlaceholder' | translate"
-            />
-          </ng-template>
+        <div class="field">
+          <span class="field__icon"><i class="bi bi-telephone" aria-hidden="true"></i></span>
+          <div class="field__body">
+            <span class="field__label">{{ 'profile.phone' | translate }}</span>
+            <ng-container *ngIf="!editing; else editPhone">
+              <strong class="field__value">{{ user.phoneNumber || ('profile.notAdded' | translate) }}</strong>
+            </ng-container>
+            <ng-template #editPhone>
+              <input
+                class="input"
+                type="text"
+                formControlName="phoneNumber"
+                [placeholder]="'profile.phonePlaceholder' | translate"
+              />
+            </ng-template>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Dynamic: addresses -->
-    <section class="profile__col profile__col--dynamic">
+    <!-- Addresses -->
+    <section class="addresses-panel">
       <div class="addr-head">
-        <h3 class="subtitle">{{ 'profile.addresses' | translate }}</h3>
-        <button class="btn-solid" type="button" (click)="openAddAddress()">
-          + {{ 'profile.addAddress' | translate }}
+        <div class="addr-head__text">
+          <h2 class="subtitle">{{ 'profile.addresses' | translate }}</h2>
+          <span class="addr-count" *ngIf="user.address.length">{{ user.address.length }}</span>
+        </div>
+        <button class="btn-solid btn-add" type="button" (click)="openAddAddress()">
+          <i class="bi bi-plus-lg" aria-hidden="true"></i>
+          {{ 'profile.addAddress' | translate }}
         </button>
       </div>
 
       <div class="address-list" *ngIf="user.address.length; else noAddress">
-        <div class="address-card" *ngFor="let addr of user.address">
-          <div class="top">
-            <div class="line">
-              {{ addr.street }}, {{ 'profile.building' | translate }} {{ addr.buildingNumber }},
-              {{ 'profile.floor' | translate }} {{ addr.floor }},
-              {{ 'profile.apartment' | translate }} {{ addr.apartment }}
-            </div>
-
+        <article
+          class="address-card"
+          *ngFor="let addr of user.address"
+          [class.is-default]="addr.isDefault"
+        >
+          <div class="address-card__top">
+            <span class="address-card__pin" aria-hidden="true">
+              <i class="bi bi-geo-alt-fill"></i>
+            </span>
             <span class="badge" *ngIf="addr.isDefault">{{ 'profile.default' | translate }}</span>
           </div>
 
-          <small>
-            {{ addr.districtName }} - {{ addr.cityName }}, {{ addr.governorateName }},
-            {{ addr.countryName }}
-          </small>
+          <p class="address-card__line">
+            {{ addr.street }}, {{ 'profile.building' | translate }} {{ addr.buildingNumber }},
+            {{ 'profile.floor' | translate }} {{ addr.floor }},
+            {{ 'profile.apartment' | translate }} {{ addr.apartment }}
+          </p>
 
-          <div class="landmark" *ngIf="addr.landmark">
-            {{ 'profile.landmark' | translate }}: {{ addr.landmark }}
-          </div>
+          <p class="address-card__meta">
+            {{ addr.districtName }} · {{ addr.cityName }}, {{ addr.governorateName }}
+          </p>
+
+          <p class="landmark" *ngIf="addr.landmark">
+            <i class="bi bi-signpost-2" aria-hidden="true"></i>
+            {{ addr.landmark }}
+          </p>
 
           <div class="addr-actions">
             <button
@@ -111,28 +137,52 @@
               (click)="deleteAddress(addr.id)"
               [disabled]="actionLoading"
             >
+              <i class="bi bi-trash3" aria-hidden="true"></i>
               {{ 'profile.delete' | translate }}
             </button>
           </div>
-        </div>
+        </article>
       </div>
 
       <ng-template #noAddress>
-        <p class="empty">{{ 'profile.noAddresses' | translate }}</p>
+        <div class="empty">
+          <span class="empty__icon" aria-hidden="true"><i class="bi bi-geo"></i></span>
+          <p>{{ 'profile.noAddresses' | translate }}</p>
+          <button class="btn-solid" type="button" (click)="openAddAddress()">
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+            {{ 'profile.addAddress' | translate }}
+          </button>
+        </div>
       </ng-template>
     </section>
   </div>
 
   <!-- Add Address Modal -->
-  <div class="modal" *ngIf="showAddAddress" (click)="openSelect = null">
+  <div
+    class="modal"
+    *ngIf="showAddAddress"
+    (click)="!actionLoading && closeAddAddress(); openSelect = null"
+  >
     <div class="modal-card" [formGroup]="addressForm" (click)="$event.stopPropagation()">
-      <h3>{{ 'profile.addAddress' | translate }}</h3>
+      <div class="modal-sheet-handle" aria-hidden="true"></div>
+
+      <header class="modal-head">
+        <h3>{{ 'profile.addAddress' | translate }}</h3>
+        <button
+          type="button"
+          class="modal-close"
+          (click)="closeAddAddress()"
+          [attr.aria-label]="'profile.cancel' | translate"
+        >
+          <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+      </header>
 
       <div class="modal-body">
-        <div class="grid2 mb-0">
+        <div class="address-fields">
           <!-- Country -->
           <div
-            class="nice-select"
+            class="nice-select field-span-2"
             [class.open]="openSelect === 'country'"
             [class.has-value]="addressForm.value.countryId"
           >
@@ -245,7 +295,7 @@
 
           <!-- District -->
           <div
-            class="nice-select"
+            class="nice-select field-span-2"
             [class.open]="openSelect === 'district'"
             [class.has-value]="addressForm.value.districtId"
             [class.disabled]="districts.length === 0"
@@ -283,39 +333,52 @@
               </li>
             </ul>
           </div>
-        </div>
 
-        <div class="grid2">
-          <input class="input" formControlName="street" [placeholder]="'profile.street' | translate" />
           <input
-            class="input"
+            class="input field-span-2"
+            formControlName="street"
+            [placeholder]="'profile.street' | translate"
+          />
+          <input
+            class="input field-compact"
             formControlName="buildingNumber"
             [placeholder]="'profile.buildingNumber' | translate"
           />
-          <input class="input" formControlName="floor" [placeholder]="'profile.floor' | translate" />
-          <input class="input" formControlName="apartment" [placeholder]="'profile.apartment' | translate" />
+          <input
+            class="input field-compact"
+            formControlName="floor"
+            [placeholder]="'profile.floor' | translate"
+          />
+          <input
+            class="input field-compact"
+            formControlName="apartment"
+            [placeholder]="'profile.apartment' | translate"
+          />
+          <input
+            class="input field-span-2"
+            formControlName="landmark"
+            [placeholder]="'profile.landmark' | translate"
+          />
         </div>
-
-        <input class="input" formControlName="landmark" [placeholder]="'profile.landmark' | translate" />
 
         <label class="check">
           <input type="checkbox" formControlName="isDefault" />
-          {{ 'profile.makeAddressDefault' | translate }}
+          <span>{{ 'profile.makeAddressDefault' | translate }}</span>
         </label>
+      </div>
 
-        <div class="modal-actions">
-          <button class="btn-outline" type="button" (click)="closeAddAddress()" [disabled]="actionLoading">
-            {{ 'profile.cancel' | translate }}
-          </button>
-          <button
-            class="btn-solid btn-bg-color"
-            type="button"
-            (click)="addAddress()"
-            [disabled]="actionLoading || addressForm.invalid"
-          >
-            {{ 'profile.add' | translate }}
-          </button>
-        </div>
+      <div class="modal-actions">
+        <button class="btn-outline" type="button" (click)="closeAddAddress()" [disabled]="actionLoading">
+          {{ 'profile.cancel' | translate }}
+        </button>
+        <button
+          class="btn-solid btn-bg-color"
+          type="button"
+          (click)="addAddress()"
+          [disabled]="actionLoading || addressForm.invalid"
+        >
+          {{ 'profile.add' | translate }}
+        </button>
       </div>
     </div>
   </div>

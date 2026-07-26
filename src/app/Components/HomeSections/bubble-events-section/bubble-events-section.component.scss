@@ -276,9 +276,9 @@ $cream: #ffe18d;
   .events-spot {
     /* فوق موجة kids-area (z-index: 3) + مسافة كافية للمدار */
     z-index: 4;
-    margin-top: 48px;
+    margin-top: 20px;
     margin-bottom: 0;
-    padding: 72px 18px 28px;
+    padding: 36px 18px 28px;
   }
 
   .events-spot__wrap {
@@ -302,7 +302,7 @@ $cream: #ffe18d;
     order: 1;
     width: 100%;
     min-height: 0;
-    padding-top: 24px;
+    padding-top: 8px;
     padding-bottom: 8px;
     overflow: visible;
   }
@@ -345,8 +345,8 @@ $cream: #ffe18d;
 
 @media (max-width: 768px) {
   .events-spot {
-    margin-top: 56px;
-    padding: 88px 16px 28px;
+    margin-top: 12px;
+    padding: 28px 16px 24px;
   }
 
   .events-spot__wrap {
@@ -381,7 +381,7 @@ $cream: #ffe18d;
   }
 
   .events-spot__visual {
-    padding-top: 32px;
+    padding-top: 4px;
     padding-bottom: 4px;
     overflow: visible;
   }
@@ -418,8 +418,8 @@ $cream: #ffe18d;
 
 @media (max-width: 480px) {
   .events-spot {
-    margin-top: 48px;
-    padding: 80px 14px 24px;
+    margin-top: 8px;
+    padding: 20px 14px 22px;
   }
 
   .events-spot__eyebrow {
@@ -433,7 +433,7 @@ $cream: #ffe18d;
   }
 
   .events-spot__visual {
-    padding-top: 28px;
+    padding-top: 0;
     overflow: visible;
   }
 

@@ -36,13 +36,21 @@ $orange: #ff7f00;
   width: 100%;
   height: 40px;
   color: $orange;
+  position: relative;
+  z-index: 1;
 
   path {
     fill: currentColor;
   }
 
+  /* Kill the 1px seam between the orange band and the wave SVGs */
+  &:not(.our-material__wave--flip) {
+    margin-bottom: -2px;
+  }
+
   &--flip {
     transform: rotate(180deg);
+    margin-top: -2px;
   }
 }
 
@@ -54,6 +62,12 @@ $orange: #ff7f00;
   overflow: hidden;
   background: $orange;
   padding: 1.15rem 0;
+  /* Cover any anti-alias gap under/over the waves */
+  box-shadow: 0 -1px 0 $orange, 0 1px 0 $orange;
+
+  &:hover .our-material__track {
+    animation-play-state: paused;
+  }
 }
 
 .our-material__track {
@@ -64,18 +78,18 @@ $orange: #ff7f00;
   will-change: transform;
 
   &--a {
-    animation: our-material-scroll 20s linear infinite;
+    animation: our-material-scroll 28s linear infinite;
   }
 
   &--b {
-    animation: our-material-scroll-rev 22s linear infinite;
+    animation: our-material-scroll-rev 30s linear infinite;
   }
 }
 
 .our-material__item {
   flex-shrink: 0;
-  width: 7.5rem;
-  height: 9.25rem;
+  width: 8.25rem;
+  height: 10.5rem;
 
   img {
     display: block;
@@ -84,7 +98,8 @@ $orange: #ff7f00;
     object-fit: contain;
     pointer-events: none;
     user-select: none;
-    filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.22));
+    /* Product shots ship on black — blend out the bg on the orange band */
+    mix-blend-mode: lighten;
     transform: rotate(-12deg);
   }
 
@@ -144,8 +159,8 @@ $orange: #ff7f00;
   }
 
   .our-material__item {
-    width: 5rem;
-    height: 6.25rem;
+    width: 5.75rem;
+    height: 7.25rem;
   }
 }
 
@@ -156,8 +171,8 @@ $orange: #ff7f00;
   }
 
   .our-material__item {
-    width: 8.5rem;
-    height: 10.5rem;
+    width: 9.25rem;
+    height: 11.75rem;
   }
 
   .our-material__track {

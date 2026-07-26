@@ -12,6 +12,17 @@ $scoop-h: clamp(2rem, 4vw, 2.75rem);
 
 .about-page {
   overflow-x: clip;
+
+  h1,
+  h2,
+  h3,
+  p,
+  span,
+  a,
+  li {
+    font-size: inherit;
+    letter-spacing: normal;
+  }
 }
 
 .about-hero {
@@ -147,7 +158,7 @@ $scoop-h: clamp(2rem, 4vw, 2.75rem);
   border-radius: 1.75rem;
   overflow: hidden;
   background:
-    radial-gradient(circle at 70% 20%, rgba(255, 115, 4, 0.16), transparent 48%),
+    radial-gradient(circle at 70% 20%, rgba(255, 115, 4, 0.12), transparent 48%),
     linear-gradient(160deg, #fff8ef 0%, #ffe8d1 55%, #ffd7b0 100%);
   box-shadow: 0 28px 50px -30px rgba(15, 23, 42, 0.35);
 
@@ -155,7 +166,6 @@ $scoop-h: clamp(2rem, 4vw, 2.75rem);
     display: block;
     width: 100%;
     height: auto;
-    max-height: 560px;
     object-fit: contain;
     object-position: center;
   }
@@ -332,36 +342,181 @@ $scoop-h: clamp(2rem, 4vw, 2.75rem);
 @media (max-width: 991.98px) {
   .about-story {
     grid-template-columns: 1fr;
-    padding-top: 0.25rem;
+    gap: 1.5rem;
+    padding: 0.25rem 1.15rem 2.25rem;
   }
 
   .about-story__media {
-    max-width: 420px;
+    max-width: 520px;
     margin-inline: auto;
+    border-radius: 1.35rem;
+  }
+
+  .about-pillars {
+    padding: 0 1.15rem 2.5rem;
   }
 
   .about-pillars__list {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 0.85rem;
+  }
+
+  .about-pillar {
+    gap: 0.85rem;
+    padding: 1rem 1rem 1.05rem;
+    border-top: 0;
+    border-radius: 1.1rem;
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.05);
+    box-shadow: 0 10px 24px -20px rgba(15, 23, 42, 0.35);
   }
 }
 
 @media (max-width: 575.98px) {
   .about-hero {
-    padding-inline: 1rem;
+    padding: 2.35rem 1rem calc(2.1rem + #{$scoop-h});
   }
 
-  .about-story,
-  .about-pillars,
+  .about-hero__orb {
+    opacity: 0.45;
+
+    &--a {
+      width: 96px;
+      height: 96px;
+      top: 8%;
+      inset-inline-start: -8px;
+    }
+
+    &--b {
+      width: 72px;
+      height: 72px;
+      top: 12%;
+      inset-inline-end: -4px;
+    }
+
+    &--c {
+      width: 58px;
+      height: 58px;
+      bottom: 32%;
+      inset-inline-start: 12%;
+    }
+  }
+
+  .about-hero__brand {
+    font-size: 2rem !important;
+    line-height: 1.05;
+  }
+
+  .about-hero__title {
+    margin-top: 0.4rem;
+    font-size: 0.92rem !important;
+    letter-spacing: 0.14em;
+  }
+
+  .about-hero__tagline {
+    margin: 0.75rem auto 1.15rem;
+    font-size: 0.95rem !important;
+    line-height: 1.45;
+    max-width: 22rem;
+  }
+
+  .about-btn--light {
+    min-height: 2.85rem;
+    width: min(100%, 16rem);
+    margin-inline: auto;
+  }
+
+  .about-kicker {
+    font-size: 0.7rem !important;
+    letter-spacing: 0.16em;
+  }
+
+  .about-story {
+    padding: 0.15rem 1rem 2rem;
+    gap: 1.25rem;
+  }
+
+  .about-story__media {
+    max-width: none;
+    width: 100%;
+    border-radius: 1.25rem;
+  }
+
+  .about-story__title {
+    font-size: 1.55rem !important;
+    line-height: 1.18;
+  }
+
+  .about-story__text {
+    margin-top: 0.7rem;
+    font-size: 0.95rem !important;
+    line-height: 1.6;
+  }
+
+  .about-pillars {
+    padding: 0 1rem 2rem;
+  }
+
+  .about-pillars__head {
+    margin-bottom: 1rem;
+  }
+
+  .about-pillars__title {
+    font-size: 1.35rem !important;
+    line-height: 1.25;
+  }
+
+  .about-pillar {
+    padding: 0.9rem 0.9rem 0.95rem;
+    gap: 0.75rem;
+  }
+
+  .about-pillar__mark {
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 0.95rem;
+  }
+
+  .about-pillar__title {
+    font-size: 1rem !important;
+  }
+
+  .about-pillar__text {
+    margin-top: 0.25rem;
+    font-size: 0.88rem !important;
+    line-height: 1.45;
+  }
+
   .about-close {
-    padding-inline: 1rem;
+    padding: 0 1rem calc(2.5rem + clamp(2.5rem, 4.5vw, 3.25rem));
+  }
+
+  .about-close__panel {
+    padding: 1.35rem 1.1rem 1.45rem;
+    border-radius: 1.35rem;
+  }
+
+  .about-close__title {
+    font-size: 1.35rem !important;
+    line-height: 1.25;
+  }
+
+  .about-close__text {
+    margin-top: 0.55rem;
+    font-size: 0.92rem !important;
+    line-height: 1.5;
   }
 
   .about-close__actions {
     flex-direction: column;
+    gap: 0.65rem;
+    margin-top: 1.15rem;
   }
 
   .about-btn {
     width: 100%;
+    min-height: 2.9rem;
+    font-size: 0.92rem !important;
+    border-radius: 14px;
   }
 }

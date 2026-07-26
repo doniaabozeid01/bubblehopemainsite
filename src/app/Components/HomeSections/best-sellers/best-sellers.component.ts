@@ -38,10 +38,10 @@ export class BestSellersComponent {
     touchDrag: true,
     rtl: this.isRTL,
     responsive: {
-      0: { items: 1, margin: 14 },
-      640: { items: 2, margin: 18 },
-      992: { items: 3, margin: 20 },
-      1200: { items: 3, margin: 24 },
+      0: { items: 1, margin: 12, stagePadding: 0 },
+      640: { items: 2, margin: 18, stagePadding: 0 },
+      992: { items: 3, margin: 20, stagePadding: 0 },
+      1200: { items: 3, margin: 24, stagePadding: 0 },
     },
   };
 

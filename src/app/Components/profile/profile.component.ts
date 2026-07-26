@@ -81,6 +81,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
     return document.documentElement.dir === 'rtl';
   }
 
+  initials(name: string | null | undefined): string {
+    const parts = (name || '').trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return 'BH';
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+
   ngOnInit(): void {
     this.loadCountries();
     this.setupCascading();

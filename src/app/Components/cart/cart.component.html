@@ -7,7 +7,12 @@
       <h1 class="cart-header__title">
         {{ 'cart.yourcart' | translate }}
         <span class="cart-header__count">
-          ({{ cart?.cartItems?.length }} {{ 'cart.itemcounter' | translate }})
+          ({{ cart?.cartItems?.length }}
+          {{
+            cart?.cartItems?.length === 1
+              ? ('cart.itemcounter' | translate)
+              : ('cart.itemcounterPlural' | translate)
+          }})
         </span>
       </h1>
     </header>
@@ -32,13 +37,24 @@
               [alt]="(languageService.languageChanged$ | async) === 'ar' ? item.name_ar : item.name"
             />
             <div class="cart-row__info">
-              <h2 class="cart-row__name">
-                {{
-                  (languageService.languageChanged$ | async) === 'ar'
-                    ? item.name_ar
-                    : item.name
-                }}
-              </h2>
+              <div class="cart-row__head">
+                <h2 class="cart-row__name">
+                  {{
+                    (languageService.languageChanged$ | async) === 'ar'
+                      ? item.name_ar
+                      : item.name
+                  }}
+                </h2>
+                <button
+                  type="button"
+                  class="cart-row__remove cart-row__remove--mobile"
+                  (click)="deleteItem(item.id)"
+                  [attr.aria-label]="'cart.delete' | translate"
+                >
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+              </div>
+
               <p
                 class="cart-row__meta"
                 *ngIf="item.optionsText || item.optionsTextAr"
@@ -49,14 +65,37 @@
                     : item.optionsText
                 }}
               </p>
-              <p class="cart-row__price-mobile">
-                {{ item.totalPrice }}
-                {{
-                  (languageService.languageChanged$ | async) === 'ar'
-                    ? item.currency_ar
-                    : item.currency
-                }}
-              </p>
+
+              <div class="cart-row__toolbar">
+                <p class="cart-row__price-mobile">
+                  {{ item.totalPrice }}
+                  {{
+                    (languageService.languageChanged$ | async) === 'ar'
+                      ? item.currency_ar
+                      : item.currency
+                  }}
+                </p>
+
+                <div class="qty qty--mobile">
+                  <button
+                    type="button"
+                    class="qty__btn"
+                    (click)="updateQuantity(item, item.quantity - 1)"
+                    aria-label="Decrease quantity"
+                  >
+                    −
+                  </button>
+                  <span class="qty__value">{{ item.quantity }}</span>
+                  <button
+                    type="button"
+                    class="qty__btn"
+                    (click)="updateQuantity(item, item.quantity + 1)"
+                    aria-label="Increase quantity"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -69,7 +108,7 @@
             }}
           </p>
 
-          <div class="qty">
+          <div class="qty qty--desktop">
             <button
               type="button"
               class="qty__btn"
@@ -100,7 +139,7 @@
             </span>
             <button
               type="button"
-              class="cart-row__remove"
+              class="cart-row__remove cart-row__remove--desktop"
               (click)="deleteItem(item.id)"
               [attr.aria-label]="'cart.delete' | translate"
             >

@@ -24,19 +24,22 @@
   *ngIf="showBranchModal"
   (click)="closeBranchModal()"
 >
-  <div class="branch-selector-card" (click)="$event.stopPropagation()">
+  <div
+    class="branch-selector-card"
+    [attr.dir]="translate.currentLang === 'ar' ? 'rtl' : 'ltr'"
+    (click)="$event.stopPropagation()"
+  >
     <div class="logo-section">
       <img src="assets/Group 73.png" alt="Bubble Hope" />
     </div>
 
     <h2 class="hero-title">
-      <span class="highlight">
+      <span class="hero-title__line">
         {{ 'branchModal.titleLine1' | translate }}
-        {{ 'branchModal.titleLine1Alt' | translate }}
+        <span class="hero-title__muted">{{ 'branchModal.titleLine1Alt' | translate }}</span>
       </span>
-      {{ 'branchModal.titleLine1End' | translate }}
-      <br />
-      {{ 'branchModal.titleLine2' | translate }}
+      <span class="hero-title__brand">{{ 'branchModal.titleLine1End' | translate }}</span>
+      <span class="hero-title__line">{{ 'branchModal.titleLine2' | translate }}</span>
     </h2>
 
     <p class="hero-subtitle">{{ 'branchModal.subtitle' | translate }}</p>
@@ -48,11 +51,11 @@
         *ngFor="let branch of branches"
         (click)="selectBranch(branch.id)"
       >
-        <span class="icon">
-          <i class="fa-solid fa-location-dot"></i>
-        </span>
-        <span>
+        <span class="branch-btn__name">
           {{ translate.currentLang === 'ar' ? branch.name_ar : branch.name }}
+        </span>
+        <span class="branch-btn__icon" aria-hidden="true">
+          <i class="fa-solid fa-location-dot"></i>
         </span>
       </button>
     </div>

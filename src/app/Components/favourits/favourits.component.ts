@@ -17,6 +17,7 @@ export class FavouritsComponent {
   usreId!: string;
   cartId!: number;
   branchId!: any;
+  loading = true;
   trackById = (_: number, x: any) => x.id ?? x.productId;
 
   constructor(
@@ -34,6 +35,7 @@ export class FavouritsComponent {
     const token = localStorage.getItem('token');
 
     if (!token) {
+      this.loading = false;
       this.router.navigate(['/home']);
       return;
     }
@@ -52,6 +54,8 @@ export class FavouritsComponent {
           this.GetProductFavouriteByUserId(this.usreId, this.branchId);
         } else if (this.branchId) {
           this.GetProductFavouriteByUserId(this.usreId, this.branchId);
+        } else {
+          this.loading = false;
         }
 
         this.branchService.currentBranch$.subscribe((branchId) => {
@@ -62,6 +66,7 @@ export class FavouritsComponent {
         });
       },
       error: () => {
+        this.loading = false;
         this.router.navigate(['/home']);
       },
     });
@@ -91,14 +96,17 @@ export class FavouritsComponent {
   }
 
   GetProductFavouriteByUserId(usreId: string, branchId: number) {
+    this.loading = true;
     this.apiService.GetProductFavouriteByUserId(usreId, branchId).subscribe({
       next: (response) => {
         this.wishlist = Array.isArray(response) ? response : response?.data || [];
         this.wishlistCountService.setCount(this.wishlist.length);
+        this.loading = false;
       },
       error: () => {
         this.wishlist = [];
         this.wishlistCountService.setCount(0);
+        this.loading = false;
       },
     });
   }

@@ -13,7 +13,7 @@ $ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
   --inner-radius: 0px;
   --inner-pad-y: 0.25rem;
   --inner-pad-x: 1.15rem;
-  --nav-logo-h: 46px;
+  --nav-logo-h: 52px;
   /* Blend with page cream at top */
   --inner-bg: transparent;
   --inner-border: transparent;
@@ -37,7 +37,7 @@ $ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
     --nav-pad-y: 0.45rem;
     --shell-max: min(1440px, calc(100% - 1.7rem));
     --inner-pad-y: 0.28rem;
-    --nav-logo-h: 52px;
+    --nav-logo-h: 58px;
   }
 
   /* Home only: slightly more equal inset */
@@ -57,7 +57,7 @@ $ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
     --inner-radius: 999px;
     --inner-pad-y: 0.65rem;
     --inner-pad-x: 1rem;
-    --nav-logo-h: 52px;
+    --nav-logo-h: 56px;
     --inner-bg: rgba(255, 251, 245, 0.92);
     --inner-border: rgba(255, 255, 255, 0.75);
     --inner-blur: 16px;
@@ -73,7 +73,7 @@ $ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
       --shell-max: min(1280px, calc(100% - 2rem));
       --inner-pad-y: 0.72rem;
       --inner-pad-x: 1.35rem;
-      --nav-logo-h: 60px;
+      --nav-logo-h: 66px;
     }
   }
 }
@@ -162,7 +162,7 @@ $ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   &--drawer img {
-    height: 48px;
+    height: 52px;
   }
 }
 
@@ -616,8 +616,8 @@ $nav-desktop-max: 1379.98px;
   position: relative;
   display: grid;
   place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border: 0;
   border-radius: 999px;
   background: transparent;
@@ -628,7 +628,7 @@ $nav-desktop-max: 1379.98px;
   padding: 0;
 
   i {
-    font-size: 1.15rem;
+    font-size: 1.2rem;
   }
 
   &:hover {

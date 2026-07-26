@@ -20,7 +20,11 @@
             />
           </div>
 
-          <nav class="menu-tabs" [attr.aria-label]="'Products.categoriesAria' | translate">
+          <nav
+            class="menu-tabs"
+            [attr.dir]="isRtl ? 'rtl' : 'ltr'"
+            [attr.aria-label]="'Products.categoriesAria' | translate"
+          >
             <button
               type="button"
               class="menu-tab"
@@ -130,7 +134,11 @@
     </div>
 
     <div class="menu-loading" *ngIf="loading">
-      <span class="menu-loading__spinner" aria-hidden="true"></span>
+      <app-brand-loader
+        size="lg"
+        [showLogo]="true"
+        [label]="'Products.loading' | translate"
+      ></app-brand-loader>
       <p>{{ 'Products.loading' | translate }}</p>
     </div>
   </div>

@@ -9,17 +9,22 @@ $scoop-h: clamp(2rem, 4vw, 2.75rem);
 :host {
   display: block;
   background: $page-cream;
+  position: relative;
+  /* Above previous home sections so the pop-out image isn't covered */
+  z-index: 3;
 }
 
 .kids-shell {
   position: relative;
   background: $page-cream;
-  overflow: hidden;
+  /* Allow kids image to pop out past the yellow scoop */
+  overflow: visible;
 }
 
 .kids-shell__scoop {
   position: relative;
-  z-index: 4;
+  /* Below the pop-out image, still above yellow for the cream curve */
+  z-index: 2;
   width: 100%;
   height: $scoop-h;
   background: $page-cream;
@@ -39,12 +44,13 @@ $scoop-h: clamp(2rem, 4vw, 2.75rem);
 
 .kids-joy {
   position: relative;
-  z-index: 1;
+  /* No z-index — so the image can stack above the cream scoop */
   width: 100%;
   background: $sunny;
   /* Extra pad so yellow fills behind scoop corners (no straight seam) */
   padding: calc(2.75rem + #{$scoop-h}) 16px calc(2.5rem + #{$scoop-h});
   margin: 0;
+  overflow: visible;
 }
 
 .kids-joy__deco {
@@ -69,7 +75,7 @@ $scoop-h: clamp(2rem, 4vw, 2.75rem);
 
 .kids-joy__wrap {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
@@ -153,6 +159,7 @@ $scoop-h: clamp(2rem, 4vw, 2.75rem);
 
 .kids-joy__media {
   position: relative;
+  z-index: 5;
   display: flex;
   justify-content: center;
   align-items: flex-end;
@@ -160,63 +167,137 @@ $scoop-h: clamp(2rem, 4vw, 2.75rem);
 
 .kids-joy__img {
   width: 100%;
-  max-width: 480px;
+  max-width: 640px;
   height: auto;
   display: block;
-  margin-top: 0;
-  margin-bottom: 0;
-  filter: drop-shadow(0 18px 24px rgba(60, 50, 20, 0.2));
+  margin-top: clamp(-4.5rem, -7vw, -2.75rem);
+  margin-bottom: -0.5rem;
+  filter: drop-shadow(0 22px 28px rgba(60, 50, 20, 0.22));
+  transform: scale(1.08);
+  transform-origin: center bottom;
 }
 
 @media (max-width: 992px) {
   .kids-joy {
-    padding: calc(2.25rem + #{$scoop-h}) 16px calc(2rem + #{$scoop-h});
+    /* Less top pad so the image can pop into the section above */
+    padding: calc(0.35rem + #{$scoop-h}) 1rem calc(1.5rem + #{$scoop-h});
   }
 
   .kids-joy__wrap {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 0.35rem;
     text-align: center;
   }
 
+  .kids-joy__media {
+    order: -1;
+    margin-top: 0;
+    z-index: 6;
+  }
+
   .kids-joy__content {
+    order: 1;
     padding-inline-start: 0;
+    text-align: center;
+    margin-top: 0.35rem;
+  }
+
+  .kids-joy__title {
+    font-size: 1.85rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.65rem;
   }
 
   .kids-joy__text {
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 1.1rem;
+    max-width: 28rem;
+    font-size: 1rem !important;
+    line-height: 1.55 !important;
   }
 
   .kids-joy__actions {
     justify-content: center;
   }
 
+  :host a.joy-btn,
+  .joy-btn {
+    font-size: 1rem !important;
+    font-family: inherit !important;
+    line-height: 1.2 !important;
+    padding-block: 0.72rem;
+    padding-inline: 1.25rem 0.7rem;
+    gap: 0.7rem;
+
+    .joy-btn__icon {
+      width: 1.9rem;
+      height: 1.9rem;
+      font-size: 0.9rem;
+    }
+  }
+
   .kids-joy__deco--bear {
-    inset-inline-start: 16px;
-    top: 40px;
-    width: 56px;
+    inset-inline-start: 0.65rem;
+    top: auto;
+    bottom: 38%;
+    width: 2.5rem;
+    opacity: 0.45;
   }
 
   .kids-joy__deco--horse {
-    inset-inline-end: 16px;
-    bottom: 44px;
-    width: 58px;
+    inset-inline-end: 0.65rem;
+    bottom: 1.15rem;
+    width: 2.65rem;
+    opacity: 0.45;
   }
 
   .kids-joy__img {
-    max-width: 340px;
-    margin-top: 8px;
-    margin-bottom: 0;
+    max-width: min(100%, 360px);
+    /* Peek into the section above */
+    margin-top: calc(-1 * (#{$scoop-h} + 3.25rem));
+    margin-bottom: 0.25rem;
+    transform: scale(1.02);
+    transform-origin: center top;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .kids-joy {
+    padding: calc(0.2rem + #{$scoop-h}) 0.85rem calc(1.35rem + #{$scoop-h});
+  }
+
+  .kids-joy__title {
+    font-size: 1.7rem !important;
+  }
+
+  .kids-joy__text {
+    font-size: 0.95rem !important;
+    margin-bottom: 1rem;
+    max-width: 22rem;
+  }
+
+  :host a.joy-btn,
+  .joy-btn {
+    font-size: 0.95rem !important;
+    padding-block: 0.68rem;
+    padding-inline: 1.15rem 0.65rem;
+  }
+
+  .kids-joy__img {
+    max-width: min(100%, 310px);
+    margin-top: calc(-1 * (#{$scoop-h} + 2.75rem));
+    margin-bottom: 0.15rem;
+  }
+
+  .kids-joy__deco--bear,
+  .kids-joy__deco--horse {
+    width: 2.15rem;
   }
 }
 
 @media (max-width: 768px) {
-  .kids-joy__title {
-    font-size: 32px !important;
-  }
-
   .kids-joy__deco {
-    opacity: 0.5;
+    opacity: 0.42;
   }
 }

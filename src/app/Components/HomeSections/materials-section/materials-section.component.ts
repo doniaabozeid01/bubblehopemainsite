@@ -6,15 +6,26 @@ import {
   HostListener,
   NgZone,
   OnDestroy,
+  OnInit,
   ViewChild,
 } from '@angular/core';
+import { CarouselComponent, OwlOptions } from 'ngx-owl-carousel-o';
+import { ApiService } from '../../../services/api.service';
+import { BranchService } from '../../../services/branch.service';
 import { LanguageService } from '../../../services/language.service';
 
 export interface MaterialPillar {
   num: string;
   image: string;
-  titleKey: string;
-  descKey: string;
+  /** Up to 4 product shots from the category — shown as one collage body */
+  images: string[];
+  title: string;
+  titleAr: string;
+  desc: string;
+  descAr: string;
+  category: string;
+  categoryAr: string;
+  categoryId: number | null;
 }
 
 @Component({
@@ -22,8 +33,9 @@ export interface MaterialPillar {
   templateUrl: './materials-section.component.html',
   styleUrls: ['./materials-section.component.scss'],
 })
-export class MaterialsSectionComponent implements AfterViewInit, OnDestroy {
+export class MaterialsSectionComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('sectionRef', { static: true }) sectionRef!: ElementRef<HTMLElement>;
+  @ViewChild('materialsCarousel') materialsCarousel?: CarouselComponent;
 
   progress = 0;
   isDesktop = false;
@@ -35,51 +47,86 @@ export class MaterialsSectionComponent implements AfterViewInit, OnDestroy {
     width: '100%',
   };
 
-  readonly pillars: MaterialPillar[] = [
-    {
-      num: '01',
-      image: '../../../../assets/image carousel/coconut.png',
-      titleKey: 'materials.pillars.coconut.title',
-      descKey: 'materials.pillars.coconut.desc',
-    },
-    {
-      num: '02',
-      image: '../../../../assets/image carousel/kiwi.png',
-      titleKey: 'materials.pillars.kiwi.title',
-      descKey: 'materials.pillars.kiwi.desc',
-    },
-    {
-      num: '03',
-      image: '../../../../assets/image carousel/lychee (1).png',
-      titleKey: 'materials.pillars.lychee.title',
-      descKey: 'materials.pillars.lychee.desc',
-    },
-    {
-      num: '04',
-      image: '../../../../assets/image carousel/blue berry (1).png',
-      titleKey: 'materials.pillars.blueberry.title',
-      descKey: 'materials.pillars.blueberry.desc',
-    },
-    {
-      num: '05',
-      image: '../../../../assets/image carousel/special mango.png',
-      titleKey: 'materials.pillars.mango.title',
-      descKey: 'materials.pillars.mango.desc',
-    },
+  mobileOptions: OwlOptions = {
+    loop: false,
+    center: true,
+    dots: true,
+    nav: false,
+    margin: 14,
+    mouseDrag: true,
+    touchDrag: true,
+    pullDrag: true,
+    rtl: false,
+    items: 1,
+    stagePadding: 18,
+  };
+
+  /** Preferred display order when the API returns these names. */
+  private readonly categoryOrder = [
+    'Milk Tea',
+    'Matcha Classic',
+    'Our Signature',
+    'Mojito',
+    'Ice Tea',
+    'Hot Coffee',
+    'Iced Coffee',
+    'Frappe&Smothie',
+    'Soft Drinks',
+    'seasonal drinks',
   ];
+
+  /** Keep the home section short — only the first 5 categories. */
+  private readonly maxPillars = 5;
+  /** How many drink shots to cluster per category collage. */
+  private readonly maxImagesPerPillar = 3;
+
+  pillars: MaterialPillar[] = this.buildFallbackPillars();
 
   private mediaQuery?: MediaQueryList;
   private mediaListener?: (e: MediaQueryListEvent) => void;
   private raf = 0;
+  private langSub?: { unsubscribe: () => void };
 
   constructor(
     public languageService: LanguageService,
+    private api: ApiService,
+    private branchService: BranchService,
     private ngZone: NgZone,
     private cdr: ChangeDetectorRef
   ) {}
 
   get translateVw(): number {
     return this.progress * (this.pillars.length - 1) * 100;
+  }
+
+  get isAr(): boolean {
+    return document.documentElement.dir === 'rtl';
+  }
+
+  pillarTitle(p: MaterialPillar): string {
+    return this.isAr ? p.titleAr || p.title : p.title || p.titleAr;
+  }
+
+  pillarDesc(p: MaterialPillar): string {
+    return this.isAr ? p.descAr || p.desc : p.desc || p.descAr;
+  }
+
+  pillarCategory(p: MaterialPillar): string {
+    return this.isAr ? p.categoryAr || p.category : p.category || p.categoryAr;
+  }
+
+  ngOnInit(): void {
+    this.syncMobileRtl();
+    this.langSub = this.languageService.languageChanged$.subscribe(() => {
+      this.syncMobileRtl();
+      this.cdr.markForCheck();
+    });
+
+    const branchId = this.branchService.getCurrentBranch() ?? 2;
+    this.loadPillars(branchId);
+    this.branchService.currentBranch$.subscribe((id) => {
+      if (id) this.loadPillars(id);
+    });
   }
 
   ngAfterViewInit(): void {
@@ -104,12 +151,224 @@ export class MaterialsSectionComponent implements AfterViewInit, OnDestroy {
       this.mediaQuery.removeEventListener('change', this.mediaListener);
     }
     if (this.raf) cancelAnimationFrame(this.raf);
+    this.langSub?.unsubscribe();
+  }
+
+  private syncMobileRtl(): void {
+    this.mobileOptions = {
+      ...this.mobileOptions,
+      rtl: this.isAr,
+    };
   }
 
   @HostListener('window:scroll')
   @HostListener('window:resize')
   onScroll(): void {
     this.queueUpdate();
+  }
+
+  private loadPillars(branchId: number): void {
+    this.api.GetAllProducts(branchId).subscribe({
+      next: (res) => {
+        const next = this.pickAcrossCategories(res);
+        if (next.length >= 1) {
+          this.pillars = next;
+          this.cdr.markForCheck();
+          this.queueUpdate();
+        }
+      },
+      error: () => {
+        this.pillars = this.buildFallbackPillars();
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  private pickAcrossCategories(payload: any): MaterialPillar[] {
+    const groups = Array.isArray(payload) ? payload : [];
+    const byName = new Map<string, any>();
+    for (const g of groups) {
+      const key = String(g?.categoryName || '').trim().toLowerCase();
+      if (key) byName.set(key, g);
+    }
+
+    const ordered: any[] = [];
+    const seen = new Set<string>();
+
+    for (const name of this.categoryOrder) {
+      const g = byName.get(name.toLowerCase());
+      if (g) {
+        ordered.push(g);
+        seen.add(name.toLowerCase());
+      }
+    }
+
+    // Any extra categories from the API still get one product each.
+    for (const g of groups) {
+      const key = String(g?.categoryName || '').trim().toLowerCase();
+      if (key && !seen.has(key)) ordered.push(g);
+    }
+
+    const picked: MaterialPillar[] = [];
+    let index = 1;
+
+    for (const group of ordered) {
+      if (picked.length >= this.maxPillars) break;
+
+      const catName = group?.categoryName || 'Category';
+      const products = (Array.isArray(group?.products) ? group.products : []).filter(
+        (p: any) => !!p?.imagePath
+      );
+      if (!products.length) continue;
+
+      const images = this.uniqueImages(
+        products.map((p: any) => p.imagePath),
+        this.maxImagesPerPillar
+      );
+      const product = products[0];
+
+      picked.push({
+        num: String(index).padStart(2, '0'),
+        image: images[0],
+        images,
+        title: product.name || catName,
+        titleAr: product.name_ar || product.name || catName,
+        desc:
+          this.cleanDesc(product.ingredients) ||
+          `A signature pick from our ${catName} menu.`,
+        descAr:
+          this.cleanDesc(product.ingredients_ar) ||
+          `اختيار مميز من قائمة ${group?.categoryName_ar || catName}.`,
+        category: catName,
+        categoryAr: group?.categoryName_ar || catName,
+        categoryId: Number(group?.categoryId ?? product?.categoryId ?? product?.category?.id) || null,
+      });
+      index += 1;
+    }
+
+    return picked;
+  }
+
+  private uniqueImages(paths: string[], limit: number): string[] {
+    const out: string[] = [];
+    const seen = new Set<string>();
+    for (const path of paths) {
+      const key = String(path || '').trim();
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      out.push(key);
+      if (out.length >= limit) break;
+    }
+    return out;
+  }
+
+  private cleanDesc(value?: string): string {
+    if (!value) return '';
+    return String(value).replace(/\s+/g, ' ').replace(/\.\.+/g, '.').trim();
+  }
+
+  private buildFallbackPillars(): MaterialPillar[] {
+    const withImages = (
+      base: Omit<MaterialPillar, 'images'>,
+      extras: string[] = []
+    ): MaterialPillar => ({
+      ...base,
+      images: this.uniqueImages([base.image, ...extras], this.maxImagesPerPillar),
+    });
+
+    return [
+      withImages(
+        {
+          num: '01',
+          image:
+            'https://res.cloudinary.com/dvo2qoi4s/image/upload/v1772444609/categories/z1g1g18lmcbqeffqduzv.png',
+          title: 'Brown Sugar Milk Tea Boba',
+          titleAr: 'براون شوجر ميلك تي بوبا',
+          desc: 'Creamy black tea with fresh brown sugar boba.',
+          descAr: 'شاي أسود كريمي مع حبوب براون شوجر فريش.',
+          category: 'Milk Tea',
+          categoryAr: 'ميلك تي',
+          categoryId: 8,
+        },
+        [
+          'https://res.cloudinary.com/dvo2qoi4s/image/upload/v1772445418/categories/spsn4omownb5l1atmtwj.png',
+          'https://res.cloudinary.com/dvo2qoi4s/image/upload/v1772445009/categories/pbwyere0xxw9agj99s9k.png',
+          'https://res.cloudinary.com/dvo2qoi4s/image/upload/v1772444895/categories/a6yylqur6ifgnlx9mp02.png',
+        ]
+      ),
+      withImages(
+        {
+          num: '02',
+          image:
+            'https://res.cloudinary.com/dvo2qoi4s/image/upload/v1772445009/categories/pbwyere0xxw9agj99s9k.png',
+          title: 'Matcha Mango Boba',
+          titleAr: 'ماتشا مانجو بوبا',
+          desc: 'Earthy matcha layered with bright mango and chewy pearls.',
+          descAr: 'ماتشا غني مع مانجو منعشة ولآلئ مطاطية.',
+          category: 'Matcha Classic',
+          categoryAr: 'ماتشا كلاسيك',
+          categoryId: 4,
+        },
+        [
+          'https://res.cloudinary.com/dvo2qoi4s/image/upload/v1772444609/categories/z1g1g18lmcbqeffqduzv.png',
+          'https://res.cloudinary.com/dvo2qoi4s/image/upload/v1772444875/categories/tnnt8qxl1ok02yq2gynl.png',
+        ]
+      ),
+      withImages(
+        {
+          num: '03',
+          image:
+            'https://res.cloudinary.com/dvo2qoi4s/image/upload/v1772445418/categories/spsn4omownb5l1atmtwj.png',
+          title: 'Chocolate Lava Boba',
+          titleAr: 'شوكولاتة لافا بوبا',
+          desc: 'Rich chocolate milk tea with melting chocolate notes.',
+          descAr: 'ميلك تي بالشوكولاتة الغنية مع لمسة شوكولاتة سايحة.',
+          category: 'Our Signature',
+          categoryAr: 'توقيعنا',
+          categoryId: 2,
+        },
+        [
+          'https://res.cloudinary.com/dvo2qoi4s/image/upload/v1772444609/categories/z1g1g18lmcbqeffqduzv.png',
+          'https://res.cloudinary.com/dvo2qoi4s/image/upload/v1772445309/categories/hwggjyyy3azfxtfg1b5x.png',
+        ]
+      ),
+      withImages(
+        {
+          num: '04',
+          image:
+            'https://res.cloudinary.com/dvo2qoi4s/image/upload/v1772444895/categories/a6yylqur6ifgnlx9mp02.png',
+          title: 'Mix Berries Mojito',
+          titleAr: 'مكس بيريز موهيتو',
+          desc: 'A refreshing berries mojito made for sunny sips.',
+          descAr: 'موهيتو توت منعش مثالي لأي وقت.',
+          category: 'Mojito',
+          categoryAr: 'موهيتو',
+          categoryId: 5,
+        },
+        [
+          'https://res.cloudinary.com/dvo2qoi4s/image/upload/v1772444875/categories/tnnt8qxl1ok02yq2gynl.png',
+          'https://res.cloudinary.com/dvo2qoi4s/image/upload/v1772445009/categories/pbwyere0xxw9agj99s9k.png',
+        ]
+      ),
+      withImages(
+        {
+          num: '05',
+          image:
+            'https://res.cloudinary.com/dvo2qoi4s/image/upload/v1772444875/categories/tnnt8qxl1ok02yq2gynl.png',
+          title: 'Peach Black Tea',
+          titleAr: 'شاي أسود بالخوخ',
+          desc: 'Iced black tea with ripe peach flavor.',
+          descAr: 'آيس تي أسود بنكهة الخوخ الناضج.',
+          category: 'Ice Tea',
+          categoryAr: 'آيس تي',
+          categoryId: 3,
+        },
+        [
+          'https://res.cloudinary.com/dvo2qoi4s/image/upload/v1772444895/categories/a6yylqur6ifgnlx9mp02.png',
+          'https://res.cloudinary.com/dvo2qoi4s/image/upload/v1772444609/categories/z1g1g18lmcbqeffqduzv.png',
+        ]
+      ),
+    ];
   }
 
   private queueUpdate(): void {
@@ -121,11 +380,6 @@ export class MaterialsSectionComponent implements AfterViewInit, OnDestroy {
     });
   }
 
-  /**
-   * Same scroll-progress math as the React Materials section,
-   * plus a JS sticky (fixed) because html/body overflow-x: clip
-   * breaks CSS position: sticky.
-   */
   private updateFromScroll(): void {
     const el = this.sectionRef?.nativeElement;
     if (!el) return;
@@ -138,7 +392,6 @@ export class MaterialsSectionComponent implements AfterViewInit, OnDestroy {
 
     let nextSticky: Record<string, string>;
     if (rect.top > 0) {
-      // Haven't reached section yet
       nextSticky = {
         position: 'absolute',
         top: '0',
@@ -147,7 +400,6 @@ export class MaterialsSectionComponent implements AfterViewInit, OnDestroy {
         width: '100%',
       };
     } else if (rect.bottom <= vh) {
-      // Past the section — pin panel to section bottom
       nextSticky = {
         position: 'absolute',
         top: 'auto',
@@ -157,7 +409,6 @@ export class MaterialsSectionComponent implements AfterViewInit, OnDestroy {
         width: '100%',
       };
     } else {
-      // Inside section — lock panel to viewport (sticky behavior)
       nextSticky = {
         position: 'fixed',
         top: '0',

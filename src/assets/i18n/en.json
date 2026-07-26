@@ -32,7 +32,7 @@
     "titleLine1Alt": "drains you",
     "titleLine1End": "Bubble Hope",
     "titleLine2": "will boost you",
-    "subtitle": "Pick your branch and leave the rest to us! ✨",
+    "subtitle": "Pick your branch and leave the rest to us!",
     "branches": {
       "ahram": "Hadayek Al Ahram",
       "dahshour": "Fuel Up Station",
@@ -69,28 +69,29 @@
         "bestSellersBadgeSignature": "Signature"
     },
     "materials": {
-        "eyebrow": "Crafted with care",
+        "eyebrow": "From across the menu",
         "title": "What Goes Into Every Cup",
+        "viewCategory": "View category",
         "pillars": {
-            "coconut": {
-                "title": "Coconut Concentrate",
-                "desc": "Rich coconut concentrated juice — creamy tropical depth for signature Bubble Hope drinks."
+            "brownSugar": {
+                "title": "Brown Sugar Milk Tea Boba",
+                "desc": "Creamy black tea with fresh brown sugar boba — the cup that started it all."
             },
-            "kiwi": {
-                "title": "Kiwi Concentrate",
-                "desc": "Bright kiwi fruit concentrate with a fresh zing that wakes up every sip."
+            "spanishLatte": {
+                "title": "Spanish Latte Boba",
+                "desc": "Espresso, sweetened condensed milk, and chewy boba in one smooth signature sip."
             },
-            "lychee": {
-                "title": "Lychee Concentrate",
-                "desc": "Delicate lychee concentrate — floral, sweet, and made for refreshing fruit teas."
+            "chocolateLava": {
+                "title": "Chocolate Lava Boba",
+                "desc": "Rich chocolate milk tea with melting chocolate notes and classic Bubble Hope pearls."
             },
-            "blueberry": {
-                "title": "Blueberry Concentrate",
-                "desc": "Bold blueberry concentrate packed with berry flavor for vibrant, colorful cups."
+            "mangoColada": {
+                "title": "Mango Colada Boba",
+                "desc": "Tropical mango brightness with creamy depth — sunny, refreshing, and full of fruit."
             },
-            "mango": {
-                "title": "Special Mango Concentrate",
-                "desc": "Ripe special mango concentrate — sweet, tropical, and made for sunny Bubble Hope cups."
+            "taro": {
+                "title": "Taro Milk Tea",
+                "desc": "Velvety taro milk tea with fresh boba pearls — soft, purple, and always a favorite."
             }
         }
     },
@@ -157,8 +158,10 @@
         "slogan": "Everything you crave… saved at Bubble Hope!",
         "ExploreProducts": "Explore Products",
         "WishListTitle": "WishList",
-        "item": "Item",
-        "price": "Price"
+        "item": "item",
+        "items": "items",
+        "price": "Price",
+        "loading": "Loading wishlist…"
     },
     "cart": {
         "slogan": "Ready to check out? The flavor’s calling!",
@@ -166,6 +169,7 @@
         "checkout": "Checkout",
         "item": "Item",
         "itemcounter": "Item",
+        "itemcounterPlural": "Items",
         "price": "Price",
         "quantity": "Quantity",
         "total": "Total",

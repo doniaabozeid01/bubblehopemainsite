@@ -6,7 +6,7 @@
   [style.height]="isDesktop ? pillars.length * 100 + 'vh' : null"
   [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'"
 >
-  <!-- Desktop: tall section + sticky panel (same as React) -->
+  <!-- Desktop: tall section + sticky panel -->
   <div class="materials__sticky" *ngIf="isDesktop" [ngStyle]="stickyStyles">
     <header class="materials__header">
       <p class="materials__eyebrow">{{ 'materials.eyebrow' | translate }}</p>
@@ -27,13 +27,33 @@
         <article class="materials__panel" *ngFor="let pillar of pillars; let i = index">
           <span class="materials__watermark" aria-hidden="true">{{ pillar.num }}</span>
           <div class="materials__grid" [class.materials__grid--flip]="i % 2 === 1">
-            <div class="materials__media">
-              <img [src]="pillar.image" [alt]="pillar.titleKey | translate" loading="lazy" />
+            <div class="materials__media" [class.materials__media--tilt-b]="i % 2 === 1">
+              <div
+                class="materials__collage"
+                [attr.data-count]="pillar.images.length"
+              >
+                <img
+                  *ngFor="let src of pillar.images; let imgI = index"
+                  [src]="src"
+                  [alt]="imgI === 0 ? pillarTitle(pillar) : ''"
+                  [attr.aria-hidden]="imgI === 0 ? null : true"
+                  loading="lazy"
+                />
+              </div>
             </div>
             <div class="materials__copy">
+              <span class="materials__category">{{ pillarCategory(pillar) }}</span>
               <span class="materials__num">{{ pillar.num }}</span>
-              <h3 class="materials__panel-title">{{ pillar.titleKey | translate }}</h3>
-              <p class="materials__panel-desc">{{ pillar.descKey | translate }}</p>
+              <h3 class="materials__panel-title">{{ pillarTitle(pillar) }}</h3>
+              <p class="materials__panel-desc">{{ pillarDesc(pillar) }}</p>
+              <a
+                *ngIf="pillar.categoryId"
+                class="materials__cta"
+                [routerLink]="['/products', pillar.categoryId]"
+              >
+                {{ 'materials.viewCategory' | translate }}
+                <i class="bi bi-arrow-right" aria-hidden="true"></i>
+              </a>
             </div>
           </div>
         </article>
@@ -45,7 +65,7 @@
     </div>
   </div>
 
-  <!-- Mobile stack -->
+  <!-- Mobile: compact carousel (no long scroll) -->
   <div class="materials__stack" *ngIf="!isDesktop">
     <header class="materials__header materials__header--stack">
       <p class="materials__eyebrow">{{ 'materials.eyebrow' | translate }}</p>
@@ -53,20 +73,71 @@
       <div class="materials__rule" aria-hidden="true"></div>
     </header>
 
-    <div class="materials__stack-list">
-      <article class="materials__card" *ngFor="let pillar of pillars">
-        <span class="materials__watermark materials__watermark--sm" aria-hidden="true">
-          {{ pillar.num }}
-        </span>
-        <div class="materials__media materials__media--stack">
-          <img [src]="pillar.image" [alt]="pillar.titleKey | translate" loading="lazy" />
-        </div>
-        <div class="materials__copy">
-          <span class="materials__num">{{ pillar.num }}</span>
-          <h3 class="materials__panel-title">{{ pillar.titleKey | translate }}</h3>
-          <p class="materials__panel-desc">{{ pillar.descKey | translate }}</p>
-        </div>
-      </article>
+    <div class="materials__mobile-actions" *ngIf="pillars.length > 1">
+      <button
+        type="button"
+        class="materials__nav-btn"
+        (click)="materialsCarousel?.prev()"
+        [attr.aria-label]="'Previous'"
+      >
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </button>
+      <button
+        type="button"
+        class="materials__nav-btn materials__nav-btn--primary"
+        (click)="materialsCarousel?.next()"
+        [attr.aria-label]="'Next'"
+      >
+        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div class="materials__mobile-track">
+      <owl-carousel-o
+        *ngIf="pillars.length"
+        #materialsCarousel
+        class="materials-carousel"
+        [options]="mobileOptions"
+      >
+        <ng-template carouselSlide *ngFor="let pillar of pillars; let i = index">
+          <article class="materials__card">
+            <span class="materials__watermark materials__watermark--sm" aria-hidden="true">
+              {{ pillar.num }}
+            </span>
+            <div
+              class="materials__media materials__media--stack"
+              [class.materials__media--tilt-b]="i % 2 === 1"
+            >
+              <div
+                class="materials__collage materials__collage--stack"
+                [attr.data-count]="pillar.images.length"
+              >
+                <img
+                  *ngFor="let src of pillar.images; let imgI = index"
+                  [src]="src"
+                  [alt]="imgI === 0 ? pillarTitle(pillar) : ''"
+                  [attr.aria-hidden]="imgI === 0 ? null : true"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+            <div class="materials__copy">
+              <span class="materials__category">{{ pillarCategory(pillar) }}</span>
+              <span class="materials__num">{{ pillar.num }}</span>
+              <h3 class="materials__panel-title">{{ pillarTitle(pillar) }}</h3>
+              <p class="materials__panel-desc">{{ pillarDesc(pillar) }}</p>
+              <a
+                *ngIf="pillar.categoryId"
+                class="materials__cta"
+                [routerLink]="['/products', pillar.categoryId]"
+              >
+                {{ 'materials.viewCategory' | translate }}
+                <i class="bi bi-arrow-right" aria-hidden="true"></i>
+              </a>
+            </div>
+          </article>
+        </ng-template>
+      </owl-carousel-o>
     </div>
   </div>
 </section>
