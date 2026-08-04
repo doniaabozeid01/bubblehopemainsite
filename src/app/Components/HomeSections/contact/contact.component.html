@@ -12,20 +12,23 @@
       <div class="contact-box mx-auto">
         <form [formGroup]="contactForm" (ngSubmit)="submit()">
           <div class="row g-3 mb-3">
-            <div class="col-md-6">
+            <div class="col-12 col-md-6">
               <input
                 formControlName="fullName"
                 type="text"
                 class="form-control border-blue"
-                placeholder="{{ 'auth.FullName' | translate }}"
+                [placeholder]="'auth.FullName' | translate"
+                autocomplete="name"
               />
             </div>
-            <div class="col-md-6">
+            <div class="col-12 col-md-6">
               <input
                 formControlName="email"
                 type="email"
                 class="form-control border-blue"
-                placeholder="{{ 'auth.email' | translate }}"
+                [placeholder]="'auth.email' | translate"
+                autocomplete="email"
+                inputmode="email"
               />
             </div>
           </div>
@@ -35,11 +38,11 @@
               formControlName="message"
               class="form-control border-blue"
               rows="5"
-              placeholder="{{ 'home.contactMsg' | translate }}"
+              [placeholder]="'home.contactMsg' | translate"
             ></textarea>
           </div>
 
-          <div class="text-center">
+          <div class="contact-actions">
             <button
               type="submit"
               class="contact-submit btn-with-loader"

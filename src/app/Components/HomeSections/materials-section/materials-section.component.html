@@ -3,7 +3,7 @@
   id="quality"
   class="materials"
   [class.materials--desktop]="isDesktop"
-  [style.height]="isDesktop ? pillars.length * 100 + 'vh' : null"
+  [style.height]="isDesktop ? sectionHeightVh + 'vh' : null"
   [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'"
 >
   <!-- Desktop: tall section + sticky panel -->
@@ -16,6 +16,7 @@
 
     <div class="materials__viewport">
       <div
+        #trackRef
         class="materials__track"
         [style.width]="pillars.length * 100 + 'vw'"
         [style.transform]="
@@ -24,7 +25,12 @@
             : 'translate3d(-' + translateVw + 'vw, 0, 0)'
         "
       >
-        <article class="materials__panel" *ngFor="let pillar of pillars; let i = index">
+        <article
+          class="materials__panel"
+          *ngFor="let pillar of pillars; let i = index"
+          [class.materials__panel--active]="i === activeIndex"
+          [ngStyle]="panelStyle(i)"
+        >
           <span class="materials__watermark" aria-hidden="true">{{ pillar.num }}</span>
           <div class="materials__grid" [class.materials__grid--flip]="i % 2 === 1">
             <div class="materials__media" [class.materials__media--tilt-b]="i % 2 === 1">

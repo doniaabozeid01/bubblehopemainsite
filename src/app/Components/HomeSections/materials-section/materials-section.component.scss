@@ -99,7 +99,8 @@ $muted: #64748b;
   height: 100%;
   align-items: center;
   will-change: transform;
-  transition: transform 0.08s linear;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .materials__panel {
@@ -112,7 +113,14 @@ $muted: #64748b;
   height: 100%;
   padding: 0.75rem clamp(1.75rem, 6vw, 5rem) 3.5rem;
   box-sizing: border-box;
+  transform-origin: center center;
+  will-change: transform, opacity;
 }
+
+.materials__panel--active {
+  z-index: 2;
+}
+
 
 .materials__watermark {
   position: absolute;
@@ -455,8 +463,8 @@ $muted: #64748b;
 .materials__progress-fill {
   height: 100%;
   border-radius: 999px;
-  background: $orange;
-  transition: width 0.08s linear;
+  background: linear-gradient(90deg, $orange 0%, #ff9a4a 55%, $teal 100%);
+  will-change: width;
 }
 
 .materials__stack {

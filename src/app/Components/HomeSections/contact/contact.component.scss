@@ -12,6 +12,16 @@ $scoop-h: clamp(2.5rem, 4.5vw, 3.25rem);
   position: relative;
   background: $page-cream;
   overflow: visible;
+
+  h2,
+  p,
+  span,
+  button,
+  input,
+  textarea {
+    font-size: inherit;
+    letter-spacing: normal;
+  }
 }
 
 .contact-section {
@@ -40,6 +50,7 @@ $scoop-h: clamp(2.5rem, 4.5vw, 3.25rem);
   font-size: clamp(2rem, 4vw, 3rem) !important;
   font-weight: 800;
   color: #1e293b;
+  line-height: 1.15;
 }
 
 .contact-subtitle {
@@ -48,6 +59,7 @@ $scoop-h: clamp(2.5rem, 4.5vw, 3.25rem);
   font-size: 1.05rem !important;
   font-weight: 600;
   color: #64748b;
+  line-height: 1.5;
 }
 
 .contact-box {
@@ -60,10 +72,20 @@ $scoop-h: clamp(2.5rem, 4.5vw, 3.25rem);
 }
 
 .border-blue {
-  border: 1px solid rgba(255, 115, 4, 0.22);
+  border: 1.5px solid rgba(255, 115, 4, 0.22);
   background-color: rgba(255, 251, 245, 0.75);
   border-radius: 1rem;
   padding: 0.85rem 1rem;
+  font-size: 0.98rem !important;
+  color: #1e293b;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+
+  &::placeholder {
+    color: rgba(100, 116, 139, 0.85);
+  }
 
   &:focus {
     border-color: $footer-orange;
@@ -72,17 +94,30 @@ $scoop-h: clamp(2.5rem, 4.5vw, 3.25rem);
   }
 }
 
+textarea.border-blue {
+  min-height: 8.5rem;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.contact-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.25rem;
+}
+
 .contact-submit {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: 10rem;
+  min-height: 3rem;
   border: 0;
   border-radius: 999px;
   padding: 0.85rem 1.75rem;
   background: $footer-orange;
-  color: #fff;
-  font-size: 1.05rem;
+  color: #fff !important;
+  font-size: 1.05rem !important;
   font-weight: 700;
   font-family: inherit;
   cursor: pointer;
@@ -101,10 +136,77 @@ $scoop-h: clamp(2.5rem, 4.5vw, 3.25rem);
 
 @media (max-width: 768px) {
   .contact-section {
-    padding: 1.25rem 1rem calc(2.5rem + #{$scoop-h});
+    padding: 1.1rem 0.85rem calc(2.25rem + #{$scoop-h});
+  }
+
+  .contact-inner {
+    width: min(100%, 100%);
+  }
+
+  .contact-eyebrow {
+    font-size: 0.72rem !important;
+    letter-spacing: 0.16em;
+  }
+
+  .contact-title {
+    margin-top: 0.45rem;
+    font-size: 1.65rem !important;
+  }
+
+  .contact-subtitle {
+    margin: 0.55rem auto 1.25rem;
+    font-size: 0.92rem !important;
+    line-height: 1.45;
+    padding-inline: 0.25rem;
   }
 
   .contact-box {
-    padding: 1.25rem 1rem;
+    padding: 1.1rem 0.95rem 1.15rem;
+    border-radius: 1.35rem;
+    box-shadow: 0 12px 28px -20px rgba(15, 23, 42, 0.28);
+  }
+
+  .border-blue {
+    min-height: 3.1rem;
+    padding: 0.9rem 0.95rem;
+    border-radius: 14px;
+    font-size: 1rem !important;
+    background: #f7f7f8;
+    border-color: rgba(0, 0, 0, 0.1);
+
+    &:focus {
+      background: #fff;
+      border-color: rgba(255, 115, 4, 0.55);
+      box-shadow: 0 0 0 4px rgba(255, 115, 4, 0.12);
+    }
+  }
+
+  textarea.border-blue {
+    min-height: 7.5rem;
+    resize: none;
+  }
+
+  .contact-actions {
+    margin-top: 0.35rem;
+  }
+
+  .contact-submit {
+    width: 100%;
+    min-width: 0;
+    min-height: 3.15rem;
+    padding: 0.9rem 1.1rem;
+    border-radius: 14px;
+    font-size: 1rem !important;
+    font-weight: 800;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .contact-title {
+    font-size: 1.5rem !important;
+  }
+
+  .contact-box {
+    padding: 1rem 0.85rem 1.05rem;
   }
 }

@@ -35,8 +35,10 @@ export interface MaterialPillar {
 })
 export class MaterialsSectionComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('sectionRef', { static: true }) sectionRef!: ElementRef<HTMLElement>;
+  @ViewChild('trackRef') trackRef?: ElementRef<HTMLElement>;
   @ViewChild('materialsCarousel') materialsCarousel?: CarouselComponent;
 
+  /** Soft display progress (lerped) — drives transform + bar. */
   progress = 0;
   isDesktop = false;
   stickyStyles: Record<string, string> = {
@@ -59,6 +61,7 @@ export class MaterialsSectionComponent implements OnInit, AfterViewInit, OnDestr
     rtl: false,
     items: 1,
     stagePadding: 18,
+    smartSpeed: 550,
   };
 
   /** Preferred display order when the API returns these names. */
@@ -79,13 +82,22 @@ export class MaterialsSectionComponent implements OnInit, AfterViewInit, OnDestr
   private readonly maxPillars = 5;
   /** How many drink shots to cluster per category collage. */
   private readonly maxImagesPerPillar = 3;
+  /** Soft follow — lower = silkier / more lag (video-like). */
+  private readonly lerpFactor = 0.085;
+  /** Extra scroll runway per panel for a calmer pace. */
+  private readonly vhPerPanel = 1.15;
 
   pillars: MaterialPillar[] = this.buildFallbackPillars();
 
   private mediaQuery?: MediaQueryList;
   private mediaListener?: (e: MediaQueryListEvent) => void;
   private raf = 0;
+  private lerpRaf = 0;
+  private snapTimer: ReturnType<typeof setTimeout> | null = null;
+  private targetProgress = 0;
+  private displayProgress = 0;
   private langSub?: { unsubscribe: () => void };
+  private snapping = false;
 
   constructor(
     public languageService: LanguageService,
@@ -95,12 +107,21 @@ export class MaterialsSectionComponent implements OnInit, AfterViewInit, OnDestr
     private cdr: ChangeDetectorRef
   ) {}
 
+  get sectionHeightVh(): number {
+    return Math.max(1, this.pillars.length) * this.vhPerPanel * 100;
+  }
+
   get translateVw(): number {
-    return this.progress * (this.pillars.length - 1) * 100;
+    return this.progress * Math.max(0, this.pillars.length - 1) * 100;
   }
 
   get isAr(): boolean {
     return document.documentElement.dir === 'rtl';
+  }
+
+  get activeIndex(): number {
+    const n = Math.max(1, this.pillars.length - 1);
+    return Math.round(this.progress * n);
   }
 
   pillarTitle(p: MaterialPillar): string {
@@ -113,6 +134,18 @@ export class MaterialsSectionComponent implements OnInit, AfterViewInit, OnDestr
 
   pillarCategory(p: MaterialPillar): string {
     return this.isAr ? p.categoryAr || p.category : p.category || p.categoryAr;
+  }
+
+  panelStyle(index: number): Record<string, string> {
+    const n = Math.max(1, this.pillars.length - 1);
+    const exact = this.progress * n;
+    const dist = Math.min(1.25, Math.abs(index - exact));
+    const opacity = String(1 - dist * 0.28);
+    const scale = String(1 - dist * 0.035);
+    return {
+      opacity,
+      transform: `scale(${scale})`,
+    };
   }
 
   ngOnInit(): void {
@@ -136,7 +169,10 @@ export class MaterialsSectionComponent implements OnInit, AfterViewInit, OnDestr
       this.isDesktop = e.matches;
       if (!e.matches) {
         this.progress = 0;
+        this.targetProgress = 0;
+        this.displayProgress = 0;
         this.stickyStyles = {};
+        this.stopLerp();
       }
       this.cdr.detectChanges();
       this.queueUpdate();
@@ -151,6 +187,8 @@ export class MaterialsSectionComponent implements OnInit, AfterViewInit, OnDestr
       this.mediaQuery.removeEventListener('change', this.mediaListener);
     }
     if (this.raf) cancelAnimationFrame(this.raf);
+    this.stopLerp();
+    if (this.snapTimer) clearTimeout(this.snapTimer);
     this.langSub?.unsubscribe();
   }
 
@@ -165,6 +203,7 @@ export class MaterialsSectionComponent implements OnInit, AfterViewInit, OnDestr
   @HostListener('window:resize')
   onScroll(): void {
     this.queueUpdate();
+    this.scheduleSnap();
   }
 
   private loadPillars(branchId: number): void {
@@ -203,7 +242,6 @@ export class MaterialsSectionComponent implements OnInit, AfterViewInit, OnDestr
       }
     }
 
-    // Any extra categories from the API still get one product each.
     for (const g of groups) {
       const key = String(g?.categoryName || '').trim().toLowerCase();
       if (key && !seen.has(key)) ordered.push(g);
@@ -418,10 +456,68 @@ export class MaterialsSectionComponent implements OnInit, AfterViewInit, OnDestr
       };
     }
 
+    this.targetProgress = nextProgress;
+
     this.ngZone.run(() => {
-      this.progress = nextProgress;
       this.stickyStyles = nextSticky;
       this.cdr.markForCheck();
     });
+
+    this.startLerp();
+  }
+
+  private startLerp(): void {
+    if (this.lerpRaf) return;
+
+    const tick = () => {
+      const diff = this.targetProgress - this.displayProgress;
+      if (Math.abs(diff) < 0.0004) {
+        this.displayProgress = this.targetProgress;
+        this.lerpRaf = 0;
+      } else {
+        this.displayProgress += diff * this.lerpFactor;
+        this.lerpRaf = requestAnimationFrame(tick);
+      }
+
+      this.ngZone.run(() => {
+        this.progress = this.displayProgress;
+        this.cdr.markForCheck();
+      });
+    };
+
+    this.lerpRaf = requestAnimationFrame(tick);
+  }
+
+  private stopLerp(): void {
+    if (this.lerpRaf) {
+      cancelAnimationFrame(this.lerpRaf);
+      this.lerpRaf = 0;
+    }
+  }
+
+  private scheduleSnap(): void {
+    if (!this.isDesktop || this.snapping) return;
+    if (this.snapTimer) clearTimeout(this.snapTimer);
+    this.snapTimer = setTimeout(() => this.snapToNearestPanel(), 140);
+  }
+
+  private snapToNearestPanel(): void {
+    const el = this.sectionRef?.nativeElement;
+    if (!el || !this.isDesktop) return;
+
+    const steps = Math.max(1, this.pillars.length - 1);
+    const nearest = Math.round(this.targetProgress * steps) / steps;
+    if (Math.abs(nearest - this.targetProgress) < 0.02) return;
+
+    const vh = window.innerHeight;
+    const total = Math.max(1, el.offsetHeight - vh);
+    const sectionTop = el.getBoundingClientRect().top + window.scrollY;
+    const targetY = sectionTop + nearest * total;
+
+    this.snapping = true;
+    window.scrollTo({ top: targetY, behavior: 'smooth' });
+    setTimeout(() => {
+      this.snapping = false;
+    }, 420);
   }
 }
