@@ -8,16 +8,25 @@
     <p class="beverages__slogan">{{ 'home.categoriesSlogan' | translate }}</p>
   </header>
 
-  <div class="beverages__track position-relative">
+  <div
+    class="beverages__track position-relative"
+    (mouseenter)="onCarouselEnter()"
+    (mouseleave)="onCarouselLeave()"
+  >
     <owl-carousel-o
       *ngIf="categories?.length"
       #catCarousel
       class="beverages-carousel"
       [options]="catOptions"
-      (drag)="dragging = true"
-      (dragged)="dragging = false"
+      (drag)="dragging = true; onCarouselEnter()"
+      (dragged)="dragging = false; onCarouselLeave()"
+      (translated)="onTranslated($event)"
     >
-      <ng-template carouselSlide *ngFor="let cat of categories; trackBy: trackById">
+      <ng-template
+        carouselSlide
+        *ngFor="let cat of categories; trackBy: trackById"
+        [id]="slideId(cat)"
+      >
         <div class="bev-slide">
           <article
             class="bev-card"
@@ -65,5 +74,17 @@
         </div>
       </ng-template>
     </owl-carousel-o>
+
+    <div class="beverages__dots" *ngIf="pageCount > 1" role="tablist">
+      <button
+        type="button"
+        class="beverages__dot"
+        *ngFor="let i of visibleDotIndexes"
+        [class.is-active]="i === activePage"
+        [attr.aria-label]="'Go to page ' + (i + 1)"
+        [attr.aria-selected]="i === activePage"
+        (click)="goToPage(i)"
+      ></button>
+    </div>
   </div>
 </section>

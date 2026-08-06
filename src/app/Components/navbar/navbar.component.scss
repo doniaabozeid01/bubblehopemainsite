@@ -136,6 +136,7 @@ $ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
     height: calc(0.45rem * 2 + 0.28rem * 2 + 52px);
   }
 
+  /* Home: no cream strip — hero sits flush under the fixed navbar */
   &.is-home {
     height: calc(0.5rem * 2 + 0.25rem * 2 + 46px);
 

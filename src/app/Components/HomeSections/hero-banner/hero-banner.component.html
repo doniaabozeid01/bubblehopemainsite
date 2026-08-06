@@ -1,0 +1,300 @@
+<section
+  #heroRoot
+  class="hero-banner"
+  aria-roledescription="carousel"
+  [attr.aria-label]="'home.heroAdsAria' | translate"
+  [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'"
+>
+  <div class="hero-banner__stage">
+    <!-- 1) Chill — 3 bands + drink -->
+    <section
+      class="chill"
+      [class.is-active]="activeIndex === 0"
+      [attr.aria-hidden]="activeIndex !== 0"
+    >
+      <div class="chill__bands" aria-hidden="true">
+        <span class="chill__band chill__band--matcha"></span>
+        <span class="chill__band chill__band--cream"></span>
+        <span class="chill__band chill__band--mango"></span>
+      </div>
+      <p class="chill__watermark" aria-hidden="true">{{ chillCopy.title1 }}</p>
+      <div class="chill__stage">
+        <div class="chill__v" aria-hidden="true">
+          <img
+            *ngFor="let drink of chillDrinks"
+            class="chill__cup"
+            [ngClass]="'chill__cup--' + drink.slot"
+            [src]="drink.src"
+            [alt]="drink.alt"
+            draggable="false"
+            loading="eager"
+          />
+        </div>
+      </div>
+      <div class="chill__copy">
+        <p class="chill__brand">{{ chillCopy.brand }}</p>
+        <p class="chill__eyebrow">{{ chillCopy.eyebrow }}</p>
+        <h1 class="chill__title">
+          <span class="chill__title-line">{{ chillCopy.title1 }}</span>
+          <span class="chill__title-line chill__title-line--accent">{{ chillCopy.title2 }}</span>
+        </h1>
+        <p class="chill__subtitle">{{ chillCopy.subtitle }}</p>
+        <a class="chill__cta" href="https://offers.bubblehope.com" target="_blank" rel="noopener">
+          {{ chillCopy.cta }}
+          <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+        </a>
+      </div>
+      <span class="chill-pearl chill-pearl--a" aria-hidden="true"></span>
+      <span class="chill-pearl chill-pearl--b" aria-hidden="true"></span>
+      <span class="chill-pearl chill-pearl--c" aria-hidden="true"></span>
+      <span class="chill-pearl chill-pearl--d" aria-hidden="true"></span>
+    </section>
+
+    <!-- 2) Handmade promo — Burstin' Delight (was missing) -->
+    <section
+      class="promo"
+      [class.is-active]="activeIndex === 1"
+      [attr.aria-hidden]="activeIndex !== 1"
+    >
+      <div class="promo__inner">
+        <div class="promo__copy">
+          <p class="promo__brand">{{ promoCopy.brand }}</p>
+          <p class="promo__eyebrow">{{ promoCopy.eyebrow }}</p>
+          <h2 class="promo__title">
+            <span class="promo__title-row">
+              <span class="promo__title-line">{{ promoCopy.title1 }}</span>
+              <span class="promo__title-line promo__title-line--accent">{{ promoCopy.title2 }}</span>
+            </span>
+            <span class="promo__title-line">{{ promoCopy.title3 }}</span>
+          </h2>
+          <p class="promo__subtitle">{{ promoCopy.subtitle }}</p>
+          <div class="promo__actions">
+            <a class="promo__cta promo__cta--primary" href="https://offers.bubblehope.com" target="_blank" rel="noopener">
+              {{ promoCopy.order }}
+            </a>
+            <a class="promo__cta promo__cta--ghost" routerLink="/products">{{ promoCopy.menu }}</a>
+          </div>
+        </div>
+        <div class="promo__visual">
+          <img
+            class="promo__img"
+            [src]="promoImage"
+            alt="Bubble Hope cups"
+            draggable="false"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- 3) Focus Slider — polished product showcase -->
+    <section
+      class="focus"
+      [class.is-active]="activeIndex === 2"
+      [attr.aria-hidden]="activeIndex !== 2"
+    >
+      <div class="focus__copy">
+        <p class="focus__brand">{{ focusCopy.brand }}</p>
+        <p class="focus__eyebrow">{{ focusCopy.eyebrow }}</p>
+        <h2 class="focus__title">
+          <span class="focus__title-line">{{ focusCopy.title1 }}</span>
+          <span class="focus__title-line focus__title-line--accent">{{ focusCopy.title2 }}</span>
+        </h2>
+        <p class="focus__subtitle">{{ focusCopy.subtitle }}</p>
+        <div class="focus__actions">
+          <a class="focus__cta focus__cta--primary" routerLink="/products">{{ focusCopy.cta }}</a>
+          <a class="focus__cta focus__cta--ghost" href="https://offers.bubblehope.com" target="_blank" rel="noopener">
+            {{ focusCopy.order }}
+          </a>
+        </div>
+      </div>
+
+      <div class="focus__stage" aria-label="Product focus slider">
+        <span class="focus__glow" aria-hidden="true"></span>
+        <button
+          type="button"
+          class="focus__cup"
+          *ngFor="let p of focusProducts; let i = index"
+          [class.is-center]="focusIndex === i"
+          [attr.aria-label]="focusLabel(p)"
+          (click)="setFocus(i)"
+        >
+          <img [src]="p.src" [alt]="focusLabel(p)" draggable="false" loading="lazy" />
+        </button>
+        <p class="focus__active-name" *ngIf="focusProducts[focusIndex] as active">
+          {{ focusLabel(active) }}
+        </p>
+      </div>
+    </section>
+
+    <!-- 4) App download (coded) — before HOPE20 offer -->
+    <section
+      *ngIf="showAppSlide"
+      class="app"
+      [class.is-active]="activeIndex === appSlideIndex"
+      [attr.aria-hidden]="activeIndex !== appSlideIndex"
+    >
+      <div class="app__ticker" aria-hidden="true">
+        <div class="app__ticker-track">
+          <div class="app__ticker-group" *ngFor="let _ of [1, 2]">
+            <span class="app__ticker-chunk" *ngFor="let __ of [1, 2, 3, 4, 5, 6, 7, 8]">
+              <strong>{{ appCopy.ticker }}</strong>
+              <span class="app__ticker-dot"></span>
+              <span class="app__ticker-badge">
+                <img [src]="appLogo" alt="" />
+                <i></i>
+              </span>
+              <span class="app__ticker-dot"></span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <span class="app__pearl app__pearl--a" aria-hidden="true"></span>
+      <span class="app__pearl app__pearl--b" aria-hidden="true"></span>
+      <span class="app__pearl app__pearl--c" aria-hidden="true"></span>
+
+      <div class="app__inner">
+        <div class="app__copy">
+          <h2 class="app__title">
+            <span class="app__title-word">{{ appCopy.line1 }}</span>
+            <span class="app__title-word app__title-word--accent">{{ appCopy.accent1 }}</span>
+            <span class="app__title-word">{{ appCopy.line2 }}</span>
+            <span class="app__title-word app__title-word--accent">{{ appCopy.accent2 }}</span>
+            <span class="app__title-word app__title-word--accent">{{ appCopy.line3 }}</span>
+          </h2>
+          <p class="app__subtitle">{{ appCopy.subtitle }}</p>
+
+          <div class="app__stores">
+            <a
+              class="app__store"
+              [href]="appStoreUrl"
+              target="_blank"
+              rel="noopener"
+              [attr.aria-label]="appCopy.storeApple"
+            >
+              <img [src]="appleBadge" alt="" />
+              <span>
+                <small>{{ appCopy.storeSmall }}</small>
+                <strong>{{ appCopy.storeApple }}</strong>
+              </span>
+            </a>
+            <a
+              class="app__store"
+              [href]="playStoreUrl"
+              target="_blank"
+              rel="noopener"
+              [attr.aria-label]="appCopy.playGoogle"
+            >
+              <img [src]="playBadge" alt="" />
+              <span>
+                <small>{{ appCopy.playSmall }}</small>
+                <strong>{{ appCopy.playGoogle }}</strong>
+              </span>
+            </a>
+          </div>
+        </div>
+
+        <div class="app__visual">
+          <span class="app__orb app__orb--teal" aria-hidden="true"></span>
+          <span class="app__orb app__orb--orange" aria-hidden="true"></span>
+          <span class="app__orb app__orb--cream" aria-hidden="true"></span>
+
+          <div class="app__phone">
+            <img [src]="appPhoneImage" alt="Bubble Hope app" draggable="false" loading="lazy" />
+          </div>
+
+          <div class="app__badge" aria-hidden="true">
+            <img [src]="appLogo" alt="" />
+            <span class="app__badge-tap"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5) Coded HOPE20 offer — after app download -->
+    <section
+      *ngIf="showOfferSlide"
+      class="offer"
+      [class.is-active]="activeIndex === offerSlideIndex"
+      [attr.aria-hidden]="activeIndex !== offerSlideIndex"
+    >
+      <div class="offer__split" aria-hidden="true">
+        <span class="offer__pane offer__pane--teal"></span>
+        <span class="offer__pane offer__pane--peach"></span>
+      </div>
+      <span class="offer__grain" aria-hidden="true"></span>
+
+      <div class="offer__inner">
+        <div class="offer__copy">
+          <p class="offer__kicker">{{ offerCopy.useCode }}</p>
+          <div class="offer__code-wrap">
+            <h2 class="offer__code">“{{ offerCode }}”</h2>
+            <span class="offer__spark" aria-hidden="true"></span>
+          </div>
+          <p class="offer__off">{{ offerCopy.off }}</p>
+          <p class="offer__hint">{{ offerCopy.hint }}</p>
+          <div class="offer__actions">
+            <button type="button" class="offer__copy-btn" (click)="copyOfferCode()">
+              {{ offerCopied ? offerCopy.copied : offerCopy.copy }}
+            </button>
+            <a class="offer__cta" href="https://offers.bubblehope.com" target="_blank" rel="noopener">
+              {{ offerCopy.cta }}
+              <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="offer__visual">
+          <div class="offer__flavor">
+            <span class="offer__flavor-mark" aria-hidden="true"></span>
+            <p class="offer__flavor-name">{{ offerDrinkName }}</p>
+            <span class="offer__flavor-line" aria-hidden="true"></span>
+          </div>
+          <button
+            type="button"
+            class="offer__drink-btn"
+            (click)="nextOfferDrink(); $event.stopPropagation()"
+            [attr.aria-label]="offerDrinkName"
+          >
+            <img
+              class="offer__drink"
+              [src]="offerDrinkImage"
+              [alt]="offerDrinkName"
+              [attr.data-index]="offerDrinkIndex"
+              draggable="false"
+              loading="lazy"
+            />
+          </button>
+          <span class="offer__doodle offer__doodle--rays" aria-hidden="true"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- API ads — full-bleed -->
+    <a
+      class="hero-ad"
+      *ngFor="let ad of adSlides; trackBy: trackById; let i = index"
+      [class.is-active]="activeIndex === i + brandSlideCount"
+      [attr.aria-hidden]="activeIndex !== i + brandSlideCount"
+      [routerLink]="ad.href"
+      [attr.aria-label]="ad.imageAlt"
+    >
+      <img [src]="ad.image" [alt]="ad.imageAlt" draggable="false" loading="lazy" />
+    </a>
+  </div>
+
+  <div class="hero-banner__dots" *ngIf="slideCount > 1" role="tablist">
+    <button
+      type="button"
+      class="hero-banner__dot"
+      *ngFor="let i of dotIndexes"
+      [class.is-active]="activeIndex === i"
+      [attr.aria-selected]="activeIndex === i"
+      [attr.aria-label]="'Go to slide ' + (i + 1)"
+      (click)="goTo(i)"
+    ></button>
+  </div>
+
+  <div class="hero-banner__scoop" aria-hidden="true"></div>
+</section>

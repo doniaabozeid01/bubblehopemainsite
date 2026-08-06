@@ -57,6 +57,7 @@ import { PageTransitionComponent } from './Components/page-transition/page-trans
 import { AnimatedPriceComponent } from './Components/animated-price/animated-price.component';
 import { ProductCardTiltDirective } from './Components/products/product-card-tilt.directive';
 import { MaterialsSectionComponent } from './Components/HomeSections/materials-section/materials-section.component';
+import { HeroBannerComponent } from './Components/HomeSections/hero-banner/hero-banner.component';
 
 
 
@@ -87,6 +88,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MainLayoutComponent,
     HomeComponent,
     AdvertiseCarouselComponent,
+    HeroBannerComponent,
     MainCategoriesComponent,
     RawMaterialCategoriesComponent,
     MobileAdvertiseComponent,

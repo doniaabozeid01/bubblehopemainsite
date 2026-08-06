@@ -1,66 +1,96 @@
-<div class="parent">
-  <div class="hero-carousel">
-    <owl-carousel-o #heroCarousel [options]="customOptions">
+<div
+  class="premium-hero"
+  [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'"
+  [attr.aria-label]="'home.heroAdsAria' | translate"
+>
+  <div class="premium-hero__atmosphere" aria-hidden="true">
+    <span class="premium-hero__blob premium-hero__blob--peach"></span>
+    <span class="premium-hero__blob premium-hero__blob--mint"></span>
+    <span class="premium-hero__blob premium-hero__blob--orange"></span>
+    <span class="premium-hero__grain"></span>
+  </div>
 
-      <!-- ✅ Slide 1: Promo -->
-      <ng-template carouselSlide [id]="'promo-slide'">
-
-        <section class="promo ">
-          <div class="promo__container  w-75">
-
-            <div class="promo__visual d-md-flex d-none">
-              <img class="promo__img " src="../../../../assets/Untitled-1 (4).png" alt="Bubble tea cups" />
-            </div>
-
-            <div class="promo__content text-center ms-0">
-              <h2 class="promo__title">
-                Burstin’<br />
-                <span class="orange promo__title">Bubble</span><br />
-                Delight!
-              </h2>
-              <p class="promo__subtitle fs-3 fw-light ">Sip, smile &amp; enjoy the fun!</p>
-              <div class="promo__actions d-flex justify-content-center ">
-                <a class="btn btn--primary py-4 fs-4" href="https://offers.bubblehope.com">Order Now</a>
-                <a class="btn btn--outline py-4 fs-4" routerLink="/products">View Menu</a>
-              </div>
-            </div>
-
+  <div #track class="premium-hero__track" (scroll)="onScroll()">
+    <article
+      class="hero-slide"
+      *ngFor="let slide of slides; trackBy: trackById; let i = index"
+      [attr.data-index]="i"
+      [attr.data-kind]="slide.kind"
+      [class.hero-slide--ad]="slide.kind === 'ad'"
+    >
+      <!-- Brand / premium slides -->
+      <ng-container *ngIf="slide.kind === 'brand'">
+        <div class="hero-slide__glass">
+          <div class="hero-slide__copy">
+            <span class="hero-badge">{{ slide.badgeKey! | translate }}</span>
+            <p class="hero-brand">{{ slide.brandKey! | translate }}</p>
+            <h1 class="hero-title">
+              <span class="hero-title__word">{{ slide.titleKey! | translate }}</span>
+              <span class="hero-title__word hero-title__word--accent">{{
+                slide.accentKey! | translate
+              }}</span>
+            </h1>
+            <p class="hero-sub">{{ slide.subtitleKey! | translate }}</p>
+            <a
+              *ngIf="slide.ctaHref?.startsWith('http')"
+              class="hero-cta"
+              [href]="slide.ctaHref"
+              target="_blank"
+              rel="noopener"
+            >
+              {{ slide.ctaKey! | translate }}
+            </a>
+            <a
+              *ngIf="slide.ctaHref && !slide.ctaHref.startsWith('http')"
+              class="hero-cta"
+              [routerLink]="slide.ctaHref"
+            >
+              {{ slide.ctaKey! | translate }}
+            </a>
           </div>
 
-          <span
-            *ngFor="let pearl of floatingPearls; let i = index"
-            class="floating-pearl"
-            [style.top]="pearl.top"
-            [style.left]="pearl.left"
-            [style.width.px]="pearl.size"
-            [style.height.px]="pearl.size"
-            [style.background]="pearl.color"
-            [style.animation-delay.s]="i * 0.45"
-            [style.animation-duration.s]="pearl.duration"
-          ></span>
-
-        </section>
-
-      </ng-template>
-
-
-<!--
-    <ng-template carouselSlide id="static-ad-1">
-    <div class="img-cover ad-slide">
-      <img src="../../../../assets/ramdan drinks for web site.jpg.jpeg" alt="Special Offer" loading="lazy" />
-    </div>
-  </ng-template> -->
-
-
-
-
-      <!-- ✅ Slides 2..n: Ads -->
-      <ng-template carouselSlide *ngFor="let item of advertisements; trackBy: trackById">
-        <div class="img-cover  ad-slide">
-          <img [src]="item.imageUrl" [alt]="item.title" loading="lazy" />
+          <div class="hero-visual">
+            <div class="hero-visual__glow" aria-hidden="true"></div>
+            <img
+              class="hero-visual__img"
+              [src]="slide.image"
+              [alt]="slide.imageAlt"
+              draggable="false"
+            />
+            <span
+              class="hero-float"
+              *ngFor="let f of floatItems"
+              [style.top]="f.top"
+              [style.left]="f.left"
+              [style.width.px]="f.size"
+              [style.height.px]="f.size"
+              [style.background]="f.color"
+              [style.animation-duration.s]="f.dur"
+              aria-hidden="true"
+            ></span>
+          </div>
         </div>
-      </ng-template>
+      </ng-container>
 
-    </owl-carousel-o>
+      <!-- API ad banners -->
+      <ng-container *ngIf="slide.kind === 'ad'">
+        <div class="hero-ad">
+          <img [src]="slide.image" [alt]="slide.imageAlt" draggable="false" />
+        </div>
+      </ng-container>
+    </article>
   </div>
+
+  <div class="premium-hero__dots" *ngIf="slides.length > 1" role="tablist">
+    <button
+      type="button"
+      class="premium-hero__dot"
+      *ngFor="let i of dotIndexes"
+      [class.is-active]="activeIndex === i"
+      [attr.aria-label]="'Slide ' + (i + 1)"
+      (click)="goTo(i)"
+    ></button>
+  </div>
+
+  <div class="premium-hero__scoop" aria-hidden="true"></div>
 </div>

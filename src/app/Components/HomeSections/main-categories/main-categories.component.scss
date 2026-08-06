@@ -238,6 +238,37 @@ $orange: #ff7304;
   overflow: visible;
 }
 
+:host ::ng-deep .beverages-carousel .owl-dots {
+  display: none !important;
+}
+
+.beverages__dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 1rem 0 0;
+  padding: 0;
+}
+
+.beverages__dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(36, 58, 99, 0.2);
+  cursor: pointer;
+  transition:
+    width 0.25s ease,
+    background 0.25s ease;
+
+  &.is-active {
+    width: 1.55rem;
+    background: $orange;
+  }
+}
+
 @media (max-width: 1199.98px) {
   .bev-card {
     max-width: 310px;
