@@ -1856,23 +1856,40 @@ $scoop-h: clamp(2.5rem, 5vw, 3.5rem);
   }
 
   .focus__stage {
-    height: min(38vh, 300px);
+    height: min(42vh, 340px);
     margin-top: 0.35rem;
-    overflow: hidden;
+    overflow: visible;
+  }
+
+  .focus__glow {
+    width: min(72%, 240px);
+    top: 46%;
+    background: radial-gradient(
+      circle,
+      rgba(255, 251, 245, 0.95) 0%,
+      rgba(43, 182, 207, 0.35) 32%,
+      rgba(244, 117, 36, 0.28) 52%,
+      transparent 72%
+    );
   }
 
   .focus__cup {
-    width: min(26%, 112px);
-    top: 46%;
+    width: min(28%, 118px);
+    top: 44%;
 
     img {
-      max-height: min(32vh, 240px);
+      max-height: min(30vh, 230px);
+      filter: drop-shadow(0 14px 24px rgba(36, 58, 99, 0.28));
+    }
+
+    &.is-center img {
+      filter: drop-shadow(0 22px 34px rgba(36, 58, 99, 0.38));
     }
   }
 
   .focus__active-name {
     font-size: 0.72rem !important;
-    bottom: 2%;
+    bottom: 1%;
     padding: 0.3rem 0.75rem;
   }
 

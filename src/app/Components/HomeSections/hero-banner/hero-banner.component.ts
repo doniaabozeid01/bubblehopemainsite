@@ -554,11 +554,12 @@ export class HeroBannerComponent implements OnInit, AfterViewInit, OnDestroy {
   private startFocusSpin(): void {
     this.stopFocusSpin();
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const isMobile = window.matchMedia('(max-width: 767.98px)').matches;
     this.focusTimer = setInterval(() => {
       this.focusIndex = (this.focusIndex + 1) % this.focusProducts.length;
       this.layoutFocus(true);
       this.cdr.detectChanges();
-    }, 2200);
+    }, isMobile ? 1800 : 2200);
   }
 
   private stopFocusSpin(): void {
@@ -586,42 +587,60 @@ export class HeroBannerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /**
    * Focus Slider — floating full cups (no card frame).
+   * On mobile, exaggerate scale / arc / dim so the "spin" reads clearly.
    */
   private layoutFocus(animate: boolean): void {
     const root = this.heroRoot?.nativeElement;
     if (!root) return;
     const stage = root.querySelector('.focus__stage') as HTMLElement | null;
     const cups = root.querySelectorAll<HTMLElement>('.focus__cup');
+    const glow = root.querySelector('.focus__glow') as HTMLElement | null;
     if (!stage || !cups.length) return;
 
     const isMobile = window.matchMedia('(max-width: 767.98px)').matches;
     const w = stage.clientWidth || 1;
-    const cupW = Math.min(w * (isMobile ? 0.26 : 0.26), isMobile ? 112 : 190);
-    const step = cupW * (isMobile ? 1.08 : 1.28);
-    const zig = cupW * (isMobile ? 0.08 : 0.2);
-    const centerScale = isMobile ? 1.12 : 1.42;
-    const sideScale = isMobile ? 0.8 : 0.82;
+    const cupW = Math.min(w * (isMobile ? 0.3 : 0.26), isMobile ? 124 : 190);
+    const step = cupW * (isMobile ? 1.36 : 1.28);
+    const zig = cupW * (isMobile ? 0.28 : 0.2);
+    const centerScale = isMobile ? 1.28 : 1.42;
+    const sideScale = isMobile ? 0.55 : 0.82;
+    const farScale = isMobile ? 0.36 : 0.55;
+    const maxVisible = isMobile ? 2 : 1;
 
     this.ngZone.runOutsideAngular(() => {
+      if (glow && animate && isMobile) {
+        gsap.fromTo(
+          glow,
+          { scale: 0.82, opacity: 0.55 },
+          { scale: 1, opacity: 1, duration: 0.7, ease: 'power2.out' }
+        );
+      }
+
       cups.forEach((cup, i) => {
         const d = this.focusDelta(i);
         const abs = Math.abs(d);
-        const visible = abs <= 1;
+        const visible = abs <= maxVisible;
         const ySign = d === 0 ? 0 : d < 0 ? -1 : 1;
+        const isCenter = abs === 0;
+        const isSide = abs === 1;
 
         const props: gsap.TweenVars = {
           x: d * step,
-          y: ySign * zig,
+          y: isCenter ? 0 : ySign * zig + (isMobile && isSide ? 10 : 0),
           xPercent: -50,
           yPercent: -50,
-          scale: abs === 0 ? centerScale : sideScale,
-          opacity: visible ? 1 : 0,
-          zIndex: abs === 0 ? 40 : 20,
-          rotate: d === 0 ? 0 : d * (isMobile ? 3 : 5),
-          filter: abs === 0 ? 'none' : 'brightness(0.96)',
-          pointerEvents: visible ? 'auto' : 'none',
-          duration: animate ? 0.65 : 0,
-          ease: 'power3.out',
+          scale: isCenter ? centerScale : isSide ? sideScale : farScale,
+          opacity: !visible ? 0 : isCenter ? 1 : isSide ? (isMobile ? 0.68 : 0.92) : 0.28,
+          zIndex: isCenter ? 40 : isSide ? 20 : 8,
+          rotate: isCenter ? 0 : d * (isMobile ? 12 : 5),
+          filter: isCenter
+            ? 'brightness(1.06)'
+            : isSide
+              ? 'brightness(0.72) saturate(0.85)'
+              : 'brightness(0.5) saturate(0.7)',
+          pointerEvents: visible && abs <= 1 ? 'auto' : 'none',
+          duration: animate ? (isMobile ? 0.8 : 0.65) : 0,
+          ease: animate ? (isMobile ? 'back.out(1.55)' : 'power3.out') : 'none',
         };
 
         if (animate) gsap.to(cup, props);
