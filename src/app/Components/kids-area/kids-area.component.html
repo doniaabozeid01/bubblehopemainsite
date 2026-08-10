@@ -409,44 +409,42 @@
           </div>
         </div>
 
-        <div class="kids-parents__content">
-          <div class="parents-lead">
-            <i class="bi bi-quote parents-lead__mark" aria-hidden="true"></i>
-            <p>{{ 'kidsArea.page.parents.lead' | translate }}</p>
-          </div>
+        <div class="parents-lead">
+          <i class="bi bi-quote parents-lead__mark" aria-hidden="true"></i>
+          <p>{{ 'kidsArea.page.parents.lead' | translate }}</p>
+        </div>
 
-          <div class="parents-block">
-            <h3 class="parents-block__label">
-              <span>{{ 'kidsArea.page.parents.menuEyebrow' | translate }}</span>
-            </h3>
-            <div class="parents-menu__grid">
-              <article *ngFor="let item of parentsMenuItems" class="parents-menu__card">
-                <span class="parents-menu__icon" aria-hidden="true">
-                  <i class="bi" [ngClass]="item.icon"></i>
-                </span>
-                <div class="parents-menu__copy">
-                  <h4>{{ item.titleKey | translate }}</h4>
-                  <p>{{ item.subKey | translate }}</p>
-                </div>
-              </article>
-            </div>
+        <div class="parents-block parents-block--menu">
+          <h3 class="parents-block__label">
+            <span>{{ 'kidsArea.page.parents.menuEyebrow' | translate }}</span>
+          </h3>
+          <div class="parents-menu__grid">
+            <article *ngFor="let item of parentsMenuItems" class="parents-menu__card">
+              <span class="parents-menu__icon" aria-hidden="true">
+                <i class="bi" [ngClass]="item.icon"></i>
+              </span>
+              <div class="parents-menu__copy">
+                <h4>{{ item.titleKey | translate }}</h4>
+                <p>{{ item.subKey | translate }}</p>
+              </div>
+            </article>
           </div>
+        </div>
 
-          <div class="parents-block">
-            <h3 class="parents-block__label">
-              <span>{{ 'kidsArea.page.parents.perksEyebrow' | translate }}</span>
-            </h3>
-            <div class="parents-perks__grid">
-              <article *ngFor="let perk of parentsPerks" class="parents-perk">
-                <span class="parents-perk__icon" aria-hidden="true">
-                  <i class="bi" [ngClass]="perk.icon"></i>
-                </span>
-                <div class="parents-perk__copy">
-                  <h4>{{ perk.titleKey | translate }}</h4>
-                  <p>{{ perk.textKey | translate }}</p>
-                </div>
-              </article>
-            </div>
+        <div class="parents-block parents-block--perks">
+          <h3 class="parents-block__label">
+            <span>{{ 'kidsArea.page.parents.perksEyebrow' | translate }}</span>
+          </h3>
+          <div class="parents-perks__grid">
+            <article *ngFor="let perk of parentsPerks" class="parents-perk">
+              <span class="parents-perk__icon" aria-hidden="true">
+                <i class="bi" [ngClass]="perk.icon"></i>
+              </span>
+              <div class="parents-perk__copy">
+                <h4>{{ perk.titleKey | translate }}</h4>
+                <p>{{ perk.textKey | translate }}</p>
+              </div>
+            </article>
           </div>
         </div>
       </div>

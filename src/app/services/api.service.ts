@@ -318,21 +318,25 @@ export class ApiService {
     return this.createKidsAreaActivityBooking(payload);
   }
 
-  getKidsAreaActivities(branchId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/api/KidsArea/activities`, {
-      params: { branchId: String(branchId) },
-    });
+  getKidsAreaActivities(branchId?: number | null): Observable<any> {
+    const params: Record<string, string> = {};
+    if (branchId) {
+      params['branchId'] = String(branchId);
+    }
+    return this.http.get(`${this.baseUrl}/api/KidsArea/activities`, { params });
   }
 
   getKidsAreaAvailability(
     date: string,
-    branchId: number,
+    branchId?: number | null,
     currentTime?: string
   ): Observable<any> {
     const params: Record<string, string> = {
       date,
-      branchId: String(branchId),
     };
+    if (branchId) {
+      params['branchId'] = String(branchId);
+    }
     if (currentTime) {
       params['currentTime'] = currentTime;
     }

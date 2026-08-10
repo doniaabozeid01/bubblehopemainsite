@@ -16,6 +16,7 @@ import {
   getActivityIcon,
   getSessionTimeLabel,
   getSessionsForActivity,
+  hasAvailabilityRows,
   normalizeActivitiesResponse,
   parseAvailabilitySessions,
   resolveBookingSession,
@@ -156,10 +157,9 @@ export class KidsAreaComponent implements OnInit, OnDestroy {
 
     this.branchId = this.branchService.getCurrentBranch() ?? 0;
     if (!this.branchId) {
-      this.toastr.error(this.translate.instant('kidsArea.branchRequired'));
-    } else {
-      this.loadAvailability();
+      this.toastr.warning(this.translate.instant('kidsArea.branchRequired'));
     }
+    this.loadAvailability();
 
     this.branchSub = this.branchService.currentBranch$.subscribe((id) => {
       if (!id || id === this.branchId) return;
@@ -207,8 +207,6 @@ export class KidsAreaComponent implements OnInit, OnDestroy {
   }
 
   loadAvailability(): void {
-    if (!this.branchId) return;
-
     this.loadingActivities = true;
     this.selectedActivityId = null;
     this.selectedSessionKey = null;
@@ -217,26 +215,48 @@ export class KidsAreaComponent implements OnInit, OnDestroy {
 
     const bookingDate = this.todayBookingDate;
     const date = formatApiDate(bookingDate);
-    this.api
-      .getKidsAreaAvailability(date, this.branchId, this.getCurrentTimeParam())
-      .subscribe({
-        next: (response) => {
-          this.activities = normalizeActivitiesResponse(response);
-          this.allSessions = parseAvailabilitySessions(
-            bookingDate,
-            response,
-            this.activities
-          );
-          this.loadingActivities = false;
-        },
-        error: (err) => {
-          this.loadingActivities = false;
-          this.activities = [];
-          this.allSessions = [];
-          console.error('Kids Area availability failed:', err?.error || err);
-          this.toastr.error(this.translate.instant('kidsArea.error'));
-        },
-      });
+    const currentTime = this.getCurrentTimeParam();
+
+    // Kids activities may live on a different branch than the shop branch.
+    // Try the selected branch first, then fall back to global availability.
+    this.api.getKidsAreaAvailability(date, this.branchId || null, currentTime).subscribe({
+      next: (response) => {
+        if (hasAvailabilityRows(response) || !this.branchId) {
+          this.applyAvailability(bookingDate, response);
+          return;
+        }
+
+        this.api.getKidsAreaAvailability(date, null, currentTime).subscribe({
+          next: (fallback) => this.applyAvailability(bookingDate, fallback),
+          error: (err) => this.onAvailabilityError(err),
+        });
+      },
+      error: (err) => {
+        // Branch-scoped call failed — still try unscoped availability
+        this.api.getKidsAreaAvailability(date, null, currentTime).subscribe({
+          next: (fallback) => this.applyAvailability(bookingDate, fallback),
+          error: () => this.onAvailabilityError(err),
+        });
+      },
+    });
+  }
+
+  private applyAvailability(bookingDate: string, response: any): void {
+    this.activities = normalizeActivitiesResponse(response);
+    this.allSessions = parseAvailabilitySessions(
+      bookingDate,
+      response,
+      this.activities
+    );
+    this.loadingActivities = false;
+  }
+
+  private onAvailabilityError(err: any): void {
+    this.loadingActivities = false;
+    this.activities = [];
+    this.allSessions = [];
+    console.error('Kids Area availability failed:', err?.error || err);
+    this.toastr.error(this.translate.instant('kidsArea.error'));
   }
 
   selectActivity(activity: KidsActivity): void {

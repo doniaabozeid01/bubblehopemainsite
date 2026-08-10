@@ -131,9 +131,13 @@ function resolveRemainingCapacity(
 }
 
 function isSlotClosed(slot: any): boolean {
-  if (slot?.isCurrentlyOpen === false) return true;
   const status = pickString(slot?.timeStatus, slot?.TimeStatus).toLowerCase();
-  return status === 'closed';
+  // "not_started" / upcoming must stay bookable — isCurrentlyOpen only means "live now"
+  if (['closed', 'ended', 'finished', 'passed', 'full'].includes(status)) {
+    return true;
+  }
+  if (slot?.isAvailable === false) return true;
+  return false;
 }
 
 function resolveSlotBookability(slot: any): {
@@ -373,9 +377,16 @@ export function resolveBookingDateIso(session: BookableSession): string {
 }
 
 export function formatApiDate(date: string): string {
+  // Keep zero-padded ISO date (API accepts yyyy-MM-dd)
+  if (/^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
   const parsed = new Date(`${date}T00:00:00`);
   if (isNaN(parsed.getTime())) return date;
-  return `${parsed.getFullYear()}-${parsed.getMonth() + 1}-${parsed.getDate()}`;
+  return formatDateKey(parsed);
+}
+
+/** True when availability payload has at least one activity/slot row. */
+export function hasAvailabilityRows(response: any): boolean {
+  return unwrapList(response).length > 0;
 }
 
 export function getActivityIcon(name: string): string {

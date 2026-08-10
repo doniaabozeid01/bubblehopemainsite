@@ -201,6 +201,8 @@ export class HeroBannerComponent implements OnInit, AfterViewInit, OnDestroy {
   private langSub?: { unsubscribe: () => void };
   private adsSub?: { unsubscribe: () => void };
   private branchSub?: Subscription;
+  private swipeStartX: number | null = null;
+  private swipeStartY: number | null = null;
 
   constructor(
     private api: ApiService,
@@ -362,6 +364,42 @@ export class HeroBannerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   next(): void {
     this.goTo((this.activeIndex + 1) % this.slideCount);
+  }
+
+  prev(): void {
+    this.goTo((this.activeIndex - 1 + this.slideCount) % this.slideCount);
+  }
+
+  onSwipeStart(event: PointerEvent): void {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    const target = event.target as HTMLElement | null;
+    if (target?.closest('a, button, input, textarea, select, label')) {
+      this.swipeStartX = null;
+      this.swipeStartY = null;
+      return;
+    }
+    this.swipeStartX = event.clientX;
+    this.swipeStartY = event.clientY;
+  }
+
+  onSwipeEnd(event: PointerEvent): void {
+    if (this.swipeStartX == null || this.swipeStartY == null) return;
+    const dx = event.clientX - this.swipeStartX;
+    const dy = event.clientY - this.swipeStartY;
+    this.swipeStartX = null;
+    this.swipeStartY = null;
+
+    if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy) * 1.15) return;
+
+    const rtl = this.isArabic();
+    const goNext = rtl ? dx > 0 : dx < 0;
+    if (goNext) this.next();
+    else this.prev();
+  }
+
+  onSwipeCancel(): void {
+    this.swipeStartX = null;
+    this.swipeStartY = null;
   }
 
   @HostListener('window:resize')

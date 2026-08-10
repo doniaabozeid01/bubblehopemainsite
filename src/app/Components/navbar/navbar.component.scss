@@ -167,9 +167,11 @@ $ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
 
-/* Desktop link row needs ~1380px+ or labels collide with logo/actions */
-$nav-desktop: 1380px;
-$nav-desktop-max: 1379.98px;
+/* Desktop from ~1200px so MacBook / laptop widths get full nav (no hamburger) */
+$nav-desktop: 1200px;
+$nav-desktop-max: 1199.98px;
+$nav-large: 1380px;
+$nav-laptop-max: 1379.98px;
 
 .bh-links {
   z-index: 1;
@@ -203,6 +205,16 @@ $nav-desktop-max: 1379.98px;
   @media (min-width: $nav-desktop) {
     display: flex;
     overflow: visible;
+  }
+
+  /* Tighter labels on mid laptops so links + actions fit */
+  @media (min-width: $nav-desktop) and (max-width: $nav-laptop-max) {
+    gap: 0;
+
+    > a {
+      padding: 0.4rem 0.5rem;
+      font-size: 0.82rem;
+    }
   }
 
   /* Mobile / tablet dropdown panel under the navbar */
@@ -284,7 +296,7 @@ $nav-desktop-max: 1379.98px;
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
   }
 
   /* Stay closed after a category/CTA click even while still hovered */
@@ -294,7 +306,21 @@ $nav-desktop-max: 1379.98px;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transform: translateX(-50%) translateY(10px);
+    transform: translateY(10px);
+  }
+
+  /* Large desktop: restore centered panel motion */
+  @media (min-width: $nav-large) {
+    &:hover .nav-mega__panel,
+    &:focus-within .nav-mega__panel {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    &.is-closed .nav-mega__panel,
+    &.is-closed:hover .nav-mega__panel,
+    &.is-closed:focus-within .nav-mega__panel {
+      transform: translateX(-50%) translateY(10px);
+    }
   }
 
   &:hover .nav-mega__trigger,
@@ -339,21 +365,18 @@ $nav-desktop-max: 1379.98px;
     font-size: 0.7rem;
     transition: transform 0.25s ease;
   }
+
+  @media (min-width: $nav-desktop) and (max-width: $nav-laptop-max) {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.82rem;
+  }
 }
 
 .nav-mega__panel {
   position: absolute;
   top: calc(100% - 0.35rem);
-  left: 50%;
-  transform: translateX(-50%) translateY(10px);
   z-index: 9600;
   display: grid;
-  grid-template-columns: 230px minmax(200px, 1fr);
-  align-items: stretch;
-  gap: 0.35rem 0.85rem;
-  width: min(520px, 74vw);
-  padding: 0.7rem;
-  border-radius: 1.4rem;
   background: #fff;
   border: 1px solid rgba(15, 23, 42, 0.06);
   box-shadow:
@@ -366,6 +389,32 @@ $nav-desktop-max: 1379.98px;
     opacity 0.22s ease,
     transform 0.22s ease,
     visibility 0.22s ease;
+
+  /* Laptop: compact, left-anchored (avoids clipping CTA) */
+  @media (min-width: $nav-desktop) and (max-width: $nav-laptop-max) {
+    left: 0;
+    right: auto;
+    transform: translateY(10px);
+    align-items: stretch;
+    grid-template-columns: minmax(220px, 240px) minmax(170px, 1fr);
+    gap: 0.4rem 0.65rem;
+    width: min(500px, calc(100vw - 1.5rem));
+    padding: 0.6rem;
+    border-radius: 1.25rem;
+  }
+
+  /* Large desktop: original centered mega */
+  @media (min-width: $nav-large) {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%) translateY(10px);
+    align-items: stretch;
+    grid-template-columns: 230px minmax(200px, 1fr);
+    gap: 0.35rem 0.85rem;
+    width: min(520px, 74vw);
+    padding: 0.7rem;
+    border-radius: 1.4rem;
+  }
 }
 
 .nav-mega__cta {
@@ -374,11 +423,22 @@ $nav-desktop-max: 1379.98px;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 0.85rem;
   overflow: hidden;
-  padding: 1.4rem 1.2rem 1.25rem;
-  border-radius: 1.1rem;
+  min-height: 0;
   background: #fff4e8;
+
+  @media (min-width: $nav-desktop) and (max-width: $nav-laptop-max) {
+    gap: 0.7rem;
+    padding: 1.15rem 1rem 1.05rem;
+    border-radius: 1rem;
+    justify-content: space-between;
+  }
+
+  @media (min-width: $nav-large) {
+    gap: 0.85rem;
+    padding: 1.4rem 1.2rem 1.25rem;
+    border-radius: 1.1rem;
+  }
 }
 
 .nav-mega__eyebrow {
@@ -391,17 +451,32 @@ $nav-desktop-max: 1379.98px;
   text-transform: uppercase;
   color: $orange;
   line-height: 1.2;
+
+  @media (min-width: $nav-desktop) and (max-width: $nav-laptop-max) {
+    font-size: 0.62rem !important;
+    letter-spacing: 0.1em;
+    padding-inline-end: 1.4rem;
+  }
 }
 
 .nav-mega__heading {
   position: relative;
   z-index: 1;
   margin: 0;
-  font-size: 1.45rem !important;
   font-weight: 800;
   line-height: 1.15;
   letter-spacing: -0.025em;
   color: #172554;
+
+  @media (min-width: $nav-desktop) and (max-width: $nav-laptop-max) {
+    font-size: 1.28rem !important;
+    line-height: 1.2;
+    max-width: 11.5ch;
+  }
+
+  @media (min-width: $nav-large) {
+    font-size: 1.45rem !important;
+  }
 }
 
 .nav-mega__btn {
@@ -411,14 +486,12 @@ $nav-desktop-max: 1379.98px;
   align-items: center;
   justify-content: center;
   width: 100%;
+  box-sizing: border-box;
   margin-top: 0.35rem;
-  padding: 0.7rem 0.9rem;
   border-radius: 999px;
   background: $orange;
   color: #fff !important;
-  font-size: 0.8rem !important;
   font-weight: 700;
-  line-height: 1.2;
   text-align: center;
   text-decoration: none !important;
   transition: transform 0.15s ease, filter 0.15s ease;
@@ -427,6 +500,23 @@ $nav-desktop-max: 1379.98px;
     filter: brightness(1.06);
     transform: translateY(-1px);
     color: #fff !important;
+  }
+
+  @media (min-width: $nav-desktop) and (max-width: $nav-laptop-max) {
+    margin-top: auto;
+    padding: 0.7rem 0.75rem;
+    font-size: 0.74rem !important;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    white-space: nowrap;
+  }
+
+  @media (min-width: $nav-large) {
+    padding: 0.7rem 0.9rem;
+    font-size: 0.8rem !important;
+    line-height: 1.2;
+    letter-spacing: normal;
+    white-space: normal;
   }
 }
 
@@ -458,18 +548,14 @@ $nav-desktop-max: 1379.98px;
 .nav-mega__list {
   list-style: none;
   margin: 0;
-  padding: 0.45rem 0.35rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   gap: 0.05rem;
 
   a {
     display: block;
-    padding: 0.52rem 0.8rem;
     border-radius: 0.7rem;
     color: #334155 !important;
-    font-size: 0.92rem !important;
     font-weight: 700;
     text-decoration: none !important;
     transition: background 0.15s ease, color 0.15s ease;
@@ -477,6 +563,26 @@ $nav-desktop-max: 1379.98px;
     &:hover {
       background: rgba(255, 127, 0, 0.1);
       color: $orange !important;
+    }
+  }
+
+  @media (min-width: $nav-desktop) and (max-width: $nav-laptop-max) {
+    padding: 0.25rem 0.15rem;
+    justify-content: flex-start;
+
+    a {
+      padding: 0.42rem 0.65rem;
+      font-size: 0.85rem !important;
+    }
+  }
+
+  @media (min-width: $nav-large) {
+    padding: 0.45rem 0.35rem;
+    justify-content: center;
+
+    a {
+      padding: 0.52rem 0.8rem;
+      font-size: 0.92rem !important;
     }
   }
 }
@@ -497,6 +603,18 @@ $nav-desktop-max: 1379.98px;
 
     i {
       font-size: 0.75rem;
+    }
+  }
+
+  .nav-mega__panel {
+    @media (min-width: $nav-desktop) and (max-width: $nav-laptop-max) {
+      left: auto;
+      right: 0;
+    }
+
+    @media (min-width: $nav-large) {
+      left: 50%;
+      right: auto;
     }
   }
 
@@ -779,7 +897,8 @@ $nav-desktop-max: 1379.98px;
 }
 
 .hide-on-mobile {
-  @media (max-width: 767.98px) {
+  /* Hide whenever hamburger menu is shown (phone + tablet) — icons live in the menu */
+  @media (max-width: $nav-desktop-max) {
     display: none !important;
   }
 }

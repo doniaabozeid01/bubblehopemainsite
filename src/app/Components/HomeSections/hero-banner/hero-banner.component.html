@@ -4,6 +4,9 @@
   aria-roledescription="carousel"
   [attr.aria-label]="'home.heroAdsAria' | translate"
   [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'"
+  (pointerdown)="onSwipeStart($event)"
+  (pointerup)="onSwipeEnd($event)"
+  (pointercancel)="onSwipeCancel()"
 >
   <div class="hero-banner__stage">
     <!-- 1) Chill — 3 bands + drink -->
@@ -282,18 +285,6 @@
     >
       <img [src]="ad.image" [alt]="ad.imageAlt" draggable="false" loading="lazy" />
     </a>
-  </div>
-
-  <div class="hero-banner__dots" *ngIf="slideCount > 1" role="tablist">
-    <button
-      type="button"
-      class="hero-banner__dot"
-      *ngFor="let i of dotIndexes"
-      [class.is-active]="activeIndex === i"
-      [attr.aria-selected]="activeIndex === i"
-      [attr.aria-label]="'Go to slide ' + (i + 1)"
-      (click)="goTo(i)"
-    ></button>
   </div>
 
   <div class="hero-banner__scoop" aria-hidden="true"></div>
