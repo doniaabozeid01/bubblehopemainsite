@@ -35,6 +35,13 @@ export class RawMaterialProductsComponent implements OnDestroy {
   userId!: string;
   branchId!: number;
   showScrollButton = false;
+  isRtl = false;
+
+  get activeCategoryName(): string {
+    const active = this.categories.find((c) => c.id === this.selectedCategoryId);
+    if (!active) return '';
+    return this.isRtl ? active.name_ar || active.name : active.name;
+  }
 
   @ViewChild('catRail') catRail!: ElementRef<HTMLDivElement>;
 
@@ -46,6 +53,10 @@ export class RawMaterialProductsComponent implements OnDestroy {
 
   ngOnInit() {
     this.loadState = 'loading';
+
+    this.languageService.languageChanged$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((lang) => (this.isRtl = lang === 'ar'));
 
     // 1) حمّل كل التصنيفات مرة واحدة
     this.api.getAllCategories(this.api.rawMaterials).subscribe({

@@ -1,84 +1,50 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { CarouselComponent, OwlOptions } from 'ngx-owl-carousel-o';
-import { ApiService } from 'src/app/services/api.service';
-import { BranchService } from 'src/app/services/branch.service';
 import { LanguageService } from 'src/app/services/language.service';
+import { RawCategoriesService } from 'src/app/services/raw-categories.service';
 
 @Component({
   selector: 'app-raw-material-categories',
   templateUrl: './raw-material-categories.component.html',
   styleUrls: ['./raw-material-categories.component.scss']
 })
-export class RawMaterialCategoriesComponent {
+export class RawMaterialCategoriesComponent implements OnInit {
 
-  RawMaterialcategories:any;
-  constructor(private router:Router,private api:ApiService,    public languageService: LanguageService){}
+  RawMaterialcategories: any[] = [];
+  loadState: 'loading' | 'success' | 'error' = 'loading';
   isRtl = false;
 
-  rawOptions: OwlOptions = {
-    loop: false,
-    dots: false,
-    nav: false,              // لأننا بنستخدم أزرار خارجية
-    mouseDrag: true,
-    touchDrag: true,
-    rtl: true,
-    responsive: {
-      0:    { items: 1, margin: 8 },
-      700:  { items: 3, margin: 10 },
-      1200: { items: 5, margin: 16 }
-    }
-  };
+  constructor(
+    private router: Router,
+    private rawCategoriesService: RawCategoriesService,
+    public languageService: LanguageService
+  ) { }
 
-
-    ngOnInit(){
-    this.api.getAllCategories(this.api.rawMaterials).subscribe({
-      next:(res)=>{
-        // console.log(res);
-        this.RawMaterialcategories = res;
-        
+  ngOnInit() {
+    this.loadState = 'loading';
+    this.rawCategoriesService.getCategories().subscribe({
+      next: (res) => {
+        this.RawMaterialcategories = res || [];
+        this.loadState = 'success';
       },
-      error:(err)=>{
-        // console.log(err);
-        
+      error: () => {
+        this.RawMaterialcategories = [];
+        this.loadState = 'error';
       }
-
-
-    })
-
-
-
-    this.languageService.languageChanged$.subscribe(lang => {
-      
-      this.isRtl = (lang === 'ar');
     });
 
-
+    this.languageService.languageChanged$.subscribe(lang => {
+      this.isRtl = (lang === 'ar');
+    });
   }
 
+  trackById = (_: number, cat: any) => cat?.id ?? cat?.name;
 
-  @ViewChild('rawCarousel', { static: false }) rawCarousel!: CarouselComponent;
-  trackById = (_: number, cat: any) => cat.id;
-
-  // --- منع الفتح أثناء السحب ---
-  dragging = false;
-  private ptrStart?: { x: number; y: number };
-  private moved = false;
-  private readonly DRAG_THRESHOLD = 10;
-
-  onPtrDown(e: PointerEvent) { this.ptrStart = { x: e.clientX, y: e.clientY }; this.moved = false; }
-  onPtrMove(e: PointerEvent) {
-    if (!this.ptrStart) return;
-    const dx = Math.abs(e.clientX - this.ptrStart.x);
-    const dy = Math.abs(e.clientY - this.ptrStart.y);
-    if (dx > this.DRAG_THRESHOLD || dy > this.DRAG_THRESHOLD) this.moved = true;
-  }
-  onPtrUp() { this.ptrStart = undefined; }
-  onPtrCancel() { this.ptrStart = undefined; this.moved = false; }
-
-  onCardClick(id: number, e: MouseEvent) {
-    if (this.dragging || this.moved) { e.preventDefault(); e.stopPropagation(); return; }
-    this.goToRawMaterialProducts(id);
+  /** Fall back to the raw dashboard image if the background-stripped one fails. */
+  onImageError(cat: any): void {
+    if (cat?.originalImageUrl && cat.imageUrl !== cat.originalImageUrl) {
+      cat.imageUrl = cat.originalImageUrl;
+    }
   }
 
   goToRawMaterialProducts(id: number) {

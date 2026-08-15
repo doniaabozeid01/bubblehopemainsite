@@ -1,55 +1,57 @@
-<div class="categoriesSwiperCustom my-5 position-relative ">
-  <h2 class="mb-0 raw-material text-center main-color d-flex justify-content-center second-color">
-    {{'home.rawMaterial.raw'|translate}} {{'home.rawMaterial.material'|translate}}
-  </h2>
-  <p class="w-100 px-1 mb-3 text-center m-auto fs-5 text-secondary">
-    {{ 'home.rawmaterialsSlogan' | translate }}
-  </p>
+<main class="raw-page" [attr.dir]="isRtl ? 'rtl' : 'ltr'">
+  <div class="raw-page__inner">
+    <header class="raw-header">
+      <p class="raw-header__eyebrow">{{ 'home.rawMaterialsEyebrow' | translate }}</p>
+      <h1 class="raw-header__title">
+        {{ 'home.rawMaterial.raw' | translate }} {{ 'home.rawMaterial.material' | translate }}
+      </h1>
+      <p class="raw-header__slogan">{{ 'home.rawmaterialsSlogan' | translate }}</p>
+    </header>
 
-  <!-- <owl-carousel-o *ngIf="RawMaterialcategories?.length" #rawCarousel [options]="rawOptions" (drag)="dragging = true"
-    (dragged)="dragging = false" class="mt-5 ">
-
-    <ng-template carouselSlide *ngFor="let cat of RawMaterialcategories; trackBy: trackById">
-      <div class="feature-item pointer " (pointerdown)="onPtrDown($event)" (pointermove)="onPtrMove($event)"
-        (pointerup)="onPtrUp()" (pointercancel)="onPtrCancel()" (pointerleave)="onPtrCancel()"
-        (click)="onCardClick(cat.id, $event)">
-
-        <div class="circle  text-center "
-          [attr.data-text]="(languageService.languageChanged$ | async) === 'ar' ? 'عرض التفاصيل' : 'See Details'">
-          <img [src]="cat.imageUrl" class="w-30 " alt="">
-          <p class="fs-5 p-0 m-0 category-name main-color">
-            {{ (languageService.languageChanged$ | async) === 'ar' ? cat.name_ar : cat.name }}
-          </p>
-        </div>
-      </div>
-    </ng-template>
-  </owl-carousel-o>
-
-  <button class="slider-arrow left" (click)="rawCarousel.prev()">
-    <i class="bi bi-chevron-left"></i>
-  </button>
-  <button class="slider-arrow right" (click)="rawCarousel.next()">
-    <i class="bi bi-chevron-right"></i>
-  </button> -->
-
-
-
-
-  <div>
-
-    <div class="row  m-auto justify-content-center align-items-center">
-      <div class="col-6 col-sm-6 col-md-4 col-lg-3 text-center my-2 items-wrapper "
-        *ngFor="let cat of RawMaterialcategories">
-        <div class="cover mx-2">
-          <p class="fs-4 p-0 m-0 category-name">
-            {{ (languageService.languageChanged$ | async) === 'ar' ? cat.name_ar : cat.name }}
-          </p>
-
-          <img [src]="cat.imageUrl" class="img-fluid" alt="">
-        </div>
-      </div>
+    <div *ngIf="loadState === 'loading'" class="raw-state">
+      <app-brand-loader size="lg" [showLogo]="true" label="Loading..."></app-brand-loader>
     </div>
 
+    <div class="raw-grid" *ngIf="loadState === 'success' && RawMaterialcategories?.length">
+      <article
+        class="raw-card"
+        *ngFor="let cat of RawMaterialcategories; trackBy: trackById"
+        role="button"
+        tabindex="0"
+        (click)="goToRawMaterialProducts(cat.id)"
+        (keydown.enter)="goToRawMaterialProducts(cat.id)"
+        (keydown.space)="goToRawMaterialProducts(cat.id)">
+        <div class="raw-card__media">
+          <img
+            [src]="cat.imageUrl"
+            [alt]="(languageService.languageChanged$ | async) === 'ar' ? cat.name_ar : cat.name"
+            loading="lazy"
+            decoding="async"
+            draggable="false"
+            (error)="onImageError(cat)" />
+        </div>
 
+        <div class="raw-card__body">
+          <div class="raw-card__copy">
+            <h3 class="raw-card__name">
+              {{ (languageService.languageChanged$ | async) === 'ar' ? cat.name_ar : cat.name }}
+            </h3>
+            <p class="raw-card__hint">{{ 'home.categoriesCardHint' | translate }}</p>
+          </div>
+
+          <span class="raw-card__cta" aria-hidden="true">
+            <i class="bi bi-arrow-up-right"></i>
+          </span>
+        </div>
+      </article>
+    </div>
+
+    <p class="raw-state raw-state--text" *ngIf="loadState === 'success' && !RawMaterialcategories?.length">
+      {{ 'Products.NoProductsFound' | translate }}
+    </p>
+
+    <p class="raw-state raw-state--text" *ngIf="loadState === 'error'">
+      {{ 'common.somethingWentWrong' | translate }}
+    </p>
   </div>
-</div>
+</main>
