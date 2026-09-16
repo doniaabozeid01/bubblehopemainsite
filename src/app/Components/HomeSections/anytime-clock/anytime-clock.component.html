@@ -1,0 +1,104 @@
+<section
+  class="anytime-shell"
+  [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'"
+>
+  <div class="anytime-shell__scoop anytime-shell__scoop--top" aria-hidden="true"></div>
+
+  <div class="anytime" #root>
+    <div class="anytime__glow" aria-hidden="true"></div>
+
+  <div class="anytime__layout">
+    <div class="anytime__copy">
+      <span class="anytime__eyebrow">{{ 'home.anytimeEyebrow' | translate }}</span>
+      <h2 class="anytime__title">
+        {{ 'home.anytimeTitle' | translate }}
+        <span class="anytime__accent">{{ 'home.anytimeAccent' | translate }}</span>
+      </h2>
+      <p class="anytime__lead">{{ 'home.anytimeLead' | translate }}</p>
+      <a routerLink="/products" class="anytime__cta">
+        {{ 'home.anytimeCta' | translate }}
+        <i class="bi bi-arrow-up-right"></i>
+      </a>
+    </div>
+
+    <div class="anytime__stage">
+      <span
+        *ngFor="let p of pearls; trackBy: trackByPearl"
+        class="anytime__pearl"
+        aria-hidden="true"
+        [style.left.%]="p.x"
+        [style.top.%]="p.y"
+        [style.width.px]="p.size"
+        [style.height.px]="p.size"
+        [style.background]="p.color"
+        [style.animationDuration.s]="p.dur"
+        [style.animationDelay.s]="p.delay"
+      ></span>
+
+      <div
+        class="clock"
+        dir="ltr"
+        role="img"
+        [attr.aria-label]="'home.anytimeAria' | translate"
+      >
+        <div class="clock__ring" aria-hidden="true"></div>
+        <div class="clock__sweep" #sweep aria-hidden="true"></div>
+
+        <span
+          *ngFor="let tick of ticks; trackBy: trackByTick"
+          class="clock__tick"
+          [class.clock__tick--hour]="tick.hour"
+          [style.transform]="'rotate(' + tick.rotation + 'deg)'"
+          aria-hidden="true"
+        ></span>
+
+        <span
+          *ngFor="let hour of hours; trackBy: trackByHour"
+          class="clock__num"
+          [attr.data-hour]="hour.value"
+          [style.left.%]="hour.left"
+          [style.top.%]="hour.top"
+        >
+          <span class="clock__num-inner" [class.is-hot]="hour.value === hotHour">
+            {{ hour.value }}
+          </span>
+        </span>
+
+        <div class="clock__hero">
+          <img
+            #heroA
+            class="clock__hero-img is-front"
+            [src]="heroASrc"
+            alt=""
+          />
+          <img
+            #heroB
+            class="clock__hero-img"
+            [src]="heroBSrc"
+            alt=""
+          />
+        </div>
+
+        <div class="clock__hand clock__hand--hour" #hourHand aria-hidden="true"></div>
+        <div class="clock__hand clock__hand--minute" #minuteHand aria-hidden="true"></div>
+
+        <div class="clock__seconds" #seconds aria-hidden="true">
+          <div class="clock__hand clock__hand--second"></div>
+          <div class="clock__orbit">
+            <img #orbitImg class="clock__orbit-img" [src]="orbitSrc" alt="" />
+          </div>
+        </div>
+
+        <div class="clock__cap" aria-hidden="true"></div>
+      </div>
+
+      <p class="anytime__now" *ngIf="clockLabel">
+        <span class="anytime__time">{{ clockLabel }}</span>
+        <span class="anytime__now-label">{{ 'home.anytimeNow' | translate }}</span>
+      </p>
+    </div>
+  </div>
+  </div>
+
+  <div class="anytime-shell__scoop anytime-shell__scoop--bottom" aria-hidden="true"></div>
+</section>

@@ -96,7 +96,14 @@
         "chillTitle1": "المود",
         "chillTitle2": "جاهز",
         "chillSubtitle": "ماتشا فوق مانجو. فوم ناعم. من غير استعجال.",
-        "chillCta": "ارشف دي"
+        "chillCta": "ارشف دي",
+        "anytimeEyebrow": "أي ساعة · أي نكهة",
+        "anytimeTitle": "أي وقت",
+        "anytimeAccent": "وقت بوبا",
+        "anytimeLead": "من أول الصبح لآخر الليل — اشرب اللي يعجبك، في الوقت اللي يعجبك. بابل هوب.",
+        "anytimeCta": "يلا اختار مشروبك",
+        "anytimeNow": "دلوقتي تمام",
+        "anytimeAria": "ساعة بمشروبات بابل هوب بتلف مع عقرب الثواني"
     },
     "materials": {
         "eyebrow": "من أصناف القائمة كلها",

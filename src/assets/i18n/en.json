@@ -96,7 +96,14 @@
         "chillTitle1": "Mood",
         "chillTitle2": "Loaded",
         "chillSubtitle": "Matcha over mango. Soft foam. Zero rush.",
-        "chillCta": "Sip this"
+        "chillCta": "Sip this",
+        "anytimeEyebrow": "Any hour · Any flavor",
+        "anytimeTitle": "Any time",
+        "anytimeAccent": "is boba time",
+        "anytimeLead": "From morning to midnight — drink what you like, whenever you like. Bubble Hope.",
+        "anytimeCta": "Go pick your drink",
+        "anytimeNow": "This hour's good",
+        "anytimeAria": "A clock with Bubble Hope drinks spinning with the second hand"
     },
     "materials": {
         "eyebrow": "From across the menu",

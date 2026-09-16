@@ -58,6 +58,7 @@ import { AnimatedPriceComponent } from './Components/animated-price/animated-pri
 import { ProductCardTiltDirective } from './Components/products/product-card-tilt.directive';
 import { MaterialsSectionComponent } from './Components/HomeSections/materials-section/materials-section.component';
 import { HeroBannerComponent } from './Components/HomeSections/hero-banner/hero-banner.component';
+import { AnytimeClockComponent } from './Components/HomeSections/anytime-clock/anytime-clock.component';
 
 
 
@@ -115,6 +116,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AnimatedPriceComponent,
     ProductCardTiltDirective,
     MaterialsSectionComponent,
+    AnytimeClockComponent,
   ],
   imports: [
     BrowserModule,

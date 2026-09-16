@@ -1661,7 +1661,8 @@ $scoop-h: clamp(2.5rem, 5vw, 3.5rem);
   .focus__stage {
     height: min(48vh, 400px);
     margin-top: 0.25rem;
-    overflow: hidden;
+    overflow: visible;
+    padding-bottom: 1.75rem;
   }
 
   .focus__cup {
@@ -1863,6 +1864,7 @@ $scoop-h: clamp(2.5rem, 5vw, 3.5rem);
     height: min(42vh, 340px);
     margin-top: 0.35rem;
     overflow: visible;
+    padding-bottom: 2.5rem;
   }
 
   .focus__glow {
@@ -1892,9 +1894,10 @@ $scoop-h: clamp(2.5rem, 5vw, 3.5rem);
   }
 
   .focus__active-name {
-    font-size: 0.72rem !important;
-    bottom: 1%;
-    padding: 0.3rem 0.75rem;
+    font-size: 0.95rem !important;
+    bottom: 11%;
+    padding: 0.42rem 0.95rem;
+    letter-spacing: 0.01em;
   }
 
   .focus__brand {
