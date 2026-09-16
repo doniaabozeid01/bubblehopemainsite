@@ -17,6 +17,49 @@ import { LanguageService } from 'src/app/services/language.service';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const CLOUD = 'https://res.cloudinary.com/dvo2qoi4s/image/upload';
+const cup = (path: string) => `${CLOUD}/${path}`;
+
+/** Isolated current-menu cups — never the old garnish / carousel stills. */
+const CURRENT_CUPS = [
+  cup('v1772444696/categories/szquqljudeihvjfp2unq.png'),
+  cup('v1772445356/categories/zszfyegnznz5ezpcaoln.png'),
+  cup('v1772444816/categories/g8j6nmccogirfsqtn3eo.png'),
+  cup('v1772445376/categories/f9rqgamglpnfuo4t1cud.png'),
+  cup('v1772445265/categories/kotlzcxxdrsu8fqzipyd.png'),
+  cup('v1772531237/categories/yksyjixsllozws5pmij4.png'),
+  cup('v1772444653/categories/cgfjbbg8r7ms5n3wtx34.png'),
+  cup('v1772445400/categories/vybbx6tzm7etzyjrjnny.png'),
+  cup('v1772531362/categories/f1dyunwqg9cmcqldy3wq.png'),
+  cup('v1772445503/categories/ub3a9izosm7utzcvnlzq.png'),
+  cup('v1772444671/categories/x3xlemrbgw24umdzxqot.png'),
+  cup('v1772445287/categories/rxzlusq6cn6tczdwhlkc.png'),
+  cup('v1772445309/categories/hwggjyyy3azfxtfg1b5x.png'),
+  cup('v1772445329/categories/xurvmewaspoh2wdvwt8p.png'),
+  cup('v1772444986/categories/i2jysbf2nfntm2we75el.png'),
+  cup('v1772531539/categories/qqtzq47gt4xmfiyfux0p.png'),
+  cup('v1772445242/categories/cyakiekalpj1rqmogxqc.png'),
+  cup('v1772445769/categories/ppbug6qihbsmyfw6zf9s.png'),
+  cup('v1772531394/categories/c0gflykeaqkhfgqkgufz.png'),
+  cup('v1772444895/categories/a6yylqur6ifgnlx9mp02.png'),
+  cup('v1772445078/categories/aqz3lbb06tle9fnclol9.png'),
+  cup('v1772444609/categories/z1g1g18lmcbqeffqduzv.png'),
+  cup('v1772444875/categories/tnnt8qxl1ok02yq2gynl.png'),
+  cup('v1772445009/categories/pbwyere0xxw9agj99s9k.png'),
+  cup('v1772445418/categories/spsn4omownb5l1atmtwj.png'),
+];
+
+const BRANCH_CUPS: Record<number, string[]> = {
+  2: CURRENT_CUPS.slice(0, 5),
+  3: CURRENT_CUPS.slice(5, 10),
+  5: CURRENT_CUPS.slice(10, 15),
+};
+
+/** Water, soda, waffle, ice cream — not the cup drinks. */
+const SKIP_CATEGORY_IDS = new Set([13, 14, 18, 19]);
+const SKIP_LABEL =
+  /soft\s*drink|غاز|soda|cola|pepsi|sprite|fanta|mirinda|\bwater\b|مياه|مايه|waffle|وافل|ice\s*cream|ايس\s*كريم/;
+
 interface ClockHour {
   value: number;
   left: number;
@@ -43,35 +86,14 @@ export class AnytimeClockComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('heroB') heroBRef?: ElementRef<HTMLImageElement>;
   @ViewChild('orbitImg') orbitImgRef?: ElementRef<HTMLImageElement>;
 
-  private readonly fallbackCups = [
-    'assets/image carousel/matcha mango 1 edit.png',
-    'assets/image carousel/special mango.png',
-    'assets/image carousel/matcha boba edit.png',
-    'assets/image carousel/black milk tea edit.png',
-    'assets/image carousel/tiger brown creme brulee edit.png',
-    'assets/image carousel/kiwi.png',
-    'assets/image carousel/coconut.png',
-    'assets/image carousel/lychee (1).png',
-    'assets/image carousel/blue berry (1).png',
-    'assets/image carousel/MANGO 1 edit.png',
-    'assets/image carousel/live/live-1.png',
-    'assets/image carousel/live/live-2.png',
-    'assets/image carousel/live/live-3.png',
-    'assets/image carousel/live/live-4.png',
-    'assets/image carousel/live/live-5.png',
-    'assets/image carousel/live/live-6.png',
-    'assets/image carousel/live/live-7.png',
-    'assets/image carousel/live/live-8.png',
-  ];
-
-  drinks: string[] = [...this.fallbackCups];
+  drinks: string[] = [...CURRENT_CUPS];
   hours: ClockHour[] = [];
   ticks: ClockTick[] = [];
   hotHour = 12;
   clockLabel = '';
-  heroASrc = this.fallbackCups[0];
-  heroBSrc = this.fallbackCups[1];
-  orbitSrc = this.fallbackCups[0];
+  heroASrc = CURRENT_CUPS[0];
+  heroBSrc = CURRENT_CUPS[1];
+  orbitSrc = CURRENT_CUPS[0];
   reduceMotion = false;
 
   readonly pearls = [
@@ -118,8 +140,8 @@ export class AnytimeClockComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.preload(this.fallbackCups);
     const branchId = this.branchService.getCurrentBranch() ?? 2;
+    this.useDrinks(this.drinksForBranch(branchId));
     this.loadDrinkImages(branchId);
     this.branchSub = this.branchService.currentBranch$.subscribe((id) => {
       if (id) this.loadDrinkImages(id);
@@ -390,7 +412,7 @@ export class AnytimeClockComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadDrinkImages(branchId: number): void {
     const apply = (extra: string[]) => {
-      this.useDrinks(this.uniqueUrls([...extra, ...this.fallbackCups]));
+      this.useDrinks(this.drinksForBranch(branchId, extra));
     };
 
     this.api.GetAllProducts(branchId, undefined, this.api.drinks).subscribe({
@@ -404,10 +426,27 @@ export class AnytimeClockComponent implements OnInit, AfterViewInit, OnDestroy {
       error: () => {
         this.api.GetBestSellerProducts(branchId).subscribe({
           next: (res) => apply(this.extractImages(res)),
-          error: () => this.useDrinks(this.fallbackCups),
+          error: () => this.useDrinks(this.drinksForBranch(branchId)),
         });
       },
     });
+  }
+
+  private drinksForBranch(branchId: number, extra: string[] = []): string[] {
+    const featured = BRANCH_CUPS[branchId] || CURRENT_CUPS.slice(0, 5);
+    return this.uniqueUrls([...featured, ...extra, ...CURRENT_CUPS]).filter((url) =>
+      this.isCurrentDrink(url)
+    );
+  }
+
+  private isCurrentDrink(url: string): boolean {
+    const u = url.toLowerCase();
+    if (!u.includes('res.cloudinary.com')) return false;
+    if (!u.includes('/categories/')) return false;
+    if (u.includes('/assets/') || u.includes('image carousel') || u.includes('/live/')) {
+      return false;
+    }
+    return true;
   }
 
   private uniqueUrls(urls: string[]): string[] {
@@ -423,7 +462,10 @@ export class AnytimeClockComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private useDrinks(urls: string[]): void {
+    if (!urls.length) return;
     this.drinks = urls;
+    this.drinkIndex = 0;
+    this.heroIsA = true;
     this.preload(urls);
     this.heroASrc = urls[0];
     this.heroBSrc = urls[1] ?? urls[0];
@@ -441,24 +483,73 @@ export class AnytimeClockComponent implements OnInit, AfterViewInit, OnDestroy {
   private extractImages(payload: any): string[] {
     const list = Array.isArray(payload) ? payload : [];
     const urls = new Set<string>();
-    const push = (url?: string | null) => {
-      if (!url || typeof url !== 'string') return;
-      const trimmed = url.trim();
-      if (trimmed) urls.add(trimmed);
+    const push = (raw?: unknown) => {
+      const url = this.asImageUrl(raw);
+      if (url) urls.add(url);
     };
 
     for (const item of list) {
-      if (Array.isArray(item?.productImages)) push(item.productImages[0]);
-      push(item?.imagePath);
-      push(item?.productImage);
+      if (this.isSkippedCategory(item)) continue;
+
       if (Array.isArray(item?.products)) {
         for (const p of item.products) {
+          if (this.isSkippedProduct(p)) continue;
           push(p?.imagePath);
-          if (Array.isArray(p?.productImages)) push(p.productImages[0]);
+          if (Array.isArray(p?.productImages)) {
+            p.productImages.forEach((img: unknown) => push(img));
+          }
         }
+        continue;
       }
+
+      if (this.isSkippedProduct(item)) continue;
+      if (Array.isArray(item?.productImages)) {
+        item.productImages.forEach((img: unknown) => push(img));
+      }
+      push(item?.imagePath);
+      push(item?.productImage);
     }
 
-    return Array.from(urls).slice(0, 40);
+    return Array.from(urls);
+  }
+
+  private isSkippedCategory(item: any): boolean {
+    const id = Number(item?.categoryId ?? item?.category?.id);
+    if (id && SKIP_CATEGORY_IDS.has(id)) return true;
+    return this.matchesSkipLabel(
+      item?.categoryName,
+      item?.categoryName_ar,
+      item?.category?.name,
+      item?.category?.name_ar
+    );
+  }
+
+  private isSkippedProduct(item: any): boolean {
+    if (this.isSkippedCategory(item)) return true;
+    return this.matchesSkipLabel(
+      item?.productName,
+      item?.productName_ar,
+      item?.name,
+      item?.nameAr,
+      item?.name_ar
+    );
+  }
+
+  private matchesSkipLabel(...values: unknown[]): boolean {
+    return values.some((value) => SKIP_LABEL.test(String(value || '').toLowerCase()));
+  }
+
+  private asImageUrl(raw?: unknown): string | null {
+    if (!raw) return null;
+    if (typeof raw === 'string') {
+      const trimmed = raw.trim();
+      return trimmed || null;
+    }
+    if (typeof raw === 'object') {
+      const rec = raw as Record<string, unknown>;
+      const nested = rec['imagePath'] ?? rec['url'] ?? rec['imageUrl'] ?? rec['image'];
+      if (typeof nested === 'string' && nested.trim()) return nested.trim();
+    }
+    return null;
   }
 }

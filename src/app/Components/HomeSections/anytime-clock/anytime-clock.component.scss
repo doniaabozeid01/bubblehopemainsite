@@ -244,13 +244,17 @@ $scoop-h: clamp(2rem, 4vw, 2.75rem);
 
 .clock__hero {
   position: absolute;
-  inset: 32.5%;
+  inset: 29%;
   z-index: 2;
   display: grid;
   place-items: center;
   pointer-events: none;
   overflow: visible;
-  transform: translateY(-12%);
+  transform: translateY(-10%);
+
+  @media (min-width: 1080px) {
+    transform: translateY(-22%);
+  }
 }
 
 .clock__hero-img {
@@ -332,10 +336,10 @@ $scoop-h: clamp(2rem, 4vw, 2.75rem);
   top: 6.5%;
   left: 50%;
   z-index: 5;
-  width: 18%;
-  height: 18%;
-  margin-left: -9%;
-  margin-top: -9%;
+  width: 21%;
+  height: 21%;
+  margin-left: -10.5%;
+  margin-top: -10.5%;
 }
 
 .clock__orbit-img {
