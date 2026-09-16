@@ -80,16 +80,16 @@
             </p>
 
             <div class="mobile-action-grid" *ngIf="isLoggedIn; else guestMobile">
-              <a routerLink="/profile" (click)="closeMenu()">
+              <a class="menu-action" routerLink="/profile" (click)="closeMenu()">
                 <i class="bi bi-person"></i> {{ 'navbar.profile' | translate }}
               </a>
-              <button type="button" class="logout-btn" (click)="logout(); closeMenu()">
+              <button type="button" class="menu-action menu-action--logout" (click)="logout(); closeMenu()">
                 <i class="bi bi-box-arrow-right"></i> {{ 'navbar.logout' | translate }}
               </button>
-              <button type="button" (click)="changeLanguage(); closeMenu()">
+              <button type="button" class="menu-action" (click)="changeLanguage(); closeMenu()">
                 <i class="fa-solid fa-globe"></i> {{ 'navbar.language' | translate }}
               </button>
-              <button type="button" routerLink="/wishlist" (click)="closeMenu()">
+              <button type="button" class="menu-action" routerLink="/wishlist" (click)="closeMenu()">
                 <i
                   class="bi"
                   [ngClass]="wishlistCount > 0 ? 'bi-heart-fill menu-heart--active' : 'bi-heart'"
@@ -100,16 +100,16 @@
 
             <ng-template #guestMobile>
               <div class="mobile-action-grid">
-                <a routerLink="/auth/login" (click)="closeMenu()">
+                <a class="menu-action menu-action--primary" routerLink="/auth/login" (click)="closeMenu()">
                   <i class="bi bi-box-arrow-in-right"></i> {{ 'navbar.login' | translate }}
                 </a>
-                <a routerLink="/auth/register" (click)="closeMenu()">
+                <a class="menu-action menu-action--ghost" routerLink="/auth/register" (click)="closeMenu()">
                   <i class="bi bi-person-plus"></i> {{ 'navbar.register' | translate }}
                 </a>
-                <button type="button" (click)="changeLanguage(); closeMenu()">
+                <button type="button" class="menu-action" (click)="changeLanguage(); closeMenu()">
                   <i class="fa-solid fa-globe"></i> {{ 'navbar.language' | translate }}
                 </button>
-                <button type="button" routerLink="/wishlist" (click)="closeMenu()">
+                <button type="button" class="menu-action" routerLink="/wishlist" (click)="closeMenu()">
                   <i
                     class="bi"
                     [ngClass]="wishlistCount > 0 ? 'bi-heart-fill menu-heart--active' : 'bi-heart'"

@@ -412,6 +412,11 @@ $scoop-h: clamp(2rem, 4vw, 2.75rem);
     padding-top: 1.35rem;
   }
 
+  .clock__hero {
+    inset: 33%;
+    transform: translateY(-20%);
+  }
+
   :host a.anytime__cta,
   .anytime__cta {
     font-size: 0.95rem !important;
