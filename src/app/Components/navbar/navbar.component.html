@@ -57,18 +57,40 @@
           {{ 'navbar.products' | translate }}
         </a>
 
-        <a routerLink="/tapioca" routerLinkActive="active" (click)="closeMenu()">{{
-          'navbar.tapioca' | translate
-        }}</a>
-        <a routerLink="/juice" routerLinkActive="active" (click)="closeMenu()">{{
-          'navbar.juice' | translate
-        }}</a>
-        <a routerLink="/sauce" routerLinkActive="active" (click)="closeMenu()">{{
-          'navbar.sauce' | translate
-        }}</a>
-        <a routerLink="/popping" routerLinkActive="active" (click)="closeMenu()">{{
-          'navbar.popping' | translate
-        }}</a>
+        <div class="nav-raw" *ngFor="let item of visibleRawNav; trackBy: trackByRawNav">
+          <a
+            [routerLink]="item.route"
+            [queryParams]="item.queryParams"
+            routerLinkActive="active"
+            (click)="closeMenu()"
+          >
+            {{ item.titleKey ? (item.titleKey | translate) : rawNavName(item) }}
+          </a>
+        </div>
+
+        <div class="nav-raw nav-more has-products" *ngIf="moreRawNav.length">
+          <a role="button" tabindex="0" [class.active]="isMoreActive" aria-haspopup="true">
+            {{ 'navbar.more' | translate }}
+            <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+          </a>
+          <ul
+            class="nav-raw__menu"
+            [class.nav-raw__menu--wide]="moreRawNav.length > 6"
+            role="menu"
+          >
+            <li *ngFor="let item of moreRawNav; trackBy: trackByRawNav">
+              <a
+                [routerLink]="item.route"
+                [queryParams]="item.queryParams"
+                role="menuitem"
+                (click)="closeMenu()"
+              >
+                {{ item.titleKey ? (item.titleKey | translate) : rawNavName(item) }}
+              </a>
+            </li>
+          </ul>
+        </div>
+
         <a href="https://t4tea.shop/home" (click)="closeMenu()">{{ 'navbar.teas' | translate }}</a>
 
         <div class="mobile-only-menu">

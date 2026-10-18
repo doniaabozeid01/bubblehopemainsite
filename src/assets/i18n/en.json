@@ -1,4 +1,7 @@
 {
+    "common": {
+        "somethingWentWrong": "We couldn't load the products right now. Please refresh the page."
+    },
     "auth": {
         "FullName": "Full Name",
         "email": "Email",
@@ -45,6 +48,7 @@
         "categoriesHeading": "Find your perfect flavor",
         "categoriesSlogan": "Explore our wide range of drinks and find your perfect flavor today.",
         "categoriesCardHint": "Explore the collection",
+        "viewProduct": "View product",
         "rawMaterial": {
             "raw": "Our",
             "material": "Material"
@@ -145,14 +149,15 @@
         "changepassword": "Change Password",
         "hello": "Hello",
         "profile": "Profile",
-        "tapioca": "Tapioca Pearls",
-        "juice": "Concentrated Juice",
+        "tapioca": "Powders",
+        "juice": "Syrup",
         "sauce": "Concentrated Sauce",
-        "popping": "Popping Bubble Tea",
+        "popping": "Popping",
         "powders": "Powders",
         "waffle-sauce": "Waffle Sauce",
         "waffle-mix": "Waffle Mix",
         "teas": "Teas",
+        "more": "More",
         "fafvorites": "Favorites",
         "language": "Language",
         "orderNow": "Order Now",
@@ -229,8 +234,10 @@
         "menuTitle": "Our Menu",
         "menuSubtitle": "Fresh, hand-crafted drinks for every mood.",
         "searchPlaceholder": "Search drinks...",
+        "searchIngredients": "Search products...",
         "categoriesAria": "Categories",
         "noMatch": "No drinks match your search.",
+        "noMatchIngredients": "No products match your search.",
         "loading": "Loading menu…",
         "quickAdd": "Quick Add"
     },

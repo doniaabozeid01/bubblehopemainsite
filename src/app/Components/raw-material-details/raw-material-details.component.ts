@@ -14,7 +14,9 @@ import {
 } from 'rxjs/operators';
 import { ApiService } from 'src/app/services/api.service';
 import { BranchService } from 'src/app/services/branch.service';
+import { CartCountService } from 'src/app/services/cart-count.service';
 import { LanguageService } from 'src/app/services/language.service';
+import { RawCategoriesService, asItemList, asShopProduct } from 'src/app/services/raw-categories.service';
 import { SeoService } from 'src/app/services/seo.service';
 
 type LoadState = 'idle' | 'loading' | 'success' | 'notfound' | 'error';
@@ -29,6 +31,7 @@ export class RawMaterialDetailsComponent implements OnDestroy {
   cartId!: number;
   usreId!: string;
   branchId!: number;
+  quantity = 1;
 
   loadState: LoadState = 'idle';
 
@@ -42,24 +45,22 @@ export class RawMaterialDetailsComponent implements OnDestroy {
     private branchService: BranchService,
     private toastr: ToastrService,
     private seoService: SeoService,
-    public languageService: LanguageService
+    public languageService: LanguageService,
+    private rawCategories: RawCategoriesService,
+    private cartCountService: CartCountService
   ) { }
 
   ngOnInit() {
-    // 1) اقرأ الاسم من الـ route مرة واحدة واضبطيه
-    const raw = this.route.snapshot.paramMap.get('name') ?? '';
-    // لو بتستخدمي slug زي mango-black-tea و الـ API عايز اسم بمسافات:
-    const name = decodeURIComponent(raw).replace(/-/g, ' ').trim();
-    this.name$.next(name);
+    this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+      this.name$.next(decodeURIComponent(params.get('name') ?? '').trim());
+    });
 
-    // 2) وفّري branchId حتى بدون لوجين (fallback من localStorage)
     const branch$ = this.branchService.currentBranch$.pipe(
       map((bid) => (bid != null ? bid : Number(localStorage.getItem('br')))),
       filter((bid): bid is number => Number.isFinite(bid as number)),
       distinctUntilChanged()
     );
 
-    // 3) اجمع الاسم + الفرع → حمّل المنتج (switchMap يلغي الطلبات السابقة)
     combineLatest([branch$, this.name$])
       .pipe(
         tap(([bid]) => {
@@ -67,16 +68,7 @@ export class RawMaterialDetailsComponent implements OnDestroy {
           this.product = null;
           this.loadState = 'loading';
         }),
-        switchMap(([bid, nm]) => {
-          if (!nm) return of(null);
-          return this.api.GetProductByName(nm, bid).pipe(
-            catchError((err) => {
-              // لو 404 → notfound
-              if (err?.status === 404) return of({ __notfound: true });
-              throw err;
-            })
-          );
-        }),
+        switchMap(([bid, slug]) => this.loadProduct(bid, slug)),
         takeUntil(this.destroy$),
         shareReplay(1)
       )
@@ -87,13 +79,14 @@ export class RawMaterialDetailsComponent implements OnDestroy {
             return;
           }
 
-          this.product = res;
+          this.product = asShopProduct(res);
+          this.quantity = 1;
           this.loadState = 'success';
 
           // SEO
           this.seoService.updateTitleAndDescription(
-            `${this.product?.name ?? name} | Bubble Hope`,
-            `جرب مشروب ${this.product?.name ?? name} من Bubble Hope - نكهة مميزة ومحبوبة.`
+            `${this.product?.name || 'Product'} | Bubble Hope`,
+            `جرب ${this.product?.name || ''} من Bubble Hope.`
           );
 
           // 4) لو المستخدم مسجّل، حضّر الكارت وتحقق من المفضلة
@@ -128,17 +121,145 @@ export class RawMaterialDetailsComponent implements OnDestroy {
       });
   }
 
-  // صورة آمنة (ترجع placeholder لو مفيش)
+  private loadProduct(branchId: number, slug: string) {
+    if (!slug) return of({ __notfound: true });
+
+    const byName = decodeURIComponent(slug).replace(/-/g, ' ').trim();
+    const key = slug.toLowerCase();
+
+    return this.rawCategories.getCategories().pipe(
+      map((cats) => {
+        const all = (cats || []).flatMap((cat) => cat['products'] || []);
+        return all.find((p: any) =>
+          String(p?.slug || '').toLowerCase() === key ||
+          String(p?.id) === slug ||
+          String(p?.name || '').toLowerCase() === byName.toLowerCase()
+        ) || null;
+      }),
+      switchMap((found) => {
+        if (found) {
+          return this.api.GetProductById(found.id, branchId).pipe(
+            catchError(() => of(found))
+          );
+        }
+        return this.api.GetProductByName(byName, branchId).pipe(
+          catchError(() => of({ __notfound: true }))
+        );
+      }),
+      switchMap((res) => {
+        if (!res || res?.__notfound) return of(res);
+        return this.applyBranchStock(branchId, res);
+      })
+    );
+  }
+
+  /** Same branch-stock overlay as the listing, so Out of Stock matches. */
+  private applyBranchStock(branchId: number, product: any) {
+    return this.api.GetAllProductsByCategoryId(branchId, {
+      groupCategoryId: this.api.rawMaterials,
+    }).pipe(
+      map((res) => {
+        const stockItems = asItemList(res).flatMap((row: any) =>
+          Array.isArray(row?.products) ? row.products : [row]
+        );
+        if (!stockItems.length) return { ...product, stock: Number(product?.stock ?? 0) };
+        const stock = stockItems.find((p: any) => Number(p?.id) === Number(product?.id));
+        return stock ? { ...product, ...stock } : { ...product, stock: 0 };
+      }),
+      catchError(() => of(product))
+    );
+  }
+
+  get isRtl(): boolean {
+    return document.documentElement.dir === 'rtl';
+  }
+
+  productName(p: any): string {
+    return this.isRtl ? p?.name_ar || p?.name : p?.name;
+  }
+
+  categoryName(p: any): string {
+    return this.isRtl
+      ? p?.category?.name_ar || p?.category?.name || ''
+      : p?.category?.name || '';
+  }
+
+  productDescription(p: any): string {
+    return (this.isRtl ? p?.ingredients_ar || p?.ingredients : p?.ingredients || '').trim();
+  }
+
+  currencyLabel(p: any): string {
+    return this.isRtl ? p?.currency_ar || 'ج.م' : p?.currency || 'LE';
+  }
+
+  get isOutOfStock(): boolean {
+    return Number(this.product?.stock ?? 0) <= 0;
+  }
+
+  get maxQuantity(): number {
+    const stock = Number(this.product?.stock ?? 0);
+    if (!Number.isFinite(stock) || stock <= 0) return 1;
+    return Math.min(99, Math.floor(stock));
+  }
+
+  get unitPrice(): number {
+    const p = this.product;
+    const n = Number(
+      p?.newPrice ?? p?.dineInNewPrice ?? p?.oldPrice ?? p?.dineInPrice ?? p?.price ?? 0
+    );
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  get totalPrice(): number {
+    return Number((this.unitPrice * this.quantity).toFixed(2));
+  }
+
+  categoryLink(p: any): string {
+    const id = Number(p?.category?.id ?? p?.categoryId);
+    if (id === 20) return '/juice';
+    if (id === 21) return '/tapioca';
+    if (id === 22) return '/popping';
+    return '/rawMaterialProducts';
+  }
+
+  goBack(p: any): void {
+    this.router.navigate([this.categoryLink(p)]);
+  }
+
+  shareProduct(): void {
+    const url = window.location.href;
+    const title = this.product ? this.productName(this.product) : 'Bubble Hope';
+    if (navigator.share) {
+      navigator.share({ title, url }).catch(() => undefined);
+      return;
+    }
+    navigator.clipboard?.writeText(url).then(() => {
+      this.toastr.success('Link copied to clipboard');
+    });
+  }
+
+  decreaseQuantity(): void {
+    if (this.quantity > 1) this.quantity--;
+  }
+
+  increaseQuantity(): void {
+    if (this.isOutOfStock) return;
+    if (this.quantity < this.maxQuantity) this.quantity++;
+  }
+
   getImageSrc(p: any): string {
-    const raw = p?.images?.[0]?.imagePath;
-    if (!raw) return 'assets/img/placeholder.png'; // تأكد الملف موجود فعليًا
-    return raw.startsWith('http') ? raw : raw; // عدّلي هنا لو عندك baseUrl للصور
+    return p?.imagePath || p?.imageUrl || p?.images?.[0]?.imagePath || '';
   }
   onImgError(ev: Event) {
     (ev.target as HTMLImageElement).src = 'assets/img/placeholder.png';
   }
 
   addToCart(data: any) {
+    if (this.isOutOfStock) {
+      this.toastr.warning('This product is out of stock.');
+      return;
+    }
+
     const token = localStorage.getItem('token');
     const hasValidToken =
       !!token && token !== 'null' && token !== 'undefined' && token.trim() !== '';
@@ -151,14 +272,17 @@ export class RawMaterialDetailsComponent implements OnDestroy {
     }
 
     const dataToAdded = {
-      quantity: 1,
+      quantity: this.quantity,
       productId: data.id,
       branchId: this.branchId,
       userId: this.usreId
     };
 
     this.api.addToCart(dataToAdded).subscribe({
-      next: () => this.toastr.success("Great choice! It's now in your cart."),
+      next: () => {
+        this.toastr.success("Great choice! It's now in your cart.");
+        this.cartCountService.refresh(this.branchId, this.usreId);
+      },
       error: (err) => this.toastr.error(err?.error?.message || 'Failed to add to cart')
     });
   }

@@ -15,14 +15,15 @@
       <!-- CATEGORIES -->
       <div class="footer-col">
         <h4 class="footer-title">{{ "footer.popularcategories" | translate }}</h4>
-        <a class="footer-link" routerLink="/tapioca">{{ "navbar.tapioca" | translate }}</a>
+        <a
+          class="footer-link"
+          *ngFor="let cat of categories; trackBy: trackByCategory"
+          [routerLink]="cat.route"
+          [queryParams]="cat.queryParams"
+        >
+          {{ cat.titleKey ? (cat.titleKey | translate) : categoryName(cat) }}
+        </a>
         <a class="footer-link" href="https://t4tea.shop">{{ "navbar.teas" | translate }}</a>
-        <a class="footer-link" routerLink="/juice">{{ "navbar.juice" | translate }}</a>
-        <a class="footer-link" routerLink="/sauce">{{ "navbar.sauce" | translate }}</a>
-        <a class="footer-link" routerLink="/popping">{{ "navbar.popping" | translate }}</a>
-        <a class="footer-link" routerLink="/powders">{{ "navbar.powders" | translate }}</a>
-        <a class="footer-link" routerLink="/waffle-sauce">{{ "navbar.waffle-sauce" | translate }}</a>
-        <a class="footer-link" routerLink="/waffle-mix">{{ "navbar.waffle-mix" | translate }}</a>
       </div>
 
       <!-- LOCATIONS -->

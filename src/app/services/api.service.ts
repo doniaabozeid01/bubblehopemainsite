@@ -45,6 +45,15 @@ export class ApiService {
     return this.http.get<any>(`${this.baseUrl}/api/Stock/GetProducts`, { params });
   }
 
+  /** Catalog products for a category (not branch stock). */
+  GetProductsByCategoryId(categoryId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/api/Products/GetProductsByCategoryId/${categoryId}`);
+  }
+
+  GetCatalogProducts(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/api/Products/GetAllProducts`);
+  }
+
 
   addToCart(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/api/CartItems/AddCartItem`, data);
@@ -134,6 +143,20 @@ export class ApiService {
 
   getAllCategories(groupId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/api/Categories/GetAllCategories?categoryGroupId=${groupId}`);
+  }
+
+  GetAllCategoriesWithProducts(groupId?: number): Observable<any> {
+    let params = new HttpParams();
+    if (groupId != null) params = params.set('categoryGroupId', String(groupId));
+    return this.http.get(`${this.baseUrl}/api/Categories/GetAllCategoriesWithProducts`, { params });
+  }
+
+  GetCategoryWithProductsById(categoryId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/api/Categories/GetCategoryWithProductsById/${categoryId}`);
+  }
+
+  GetCategoryBySlug(slug: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/api/Categories/GetCategoryBySlug/${slug}`);
   }
 
 

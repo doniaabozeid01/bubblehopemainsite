@@ -62,13 +62,13 @@ $footer-wave-height: 100px;
     linear-gradient(180deg, $cream-warm 0%, $cream 45%, $cream-deep 100%);
 }
 
-$breadcrumbs-bg: rgb(243, 243, 243);
+$breadcrumbs-bg: #fffbf5;
 
 .details-breadcrumbs {
   position: relative;
   background: $breadcrumbs-bg;
-  border-bottom: 1px solid rgba($orange, 0.1);
-  padding-top: calc(40px + 0.35rem);
+  border-bottom: 1px solid rgba($orange, 0.08);
+  padding-top: calc(40px + 0.2rem);
 
   @include details-wave-cap-top($breadcrumbs-bg);
 }
@@ -78,14 +78,15 @@ $breadcrumbs-bg: rgb(243, 243, 243);
   z-index: 1;
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 0.35rem 0.5rem;
+  flex-wrap: nowrap;
+  gap: 0.4rem 0.55rem;
   max-width: 80rem;
   margin: 0 auto;
-  padding: 0.75rem clamp(1rem, 3vw, 2rem) 1rem;
+  padding: 0.55rem clamp(1rem, 3vw, 2rem) 0.9rem;
   font-family: var(--font-brand);
   font-size: 0.85rem;
   color: $muted;
+  overflow: hidden;
 }
 
 .details-breadcrumbs__link,
@@ -94,6 +95,7 @@ $breadcrumbs-bg: rgb(243, 243, 243);
 .details-breadcrumbs__sep {
   font-size: 0.85rem !important;
   line-height: 1.4;
+  white-space: nowrap;
 }
 
 .details-breadcrumbs__link {
@@ -118,11 +120,17 @@ $breadcrumbs-bg: rgb(243, 243, 243);
 .details-breadcrumbs__category {
   color: $ink-soft;
   font-weight: 600;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .details-breadcrumbs__current {
   color: $ink;
   font-weight: 700;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .details-container {
@@ -1030,7 +1038,7 @@ $breadcrumbs-bg: rgb(243, 243, 243);
 // موبايل + تابلت — عمود واحد
 @media (max-width: $details-tablet-max) {
   .details-breadcrumbs {
-    padding-top: calc(28px + 0.25rem);
+    padding-top: calc(28px + 0.2rem);
   }
 
   .details-breadcrumbs__link,

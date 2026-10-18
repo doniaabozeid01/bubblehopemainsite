@@ -12,6 +12,10 @@ export interface RawCategory {
   id: number;
   name: string;
   name_ar: string;
+  slug?: string;
+  titleKey?: string | null;
+  categoryGroupId?: number;
+  products?: any[];
   /** Background-stripped variant used for display. */
   imageUrl: string;
   /** Untouched dashboard URL, used if the cutout fails to load. */
@@ -23,12 +27,104 @@ export interface RawCategory {
  * Dashboard photos are shot on studio backdrops. Cloudinary strips the backdrop
  * on the fly so the products sit cleanly on the page.
  */
-function toCutoutUrl(url: string): string {
+export function toCutoutUrl(url: string): string {
   if (!url || !url.includes('res.cloudinary.com') || !url.includes(CLOUDINARY_UPLOAD)) {
     return url;
   }
   if (url.includes('e_background_removal')) return url;
   return url.replace(CLOUDINARY_UPLOAD, CLOUDINARY_UPLOAD + CUTOUT_TRANSFORM);
+}
+
+export function asItemList(payload: any): any[] {
+  if (Array.isArray(payload)) return payload;
+  if (payload?.data && Array.isArray(payload.data)) return payload.data;
+  if (payload?.value && Array.isArray(payload.value)) return payload.value;
+  if (payload && typeof payload === 'object' && (payload.id || payload.name)) return [payload];
+  return [];
+}
+
+export function cloudinaryFileId(url?: string | null): string {
+  if (!url) return '';
+  const file = url.split('?')[0].split('/').pop() || '';
+  return file.replace(/\.[a-zA-Z0-9]+$/, '').toLowerCase();
+}
+
+export function rawProductImage(product: any): string {
+  const fromImages = product?.images?.[0];
+  const nested = typeof fromImages === 'string' ? fromImages : fromImages?.imagePath;
+  const fromBest = Array.isArray(product?.productImages) ? product.productImages[0] : '';
+  return nested || product?.imagePath || product?.imageUrl || fromBest || '';
+}
+
+function resolveShopPrice(product: any): number {
+  const price = Number(
+    product?.newPrice ?? product?.dineInNewPrice ?? product?.oldPrice ?? product?.dineInPrice ?? product?.price ?? 0
+  );
+  return Number.isFinite(price) && price > 0 ? price : 0;
+}
+
+export function asShopProduct(product: any, category?: { id?: number; name?: string; name_ar?: string }): any {
+  const original = rawProductImage(product);
+  const stock = Number(product?.stock ?? product?.quantity ?? 0);
+  return {
+    ...product,
+    originalImageUrl: original,
+    imageUrl: original ? toCutoutUrl(original) : '',
+    imagePath: original ? toCutoutUrl(original) : '',
+    newPrice: resolveShopPrice(product),
+    oldPrice: Number(product?.oldPrice) > 0 ? Number(product.oldPrice) : resolveShopPrice(product),
+    stock: Number.isFinite(stock) ? stock : 0,
+    currency: product?.currency || 'LE',
+    currency_ar: product?.currency_ar || 'ج.م',
+    isFavorite: !!product?.isFavorite || !!product?.isFavourite,
+    category: product?.category || (category
+      ? { id: category.id, name: category.name, name_ar: category.name_ar }
+      : product?.category),
+  };
+}
+
+/** Dashboard names → the labels used in the navbar. */
+export function rawCategoryTitleKey(cat: { name?: string; name_ar?: string; slug?: string; id?: number }): string | null {
+  const id = Number(cat?.id);
+  if (id === 20) return 'navbar.juice';
+  if (id === 21) return 'navbar.tapioca';
+  if (id === 22) return 'navbar.popping';
+  const blob = `${cat?.slug || ''} ${cat?.name || ''} ${cat?.name_ar || ''}`.toLowerCase();
+  if (/popping|بوبا/.test(blob)) return 'navbar.popping';
+  if (/powder|مساحيق|tapioca|pearl|تابيو/.test(blob)) return 'navbar.tapioca';
+  if (/juice|syrup|شراب|عصير/.test(blob)) return 'navbar.juice';
+  if (/sauce|صلصة/.test(blob) && !/waffle/.test(blob)) return 'navbar.sauce';
+  return null;
+}
+
+export interface RawCategoryLink {
+  route: string;
+  queryParams?: Record<string, any>;
+  titleKey: string | null;
+  name?: string;
+  name_ar?: string;
+  categoryId: number;
+}
+
+const RAW_CATEGORY_ROUTES: Record<number, string> = {
+  21: '/tapioca',
+  20: '/juice',
+  22: '/popping',
+};
+
+/** Pretty route for the known categories, otherwise the filtered products page. */
+export function rawCategoryLink(cat: any): RawCategoryLink {
+  const id = Number(cat?.id);
+  const titleKey = cat?.titleKey ?? rawCategoryTitleKey(cat);
+  const route = RAW_CATEGORY_ROUTES[id] ?? (titleKey === 'navbar.sauce' ? '/sauce' : undefined);
+  return {
+    route: route ?? '/rawMaterialProducts',
+    queryParams: route ? undefined : { categoryId: id },
+    titleKey: route ? titleKey : null,
+    name: cat?.name,
+    name_ar: cat?.name_ar,
+    categoryId: id,
+  };
 }
 
 @Injectable({ providedIn: 'root' })
@@ -37,24 +133,55 @@ export class RawCategoriesService {
 
   constructor(private api: ApiService) {}
 
-  /** Raw-material categories as configured in the dashboard, cached for the session. */
+  /** Group-2 categories with the products nested inside each one. */
   getCategories(): Observable<RawCategory[]> {
-    if (!this.categories$) {
-      this.categories$ = this.api.getAllCategories(this.api.rawMaterials).pipe(
-        map((res) =>
-          Array.isArray(res) ? res : res?.data || res?.result || res?.categories || []
-        ),
-        map((list: any[]) =>
-          list.map((cat) => ({
+    this.categories$ ??= this.fetchCategories();
+    return this.categories$;
+  }
+
+  private fetchCategories(): Observable<RawCategory[]> {
+    return this.api.GetAllCategoriesWithProducts().pipe(
+      map((res) => asItemList(res)),
+      map((list: any[]) => {
+        const cats = list.filter((cat) => Number(cat?.categoryGroupId) === 2);
+
+        const fromApi = cats.map((cat) => {
+          const catId = Number(cat?.id);
+          const products = asItemList(cat?.products)
+            .filter((p) => p?.categoryId == null || Number(p.categoryId) === catId)
+            .map((p) => asShopProduct(p, cat));
+
+          return {
             ...cat,
+            titleKey: rawCategoryTitleKey(cat),
+            products,
             imageUrl: toCutoutUrl(cat?.imageUrl),
             originalImageUrl: cat?.imageUrl,
-          }))
-        ),
-        catchError(() => of([] as RawCategory[])),
-        shareReplay({ bufferSize: 1, refCount: false })
-      );
-    }
-    return this.categories$;
+          };
+        });
+
+        return this.sortCategories(fromApi);
+      }),
+      catchError(() => {
+        this.categories$ = undefined;
+        return of([]);
+      }),
+      shareReplay(1)
+    );
+  }
+
+  private sortCategories(cats: RawCategory[]): RawCategory[] {
+    const order = [21, 20, 22];
+    const rank = (cat: RawCategory) => {
+      const i = order.indexOf(Number(cat.id));
+      return i === -1 ? order.length : i;
+    };
+    return [...cats].sort((a, b) => rank(a) - rank(b));
+  }
+
+  getCategory(id: number): Observable<RawCategory | null> {
+    return this.getCategories().pipe(
+      map((cats) => cats.find((cat) => Number(cat.id) === Number(id)) || null)
+    );
   }
 }

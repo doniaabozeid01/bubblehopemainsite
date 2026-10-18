@@ -9,6 +9,19 @@ import { BranchService } from 'src/app/services/branch.service';
 import { CartCountService } from 'src/app/services/cart-count.service';
 import { WishlistCountService } from 'src/app/services/wishlist-count.service';
 import { LanguageService } from 'src/app/services/language.service';
+import {
+  RawCategoriesService,
+  RawCategoryLink,
+  rawCategoryLink,
+} from 'src/app/services/raw-categories.service';
+
+const RAW_NAV_DEFAULTS = [
+  { id: 21, titleKey: 'navbar.tapioca' },
+  { id: 20, titleKey: 'navbar.juice' },
+  { id: 22, titleKey: 'navbar.popping' },
+];
+
+const RAW_NAV_LIMIT = 4;
 
 @Component({
   selector: 'app-navbar',
@@ -25,6 +38,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isHome = false;
   /** Force-hide Products mega after a click until the mouse leaves */
   megaClosed = false;
+  rawNav: RawCategoryLink[] = RAW_NAV_DEFAULTS.map(rawCategoryLink);
 
   selectedBranchName: string = '';
   branchId: number | null = null;
@@ -42,7 +56,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private branchService: BranchService,
     private toastr: ToastrService,
     public languageService: LanguageService,
-    public api: ApiService
+    public api: ApiService,
+    private rawCategories: RawCategoriesService
   ) {}
 
   ngOnInit(): void {
@@ -101,6 +116,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
       if (branchId) {
         this.branchId = branchId;
       }
+    });
+
+    this.rawCategories.getCategories().subscribe({
+      next: (cats) => {
+        if (!cats?.length) return;
+        this.rawNav = cats.map(rawCategoryLink);
+      },
+      error: () => {},
     });
 
     this.apiService.getAllCategories(this.apiService.drinks).subscribe({
@@ -395,7 +418,30 @@ export class NavbarComponent implements OnInit, OnDestroy {
     return (this.categories || []).slice(0, 6);
   }
 
+  get visibleRawNav(): RawCategoryLink[] {
+    return this.rawNav.slice(0, RAW_NAV_LIMIT);
+  }
+
+  get moreRawNav(): RawCategoryLink[] {
+    return this.rawNav.slice(RAW_NAV_LIMIT);
+  }
+
+  get isMoreActive(): boolean {
+    const [path, query = ''] = this.router.url.split('?');
+    const categoryId = new URLSearchParams(query).get('categoryId');
+    return this.moreRawNav.some((item) =>
+      item.queryParams
+        ? path === item.route && String(item.queryParams['categoryId']) === categoryId
+        : path === item.route
+    );
+  }
+
+  rawNavName(item: RawCategoryLink): string {
+    return this.categoryLabel({ name: item.name, name_ar: item.name_ar });
+  }
+
   trackByCategoryId = (_: number, cat: any) => cat?.id ?? cat?.name;
+  trackByRawNav = (_: number, item: RawCategoryLink) => item.categoryId ?? item.route;
 
   categoryLabel(cat: any): string {
     if (!cat) return '';

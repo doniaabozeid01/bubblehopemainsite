@@ -1,16 +1,50 @@
-import { Component, ElementRef, HostListener, ViewChild, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, HostListener, OnDestroy } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
-import { ApiService } from 'src/app/services/api.service';
-import { BranchService } from 'src/app/services/branch.service';
-import { LanguageService } from 'src/app/services/language.service';
-import { BehaviorSubject, Subject, combineLatest, of } from 'rxjs';
+import { Subject, combineLatest, of } from 'rxjs';
 import {
-  catchError, distinctUntilChanged, filter, map,
+  catchError, distinctUntilChanged, filter, map, startWith,
   switchMap, takeUntil, tap
 } from 'rxjs/operators';
+import { ApiService } from 'src/app/services/api.service';
+import { BranchService } from 'src/app/services/branch.service';
+import { CartCountService } from 'src/app/services/cart-count.service';
+import { LanguageService } from 'src/app/services/language.service';
+import {
+  RawCategoriesService,
+  asItemList,
+  asShopProduct,
+} from 'src/app/services/raw-categories.service';
+import { WishlistCountService } from 'src/app/services/wishlist-count.service';
+
+const ROUTE_CAT: Record<string, number> = {
+  juice: 20,
+  tapioca: 21,
+  powders: 21,
+  popping: 22,
+};
+
+const PATH_BY_CAT: Record<number, string> = {
+  20: '/juice',
+  21: '/tapioca',
+  22: '/popping',
+};
+
+/** Categories without a fixed id; matched by the navbar label the service assigns. */
+const ROUTE_TITLE_KEY: Record<string, string> = {
+  sauce: 'navbar.sauce',
+};
 
 type LoadState = 'idle' | 'loading' | 'success' | 'error';
+
+export interface RawProductGroup {
+  key: string;
+  name: string;
+  nameAr: string;
+  titleKey?: string | null;
+  products: any[];
+}
 
 @Component({
   selector: 'app-raw-material-products',
@@ -24,186 +58,257 @@ export class RawMaterialProductsComponent implements OnDestroy {
     private router: Router,
     private branchService: BranchService,
     private toastr: ToastrService,
-    public languageService: LanguageService
+    public languageService: LanguageService,
+    private rawCategories: RawCategoriesService,
+    private cartCountService: CartCountService,
+    private wishlistCountService: WishlistCountService,
+    private translate: TranslateService
   ) { }
 
   products: any[] = [];
-  categories: any[] = [];
-  selectedCategoryId: number | null = null;
+  groups: RawProductGroup[] = [];
+  filteredGroups: RawProductGroup[] = [];
+  tabs: { key: string; label: string; labelAr: string; titleKey?: string | null }[] = [];
+  activeTab = 'all';
+  searchQuery = '';
 
   cartId!: number;
   userId!: string;
   branchId!: number;
   showScrollButton = false;
   isRtl = false;
-
-  get activeCategoryName(): string {
-    const active = this.categories.find((c) => c.id === this.selectedCategoryId);
-    if (!active) return '';
-    return this.isRtl ? active.name_ar || active.name : active.name;
-  }
-
-  @ViewChild('catRail') catRail!: ElementRef<HTMLDivElement>;
-
   loadState: LoadState = 'loading';
 
-  // streams
   private destroy$ = new Subject<void>();
-  private selectedCategoryId$ = new BehaviorSubject<number | null>(null);
+  private searchTimer?: ReturnType<typeof setTimeout>;
+
+  get pageTitle(): string {
+    if (this.activeTab === 'all') {
+      return this.isRtl ? 'الكل' : 'All';
+    }
+    const tab = this.tabs.find((t) => t.key === this.activeTab);
+    if (tab?.titleKey) return this.translate.instant(tab.titleKey);
+    return this.isRtl ? tab?.labelAr || tab?.label || '' : tab?.label || '';
+  }
+
+  productName(product: any): string {
+    return this.isRtl ? product?.name_ar || product?.name : product?.name;
+  }
+
+  currencyLabel(product: any): string {
+    return this.isRtl ? product?.currency_ar || 'ج.م' : product?.currency || 'LE';
+  }
+
+  tabLabel(tab: { label: string; labelAr: string; titleKey?: string | null }): string {
+    if (tab.titleKey) return this.translate.instant(tab.titleKey);
+    return this.isRtl ? tab.labelAr || tab.label : tab.label;
+  }
+
+  groupTitle(group: RawProductGroup): string {
+    if (group.titleKey) return this.translate.instant(group.titleKey);
+    return this.isRtl ? group.nameAr || group.name : group.name;
+  }
+
+  trackByTab = (_: number, tab: { key: string }) => tab.key;
+  trackByGroup = (_: number, group: RawProductGroup) => group.key;
+  trackByProduct = (_: number, item: any) => item.id ?? item.slug;
 
   ngOnInit() {
     this.loadState = 'loading';
 
     this.languageService.languageChanged$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((lang) => (this.isRtl = lang === 'ar'));
+      .subscribe((lang) => {
+        this.isRtl = lang === 'ar';
+      });
 
-    // 1) حمّل كل التصنيفات مرة واحدة
-    this.api.getAllCategories(this.api.rawMaterials).subscribe({
-      next: (res) => {
-        this.categories = res || [];
-        // خُد الكاتيجوري من URL لو موجود، وإلا أول كاتيجوري
-        const qCat = Number(this.route.snapshot.queryParamMap.get('categoryId')) || null;
-        const initial = (qCat && this.categories.some(c => c.id === qCat))
-          ? qCat
-          : (this.categories[0]?.id ?? null);
-
-        this.selectedCategoryId = initial;
-        this.selectedCategoryId$.next(initial);
-
-        if (initial) {
-          // مزامنة URL بدون إضافة history جديدة
-          this.router.navigate([], {
-            relativeTo: this.route,
-            queryParams: { categoryId: initial },
-            replaceUrl: true
-          });
-        }
-      },
-      error: () => { this.loadState = 'error'; }
-    });
-
-    // 2) فرع فعّال (مع fallback من localStorage)
     const branch$ = this.branchService.currentBranch$.pipe(
       map(b => (b != null ? b : Number(localStorage.getItem('br')))),
       filter((b): b is number => Number.isFinite(b as number)),
       distinctUntilChanged()
     );
 
-    // 3) استمع لأي تغيير في الكاتيجوري من الـ URL (لو اتغيّر خارجيًا)
-    const urlCategory$ = this.route.queryParamMap.pipe(
-      map(p => Number(p.get('categoryId')) || null),
-      distinctUntilChanged()
-    );
-
-    // خُد الكاتيجوري النهائي (من الـ URL أو من اختياراتك)
-    const categoryId$ = combineLatest([this.selectedCategoryId$, urlCategory$]).pipe(
-      map(([sel, url]) => url ?? sel),
-      filter((id): id is number => id != null),
-      distinctUntilChanged()
-    );
-
-    // 4) حمّل المنتجات عند أي تغيير فرع/كاتيجوري (switchMap يكانسل القديم)
-    // combineLatest([branch$, categoryId$]).pipe(
-    //   tap(([b, id]) => {
-    //     this.branchId = b;
-    //     this.selectedCategoryId = id;
-    //     this.products = [];
-    //     this.loadState = 'loading';
-    //   }),
-    //   switchMap(([b, id]) =>
-
-    //     this.api.GetAllProductsByCategoryId(b, { categoryId: id, userId: this.userId ?? undefined }).pipe(catchError(() => of([])))
-
-    //   ),
-    //   takeUntil(this.destroy$)
-    // ).subscribe(list => {
-    //   // لو مفيش منتجات → products=[] وهنعرض رسالة تحت
-    //   this.loadState = 'success';
-    //   console.log(list);
-    //   this.products = list;
-    //   const token = localStorage.getItem('token');
-    //   // const hasToken = !!token && token !== 'null' && token !== 'undefined' && token.trim() !== '';
-
-    // });
-
-    // تجهيز الكارت لو فيه توكن (اختياري)
     const token = localStorage.getItem('token');
     const hasToken = !!token && token !== 'null' && token !== 'undefined' && token.trim() !== '';
-    if (hasToken) {
-      this.api.GetUserId().subscribe({
-        next: (r) => {
-          this.userId = r.userId;
-          // this.api.GetOrCreateCart(this.userId).subscribe({ next: (c) => this.cartId = c.id });
-          combineLatest([branch$, categoryId$]).pipe(
-            tap(([b, id]) => {
-              this.branchId = b;
-              this.selectedCategoryId = id;
-              this.products = [];
-              this.loadState = 'loading';
-            }),
-            switchMap(([b, id]) =>
 
-              this.api.GetAllProductsByCategoryId(b, { categoryId: id, userId: this.userId ?? undefined }).pipe(catchError(() => of([])))
+    const start$ = hasToken
+      ? this.api.GetUserId().pipe(
+          tap((r) => { this.userId = r.userId; }),
+          catchError(() => of(null))
+        )
+      : of(null);
 
-            ),
-            takeUntil(this.destroy$)
-          ).subscribe(list => {
-            // لو مفيش منتجات → products=[] وهنعرض رسالة تحت
-            this.loadState = 'success';
-            // console.log(list);
-            this.products = list;
-            const token = localStorage.getItem('token');
-            // const hasToken = !!token && token !== 'null' && token !== 'undefined' && token.trim() !== '';
+    start$.pipe(
+      switchMap(() => branch$),
+      tap((b) => {
+        this.branchId = b;
+        this.loadState = 'loading';
+      }),
+      switchMap((b) => this.loadCatalog(b)),
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (groups) => {
+        this.groups = groups;
+        this.products = groups.flatMap((g) => g.products);
+        this.rebuildTabs();
+        this.activeTab = this.tabFromRoute();
+        this.applyFilters();
+        this.loadState = groups.length ? 'success' : 'error';
+      },
+      error: () => { this.loadState = 'error'; }
+    });
 
-          });
-        }
-      });
-    }
-    else {
-      combineLatest([branch$, categoryId$]).pipe(
-        tap(([b, id]) => {
-          this.branchId = b;
-          this.selectedCategoryId = id;
-          this.products = [];
-          this.loadState = 'loading';
-        }),
-        switchMap(([b, id]) =>
-
-          this.api.GetAllProductsByCategoryId(b, { categoryId: id, userId: this.userId ?? undefined }).pipe(catchError(() => of([])))
-
-        ),
-        takeUntil(this.destroy$)
-      ).subscribe(list => {
-        // لو مفيش منتجات → products=[] وهنعرض رسالة تحت
-        this.loadState = 'success';
-        // console.log(list);
-        this.products = list;
-        const token = localStorage.getItem('token');
-        // const hasToken = !!token && token !== 'null' && token !== 'undefined' && token.trim() !== '';
-
-      });
-    }
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next(); this.destroy$.complete();
-  }
-
-  // اختيار كاتيجوري من التابس
-  selectCategory(category: any) {
-    if (!category?.id) return;
-    this.selectedCategoryId = category.id;
-    this.selectedCategoryId$.next(category.id);
-
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { categoryId: category.id },
-      replaceUrl: true
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      const next = this.tabFromRoute();
+      if (next === this.activeTab) return;
+      this.activeTab = next;
+      this.applyFilters();
     });
   }
 
-  // Scroll helpers
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+    if (this.searchTimer) clearTimeout(this.searchTimer);
+  }
+
+  onSearchChange(value: string): void {
+    this.searchQuery = value;
+    if (this.searchTimer) clearTimeout(this.searchTimer);
+    this.searchTimer = setTimeout(() => this.applyFilters(), 120);
+  }
+
+  setActiveTab(key: string): void {
+    this.activeTab = key;
+    this.applyFilters();
+
+    if (key === 'all') {
+      this.router.navigate(['/rawMaterialProducts']);
+      return;
+    }
+
+    const pretty = this.pathForCategory(key);
+    if (pretty) {
+      if (!this.router.url.startsWith(pretty)) this.router.navigate([pretty]);
+      return;
+    }
+    this.router.navigate(['/rawMaterialProducts'], { queryParams: { categoryId: key } });
+  }
+
+  isTabActive(key: string): boolean {
+    return this.activeTab === key;
+  }
+
+  private currentPath(): string {
+    return this.router.url.split('?')[0].replace(/^\//, '').split('/')[0];
+  }
+
+  private pathForCategory(key: string): string | null {
+    const fixed = PATH_BY_CAT[Number(key)];
+    if (fixed) return fixed;
+    const titleKey = this.groups.find((g) => g.key === key)?.titleKey;
+    const route = Object.keys(ROUTE_TITLE_KEY).find((r) => ROUTE_TITLE_KEY[r] === titleKey);
+    return route ? `/${route}` : null;
+  }
+
+  private resolveCategoryId(): number | null {
+    const path = this.currentPath();
+    if (path in ROUTE_CAT) return ROUTE_CAT[path];
+    if (path in ROUTE_TITLE_KEY) {
+      const group = this.groups.find((g) => g.titleKey === ROUTE_TITLE_KEY[path]);
+      return group ? Number(group.key) : null;
+    }
+    const q = Number(this.route.snapshot.queryParamMap.get('categoryId'));
+    return Number.isFinite(q) && q ? q : null;
+  }
+
+  private tabFromRoute(): string {
+    const id = this.resolveCategoryId();
+    return id != null ? String(id) : 'all';
+  }
+
+  private rebuildTabs(): void {
+    this.tabs = [
+      { key: 'all', label: 'All', labelAr: 'الكل' },
+      ...this.groups.map((g) => ({
+        key: g.key,
+        label: g.name,
+        labelAr: g.nameAr,
+        titleKey: g.titleKey,
+      })),
+    ];
+  }
+
+  private applyFilters(): void {
+    const q = this.searchQuery.trim().toLowerCase();
+    const source =
+      this.activeTab === 'all'
+        ? this.groups
+        : this.groups.filter((g) => g.key === this.activeTab);
+
+    this.filteredGroups = source
+      .map((g) => ({
+        ...g,
+        products: !q
+          ? g.products
+          : g.products.filter((p) => {
+              const name = String(p.name || '').toLowerCase();
+              const nameAr = String(p.name_ar || '').toLowerCase();
+              return name.includes(q) || nameAr.includes(q);
+            }),
+      }))
+      .filter((g) => g.products.length > 0);
+  }
+
+  private loadCatalog(branchId: number) {
+    return this.rawCategories.getCategories().pipe(
+      map((cats) => (cats || []).map((cat) => ({
+        key: String(cat.id),
+        name: cat.name,
+        nameAr: cat.name_ar,
+        titleKey: cat.titleKey,
+        products: (cat.products || []).map((p: any) => asShopProduct(p, cat)),
+      }))),
+      switchMap((groups) => {
+        const catalog = groups.flatMap((g) => g.products);
+        return this.mergeBranchStock(branchId, catalog).pipe(
+          map((merged) => {
+            const byId = new Map(merged.map((p) => [Number(p.id), p]));
+            return groups.map((g) => ({
+              ...g,
+              products: g.products.map((p) => byId.get(Number(p.id)) || p),
+            }));
+          })
+        );
+      }),
+      catchError(() => of([] as RawProductGroup[]))
+    );
+  }
+
+  private mergeBranchStock(branchId: number, catalog: any[]) {
+    return this.api.GetAllProductsByCategoryId(branchId, {
+      userId: this.userId ?? undefined,
+      groupCategoryId: this.api.rawMaterials,
+    }).pipe(
+      map((res) => {
+        const stockItems = asItemList(res).flatMap((row: any) =>
+          Array.isArray(row?.products) ? row.products : [row]
+        );
+        if (!stockItems.length) return catalog;
+        const byId = new Map(stockItems.map((p: any) => [Number(p.id), p]));
+        return catalog.map((p) => {
+          const stock = byId.get(Number(p.id));
+          if (!stock) return p;
+          return asShopProduct({ ...p, ...stock }, p.category);
+        });
+      }),
+      catchError(() => of(catalog))
+    );
+  }
+
   @HostListener('window:scroll', [])
   onWindowScroll() {
     const y = window.pageYOffset || document.documentElement.scrollTop || 0;
@@ -211,13 +316,16 @@ export class RawMaterialProductsComponent implements OnDestroy {
   }
   scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
-  // تفاصيل
   gotodetails(product: any) {
-    this.router.navigate(['rawmaterialdetails', product.slug]); // بدون سلاش زائد
+    this.router.navigate(['rawmaterialdetails', product.slug]);
   }
 
-  // المفضلة و السلة زي ما هم عندك (اختصارًا)
   addToCart(data: any) {
+    if (Number(data?.stock ?? 0) <= 0) {
+      this.toastr.warning('This product is out of stock.');
+      return;
+    }
+
     const token = localStorage.getItem('token');
     if (!token) {
       this.router.navigate(['/auth/login'], {
@@ -225,7 +333,6 @@ export class RawMaterialProductsComponent implements OnDestroy {
       });
       return;
     }
-
 
     const dataToAdded = {
       quantity: 1,
@@ -235,21 +342,14 @@ export class RawMaterialProductsComponent implements OnDestroy {
     };
 
     this.api.addToCart(dataToAdded).subscribe({
-      next: (response) => {
+      next: () => {
         this.toastr.success("Great choice! It's now in your cart.");
-
-        // console.log("add to cart", response);
+        this.cartCountService.refresh(this.branchId, this.userId);
       },
       error: (err) => {
-        this.toastr.warning(err.error.message);
-
-        // console.log(err);
+        this.toastr.warning(err.error?.message || 'Failed to add to cart');
       }
     });
-
-
-
-
   }
 
   addToFavourite(item: any) {
@@ -265,18 +365,15 @@ export class RawMaterialProductsComponent implements OnDestroy {
       productId: item.id,
       userId: this.userId,
       branchId: this.branchId
-
     };
 
     this.api.addToFavourite(dataToAdded).subscribe({
       next: () => {
         this.toastr.success("Product Saved to your wishlist!");
-
         item.isFavorite = true;
+        this.wishlistCountService.increment();
       },
-      error: (err) => {
-        // console.log(err)
-      }
+      error: () => {}
     });
   }
 
@@ -289,71 +386,12 @@ export class RawMaterialProductsComponent implements OnDestroy {
       return;
     }
 
-
-
-
     this.api.removeFromFavourite(item.id, this.branchId, this.userId).subscribe({
       next: () => {
         this.toastr.success("Product removed from your wishlist.");
-
         item.isFavorite = false;
+        this.wishlistCountService.decrement();
       },
-      // error: (err) => console.log(err)
-
-    })
-    // console.log(item);
-
-
-
-
-
-  }
-
-  // سلوك السحب للتابس كما هو عندك
-  moved = false;
-  private isPointerDown = false;
-  private isDragging = false;
-  private startX = 0;
-  private startScrollLeft = 0;
-  private lastX = 0;
-  private velX = 0;
-  private dragThreshold = 10;
-  private momentumId: number | null = null;
-
-  onTabsWheel(e: WheelEvent, el: HTMLElement) {
-    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-      el.scrollBy({ left: e.deltaY, behavior: 'auto' });
-      e.preventDefault();
-    }
-  }
-  dragStart(e: PointerEvent, el: HTMLElement) {
-    this.isPointerDown = true; this.isDragging = false; this.moved = false;
-    this.startX = this.lastX = e.clientX; this.startScrollLeft = el.scrollLeft; this.velX = 0;
-  }
-  dragMove(e: PointerEvent, el: HTMLElement) {
-    if (!this.isPointerDown) return;
-    const dx = e.clientX - this.startX;
-    if (!this.isDragging && Math.abs(dx) > this.dragThreshold) {
-      this.isDragging = true; this.moved = true; el.classList.add('dragging');
-      try { el.setPointerCapture(e.pointerId); } catch { }
-    }
-    if (!this.isDragging) return;
-    el.scrollLeft = this.startScrollLeft - dx;
-    this.velX = e.clientX - this.lastX; this.lastX = e.clientX;
-    e.preventDefault();
-  }
-  dragEnd(e: PointerEvent, el: HTMLElement) {
-    if (!this.isPointerDown) return;
-    this.isPointerDown = false;
-    try { el.releasePointerCapture?.(e.pointerId); } catch { }
-    if (this.isDragging) {
-      el.classList.remove('dragging');
-      if (this.momentumId) cancelAnimationFrame(this.momentumId);
-      let v = this.velX;
-      const step = () => { if (Math.abs(v) < 0.2) return; el.scrollLeft -= v; v *= 0.95; this.momentumId = requestAnimationFrame(step); };
-      this.momentumId = requestAnimationFrame(step);
-    }
-    this.isDragging = false;
-    requestAnimationFrame(() => { this.moved = false; });
+    });
   }
 }

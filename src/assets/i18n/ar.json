@@ -1,4 +1,7 @@
 {
+    "common": {
+        "somethingWentWrong": "معرفناش نحمّل المنتجات دلوقتي. جرّب تعمل تحديث للصفحة."
+    },
     "auth": {
         "FullName": "الاسم الكامل",
         "email": "البريد الإلكتروني",
@@ -45,6 +48,7 @@
         "categoriesHeading": "لاقي نكهتك المثالية",
         "categoriesSlogan": "استكشف مجموعتنا الواسعة من المشروبات وابحث عن نكهتك المفضلة اليوم.",
         "categoriesCardHint": "استكشف المجموعة",
+        "viewProduct": "عرض المنتج",
         "rawMaterial": {
             "raw": "المواد",
             "material": "الخام"
@@ -145,14 +149,15 @@
         "changepassword": "تغيير كلمة السر",
         "hello": "مرحبا",
         "profile": "الملف الشخصي",
-        "tapioca": "حبوب التابيوكا",
-        "juice": "عصائر مركزة",
+        "tapioca": "المساحيق",
+        "juice": "شراب",
         "sauce": "صلصات مركزة",
-        "popping": "شاي الفقاعات المنتفخة",
-        "powders": "البودرات",
+        "popping": "بوبا",
+        "powders": "المساحيق",
         "waffle-sauce": "صلصة الشيفل",
         "waffle-mix": "خليط الشيفل",
         "teas": "الشاي",
+        "more": "المزيد",
         "fafvorites": "المفضلات",
         "language": "اللغة",
         "orderNow": "اطلب الآن",
@@ -229,8 +234,10 @@
         "menuTitle": "قائمتنا",
         "menuSubtitle": "مشروبات طازجة مصنوعة بعناية لكل مزاج.",
         "searchPlaceholder": "ابحث عن مشروب...",
+        "searchIngredients": "ابحث عن منتج...",
         "categoriesAria": "الأقسام",
         "noMatch": "لا توجد مشروبات مطابقة لبحثك.",
+        "noMatchIngredients": "لا توجد منتجات مطابقة لبحثك.",
         "loading": "جاري تحميل القائمة…",
         "quickAdd": "إضافة سريعة"
     },

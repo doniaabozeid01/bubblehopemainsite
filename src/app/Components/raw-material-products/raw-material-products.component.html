@@ -2,99 +2,120 @@
   <div class="raw-products__inner">
     <header class="raw-products__header">
       <p class="raw-products__eyebrow">{{ 'home.rawMaterialsEyebrow' | translate }}</p>
-      <h1 class="raw-products__title">{{ activeCategoryName || ('home.rawMaterial.raw' | translate) + ' ' + ('home.rawMaterial.material' | translate) }}</h1>
+      <h1 class="raw-products__title">{{ pageTitle }}</h1>
       <p class="raw-products__subtitle">{{ 'home.rawmaterialsSlogan' | translate }}</p>
     </header>
-
-    <nav
-      class="raw-tabs"
-      #tabs
-      [attr.aria-label]="'Products.categoriesAria' | translate"
-      (wheel)="onTabsWheel($event, tabs)"
-      (pointerdown)="dragStart($event, tabs)"
-      (pointermove)="dragMove($event, tabs)"
-      (pointerup)="dragEnd($event, tabs)"
-      (pointerleave)="dragEnd($event, tabs)">
-      <button
-        type="button"
-        class="raw-tab"
-        *ngFor="let category of categories"
-        [class.raw-tab--active]="selectedCategoryId === category.id"
-        [attr.aria-pressed]="selectedCategoryId === category.id"
-        (click)="!moved && selectCategory(category)">
-        {{ (languageService.languageChanged$ | async) === 'ar' ? category.name_ar : category.name }}
-      </button>
-    </nav>
 
     <div *ngIf="loadState === 'loading'" class="raw-products__state">
       <app-brand-loader size="lg" [showLogo]="true" [label]="'Products.loading' | translate"></app-brand-loader>
     </div>
 
-    <div class="raw-products__grid" *ngIf="loadState === 'success' && products.length > 0">
-      <article
-        class="rm-card"
-        *ngFor="let product of products"
-        [class.rm-card--oos]="product.stock <= 0"
-        (click)="gotodetails(product)">
-        <button
-          type="button"
-          class="rm-card__wish"
-          [class.rm-card__wish--active]="product.isFavorite"
-          (click)="product.isFavorite ? removeFromFavourite(product) : addToFavourite(product); $event.stopPropagation()"
-          [attr.aria-pressed]="product.isFavorite"
-          [attr.aria-label]="
-            product.isFavorite
-              ? ('cart.removeFromWishlist' | translate)
-              : ('cart.addToWishlist' | translate)
-          ">
-          <i class="fa-heart" [ngClass]="product.isFavorite ? 'fa-solid' : 'fa-regular'"></i>
-        </button>
+    <div class="raw-layout" *ngIf="loadState === 'success'">
+      <aside class="raw-sidebar">
+        <div class="raw-sidebar__sticky">
+          <div class="raw-search">
+            <i class="bi bi-search raw-search__icon" aria-hidden="true"></i>
+            <input
+              type="search"
+              class="raw-search__input"
+              [ngModel]="searchQuery"
+              (ngModelChange)="onSearchChange($event)"
+              [placeholder]="'Products.searchIngredients' | translate"
+              [attr.aria-label]="'Products.searchIngredients' | translate" />
+          </div>
 
-        <span class="rm-card__badge" *ngIf="product.discount > 0 && product.stock > 0">
-          -{{ product.discount }}%
-        </span>
-
-        <span class="rm-card__badge rm-card__badge--oos" *ngIf="product.stock <= 0">
-          {{ 'outOfStock' | translate }}
-        </span>
-
-        <div class="rm-card__media">
-          <img
-            [src]="product.imagePath"
-            [alt]="(languageService.languageChanged$ | async) === 'ar' ? product.name_ar : product.name"
-            loading="lazy"
-            decoding="async" />
+          <nav class="raw-tabs" [attr.aria-label]="'Products.categoriesAria' | translate">
+            <button
+              type="button"
+              class="raw-tab"
+              *ngFor="let tab of tabs; trackBy: trackByTab"
+              [class.raw-tab--active]="isTabActive(tab.key)"
+              [attr.aria-pressed]="isTabActive(tab.key)"
+              (click)="setActiveTab(tab.key)">
+              {{ tabLabel(tab) }}
+            </button>
+          </nav>
         </div>
+      </aside>
 
-        <h3 class="rm-card__name">
-          {{ (languageService.languageChanged$ | async) === 'ar' ? product.name_ar : product.name }}
-        </h3>
-
-        <div class="rm-card__footer">
-          <span class="rm-card__price">
-            {{ product.newPrice }}
-            <small>
-              {{ (languageService.languageChanged$ | async) === 'ar' ? product.currency_ar : product.currency }}
-            </small>
+      <div class="raw-content">
+        <div class="raw-products__empty" *ngIf="filteredGroups.length === 0">
+          <span class="raw-products__empty-icon" aria-hidden="true">
+            <i class="bi bi-inboxes"></i>
           </span>
-
-          <button
-            type="button"
-            class="rm-card__add"
-            *ngIf="product.stock > 0"
-            (click)="addToCart(product); $event.stopPropagation()"
-            [attr.aria-label]="'Products.quickAdd' | translate">
-            <i class="bi bi-plus-lg" aria-hidden="true"></i>
-          </button>
+          <p>{{ 'Products.noMatchIngredients' | translate }}</p>
         </div>
-      </article>
-    </div>
 
-    <div class="raw-products__empty" *ngIf="loadState === 'success' && products?.length === 0">
-      <span class="raw-products__empty-icon" aria-hidden="true">
-        <i class="bi bi-inboxes"></i>
-      </span>
-      <p>{{ 'Products.NoProductsFound' | translate }}</p>
+        <section
+          class="raw-section"
+          *ngFor="let group of filteredGroups; trackBy: trackByGroup"
+          [attr.aria-labelledby]="'raw-cat-' + group.key">
+          <h2 class="raw-section__title" *ngIf="activeTab === 'all'" [id]="'raw-cat-' + group.key">
+            <span class="raw-section__bar" aria-hidden="true"></span>
+            {{ groupTitle(group) }}
+          </h2>
+
+          <div class="raw-products__grid">
+            <article
+              class="rm-card"
+              *ngFor="let product of group.products; trackBy: trackByProduct"
+              [class.rm-card--oos]="product.stock <= 0"
+              appProductCardTilt
+              (click)="gotodetails(product)">
+              <button
+                type="button"
+                class="rm-card__wish"
+                [class.rm-card__wish--active]="product.isFavorite"
+                (click)="product.isFavorite ? removeFromFavourite(product) : addToFavourite(product); $event.stopPropagation()"
+                [attr.aria-pressed]="product.isFavorite"
+                [attr.aria-label]="
+                  product.isFavorite
+                    ? ('cart.removeFromWishlist' | translate)
+                    : ('cart.addToWishlist' | translate)
+                ">
+                <i class="fa-heart" [ngClass]="product.isFavorite ? 'fa-solid' : 'fa-regular'"></i>
+              </button>
+
+              <span class="rm-card__badge" *ngIf="product.discount > 0 && product.stock > 0">
+                -{{ product.discount }}%
+              </span>
+
+              <span class="rm-card__badge rm-card__badge--oos" *ngIf="product.stock <= 0">
+                {{ 'outOfStock' | translate }}
+              </span>
+
+              <div class="rm-card__media">
+                <img
+                  [src]="product.imagePath"
+                  [alt]="productName(product)"
+                  loading="lazy"
+                  decoding="async" />
+              </div>
+
+              <h3 class="rm-card__name">{{ productName(product) }}</h3>
+
+              <div class="rm-card__footer">
+                <app-animated-price
+                  [value]="product.newPrice"
+                  [currency]="currencyLabel(product)">
+                </app-animated-price>
+
+                <button
+                  type="button"
+                  class="rm-card__add"
+                  *ngIf="product.stock > 0"
+                  (click)="addToCart(product); $event.stopPropagation()"
+                  [attr.aria-label]="('Products.quickAdd' | translate) + ' ' + productName(product)">
+                  <span class="rm-card__add-icon" aria-hidden="true">
+                    <i class="bi bi-plus-lg"></i>
+                  </span>
+                  <span class="rm-card__add-label">{{ 'Products.quickAdd' | translate }}</span>
+                </button>
+              </div>
+            </article>
+          </div>
+        </section>
+      </div>
     </div>
 
     <div class="raw-products__state raw-products__state--text" *ngIf="loadState === 'error'">

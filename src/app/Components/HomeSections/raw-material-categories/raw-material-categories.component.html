@@ -2,7 +2,10 @@
   <div class="raw-page__inner">
     <header class="raw-header">
       <p class="raw-header__eyebrow">{{ 'home.rawMaterialsEyebrow' | translate }}</p>
-      <h1 class="raw-header__title">
+      <h1 class="raw-header__title" *ngIf="pageTitleKey">
+        {{ pageTitleKey | translate }}
+      </h1>
+      <h1 class="raw-header__title" *ngIf="!pageTitleKey">
         {{ 'home.rawMaterial.raw' | translate }} {{ 'home.rawMaterial.material' | translate }}
       </h1>
       <p class="raw-header__slogan">{{ 'home.rawmaterialsSlogan' | translate }}</p>
@@ -12,7 +15,7 @@
       <app-brand-loader size="lg" [showLogo]="true" label="Loading..."></app-brand-loader>
     </div>
 
-    <div class="raw-grid" *ngIf="loadState === 'success' && RawMaterialcategories?.length">
+    <div class="raw-grid" *ngIf="loadState === 'success' && mode === 'categories' && RawMaterialcategories?.length">
       <article
         class="raw-card"
         *ngFor="let cat of RawMaterialcategories; trackBy: trackById"
@@ -24,7 +27,7 @@
         <div class="raw-card__media">
           <img
             [src]="cat.imageUrl"
-            [alt]="(languageService.languageChanged$ | async) === 'ar' ? cat.name_ar : cat.name"
+            [alt]="cat.titleKey ? (cat.titleKey | translate) : categoryLabel(cat)"
             loading="lazy"
             decoding="async"
             draggable="false"
@@ -34,7 +37,7 @@
         <div class="raw-card__body">
           <div class="raw-card__copy">
             <h3 class="raw-card__name">
-              {{ (languageService.languageChanged$ | async) === 'ar' ? cat.name_ar : cat.name }}
+              {{ cat.titleKey ? (cat.titleKey | translate) : categoryLabel(cat) }}
             </h3>
             <p class="raw-card__hint">{{ 'home.categoriesCardHint' | translate }}</p>
           </div>
@@ -46,7 +49,54 @@
       </article>
     </div>
 
-    <p class="raw-state raw-state--text" *ngIf="loadState === 'success' && !RawMaterialcategories?.length">
+    <div class="raw-grid raw-grid--products" *ngIf="loadState === 'success' && mode === 'products' && products.length">
+      <article
+        class="raw-card raw-card--product"
+        *ngFor="let product of products; trackBy: trackById"
+        role="button"
+        tabindex="0"
+        (click)="goToProduct(product)"
+        (keydown.enter)="goToProduct(product)"
+        (keydown.space)="goToProduct(product)">
+        <div class="raw-card__media" [class.raw-card__media--empty]="!product.imageUrl">
+          <img
+            *ngIf="product.imageUrl"
+            [src]="product.imageUrl"
+            [alt]="productLabel(product)"
+            loading="lazy"
+            decoding="async"
+            draggable="false"
+            (error)="onImageError(product)" />
+          <span
+            class="raw-card__pack"
+            *ngIf="!product.imageUrl"
+            [attr.data-kind]="packKind(product)"
+            aria-hidden="true"></span>
+        </div>
+
+        <div class="raw-card__body raw-card__body--product">
+          <h3 class="raw-card__name">{{ productLabel(product) }}</h3>
+          <p class="raw-card__hint raw-card__hint--action">
+            <span *ngIf="product.newPrice > 0; else viewProductHint">
+              {{ product.newPrice }}
+              {{ isRtl ? product.currency_ar : product.currency }}
+            </span>
+            <ng-template #viewProductHint>{{ 'home.viewProduct' | translate }}</ng-template>
+            <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+          </p>
+        </div>
+      </article>
+    </div>
+
+    <p
+      class="raw-state raw-state--text"
+      *ngIf="loadState === 'success' && mode === 'categories' && !RawMaterialcategories?.length">
+      {{ 'Products.NoProductsFound' | translate }}
+    </p>
+
+    <p
+      class="raw-state raw-state--text"
+      *ngIf="loadState === 'success' && mode === 'products' && !products.length">
       {{ 'Products.NoProductsFound' | translate }}
     </p>
 
