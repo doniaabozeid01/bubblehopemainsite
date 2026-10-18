@@ -60,8 +60,7 @@ html.kids-area-scroll body::-webkit-scrollbar {
   --brand-orange: #ff7f00;
   --brand-sunny: #ffe18d;
   /* App chrome — one voice across Menu / Cart / Checkout / Wishlist */
-  --font-brand: 'Grandstander', cursive;
-  --font-app: 'Grandstander', cursive;
+  --font-app: 'Nunito', system-ui, sans-serif;
   --app-title-size: 1.4rem;
   --app-title-weight: 800;
   --app-title-color: #ff7f00;
@@ -452,7 +451,7 @@ label {
   :host .cart-header__title,
   :host .checkout-header__title,
   :host .wishlist-page__title {
-    font-family: var(--font-app, 'Grandstander', cursive) !important;
+    font-family: var(--font-app, 'Nunito', system-ui, sans-serif) !important;
     font-size: 1.4rem !important;
     font-weight: 800 !important;
     line-height: 1.2 !important;

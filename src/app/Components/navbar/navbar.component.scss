@@ -264,7 +264,7 @@ $nav-laptop-max: 1379.98px;
       width: 100%;
       border-radius: 999px;
       padding: 0.72rem 1rem;
-      font-family: 'Grandstander', cursive;
+      font-family: 'Nunito', system-ui, sans-serif !important;
       font-size: 0.95rem !important;
       line-height: 1.3;
       font-weight: 800;
@@ -827,7 +827,7 @@ $nav-laptop-max: 1379.98px;
 
   .welcome-text {
     color: $ink-muted;
-    font-family: 'Grandstander', cursive;
+    font-family: 'Nunito', system-ui, sans-serif !important;
     font-size: 0.82rem !important;
     margin: 0 0 0.65rem;
     padding-inline-start: 0.55rem;
@@ -851,7 +851,7 @@ $nav-laptop-max: 1379.98px;
     padding: 0.72rem 0.5rem;
     background: #fff6ea;
     color: $ink !important;
-    font-family: 'Grandstander', cursive;
+    font-family: 'Nunito', system-ui, sans-serif !important;
     font-size: 0.82rem !important;
     line-height: 1.2;
     font-weight: 800;
