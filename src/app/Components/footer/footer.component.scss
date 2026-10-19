@@ -4,6 +4,7 @@ $scoop-h: clamp(2.5rem, 4.5vw, 3.25rem);
 
 :host {
   display: block;
+  flex: 0 0 auto;
   position: relative;
   z-index: 2;
 }

@@ -13,8 +13,7 @@ $card-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
 }
 
 .checkout-page {
-  min-height: 100dvh;
-  padding: 0.75rem 0.85rem calc(6.5rem + env(safe-area-inset-bottom, 0px));
+  padding: 0.75rem 0.85rem calc(clamp(2.5rem, 4.5vw, 3.25rem) + env(safe-area-inset-bottom, 0px));
   background: $cream;
   font-size: 16px;
   line-height: 1.45;

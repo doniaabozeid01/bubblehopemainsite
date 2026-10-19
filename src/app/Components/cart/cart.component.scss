@@ -8,11 +8,13 @@ $card-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
 
 :host {
   display: block;
+  flex: 1 1 auto;
   background: var(--page-bg, $page-bg);
 }
 
 .cart-page {
-  padding: 1.25rem clamp(1.25rem, 4vw, 2.5rem) calc(3.5rem + clamp(2.5rem, 4.5vw, 3.25rem));
+  min-height: 100%;
+  padding: 1.25rem clamp(1.25rem, 4vw, 2.5rem) clamp(2.5rem, 4.5vw, 3.25rem);
   background: var(--page-bg, $page-bg);
 
   // Override global inflated typography scoped to this page
@@ -440,7 +442,7 @@ $card-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
 
   .cart-page {
     padding: var(--app-page-pad-top, 1.1rem) 0.7rem
-      calc(5.5rem + env(safe-area-inset-bottom, 0px));
+      calc(clamp(2.5rem, 4.5vw, 3.25rem) + env(safe-area-inset-bottom, 0px));
   }
 
   .cart-header {

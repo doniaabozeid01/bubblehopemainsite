@@ -1,14 +1,16 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
   position: relative;
-  flex: 1;
-  min-height: 0;
 }
 
 .page-transition {
   position: relative;
   z-index: 1;
-  min-height: 50vh;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Framer: fixed inset-0 z-[95] origin-left bg-brand-orange */

@@ -14,6 +14,20 @@ body {
   margin: 0;
   padding: 0;
   width: 100%;
+  min-height: 100%;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+app-root {
+  display: block;
+  min-height: 100dvh;
 }
 
 /* Kids Area page: scrolling enabled, scrollbar hidden */
