@@ -59,6 +59,7 @@ import { ProductCardTiltDirective } from './Components/products/product-card-til
 import { MaterialsSectionComponent } from './Components/HomeSections/materials-section/materials-section.component';
 import { HeroBannerComponent } from './Components/HomeSections/hero-banner/hero-banner.component';
 import { AnytimeClockComponent } from './Components/HomeSections/anytime-clock/anytime-clock.component';
+import { RabahniPromoModalComponent } from './Components/HomeSections/rabahni-promo-modal/rabahni-promo-modal.component';
 
 
 
@@ -117,6 +118,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ProductCardTiltDirective,
     MaterialsSectionComponent,
     AnytimeClockComponent,
+    RabahniPromoModalComponent,
   ],
   imports: [
     BrowserModule,

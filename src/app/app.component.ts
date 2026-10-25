@@ -105,22 +105,19 @@ export class AppComponent implements OnInit {
 ngOnInit() {
   this.api.getAllBranches().subscribe({
     next: (data) => {
-      this.branches = Array.isArray(data) ? data : [];
+      const list = Array.isArray(data) ? data : data?.data || data?.result || [];
+      this.branches = Array.isArray(list) ? list : [];
       const savedBranchId = this.branchService.getCurrentBranch();
       const isValid =
         !!savedBranchId &&
         this.branches.some((b: any) => Number(b?.id) === Number(savedBranchId));
 
-      if (isValid) return;
+      if (!this.branches.length) return;
 
-      // Old/deleted branch ids (e.g. 1) break product APIs — fall back to default.
-      const fallback =
-        this.branches.find((b: any) => b?.isDefault) || this.branches[0];
-      if (fallback?.id != null) {
-        this.branchService.setBranch(Number(fallback.id));
-      } else {
-        this.branchService.openModal();
-      }
+      // First visit: customer picks the nearest branch. Later visits keep that choice.
+      if (isValid && this.branchService.hasChosenBranch()) return;
+
+      this.branchService.openModal();
     },
     error: () => {
       this.branches = [];
@@ -170,8 +167,14 @@ ngOnInit() {
   }
 
   closeBranchModal() {
+    // First visit must end with a real choice; later opens can be dismissed.
+    if (!this.branchService.hasChosenBranch()) return;
     this.branchService.closeModal();
     this.showBranchModal = false;
+  }
+
+  isCurrentBranch(branchId: number): boolean {
+    return Number(this.branchService.getCurrentBranch()) === Number(branchId);
   }
 
   checkSiteStatus() {

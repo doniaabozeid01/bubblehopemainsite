@@ -186,6 +186,12 @@ $line: #eceff3;
   &:active {
     transform: translateY(0);
   }
+
+  &.is-current {
+    border-color: $orange;
+    background: rgba(244, 117, 36, 0.08);
+    color: $navy;
+  }
 }
 
 @keyframes fadeInPop {

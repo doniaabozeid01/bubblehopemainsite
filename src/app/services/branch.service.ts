@@ -29,7 +29,13 @@ currentBranch$ = this.selectedBranchId.asObservable();
   setBranch(branchId: number) {
     this.selectedBranchId.next(branchId);
     localStorage.setItem('br', branchId.toString());
+    localStorage.setItem('br_chosen', '1');
     this.closeModal();
+  }
+
+  /** True only after the customer picks a branch. Auto-filled defaults do not count. */
+  hasChosenBranch(): boolean {
+    return localStorage.getItem('br_chosen') === '1' && this.getCurrentBranch() != null;
   }
 
   // getCurrentBranch(): number {
