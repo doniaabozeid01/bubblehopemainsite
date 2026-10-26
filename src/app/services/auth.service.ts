@@ -7,7 +7,8 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class AuthService {
   // private baseUrl = environment.baseUrl;
-  baseUrl: string = "https://alhendalcompany-001-site1.stempurl.com";
+  // baseUrl: string = "https://alhendalcompany-001-site1.stempurl.com";
+  baseUrl: string = "https://localhost:5001";
 
 
   constructor(private httpClient: HttpClient) { 
