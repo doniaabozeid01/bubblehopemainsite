@@ -130,20 +130,7 @@ export class ProductsComponent implements OnDestroy {
       }
 
       if (!branchId && !this.branchId) {
-        this.apiService.GetDefaultBranch().subscribe({
-          next: (res) => {
-            const id = Number(res?.id);
-            if (!id || id === this.branchId) return;
-            this.branchService.setBranch(id);
-          },
-          error: () => {
-            this.loading = false;
-            this.groups = [];
-            this.products = [];
-            this.filteredGroups = [];
-            this.rebuildTabs();
-          },
-        });
+        this.loading = false;
       }
     });
   }

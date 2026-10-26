@@ -108,7 +108,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
         },
       });
     } else {
-      this.GetDefaultBranch();
       this.wishlistCountService.clear();
     }
 
@@ -140,7 +139,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     this.apiService.getAllBranches().subscribe({
       next: (data) => {
-        this.branches = data;
+        const list = Array.isArray(data) ? data : data?.data || data?.result || [];
+        this.branches = Array.isArray(list) ? list : [];
+        const currentId = this.branchService.getCurrentBranch() || this.branchId;
+        if (currentId) this.updateBranchName(Number(currentId));
       },
       error: (err) => {
         console.error('Error loading branches:', err);
@@ -148,20 +150,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
     });
 
     this.branchService.currentBranch$.subscribe((id) => {
-      if (id) {
-        this.branchId = id;
-        this.updateBranchName(id);
-      }
+      if (!id) return;
+      this.branchId = id;
+      this.updateBranchName(id);
     });
 
-    this.apiService.getAllBranches().subscribe({
-      next: (data) => {
-        this.branches = data;
-        const currentId = this.branchService.getCurrentBranch();
-        if (currentId) {
-          this.updateBranchName(Number(currentId));
-        }
-      },
+    this.languageService.languageChanged$.subscribe(() => {
+      if (this.branchId) this.updateBranchName(this.branchId);
     });
   }
 
@@ -272,10 +267,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
       if (branch) {
         // الهروب من خطأ الـ translateService اللي ظهر في الـ Terminal
         const isAr =
-          (this.languageService as any).translate?.currentLang === 'ar' ||
-          (this.languageService as any).currentLang === 'ar';
+          document.documentElement.dir === 'rtl' ||
+          localStorage.getItem('lang') === 'ar';
 
-        this.selectedBranchName = isAr ? branch.name_ar : branch.name;
+        this.selectedBranchName = isAr
+          ? branch.name_ar || branch.name
+          : branch.name || branch.name_ar;
       }
     }
   }
@@ -346,22 +343,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     } else {
       // console.log(userId);
     }
-  }
-
-  GetDefaultBranch() {
-    // Don't overwrite a user-selected branch; only fill in when missing/invalid.
-    const current = this.branchService.getCurrentBranch();
-    if (current) return;
-
-    this.apiService.GetDefaultBranch().subscribe({
-      next: (response) => {
-        const id = Number(response?.id);
-        if (!id) return;
-        this.branchId = id;
-        this.branchService.setBranch(id);
-      },
-      error: () => {},
-    });
   }
 
   changeLanguage() {

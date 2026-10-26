@@ -2,6 +2,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap');
 
+/* Arabic glyphs for the site's Latin-only fonts: same family name + Arabic unicode-range
+   merges these faces into Grandstander / Nunito / Baloo 2, so every existing font stack
+   renders Arabic in Segoe without touching component styles. One face per weight is
+   required — the browser only combines faces whose weight descriptors match exactly. */
+$arabic-unicode-range: U+0600-06FF, U+0750-077F, U+0870-089F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+$arabic-font-file: url('assets/fonts/alfont_com_AlFont_com_Segoe.UI_DownloadSoftware.iR_.ttf') format('truetype');
+
+@each $family in ('Grandstander', 'Nunito', 'Baloo 2') {
+  @for $step from 1 through 9 {
+    $weight: $step * 100;
+    @font-face {
+      font-family: $family;
+      font-style: normal;
+      font-weight: $weight;
+      font-display: swap;
+      src: if($weight >= 600, (local('Segoe UI Bold'), local('SegoeUI-Bold'), $arabic-font-file), $arabic-font-file);
+      unicode-range: $arabic-unicode-range;
+    }
+  }
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -211,8 +232,12 @@ body {
 }
 
 /* Profile address modal must sit above footer scoop stacking */
-body.profile-modal-open {
-  overflow: hidden;
+body.profile-modal-open,
+html.rabahni-promo-open,
+html.rabahni-promo-open body,
+body.rabahni-promo-open {
+  overflow: hidden !important;
+  overscroll-behavior: none;
 }
 
 body.profile-modal-open app-footer {

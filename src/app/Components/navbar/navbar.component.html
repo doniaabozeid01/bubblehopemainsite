@@ -101,6 +101,15 @@
               {{ 'navbar.hello' | translate }}, {{ firstName }}
             </p>
 
+            <button
+              type="button"
+              class="menu-action"
+              (click)="openBranchSelector(); closeMenu()"
+            >
+              <i class="fa-solid fa-location-dot"></i>
+              {{ selectedBranchName || ('cart.chooseBranch' | translate) }}
+            </button>
+
             <div class="mobile-action-grid" *ngIf="isLoggedIn; else guestMobile">
               <a class="menu-action" routerLink="/profile" (click)="closeMenu()">
                 <i class="bi bi-person"></i> {{ 'navbar.profile' | translate }}

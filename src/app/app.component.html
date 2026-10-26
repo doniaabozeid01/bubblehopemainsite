@@ -49,6 +49,7 @@
         type="button"
         class="branch-btn"
         *ngFor="let branch of branches"
+        [class.is-current]="isCurrentBranch(branch.id)"
         (click)="selectBranch(branch.id)"
       >
         <span class="branch-btn__name">

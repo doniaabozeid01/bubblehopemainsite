@@ -38,37 +38,29 @@ export class CartComponent {
 
   ngOnInit(): void {
     this.isRtl = this.translate.currentLang?.startsWith('ar');
-    this.translate.onLangChange.subscribe(
-      (e) => (this.isRtl = e.lang.startsWith('ar'))
-    );
-    this.branchId = localStorage.getItem('br');
+    this.translate.onLangChange.subscribe((e) => {
+      this.isRtl = e.lang.startsWith('ar');
+    });
     this.loadBranches();
+
+    this.branchService.currentBranch$.subscribe((branchId) => {
+      const id = Number(branchId);
+      if (!id || id === Number(this.branchId)) return;
+      this.branchId = id;
+      this.setDeliveryFeeByBranch(id);
+      if (this.userId) this.getCart(id, this.userId);
+    });
 
     const token = localStorage.getItem('token');
     if (token) {
       this.apiService.GetUserId().subscribe({
         next: (res) => {
           this.userId = typeof res === 'string' ? res : res?.userId;
-          if (this.userId) {
-            // console.log('hi');
-            // console.log(res);
-
-            const initialBranchId = Number(
-              this.branchService.getCurrentBranch()
-            );
-            if (initialBranchId) {
-              this.branchId = initialBranchId;
-              this.setDeliveryFeeByBranch(this.branchId);
-              this.getCart(this.branchId, this.userId);
-            }
-
-            this.branchService.currentBranch$.subscribe((branchId) => {
-              if (branchId && branchId !== this.branchId) {
-                this.branchId = branchId;
-                this.setDeliveryFeeByBranch(branchId);
-                this.getCart(branchId, this.userId);
-              }
-            });
+          const initialBranchId = Number(this.branchService.getCurrentBranch());
+          if (this.userId && initialBranchId) {
+            this.branchId = initialBranchId;
+            this.setDeliveryFeeByBranch(this.branchId);
+            this.getCart(this.branchId, this.userId);
           }
 
           this.seoService.updateTitleAndDescription(
@@ -78,20 +70,6 @@ export class CartComponent {
         },
         error: (err) => {
           console.error('❌ Error getting userId:', err);
-          const initialBranchId = Number(this.branchService.getCurrentBranch());
-          if (initialBranchId) {
-            this.branchId = initialBranchId;
-            this.setDeliveryFeeByBranch(this.branchId);
-            this.getCart(this.branchId, this.userId);
-          }
-
-          this.branchService.currentBranch$.subscribe((branchId) => {
-            if (branchId && branchId !== this.branchId) {
-              this.branchId = branchId;
-              this.setDeliveryFeeByBranch(branchId);
-              this.getCart(branchId, this.userId);
-            }
-          });
         },
       });
     } else {
@@ -115,7 +93,7 @@ export class CartComponent {
   loadBranches() {
     this.apiService.getAllBranches().subscribe({
       next: (res: any[]) => {
-        this.branches = res || [];
+        this.branches = Array.isArray(res) ? res : [];
         this.setDeliveryFeeByBranch(this.branchId);
       },
       error: () => {

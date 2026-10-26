@@ -107,7 +107,24 @@
         "anytimeLead": "From morning to midnight — drink what you like, whenever you like. Bubble Hope.",
         "anytimeCta": "Go pick your drink",
         "anytimeNow": "This hour's good",
-        "anytimeAria": "A clock with Bubble Hope drinks spinning with the second hand"
+        "anytimeAria": "A clock with Bubble Hope drinks spinning with the second hand",
+        "rabahniPromo": {
+            "badge": "Special offer x Bubble Hope",
+            "skip": "Skip ad",
+            "headline": "Download Rabahni\nand win exclusive auctions and daily prizes!",
+            "sub": "Bid on exclusive discounts and vouchers you can redeem on Bubble Hope drinks — daily drops that go fast.",
+            "cta": "Download the app now",
+            "more": "Learn more about auctions",
+            "scan": "Scan to get Rabahni",
+            "appStore": "App Store",
+            "googlePlay": "Google Play",
+            "footer": "This ad closes automatically in seconds • Limited-time offer",
+            "floats": {
+                "win": { "title": "You won!", "sub": "Sports bike" },
+                "live": { "title": "Live auction", "sub": "Ends in 02:14" },
+                "coupon": { "title": "Bubble Hope coupon", "sub": "20% off your drink" }
+            }
+        }
     },
     "materials": {
         "eyebrow": "From across the menu",
@@ -219,6 +236,7 @@
         "fees": "Fees",
         "deliveryFee": "Delivery Fee",
         "yourcart": "Your Cart",
+        "chooseBranch": "Choose branch",
         "size": "Size",
         "addToWishlist": "Add To Wishlist",
         "removeFromWishlist": "Remove From Wishlist",

@@ -853,6 +853,11 @@ $nav-laptop-max: 1379.98px;
     line-height: 1.3;
   }
 
+  .mobile-account-section > .menu-action {
+    width: 100%;
+    margin-bottom: 0.65rem;
+  }
+
   .mobile-action-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1035,7 +1040,7 @@ $nav-laptop-max: 1379.98px;
     text-overflow: ellipsis;
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 640px) {
     display: inline-flex;
   }
 }

@@ -1,0 +1,109 @@
+<div
+  class="rabahni-scrim"
+  *ngIf="open"
+  #root
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-label]="'home.rabahniPromo.headline' | translate"
+  (click)="dismiss()"
+>
+  <div class="rabahni-card" (click)="$event.stopPropagation()" [attr.dir]="isRtl ? 'rtl' : 'ltr'">
+    <div class="rabahni-glow" aria-hidden="true"></div>
+    <div class="rabahni-confetti" aria-hidden="true">
+      <span *ngFor="let c of confetti" [class]="'c' + (c % 6)"></span>
+    </div>
+
+    <header class="rabahni-chrome">
+      <span class="rabahni-badge">{{ 'home.rabahniPromo.badge' | translate }}</span>
+
+      <button
+        type="button"
+        class="rabahni-skip"
+        (click)="dismiss()"
+        [attr.aria-label]="'home.rabahniPromo.skip' | translate"
+      >
+        <span class="rabahni-timer" aria-hidden="true">
+          <svg viewBox="0 0 44 44">
+            <circle class="rabahni-timer__track" cx="22" cy="22" r="18"></circle>
+            <circle
+              class="rabahni-timer__progress"
+              cx="22"
+              cy="22"
+              r="18"
+              [style.strokeDasharray]="circumference"
+              [style.strokeDashoffset]="dashOffset"
+            ></circle>
+          </svg>
+          <span class="rabahni-timer__sec">{{ secondsLabel }}</span>
+        </span>
+        <span class="rabahni-skip__label">{{ 'home.rabahniPromo.skip' | translate }}</span>
+        <span class="rabahni-skip__x" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="12" height="12"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"/></svg>
+        </span>
+      </button>
+    </header>
+
+    <div class="rabahni-body">
+      <div class="rabahni-copy">
+        <h2 class="rabahni-headline">{{ 'home.rabahniPromo.headline' | translate }}</h2>
+        <p class="rabahni-sub">{{ 'home.rabahniPromo.sub' | translate }}</p>
+
+        <div class="rabahni-actions">
+          <button type="button" class="rabahni-cta" (click)="download()">
+            {{ 'home.rabahniPromo.cta' | translate }}
+          </button>
+
+          <div class="rabahni-stores">
+            <a class="rabahni-store" [href]="appStoreUrl" target="_blank" rel="noopener" (click)="openStore(appStoreUrl, $event)">
+              <img class="rabahni-store__icon" [src]="appleIcon" width="22" height="22" alt="">
+              {{ 'home.rabahniPromo.appStore' | translate }}
+            </a>
+            <a class="rabahni-store" [href]="playUrl" target="_blank" rel="noopener" (click)="openStore(playUrl, $event)">
+              <img class="rabahni-store__icon" [src]="playIcon" width="22" height="22" alt="">
+              {{ 'home.rabahniPromo.googlePlay' | translate }}
+            </a>
+          </div>
+        </div>
+
+        <div class="rabahni-qrbox">
+          <img class="rabahni-qr" [src]="qrSrc" width="92" height="92" alt="Rabahni QR">
+          <div class="rabahni-qrbox__copy">
+            <p>{{ 'home.rabahniPromo.scan' | translate }}</p>
+            <button type="button" class="rabahni-more" (click)="learnMore()">
+              {{ 'home.rabahniPromo.more' | translate }}
+            </button>
+          </div>
+        </div>
+
+        <p class="rabahni-foot">{{ 'home.rabahniPromo.footer' | translate }}</p>
+      </div>
+
+      <div class="rabahni-stage" aria-hidden="true">
+        <div class="rabahni-stage__orb"></div>
+        <div class="rabahni-float" *ngFor="let f of floats" [ngClass]="'rabahni-float--' + f.key">
+          <span class="rabahni-float__icon" [ngSwitch]="f.key">
+            <svg *ngSwitchCase="'win'" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M7 3h10v2h3v3a4 4 0 0 1-4 4h-.35A5 5 0 0 1 13 14.9V17h3v3H8v-3h3v-2.1A5 5 0 0 1 8.35 12H8a4 4 0 0 1-4-4V5h3V3Zm-1 4v1a2 2 0 0 0 2 2V7H6Zm12 0h-2v3a2 2 0 0 0 2-2V7Z"/></svg>
+            <svg *ngSwitchCase="'live'" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg>
+            <svg *ngSwitchCase="'coupon'" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2.5a2.5 2.5 0 0 0 0 5V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2.5a2.5 2.5 0 0 0 0-5V7Zm6.3 8.7 6.4-6.4-1.4-1.4-6.4 6.4 1.4 1.4ZM9.5 11a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Zm5 5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/></svg>
+          </span>
+          <span class="rabahni-float__text">
+            <strong>{{ 'home.rabahniPromo.floats.' + f.key + '.title' | translate }}</strong>
+            <small>{{ 'home.rabahniPromo.floats.' + f.key + '.sub' | translate }}</small>
+          </span>
+          <span class="rabahni-float__live" *ngIf="f.key === 'live'"></span>
+        </div>
+
+        <div class="rabahni-device">
+          <div class="rabahni-device__screen">
+            <img
+              *ngFor="let shot of shots; let i = index"
+              [src]="shot"
+              [class.is-on]="i === shotIndex"
+              alt=""
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

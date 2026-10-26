@@ -58,57 +58,24 @@ export class BestSellersComponent {
 
   ngOnInit() {
     const token = localStorage.getItem('token');
+    const watchBranch = () => {
+      this.branchService.currentBranch$.subscribe((branchId) => {
+        if (!branchId || Number(branchId) === Number(this.branchId)) return;
+        this.branchId = branchId;
+        this.GetBestSellerProducts(branchId, this.userId);
+      });
+    };
 
     if (token) {
       this.api.GetUserId().subscribe({
         next: (response) => {
           this.userId = response.userId;
-          this.api.GetUserBranch(response.userId).subscribe({
-            next: (res) => {
-              this.branchId = res.id;
-              this.GetBestSellerProducts(res.id, this.userId);
-
-              this.branchService.currentBranch$.subscribe((branchId) => {
-                if (branchId && branchId !== this.branchId) {
-                  this.branchId = branchId;
-                  this.GetBestSellerProducts(branchId, this.userId);
-                }
-              });
-            },
-            error: () => {
-              this.bestSellerProducts = [];
-            },
-          });
+          watchBranch();
         },
-        error: () => {
-          this.api.GetDefaultBranch().subscribe({
-            next: (res) => {
-              this.branchId = res.id;
-              this.GetBestSellerProducts(res.id);
-            },
-            error: () => {
-              this.bestSellerProducts = [];
-            },
-          });
-        },
+        error: () => watchBranch(),
       });
     } else {
-      this.api.GetDefaultBranch().subscribe({
-        next: (res) => {
-          this.branchId = res.id;
-          this.GetBestSellerProducts(res.id);
-        },
-        error: () => {
-          this.bestSellerProducts = [];
-        },
-      });
-
-      this.branchService.currentBranch$.subscribe((branchId) => {
-        if (branchId && branchId !== this.branchId) {
-          this.branchId = branchId;
-          this.GetBestSellerProducts(branchId);
-        }
-      });
+      watchBranch();
     }
 
     this.languageService.languageChanged$.subscribe((lang) => {
