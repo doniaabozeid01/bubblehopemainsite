@@ -10,8 +10,8 @@ export const environment = {
     appId: "1:537902604580:web:6052b8e7425c567c4613b1",
   },
 
-  // apiBaseUrl: "https://alhendalcompany-001-site1.stempurl.com"
-  apiBaseUrl: "https://localhost:5001"
+  apiBaseUrl: "https://alhendalcompany-001-site1.stempurl.com"
+  // apiBaseUrl: "https://localhost:5001"
 };
 
 
