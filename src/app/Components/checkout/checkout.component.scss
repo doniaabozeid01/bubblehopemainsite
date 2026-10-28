@@ -318,7 +318,6 @@ $card-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
   word-break: break-word;
 }
 
-.checkout-select,
 .checkout-input {
   width: 100%;
   box-sizing: border-box;
@@ -338,16 +337,75 @@ $card-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
   }
 }
 
-.checkout-select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b7280' d='M1.4 1.4 6 6l4.6-4.6L12 2.8 6 8.8 0 2.8z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.9rem center;
-  padding-inline-end: 2.25rem;
+.pay-options {
+  display: grid;
+  gap: 0.5rem;
+}
 
-  [dir='rtl'] & {
-    background-position: left 0.9rem center;
-    padding-inline-end: 0.85rem;
-    padding-inline-start: 2.25rem;
+.pay-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  margin: 0;
+  padding: 0.75rem 0.85rem;
+  border: 1.5px solid $line;
+  border-radius: 0.9rem;
+  background: #fff;
+  color: $ink;
+  text-align: start;
+  cursor: pointer;
+  font: inherit;
+  transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+
+  &:active {
+    transform: scale(0.99);
+  }
+
+  &--active {
+    border-color: $orange;
+    background: $orange-soft;
+    box-shadow: 0 0 0 3px rgba($orange, 0.12);
+  }
+}
+
+.pay-option__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 0.65rem;
+  background: rgba($orange, 0.12);
+  color: $orange;
+  font-size: 0.95rem !important;
+  flex-shrink: 0;
+}
+
+.pay-option__label {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.9rem !important;
+  font-weight: 700;
+  line-height: 1.35;
+  color: $ink;
+}
+
+.pay-option__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  border: 1.5px solid #d6dbe3;
+  flex-shrink: 0;
+  color: #fff;
+  font-size: 0.62rem !important;
+
+  .pay-option--active & {
+    border-color: $orange;
+    background: $orange;
   }
 }
 

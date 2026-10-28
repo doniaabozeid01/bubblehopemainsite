@@ -101,11 +101,35 @@
           <!-- Payment -->
           <section class="co-block">
             <h2 class="co-block__title">{{ 'delivery.paymentMethod' | translate }}</h2>
-            <select class="checkout-select" formControlName="paymentMethodId">
-              <option *ngFor="let method of paymentMethods" [ngValue]="method.id">
-                {{ method.name }}
-              </option>
-            </select>
+            <div
+              class="pay-options"
+              role="radiogroup"
+              [attr.aria-label]="'delivery.paymentMethod' | translate"
+            >
+              <button
+                type="button"
+                class="pay-option"
+                role="radio"
+                *ngFor="let method of paymentMethods"
+                [class.pay-option--active]="isPaymentSelected(method.id)"
+                [attr.aria-checked]="isPaymentSelected(method.id)"
+                (click)="selectPaymentMethod(method.id)"
+              >
+                <span class="pay-option__icon" aria-hidden="true">
+                  <i [class]="paymentMethodIcon(method.name)"></i>
+                </span>
+                <span class="pay-option__label">{{ paymentMethodLabel(method) }}</span>
+                <span class="pay-option__mark" aria-hidden="true">
+                  <i class="fa-solid fa-check" *ngIf="isPaymentSelected(method.id)"></i>
+                </span>
+              </button>
+            </div>
+            <p
+              class="field-error"
+              *ngIf="submitted && orderForm.get('paymentMethodId')?.invalid"
+            >
+              {{ 'delivery.paymentMethod' | translate }}
+            </p>
           </section>
 
           <!-- Discount -->

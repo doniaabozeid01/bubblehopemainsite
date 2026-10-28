@@ -277,6 +277,43 @@ export class CheckoutComponent implements OnInit {
     });
   }
 
+  selectPaymentMethod(id: number): void {
+    this.orderForm.patchValue({ paymentMethodId: id });
+    this.orderForm.get('paymentMethodId')?.markAsTouched();
+  }
+
+  isPaymentSelected(id: number): boolean {
+    return this.orderForm?.value?.paymentMethodId === id;
+  }
+
+  paymentMethodLabel(method: { name?: string; nameAr?: string; name_ar?: string }): string {
+    const arabic = method?.nameAr || method?.name_ar || method?.name || '';
+    const english = method?.name || arabic;
+    return this.translate.currentLang === 'ar' ? arabic : english;
+  }
+
+  paymentMethodIcon(name: string): string {
+    const label = (name || '').toLowerCase();
+    if (label.includes('cash') || label.includes('نقد')) {
+      return 'fa-solid fa-money-bill-wave';
+    }
+    if (
+      (label.includes('card') || label.includes('بطاق')) &&
+      (label.includes('delivery') || label.includes('توصيل'))
+    ) {
+      return 'fa-solid fa-truck';
+    }
+    if (
+      label.includes('credit') ||
+      label.includes('debit') ||
+      label.includes('card') ||
+      label.includes('بطاق')
+    ) {
+      return 'fa-solid fa-credit-card';
+    }
+    return 'fa-solid fa-wallet';
+  }
+
   // =============================
   // Submit Order
   // =============================

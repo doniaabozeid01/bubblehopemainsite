@@ -153,8 +153,8 @@ export class MainCategoriesComponent implements OnInit, OnDestroy {
           (c: any, index: number) => ({
             ...c,
             imageUrl:
-              productImageByCategory.get(Number(c.id)) ||
-              productImageByCategory.get(String(c.name || '').trim().toLowerCase()) ||
+              // productImageByCategory.get(Number(c.id)) ||
+              // productImageByCategory.get(String(c.name || '').trim().toLowerCase()) ||
               c.imageUrl,
             bgColor: this.accentColors[index % this.accentColors.length],
           })
