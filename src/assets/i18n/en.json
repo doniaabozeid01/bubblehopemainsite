@@ -42,6 +42,35 @@
       "zeweil": "Zewail Branch"
     }
   },
+    "recipeMotion": {
+        "eyebrow": "The recipe in 24 seconds",
+        "title": "Watch your cup",
+        "accent": "come together",
+        "lead": "From an empty cup to the torched brûlée top: every ingredient and every measure, exactly how we build a Brown Sugar Boba.",
+        "cta": "Order Brown Sugar Boba",
+        "play": "Play",
+        "pause": "Pause",
+        "soundOn": "Turn sound on",
+        "soundOff": "Turn sound off",
+        "seek": "Recipe timeline",
+        "step": "Step",
+        "scene": {
+            "title": "Brown Sugar Boba",
+            "subtitle": "tiger stripes · fresh pearls · brûlée foam",
+            "stepOf": "STEP {{n}} OF {{total}}",
+            "signoff": "Order yours at Bubble Hope",
+            "milkTag": "MILK",
+            "steps": [
+                { "measure": "30 ML", "name": "BROWN SUGAR", "sub": "drizzled on the walls", "unit": "ml", "short": "SYRUP" },
+                { "measure": "60 G", "name": "TAPIOCA PEARLS", "sub": "cooked fresh, still warm", "unit": "g", "short": "PEARLS" },
+                { "measure": "1 CUP", "name": "ICE", "sub": "four cubes, packed tight", "unit": "cubes", "short": "ICE" },
+                { "measure": "200 ML", "name": "FRESH MILK", "sub": "full cream, ice cold", "unit": "ml", "short": "MILK" },
+                { "measure": "50 ML", "name": "CREAM FOAM", "sub": "silky, poured on top", "unit": "ml", "short": "FOAM" },
+                { "measure": "10 G", "name": "BROWN SUGAR", "sub": "sprinkled over the foam", "unit": "g", "short": "SUGAR" },
+                { "measure": "10 SEC", "name": "TORCH IT", "sub": "until the top caramelizes", "unit": "sec", "short": "TORCH" }
+            ]
+        }
+    },
     "home": {
         "catergories": "Beverages",
         "categoriesEyebrow": "Beverages",
