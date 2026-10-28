@@ -28,6 +28,7 @@ import { ProfileComponent } from './Components/profile/profile.component';
 import { AdvertisementProductsComponent } from './Components/advertisement-products/advertisement-products.component';
 import { KidsAreaComponent } from './Components/kids-area/kids-area.component';
 import { BubbleEventsComponent } from './Components/bubble-events/bubble-events.component';
+import { RecipeRenderComponent } from './Components/HomeSections/recipe-motion/recipe-render.component';
 
 
 
@@ -87,6 +88,7 @@ const routes: Routes = [
 
     ]
   },
+  { path: 'recipe-render', component: RecipeRenderComponent },
   // optional fallback
   { path: '**', redirectTo: 'home' }
 

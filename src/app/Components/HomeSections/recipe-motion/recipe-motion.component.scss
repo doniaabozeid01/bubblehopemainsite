@@ -1,0 +1,252 @@
+$cream: #fffbf5;
+$ink: #243a63;
+$orange: #f47524;
+$teal: #2bb6cf;
+
+:host {
+  display: block;
+  background: $cream;
+}
+
+.recipe {
+  padding: clamp(3rem, 7vw, 5.5rem) 1.25rem;
+}
+
+.recipe__layout {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: grid;
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: center;
+
+  @media (min-width: 1080px) {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  }
+}
+
+.recipe__copy {
+  max-width: 32rem;
+  text-align: start;
+
+  @media (max-width: 1079px) {
+    margin: 0 auto;
+    text-align: center;
+  }
+}
+
+.recipe__eyebrow {
+  display: inline-block;
+  margin-bottom: 0.85rem;
+  font-family: var(--font-app, 'Nunito', system-ui, sans-serif);
+  font-size: 0.78rem !important;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: $teal;
+}
+
+.recipe__title {
+  margin: 0;
+  font-size: clamp(2.1rem, 4.6vw, 3.5rem) !important;
+  font-weight: 800;
+  line-height: 1 !important;
+  letter-spacing: -0.03em;
+  color: $ink;
+}
+
+.recipe__accent {
+  display: block;
+  font-size: inherit !important;
+  color: $orange;
+}
+
+.recipe__lead {
+  margin: 1.05rem 0 1.6rem;
+  font-family: var(--font-app, 'Nunito', system-ui, sans-serif);
+  font-size: clamp(1rem, 1.6vw, 1.12rem) !important;
+  font-weight: 600;
+  line-height: 1.65;
+  color: rgba($ink, 0.68);
+
+  @media (max-width: 1079px) {
+    margin-inline: auto;
+  }
+}
+
+.recipe__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.72rem 1.25rem;
+  border-radius: 999px;
+  background: $ink;
+  color: #fff;
+  font-size: 16px !important;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  box-shadow: 0 12px 28px rgba($ink, 0.18);
+  transition: transform 0.25s ease, background 0.25s ease;
+
+  i {
+    font-size: 0.9rem;
+  }
+
+  &:hover {
+    background: $orange;
+    color: #fff;
+    transform: translateY(-2px);
+  }
+}
+
+.recipe__player {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.recipe__stage {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 2rem;
+  overflow: hidden;
+  background: $cream;
+  border: 2px solid rgba($ink, 0.08);
+  box-shadow: 0 30px 70px -36px rgba($ink, 0.35);
+}
+
+.recipe__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding: 0 0.25rem;
+}
+
+.recipe__btn {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0;
+  border-radius: 50%;
+  background: $orange;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+
+  i {
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+    background: darken($orange, 6%);
+  }
+
+  &--ghost {
+    background: rgba($ink, 0.07);
+    color: $ink;
+
+    &:hover {
+      background: rgba($ink, 0.12);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+}
+
+.recipe__track {
+  position: relative;
+  flex: 1;
+  height: 1.75rem;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.recipe__rail {
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  height: 4px;
+  margin-top: -2px;
+  border-radius: 999px;
+  background: rgba($ink, 0.1);
+  overflow: hidden;
+}
+
+.recipe__fill {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #ff9a3c, $orange);
+  transform: scaleX(0);
+  transform-origin: left center;
+
+  [dir='rtl'] & {
+    transform-origin: right center;
+  }
+}
+
+.recipe__marker {
+  position: absolute;
+  top: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-inline-start: -0.75rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  transform: translateY(-50%);
+  cursor: pointer;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 10px;
+    border-radius: 2px;
+    background: rgba($ink, 0.28);
+    transform: translate(-50%, -50%);
+    transition: height 0.2s ease, background 0.2s ease;
+  }
+
+  &:hover::after,
+  &:focus-visible::after {
+    height: 16px;
+    background: $orange;
+  }
+}
+
+.recipe__time {
+  flex-shrink: 0;
+  min-width: 2.6rem;
+  font-family: var(--font-app, 'Nunito', system-ui, sans-serif);
+  font-size: 0.85rem !important;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: rgba($ink, 0.55);
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .recipe {
+    padding-inline: 0.75rem;
+  }
+
+  .recipe__stage {
+    border-radius: 1.4rem;
+  }
+
+  :host a.recipe__cta,
+  .recipe__cta {
+    font-size: 0.95rem !important;
+    line-height: 1.2 !important;
+  }
+}

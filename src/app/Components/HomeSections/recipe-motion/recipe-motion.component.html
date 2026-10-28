@@ -1,0 +1,73 @@
+<section
+  class="recipe"
+  #root
+  [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'"
+>
+  <div class="recipe__layout">
+    <div class="recipe__copy">
+      <span class="recipe__eyebrow">{{ 'recipeMotion.eyebrow' | translate }}</span>
+      <h2 class="recipe__title">
+        {{ 'recipeMotion.title' | translate }}
+        <span class="recipe__accent">{{ 'recipeMotion.accent' | translate }}</span>
+      </h2>
+      <p class="recipe__lead">{{ 'recipeMotion.lead' | translate }}</p>
+      <a routerLink="/products" class="recipe__cta">
+        {{ 'recipeMotion.cta' | translate }}
+        <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+      </a>
+    </div>
+
+    <div class="recipe__player">
+      <div class="recipe__stage" #stage></div>
+
+      <div class="recipe__controls">
+        <button
+          type="button"
+          class="recipe__btn"
+          (click)="togglePlay()"
+          [attr.aria-label]="(playing ? 'recipeMotion.pause' : 'recipeMotion.play') | translate"
+        >
+          <i class="bi" [class.bi-pause-fill]="playing" [class.bi-play-fill]="!playing" aria-hidden="true"></i>
+        </button>
+
+        <div
+          class="recipe__track"
+          role="slider"
+          tabindex="-1"
+          [attr.aria-label]="'recipeMotion.seek' | translate"
+          (pointerdown)="seekFromPointer($event)"
+        >
+          <div class="recipe__rail">
+            <div class="recipe__fill" #progress></div>
+          </div>
+          <button
+            *ngFor="let m of markers; let i = index"
+            type="button"
+            class="recipe__marker"
+            [style.inset-inline-start.%]="m"
+            [attr.aria-label]="('recipeMotion.step' | translate) + ' ' + (i + 1)"
+            (pointerdown)="$event.stopPropagation()"
+            (click)="seekToStep(i)"
+          ></button>
+        </div>
+
+        <span class="recipe__time" #clock dir="ltr">0:00</span>
+
+        <button
+          type="button"
+          class="recipe__btn recipe__btn--ghost"
+          (click)="toggleSound()"
+          [disabled]="soundLoading"
+          [attr.aria-label]="(soundOn ? 'recipeMotion.soundOff' : 'recipeMotion.soundOn') | translate"
+        >
+          <i
+            class="bi"
+            [class.bi-volume-up-fill]="soundOn"
+            [class.bi-volume-mute-fill]="!soundOn"
+            aria-hidden="true"
+          ></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
