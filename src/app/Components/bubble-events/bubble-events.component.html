@@ -240,14 +240,33 @@
           (click)="openLightbox(featuredGalleryItem)"
         >
           <div class="events-showcase__hero-frame">
-            <img
+            <video
+              *ngIf="featuredGalleryItem.type === 'video'; else featuredImage"
               class="events-showcase__hero-img"
               [class.events-showcase__hero-img--fresh]="galleryHeroFresh"
               [src]="featuredGalleryItem.src"
-              [alt]="galleryKey(featuredGalleryItem, 'alt') | translate"
-              loading="lazy"
-              decoding="async"
-            />
+              [poster]="featuredGalleryItem.poster"
+              [muted]="true"
+              muted
+              autoplay
+              loop
+              playsinline
+              preload="metadata"
+              aria-hidden="true"
+            ></video>
+            <ng-template #featuredImage>
+              <img
+                class="events-showcase__hero-img"
+                [class.events-showcase__hero-img--fresh]="galleryHeroFresh"
+                [src]="featuredGalleryItem.src"
+                [alt]="galleryKey(featuredGalleryItem, 'alt') | translate"
+                loading="lazy"
+                decoding="async"
+              />
+            </ng-template>
+            <span class="events-showcase__play" *ngIf="featuredGalleryItem.type === 'video'" aria-hidden="true">
+              <i class="bi bi-play-fill"></i>
+            </span>
           </div>
 
           <span class="events-showcase__hero-glass">
@@ -277,8 +296,9 @@
             [attr.aria-label]="galleryKey(item, 'alt') | translate"
             (click)="selectGalleryByItem(item)"
           >
-            <img [src]="item.src" [alt]="galleryKey(item, 'alt') | translate" loading="lazy" decoding="async" />
+            <img [src]="galleryThumb(item)" [alt]="galleryKey(item, 'alt') | translate" loading="lazy" decoding="async" />
             <span class="events-showcase__stack-label">{{ galleryKey(item, 'eventType') | translate }}</span>
+            <i *ngIf="item.type === 'video'" class="bi bi-play-circle-fill events-showcase__video-badge" aria-hidden="true"></i>
           </button>
         </div>
       </div>
@@ -303,7 +323,8 @@
             [attr.aria-current]="galleryActiveIndex === i ? 'true' : null"
             (click)="selectGallerySlide(i)"
           >
-            <img [src]="item.src" [alt]="galleryKey(item, 'alt') | translate" loading="lazy" decoding="async" />
+            <img [src]="galleryThumb(item)" [alt]="galleryKey(item, 'alt') | translate" loading="lazy" decoding="async" />
+            <i *ngIf="item.type === 'video'" class="bi bi-play-circle-fill events-showcase__video-badge" aria-hidden="true"></i>
           </button>
         </div>
 
@@ -583,6 +604,7 @@
         [src]="activeGalleryItem.src"
         [poster]="activeGalleryItem.poster"
         controls
+        autoplay
         playsinline
       ></video>
     </div>

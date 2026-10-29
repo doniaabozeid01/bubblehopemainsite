@@ -68,10 +68,10 @@ $muted: #8a8178;
   padding: 82px 48px 48px;
   color: #fff;
   background-color: #1a1208;
-  background-image: url('/assets/kidsarea-bg.jpg');
+  background-image: url('/assets/brand/kids/kids-giant-games.webp');
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: center;
+  background-position: center 40%;
   border-end-end-radius: 15px;
 }
 
@@ -2351,5 +2351,64 @@ $blue: $brand-blue;
     font-size: clamp(24px, 6.5vw, 32px) !important;
     line-height: 1.12;
     padding: 0 4px;
+  }
+}
+
+/* ===================== FLOATING NAV OFFSET =====================
+   The navbar floats as a glass pill over this page (no spacer), so the hero
+   photo runs to the top edge and only its content is pushed below the pill. */
+:host {
+  --kids-nav-offset: 124px;
+
+  @media (max-width: 639.98px) {
+    --kids-nav-offset: 104px;
+  }
+}
+
+.kids-shell {
+  min-height: 100dvh;
+}
+
+.kids-hero__media {
+  min-height: 100dvh;
+}
+
+.kids-hero__badge {
+  top: calc(var(--kids-nav-offset) + 18px);
+}
+
+.kids-form-panel {
+  padding-top: calc(var(--kids-nav-offset) + 20px);
+}
+
+@media (min-width: 961px) and (max-width: 1379.98px) {
+  .kids-shell,
+  .kids-hero__media,
+  .kids-form-panel {
+    min-height: 100dvh;
+  }
+
+  .kids-hero__badge {
+    top: calc(var(--kids-nav-offset) + 14px);
+  }
+}
+
+@media (max-width: 960px) {
+  .kids-shell,
+  .kids-hero__media {
+    min-height: auto;
+  }
+
+  .kids-hero__media {
+    min-height: min(560px, 86svh);
+    padding-top: calc(var(--kids-nav-offset) + 12px);
+  }
+
+  .kids-hero__badge {
+    top: auto;
+  }
+
+  .kids-form-panel {
+    padding-top: 16px;
   }
 }

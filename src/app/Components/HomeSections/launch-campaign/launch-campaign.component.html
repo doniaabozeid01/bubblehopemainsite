@@ -1,0 +1,151 @@
+<section
+  *ngIf="visible"
+  class="launch"
+  [class.launch--live]="live"
+  [class.is-paused]="!running"
+  [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'"
+>
+  <div class="launch__panel" #panel>
+    <!-- Arabic stays on a straight baseline: text on a curve places each glyph
+         separately, which breaks the joins between Arabic letters. -->
+    <svg class="launch__bg-arc launch__bg-arc--wide" viewBox="0 0 1400 300" aria-hidden="true">
+      <defs>
+        <path id="launchArcWidePath" d="M 20,215 Q 700,135 1380,215" />
+      </defs>
+      <text *ngIf="isArabic; else wideArc" x="700" y="230" text-anchor="middle" direction="rtl">
+        {{ bgWordKey | translate }}
+      </text>
+      <ng-template #wideArc>
+        <svg:text text-anchor="middle">
+          <svg:textPath href="#launchArcWidePath" startOffset="50%">{{ bgWordKey | translate }}</svg:textPath>
+        </svg:text>
+      </ng-template>
+    </svg>
+    <svg class="launch__bg-arc launch__bg-arc--narrow" viewBox="0 0 400 120" aria-hidden="true">
+      <defs>
+        <path id="launchArcPath" d="M 8,112 Q 200,8 392,112" />
+      </defs>
+      <text *ngIf="isArabic; else narrowArc" x="200" y="96" text-anchor="middle" direction="rtl">
+        {{ bgWordKey | translate }}
+      </text>
+      <ng-template #narrowArc>
+        <svg:text text-anchor="middle">
+          <svg:textPath href="#launchArcPath" startOffset="50%">{{ bgWordKey | translate }}</svg:textPath>
+        </svg:text>
+      </ng-template>
+    </svg>
+
+    <div class="launch__layout">
+      <div class="launch__copy">
+        <span class="launch__eyebrow">
+          <span class="launch__dot" aria-hidden="true"></span>
+          {{ (live ? 'launchCampaign.eyebrowLive' : 'launchCampaign.eyebrow') | translate }}
+        </span>
+
+        <h2 class="launch__title">
+          {{ 'launchCampaign.title' | translate }}
+          <span class="launch__accent">{{ 'launchCampaign.accent' | translate }}</span>
+        </h2>
+
+        <p class="launch__lead">
+          {{ (live ? 'launchCampaign.leadLive' : 'launchCampaign.lead') | translate }}
+        </p>
+
+        <div *ngIf="!live" class="launch__countdown" role="timer" aria-live="off">
+          <ng-container *ngFor="let part of countdown; let last = last">
+            <div class="launch__unit">
+              <span class="launch__num">{{ part.value }}</span>
+              <span class="launch__label">{{ 'launchCampaign.' + part.key | translate }}</span>
+            </div>
+            <span *ngIf="!last" class="launch__sep" aria-hidden="true">:</span>
+          </ng-container>
+        </div>
+
+        <div class="launch__actions">
+          <button *ngIf="live" type="button" class="launch__cta" (click)="orderNow()" [disabled]="ordering">
+            {{ (isZewailSelected ? 'launchCampaign.cta' : 'launchCampaign.ctaSwitch') | translate }}
+            <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+          </button>
+          <span class="launch__branch">
+            <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+            {{ 'launchCampaign.branchOnly' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <div class="launch__stage">
+        <div class="launch__video-card" *ngIf="videoSrc">
+          <video
+            #video
+            [src]="videoSrc"
+            [poster]="config.poster || ''"
+            muted
+            [muted]="true"
+            loop
+            playsinline
+            disablepictureinpicture
+            preload="none"
+          ></video>
+          <span class="launch__live-tag">
+            <span class="launch__dot" aria-hidden="true"></span>
+            {{ (live ? 'launchCampaign.badgeLive' : 'launchCampaign.badge') | translate }}
+          </span>
+        </div>
+
+        <svg class="launch__sticker" viewBox="0 0 200 200" aria-hidden="true">
+          <defs>
+            <path id="launchStickerPath" d="M100,100 m-72,0 a72,72 0 1,1 144,0 a72,72 0 1,1 -144,0" />
+          </defs>
+          <circle cx="100" cy="100" r="96" class="launch__sticker-bg" />
+          <g class="launch__sticker-ring">
+            <text>
+              <textPath href="#launchStickerPath" startOffset="0">
+                {{ 'launchCampaign.sticker' | translate }}
+              </textPath>
+            </text>
+          </g>
+          <text x="100" y="114" text-anchor="middle" class="launch__sticker-core">
+            {{ 'launchCampaign.stickerCore' | translate }}
+          </text>
+        </svg>
+
+        <button
+          *ngIf="photos.length"
+          type="button"
+          class="launch__deck"
+          (click)="nextPhoto()"
+          [attr.aria-label]="'launchCampaign.next' | translate"
+        >
+          <img
+            *ngFor="let src of photos; let i = index"
+            class="launch__card"
+            [ngClass]="deckClass(i)"
+            [src]="src"
+            [alt]="'launchCampaign.title' | translate"
+            loading="lazy"
+            decoding="async"
+          />
+        </button>
+      </div>
+    </div>
+
+    <div class="launch__ribbons" aria-hidden="true">
+      <div class="launch__ribbon launch__ribbon--back">
+        <div class="launch__track" dir="ltr">
+          <ng-container *ngFor="let _ of [0, 1]">
+            <span *ngFor="let item of 'launchCampaign.ribbon' | translate">{{ item }}<i>✦</i></span>
+          </ng-container>
+        </div>
+      </div>
+      <div class="launch__ribbon">
+        <div class="launch__track" dir="ltr">
+          <ng-container *ngFor="let _ of [0, 1]">
+            <span *ngFor="let item of 'launchCampaign.ribbon' | translate">{{ item }}<i>✦</i></span>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <span class="launch__scoop" aria-hidden="true"></span>
+  </div>
+</section>

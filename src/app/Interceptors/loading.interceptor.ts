@@ -5,7 +5,7 @@ import {
   HttpEvent,
   HttpInterceptor
 } from '@angular/common/http';
-import { finalize, Observable } from 'rxjs';
+import { defer, finalize, Observable } from 'rxjs';
 import { LoadingService } from '../services/loading.service';
 
 @Injectable()
@@ -17,12 +17,10 @@ constructor(private loading: LoadingService) {}
     const ignore = req.url.includes('/assets/');
     if (ignore) return next.handle(req);
 
-    this.loading.start();
-    try {
+    // Count per subscription so retried requests start and stop the spinner in pairs.
+    return defer(() => {
+      this.loading.start();
       return next.handle(req).pipe(finalize(() => this.loading.stop()));
-    } catch (error) {
-      this.loading.stop();
-      throw error;
-    }
+    });
   }
 }

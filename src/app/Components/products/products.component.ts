@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
@@ -38,7 +38,7 @@ export class ProductsComponent implements OnDestroy {
   searchPlaceholder = '';
   routeCategoryId: number | null = null;
 
-  tabs: { key: string; label: string; labelAr: string }[] = [
+  tabs: { key: string; label: string; labelAr: string; count?: number }[] = [
     { key: 'all', label: 'All', labelAr: 'الكل' },
   ];
   filteredGroups: ProductGroup[] = [];
@@ -51,16 +51,37 @@ export class ProductsComponent implements OnDestroy {
   /** Skip spy updates while smooth-scrolling from a tab click. */
   private suppressSpy = false;
   private readonly spyOffset = 145;
+  private scrollRaf = 0;
+  /** True while the pointer is over the sidebar, so the spy never scrolls it under the user. */
+  private sidebarHovered = false;
+  private readonly onScroll = () => {
+    if (this.scrollRaf) return;
+    this.scrollRaf = requestAnimationFrame(() => {
+      this.scrollRaf = 0;
+      const prevKey = this.spyKey;
+      const prevShow = this.showScrollButton;
+      this.showScrollButton = window.scrollY > 300;
+      this.updateSpyFromScroll();
+      if (prevKey !== this.spyKey || prevShow !== this.showScrollButton) {
+        this.cdr.detectChanges();
+      }
+    });
+  };
 
+  /** Distance from the viewport top to where a section counts as "reached". */
   private getScrollOffset(): number {
     const sticky = document.querySelector(
       '.menu-sidebar__sticky'
     ) as HTMLElement | null;
-    if (sticky) {
+    // Mobile: the search + chips bar is sticky above the content.
+    if (sticky && getComputedStyle(sticky).position === 'sticky') {
       const top = parseFloat(getComputedStyle(sticky).top) || 0;
       return Math.ceil(top + sticky.offsetHeight + 12);
     }
-    return this.spyOffset;
+    // Desktop: the sidebar sits beside the content, only the navbar covers the top.
+    const sidebar = document.querySelector('.menu-sidebar') as HTMLElement | null;
+    const top = sidebar ? parseFloat(getComputedStyle(sidebar).top) : NaN;
+    return Number.isFinite(top) ? Math.ceil(top + 12) : this.spyOffset;
   }
 
   constructor(
@@ -72,10 +93,17 @@ export class ProductsComponent implements OnDestroy {
     public languageService: LanguageService,
     private seoService: SeoService,
     private translate: TranslateService,
-    private wishlistCountService: WishlistCountService
+    private wishlistCountService: WishlistCountService,
+    private ngZone: NgZone,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
+    this.ngZone.runOutsideAngular(() => {
+      window.addEventListener('scroll', this.onScroll, { passive: true });
+      window.addEventListener('resize', this.onResize, { passive: true });
+    });
+
     this.updateSearchPlaceholder();
     this.langSub = this.translate.onLangChange.subscribe(() =>
       this.updateSearchPlaceholder()
@@ -107,6 +135,34 @@ export class ProductsComponent implements OnDestroy {
     this.langSub?.unsubscribe();
     if (this.searchTimer) clearTimeout(this.searchTimer);
     if (this.spyUnlockTimer) clearTimeout(this.spyUnlockTimer);
+    window.removeEventListener('scroll', this.onScroll);
+    window.removeEventListener('resize', this.onResize);
+    if (this.scrollRaf) cancelAnimationFrame(this.scrollRaf);
+  }
+
+  onSidebarHover(hovered: boolean): void {
+    this.sidebarHovered = hovered;
+  }
+
+  sidebarMoreAbove = false;
+  sidebarMoreBelow = false;
+  private sidebarScroller?: HTMLElement;
+  private readonly onResize = () => this.updateSidebarFade(true);
+
+  @ViewChild('sidebarScroller') set sidebarScrollerRef(ref: ElementRef<HTMLElement> | undefined) {
+    this.sidebarScroller = ref?.nativeElement;
+    if (this.sidebarScroller) requestAnimationFrame(() => this.updateSidebarFade(true));
+  }
+
+  /** Which edges of the (scrollbar-less) category list still hide items. */
+  updateSidebarFade(detect = false): void {
+    const el = this.sidebarScroller;
+    const above = !!el && el.scrollTop > 4;
+    const below = !!el && el.scrollTop + el.clientHeight < el.scrollHeight - 4;
+    if (above === this.sidebarMoreAbove && below === this.sidebarMoreBelow) return;
+    this.sidebarMoreAbove = above;
+    this.sidebarMoreBelow = below;
+    if (detect) this.cdr.detectChanges();
   }
 
   private updateSearchPlaceholder(): void {
@@ -187,11 +243,17 @@ export class ProductsComponent implements OnDestroy {
 
   private rebuildTabs(): void {
     this.tabs = [
-      { key: 'all', label: 'All', labelAr: 'الكل' },
+      {
+        key: 'all',
+        label: 'All',
+        labelAr: 'الكل',
+        count: this.groups.reduce((sum, g) => sum + g.products.length, 0),
+      },
       ...this.groups.map((g) => ({
         key: g.key,
         label: g.name,
         labelAr: g.nameAr,
+        count: g.products.length,
       })),
     ];
   }
@@ -318,17 +380,6 @@ export class ProductsComponent implements OnDestroy {
     this.applyFilters();
   }
 
-  @HostListener('window:scroll', [])
-  onWindowScroll() {
-    const scrollPosition =
-      window.pageYOffset ||
-      document.documentElement.scrollTop ||
-      document.body.scrollTop ||
-      0;
-    this.showScrollButton = scrollPosition > 300;
-    this.updateSpyFromScroll();
-  }
-
   scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -391,7 +442,7 @@ export class ProductsComponent implements OnDestroy {
   private setSpyKey(key: string): void {
     if (this.spyKey === key) return;
     this.spyKey = key;
-    this.scrollSidebarTabIntoView(key);
+    if (!this.sidebarHovered) this.scrollSidebarTabIntoView(key);
   }
 
   /** Scroll only the tabs strip — never use scrollIntoView (it jumps the page). */

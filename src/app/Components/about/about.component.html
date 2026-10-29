@@ -9,26 +9,117 @@
       <span class="about-hero__orb about-hero__orb--c"></span>
     </div>
 
-    <div class="about-hero__inner">
-      <p class="about-hero__brand">Bubble Hope</p>
-      <h1 class="about-hero__title">{{ 'aboutus.title' | translate }}</h1>
-      <p class="about-hero__tagline">{{ 'aboutus.tagline' | translate }}</p>
-      <a routerLink="/products" class="about-btn about-btn--light">
-        {{ 'aboutus.ctaMenu' | translate }}
-      </a>
+    <div class="about-hero__layout">
+      <div class="about-hero__inner">
+        <p class="about-hero__brand">Bubble Hope</p>
+        <h1 class="about-hero__title">{{ 'aboutus.title' | translate }}</h1>
+        <p class="about-hero__tagline">{{ 'aboutus.tagline' | translate }}</p>
+        <a routerLink="/products" class="about-btn about-btn--light">
+          {{ 'aboutus.ctaMenu' | translate }}
+        </a>
+      </div>
+
+      <div
+        class="about-hero__media"
+        (mouseenter)="pauseReels()"
+        (mouseleave)="resumeReels()"
+      >
+        <div class="about-deck" aria-hidden="true">
+          <div
+            *ngFor="let reel of heroReels; let i = index"
+            class="about-deck__card"
+            [class.is-active]="i === heroIndex"
+            [class.is-hidden]="abs(reelOffset(i)) > 2"
+            [style.--o]="reelOffset(i)"
+            [style.--a]="abs(reelOffset(i))"
+            (click)="goToReel(i)"
+          >
+            <video
+              *ngIf="reel.type === 'video' && i === heroIndex; else still"
+              [src]="reel.src"
+              [poster]="reel.poster"
+              [muted]="true"
+              muted
+              autoplay
+              playsinline
+              preload="auto"
+              (ended)="onReelEnded(i)"
+            ></video>
+            <ng-template #still>
+              <img [src]="reel.poster" alt="" decoding="async" [attr.loading]="abs(reelOffset(i)) > 2 ? 'lazy' : null" />
+            </ng-template>
+            <span class="about-deck__badge" *ngIf="reel.type === 'video'">
+              <i class="bi" [ngClass]="i === heroIndex ? 'bi-volume-mute-fill' : 'bi-play-fill'"></i>
+            </span>
+          </div>
+        </div>
+
+        <div class="about-deck__dots" role="tablist">
+          <button
+            *ngFor="let reel of heroReels; let i = index"
+            type="button"
+            class="about-deck__dot"
+            [class.is-on]="i === heroIndex"
+            [attr.aria-label]="(i + 1) + ' / ' + heroReels.length"
+            [attr.aria-selected]="i === heroIndex"
+            (click)="goToReel(i)"
+          ></button>
+        </div>
+      </div>
     </div>
 
     <div class="about-hero__scoop" aria-hidden="true"></div>
   </header>
 
   <section class="about-story">
-    <div class="about-story__media">
-      <img
-        src="assets/4_V1.jpg"
-        [alt]="'aboutus.title' | translate"
-        loading="lazy"
-        decoding="async"
-      />
+    <div class="story-bento">
+      <div class="story-bento__hero">
+        <span class="story-bento__glow" aria-hidden="true"></span>
+        <span class="story-bento__pearl story-bento__pearl--a" aria-hidden="true"></span>
+        <span class="story-bento__pearl story-bento__pearl--b" aria-hidden="true"></span>
+        <span class="story-bento__pearl story-bento__pearl--c" aria-hidden="true"></span>
+        <img
+          *ngFor="let src of storyCups; let i = index"
+          class="story-bento__cup"
+          [class.story-bento__cup--center]="i === 1"
+          [class.story-bento__cup--start]="i === 0"
+          [class.story-bento__cup--end]="i === 2"
+          [src]="src"
+          [alt]="i === 1 ? ('aboutus.title' | translate) : ''"
+          loading="lazy"
+          decoding="async"
+        />
+        <span class="story-bento__tag">
+          <i class="bi bi-stars" aria-hidden="true"></i>
+          {{ 'aboutus.bento.fresh' | translate }}
+        </span>
+      </div>
+
+      <div class="story-bento__stat story-bento__stat--drinks" *ngIf="storyDrinkCount">
+        <strong class="story-bento__num">{{ storyDrinkCount }}+</strong>
+        <span class="story-bento__caption">{{ 'aboutus.bento.drinks' | translate }}</span>
+      </div>
+
+      <div class="story-bento__stat story-bento__stat--branches" *ngIf="storyBranches.length">
+        <strong class="story-bento__num">{{ storyBranches.length }}</strong>
+        <span class="story-bento__caption">{{ 'aboutus.bento.branches' | translate }}</span>
+        <span class="story-bento__branches">
+          <span *ngFor="let b of storyBranches">
+            <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>{{ storyLabel(b) }}
+          </span>
+        </span>
+      </div>
+
+      <a class="story-bento__marquee" routerLink="/products" *ngIf="storyCategories.length">
+        <span class="story-bento__marquee-label">
+          <strong>{{ storyCategories.length }}</strong> {{ 'aboutus.bento.categories' | translate }}
+        </span>
+        <span class="story-bento__marquee-window" aria-hidden="true">
+          <span class="story-bento__marquee-track" dir="ltr">
+            <span class="story-bento__chip" *ngFor="let c of marqueeCategories">{{ storyLabel(c) }}</span>
+          </span>
+        </span>
+      </a>
     </div>
 
     <div class="about-story__copy">
@@ -36,6 +127,62 @@
       <h2 class="about-story__title">{{ 'aboutus.storyTitle' | translate }}</h2>
       <p class="about-story__text">{{ 'aboutus.aboutusDescribtion' | translate }}</p>
       <p class="about-story__text">{{ 'aboutus.storyExtra' | translate }}</p>
+    </div>
+  </section>
+
+  <section class="about-moments" aria-labelledby="about-moments-title">
+    <div class="about-moments__head">
+      <p class="about-kicker">{{ 'aboutus.moments.eyebrow' | translate }}</p>
+      <h2 id="about-moments-title" class="about-moments__title">{{ 'aboutus.moments.title' | translate }}</h2>
+      <p class="about-moments__lead">{{ 'aboutus.moments.lead' | translate }}</p>
+    </div>
+
+    <div class="about-moments__grid">
+      <figure class="about-moment about-moment--craft">
+        <video
+          src="assets/brand/drinks/matcha-reel.webm"
+          poster="assets/brand/drinks/matcha-reel.webp"
+          [attr.aria-label]="'aboutus.moments.craftAlt' | translate"
+          [muted]="true"
+          muted
+          autoplay
+          loop
+          playsinline
+          preload="metadata"
+        ></video>
+        <figcaption class="about-moment__label">{{ 'aboutus.moments.craft' | translate }}</figcaption>
+      </figure>
+
+      <figure class="about-moment about-moment--branch">
+        <img src="assets/brand/events/branch-exterior.webp" [alt]="'aboutus.moments.branchAlt' | translate" loading="lazy" decoding="async" />
+        <figcaption class="about-moment__label">{{ 'aboutus.moments.branch' | translate }}</figcaption>
+      </figure>
+
+      <figure class="about-moment about-moment--coffee">
+        <img src="assets/brand/drinks/cafe-latte-art.webp" [alt]="'aboutus.moments.coffeeAlt' | translate" loading="lazy" decoding="async" />
+        <figcaption class="about-moment__label">{{ 'aboutus.moments.coffee' | translate }}</figcaption>
+      </figure>
+
+      <a class="about-moment about-moment--kids" routerLink="/kids-area">
+        <img src="assets/brand/kids/kids-giant-games.webp" [alt]="'aboutus.moments.kidsAlt' | translate" loading="lazy" decoding="async" />
+        <span class="about-moment__label">
+          {{ 'aboutus.moments.kids' | translate }}
+          <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+        </span>
+      </a>
+
+      <a class="about-moment about-moment--events" routerLink="/bubble-events">
+        <img src="assets/brand/events/ahmed-samar-3.webp" [alt]="'aboutus.moments.eventsAlt' | translate" loading="lazy" decoding="async" />
+        <span class="about-moment__label">
+          {{ 'aboutus.moments.events' | translate }}
+          <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+        </span>
+      </a>
+
+      <figure class="about-moment about-moment--treats">
+        <img src="assets/brand/drinks/cafe-mango-cake.webp" [alt]="'aboutus.moments.treatsAlt' | translate" loading="lazy" decoding="async" />
+        <figcaption class="about-moment__label">{{ 'aboutus.moments.treats' | translate }}</figcaption>
+      </figure>
     </div>
   </section>
 

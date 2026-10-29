@@ -6,8 +6,18 @@
     </header>
 
     <div class="menu-page__layout" *ngIf="!loading">
-      <aside class="menu-sidebar">
-        <div class="menu-sidebar__sticky">
+      <aside
+        class="menu-sidebar"
+        (mouseenter)="onSidebarHover(true)"
+        (mouseleave)="onSidebarHover(false)"
+      >
+        <div
+          class="menu-sidebar__sticky"
+          #sidebarScroller
+          (scroll)="updateSidebarFade()"
+          [class.has-more-above]="sidebarMoreAbove"
+          [class.has-more-below]="sidebarMoreBelow"
+        >
           <div class="menu-search">
             <i class="bi bi-search menu-search__icon" aria-hidden="true"></i>
             <input
@@ -34,7 +44,8 @@
               [attr.aria-pressed]="isTabActive(tab.key)"
               (click)="setActiveTab(tab.key)"
             >
-              {{ tabLabel(tab) }}
+              <span class="menu-tab__label">{{ tabLabel(tab) }}</span>
+              <span class="menu-tab__count" *ngIf="tab.count">{{ tab.count }}</span>
             </button>
           </nav>
         </div>

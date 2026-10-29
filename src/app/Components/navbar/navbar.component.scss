@@ -1150,6 +1150,53 @@ $nav-laptop-max: 1379.98px;
   background: rgba(36, 58, 99, 0.18);
 }
 
+/* ---------- Transparent bar over a dark full-bleed hero ---------- */
+.bh-navbar.is-overlay:not(.is-scrolled) {
+  background: linear-gradient(180deg, rgba(12, 6, 2, 0.45) 0%, rgba(12, 6, 2, 0) 100%);
+
+  .icon-btn {
+    color: rgba(255, 255, 255, 0.92);
+
+    &:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.14);
+    }
+  }
+
+  .menu-btn span {
+    background: #fff;
+  }
+
+  .bh-brand img {
+    filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
+  }
+
+  @media (min-width: $nav-desktop) {
+    .bh-links > a,
+    .bh-links .nav-raw > a,
+    .nav-mega__trigger {
+      color: rgba(255, 255, 255, 0.92);
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+
+      &:hover,
+      &.active {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.16);
+      }
+    }
+
+    .nav-mega:hover .nav-mega__trigger,
+    .nav-mega:focus-within .nav-mega__trigger {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.16);
+    }
+  }
+}
+
+.bh-navbar-spacer.is-overlay {
+  height: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bh-navbar,
   .bh-shell,

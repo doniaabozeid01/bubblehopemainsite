@@ -12,27 +12,19 @@ import { BranchService } from 'src/app/services/branch.service';
 import { CartCountService } from 'src/app/services/cart-count.service';
 import { LanguageService } from 'src/app/services/language.service';
 import {
+  RAW_CATEGORY_ROUTES,
   RawCategoriesService,
   asItemList,
   asShopProduct,
 } from 'src/app/services/raw-categories.service';
 import { WishlistCountService } from 'src/app/services/wishlist-count.service';
 
-const ROUTE_CAT: Record<string, number> = {
-  juice: 20,
-  tapioca: 21,
-  powders: 21,
-  popping: 22,
-};
-
-const PATH_BY_CAT: Record<number, string> = {
-  20: '/juice',
-  21: '/tapioca',
-  22: '/popping',
-};
-
-/** Categories without a fixed id; matched by the navbar label the service assigns. */
+/** Pretty paths → the navbar label of the category they show (matched by name in the service). */
 const ROUTE_TITLE_KEY: Record<string, string> = {
+  juice: 'navbar.juice',
+  tapioca: 'navbar.tapioca',
+  powders: 'navbar.tapioca',
+  popping: 'navbar.popping',
   sauce: 'navbar.sauce',
 };
 
@@ -207,16 +199,12 @@ export class RawMaterialProductsComponent implements OnDestroy {
   }
 
   private pathForCategory(key: string): string | null {
-    const fixed = PATH_BY_CAT[Number(key)];
-    if (fixed) return fixed;
     const titleKey = this.groups.find((g) => g.key === key)?.titleKey;
-    const route = Object.keys(ROUTE_TITLE_KEY).find((r) => ROUTE_TITLE_KEY[r] === titleKey);
-    return route ? `/${route}` : null;
+    return (titleKey && RAW_CATEGORY_ROUTES[titleKey]) || null;
   }
 
   private resolveCategoryId(): number | null {
     const path = this.currentPath();
-    if (path in ROUTE_CAT) return ROUTE_CAT[path];
     if (path in ROUTE_TITLE_KEY) {
       const group = this.groups.find((g) => g.titleKey === ROUTE_TITLE_KEY[path]);
       return group ? Number(group.key) : null;

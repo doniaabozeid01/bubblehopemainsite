@@ -138,8 +138,10 @@ export class CartComponent {
   getCart(branchId: number, userId: string) {
     // console.log('hello');
 
+    this.cart = null;
     this.apiService.GetCartByUserIdAndBranchId(userId, branchId).subscribe({
       next: (res: any) => {
+        if (Number(branchId) !== Number(this.branchId)) return;
         this.cart = res;
         // console.log('✅ cart loaded:', this.cart);
 
@@ -161,6 +163,7 @@ export class CartComponent {
         this.cartCountService.setCount(count);
       },
       error: (err) => {
+        if (Number(branchId) !== Number(this.branchId)) return;
         this.cart = null;
         this.cartCountService.setCount(0); // ✅
         console.error('❌ Error fetching cart:', err);

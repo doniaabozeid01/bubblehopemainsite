@@ -43,8 +43,7 @@ export interface FloatingBubble {
   drift: number;
 }
 
-const KIDS_IMG = (photoId: string) =>
-  `https://images.unsplash.com/photo-${photoId}?w=900&h=700&fit=crop&auto=format&q=80`;
+const KIDS_IMG = (name: string) => `assets/brand/kids/${name}.webp`;
 
 @Component({
   selector: 'app-kids-area',
@@ -92,26 +91,26 @@ export class KidsAreaComponent implements OnInit, OnDestroy {
     {
       id: 'play',
       icon: 'bi-balloon-heart',
-      image: KIDS_IMG('1759330203240-b89ccee8840f'),
-      imagePosition: 'center 42%',
+      image: KIDS_IMG('kids-ball-pit'),
+      imagePosition: 'center 70%',
     },
     {
       id: 'draw',
       icon: 'bi-palette',
-      image: KIDS_IMG('1703301287703-159acad046d0'),
-      imagePosition: 'center 40%',
+      image: KIDS_IMG('kids-drawing'),
+      imagePosition: 'center 45%',
     },
     {
       id: 'lego',
-      icon: 'bi-bricks',
-      image: KIDS_IMG('1655842556550-6809c404ce9c'),
-      imagePosition: 'center 48%',
+      icon: 'bi-ladder',
+      image: KIDS_IMG('kids-slide'),
+      imagePosition: 'center 28%',
     },
     {
       id: 'reading',
-      icon: 'bi-book',
-      image: KIDS_IMG('1540151812223-c30b3fab58e6'),
-      imagePosition: 'center 40%',
+      icon: 'bi-emoji-smile',
+      image: KIDS_IMG('kids-rocking'),
+      imagePosition: 'center 65%',
     },
   ];
 

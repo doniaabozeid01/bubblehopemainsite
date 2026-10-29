@@ -17,8 +17,19 @@ import { SeoService } from 'src/app/services/seo.service';
 
 gsap.registerPlugin(ScrollTrigger);
 
+export type EventGroup =
+  | 'ahmedSamar'
+  | 'reemNight'
+  | 'dinaNight'
+  | 'birthday'
+  | 'catering'
+  | 'weddingGarden'
+  | 'weddingDay'
+  | 'eventDrinks';
+
 export interface EventGalleryItem {
   id: string;
+  group: EventGroup;
   type: 'image' | 'video';
   src: string;
   poster?: string;
@@ -34,17 +45,84 @@ export interface SelectOption {
   id: string;
 }
 
-const PEX = (id: number) =>
-  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=800&h=1000&fit=crop`;
+const BRAND = (name: string) => `assets/brand/events/${name}`;
 
-const PEX_HERO = (id: number) =>
-  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop`;
+const galleryImage = (group: EventGroup, name: string): EventGalleryItem => ({
+  id: name,
+  group,
+  type: 'image',
+  src: BRAND(`${name}.webp`),
+});
 
-const PEX_SPLIT = (id: number) =>
-  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=900&h=700&fit=crop`;
+const galleryVideo = (group: EventGroup, name: string): EventGalleryItem => ({
+  id: name,
+  group,
+  type: 'video',
+  src: BRAND(`${name}.webm`),
+  poster: BRAND(`${name}.webp`),
+});
 
-const PEX_GALLERY = (id: number) =>
-  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=1100&h=825&fit=crop`;
+const GALLERY_POOL: EventGalleryItem[] = [
+  galleryVideo('ahmedSamar', 'ahmed-samar-reel'),
+  galleryVideo('reemNight', 'reem-night-reel'),
+  galleryVideo('dinaNight', 'dina-night-reel'),
+  galleryVideo('birthday', 'birthday-reel'),
+  galleryVideo('catering', 'catering-reel'),
+  galleryVideo('catering', 'catering-moments-reel'),
+  galleryVideo('weddingGarden', 'wedding-garden-reel'),
+  galleryVideo('weddingDay', 'wedding-honored-reel'),
+  ...[1, 2, 3, 4, 5, 6, 7, 8].map((n) => galleryImage('ahmedSamar', `ahmed-samar-${n}`)),
+  ...[1, 2, 3, 4].map((n) => galleryImage('reemNight', `reem-night-${n}`)),
+  galleryImage('reemNight', 'reem-night-flowers'),
+  galleryImage('birthday', 'birthday-group'),
+  galleryImage('birthday', 'branch-birthday'),
+  ...[1, 2, 3].map((n) => galleryImage('catering', `catering-bar-${n}`)),
+  galleryImage('weddingGarden', 'wedding-garden-sign'),
+  galleryImage('weddingGarden', 'wedding-signature-sign'),
+  galleryImage('weddingGarden', 'wedding-drinks-station'),
+  galleryImage('weddingDay', 'wedding-palace-flowers'),
+  galleryImage('eventDrinks', 'event-drinks-tray'),
+  galleryImage('eventDrinks', 'event-drinks-sign'),
+  galleryImage('eventDrinks', 'event-drinks-roses'),
+];
+
+const GALLERY_SIZE = 12;
+const MAX_IMAGES_PER_GROUP = 2;
+
+function shuffle<T>(list: T[]): T[] {
+  const out = [...list];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+/** Random half-video / half-image set, interleaved, avoiding a repeat of `avoidFirst`. */
+function pickGallery(avoidFirst?: EventGalleryItem): EventGalleryItem[] {
+  const half = GALLERY_SIZE / 2;
+  const videos = shuffle(GALLERY_POOL.filter((i) => i.type === 'video')).slice(0, half);
+
+  const perGroup = new Map<EventGroup, number>();
+  const images: EventGalleryItem[] = [];
+  for (const item of shuffle(GALLERY_POOL.filter((i) => i.type === 'image'))) {
+    const used = perGroup.get(item.group) ?? 0;
+    if (used >= MAX_IMAGES_PER_GROUP) continue;
+    perGroup.set(item.group, used + 1);
+    images.push(item);
+    if (images.length === half) break;
+  }
+
+  const picked: EventGalleryItem[] = [];
+  for (let i = 0; i < half; i++) {
+    if (videos[i]) picked.push(videos[i]);
+    if (images[i]) picked.push(images[i]);
+  }
+  if (avoidFirst && picked[0]?.id === avoidFirst.id && picked.length > 1) {
+    [picked[0], picked[1]] = [picked[1], picked[0]];
+  }
+  return picked;
+}
 
 export interface SplitBranch {
   id: string;
@@ -103,8 +181,8 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
   submittingBooking = false;
   splitHover: 'branch' | 'catering' | null = null;
 
-  readonly splitBranchImage = PEX_SPLIT(7155950);
-  readonly splitCateringImage = PEX_SPLIT(2526105);
+  readonly splitBranchImage = BRAND('branch-birthday.webp');
+  readonly splitCateringImage = BRAND('catering-bar-2.webp');
 
   readonly splitBranches: SplitBranch[] = [
     { id: 'hadayek', rating: 4.9 },
@@ -114,13 +192,12 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   readonly cateringHighlightKeys = ['bobaBar', 'waffle', 'branded', 'staff'];
 
-  /** Rotating hero backgrounds — kids birthdays & wedding/afrah. */
   readonly heroSlides: HeroSlide[] = [
-    { src: PEX_HERO(7155950), slideKey: '0' },
-    { src: PEX_HERO(799443), slideKey: '1' },
-    { src: PEX_HERO(6220553), slideKey: '2' },
-    { src: PEX_HERO(1721833), slideKey: '3' },
-    { src: PEX_HERO(2526105), slideKey: '4' },
+    { src: BRAND('hero-birthday-group.webp'), slideKey: '0' },
+    { src: BRAND('hero-palace-flowers.webp'), slideKey: '1' },
+    { src: BRAND('hero-drinks-roses.webp'), slideKey: '2' },
+    { src: BRAND('hero-reem-flowers.webp'), slideKey: '3' },
+    { src: BRAND('hero-garden-sign.webp'), slideKey: '4' },
   ];
 
   readonly heroSlideDuration = 5000;
@@ -161,18 +238,7 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
     { id: 'catering' },
   ];
 
-  /** Same themes as hero — 4 birthdays + 4 weddings/afrah (verified Pexels IDs). */
-  /** 4 kids birthdays + 4 wedding/afrah — verified Pexels IDs only. */
-  readonly galleryItems: EventGalleryItem[] = [
-    { id: 'g1', type: 'image', src: PEX_GALLERY(7155950) },
-    { id: 'g2', type: 'image', src: PEX_GALLERY(1721833) },
-    { id: 'g3', type: 'image', src: PEX_GALLERY(799443) },
-    { id: 'g4', type: 'image', src: PEX_GALLERY(2526105) },
-    { id: 'g5', type: 'image', src: PEX_GALLERY(5877417) },
-    { id: 'g6', type: 'image', src: PEX_GALLERY(3171837) },
-    { id: 'g7', type: 'image', src: PEX_GALLERY(6220553) },
-    { id: 'g8', type: 'image', src: PEX_GALLERY(265088) },
-  ];
+  galleryItems: EventGalleryItem[] = pickGallery();
 
   readonly galleryStats = [
     { valueKey: 'bubbleEvents.page.gallery.stats.eventsValue', labelKey: 'bubbleEvents.page.gallery.stats.eventsLabel' },
@@ -404,7 +470,20 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   nextGallerySlide(): void {
-    this.selectGallerySlide((this.galleryActiveIndex + 1) % this.galleryItems.length);
+    if (this.galleryActiveIndex === this.galleryItems.length - 1) {
+      this.refreshGallerySet();
+      return;
+    }
+    this.selectGallerySlide(this.galleryActiveIndex + 1);
+  }
+
+  /** After a full lap, swap in a fresh random set from the pool. */
+  private refreshGallerySet(): void {
+    this.galleryItems = pickGallery(this.featuredGalleryItem);
+    this.galleryActiveIndex = 0;
+    this.pulseGalleryHero();
+    this.restartGalleryAutoplay();
+    requestAnimationFrame(() => this.scrollGalleryThumbIntoView(0));
   }
 
   prevGallerySlide(): void {
@@ -466,7 +545,11 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
   private scrollGalleryThumbIntoView(index: number): void {
     const rail = this.galleryRail?.nativeElement;
     const thumb = rail?.children[index] as HTMLElement | undefined;
-    thumb?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    if (!rail || !thumb) return;
+    const railRect = rail.getBoundingClientRect();
+    const thumbRect = thumb.getBoundingClientRect();
+    const delta = thumbRect.left + thumbRect.width / 2 - (railRect.left + railRect.width / 2);
+    rail.scrollBy({ left: delta, behavior: 'smooth' });
   }
 
   private initBgBubbles(): void {
@@ -521,8 +604,12 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
+  galleryThumb(item: EventGalleryItem): string {
+    return item.poster || item.src;
+  }
+
   galleryKey(item: EventGalleryItem, field: 'alt' | 'eventType' | 'package' | 'location'): string {
-    return `bubbleEvents.page.gallery.${item.id}.${field}`;
+    return `bubbleEvents.page.gallery.groups.${item.group}.${field}`;
   }
 
   toggleEventTypeMenu(event: Event): void {

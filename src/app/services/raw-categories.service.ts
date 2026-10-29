@@ -83,16 +83,13 @@ export function asShopProduct(product: any, category?: { id?: number; name?: str
   };
 }
 
-/** Dashboard names → the labels used in the navbar. */
+/** Dashboard names → the labels used in the navbar. Matched by name, not id: the
+ *  dashboard recreates these categories, so their ids are not stable. */
 export function rawCategoryTitleKey(cat: { name?: string; name_ar?: string; slug?: string; id?: number }): string | null {
-  const id = Number(cat?.id);
-  if (id === 20) return 'navbar.juice';
-  if (id === 21) return 'navbar.tapioca';
-  if (id === 22) return 'navbar.popping';
   const blob = `${cat?.slug || ''} ${cat?.name || ''} ${cat?.name_ar || ''}`.toLowerCase();
   if (/popping|بوبا/.test(blob)) return 'navbar.popping';
-  if (/powder|مساحيق|tapioca|pearl|تابيو/.test(blob)) return 'navbar.tapioca';
-  if (/juice|syrup|شراب|عصير/.test(blob)) return 'navbar.juice';
+  if (/powder|مساحيق|مسحوق|بودر|tapioca|pearl|تابيو/.test(blob)) return 'navbar.tapioca';
+  if (/juice|syrup|شراب|سيرب|عصير/.test(blob)) return 'navbar.juice';
   if (/sauce|صلصة/.test(blob) && !/waffle/.test(blob)) return 'navbar.sauce';
   return null;
 }
@@ -106,17 +103,20 @@ export interface RawCategoryLink {
   categoryId: number;
 }
 
-const RAW_CATEGORY_ROUTES: Record<number, string> = {
-  21: '/tapioca',
-  20: '/juice',
-  22: '/popping',
+/** Pretty route per navbar label, in the order the raw-material categories are shown. */
+export const RAW_CATEGORY_ROUTES: Record<string, string> = {
+  'navbar.tapioca': '/tapioca',
+  'navbar.juice': '/juice',
+  'navbar.popping': '/popping',
+  'navbar.sauce': '/sauce',
 };
+const RAW_CATEGORY_ORDER = Object.keys(RAW_CATEGORY_ROUTES);
 
 /** Pretty route for the known categories, otherwise the filtered products page. */
 export function rawCategoryLink(cat: any): RawCategoryLink {
   const id = Number(cat?.id);
-  const titleKey = cat?.titleKey ?? rawCategoryTitleKey(cat);
-  const route = RAW_CATEGORY_ROUTES[id] ?? (titleKey === 'navbar.sauce' ? '/sauce' : undefined);
+  const titleKey = cat?.titleKey !== undefined ? cat.titleKey : rawCategoryTitleKey(cat);
+  const route = titleKey ? RAW_CATEGORY_ROUTES[titleKey] : undefined;
   return {
     route: route ?? '/rawMaterialProducts',
     queryParams: route ? undefined : { categoryId: id },
@@ -145,15 +145,21 @@ export class RawCategoriesService {
       map((list: any[]) => {
         const cats = list.filter((cat) => Number(cat?.categoryGroupId) === 2);
 
+        const claimed = new Set<string>();
         const fromApi = cats.map((cat) => {
           const catId = Number(cat?.id);
           const products = asItemList(cat?.products)
             .filter((p) => p?.categoryId == null || Number(p.categoryId) === catId)
             .map((p) => asShopProduct(p, cat));
 
+          // One category per label/route; a second "syrup" falls back to its own name and link.
+          let titleKey = rawCategoryTitleKey(cat);
+          if (titleKey && claimed.has(titleKey)) titleKey = null;
+          if (titleKey) claimed.add(titleKey);
+
           return {
             ...cat,
-            titleKey: rawCategoryTitleKey(cat),
+            titleKey,
             products,
             imageUrl: toCutoutUrl(cat?.imageUrl),
             originalImageUrl: cat?.imageUrl,
@@ -171,10 +177,9 @@ export class RawCategoriesService {
   }
 
   private sortCategories(cats: RawCategory[]): RawCategory[] {
-    const order = [21, 20, 22];
     const rank = (cat: RawCategory) => {
-      const i = order.indexOf(Number(cat.id));
-      return i === -1 ? order.length : i;
+      const i = cat.titleKey ? RAW_CATEGORY_ORDER.indexOf(cat.titleKey) : -1;
+      return i === -1 ? RAW_CATEGORY_ORDER.length : i;
     };
     return [...cats].sort((a, b) => rank(a) - rank(b));
   }

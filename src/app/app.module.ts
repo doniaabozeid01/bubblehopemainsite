@@ -61,6 +61,7 @@ import { HeroBannerComponent } from './Components/HomeSections/hero-banner/hero-
 import { AnytimeClockComponent } from './Components/HomeSections/anytime-clock/anytime-clock.component';
 import { RabahniPromoModalComponent } from './Components/HomeSections/rabahni-promo-modal/rabahni-promo-modal.component';
 import { RecipeMotionComponent } from './Components/HomeSections/recipe-motion/recipe-motion.component';
+import { LaunchCampaignComponent } from './Components/HomeSections/launch-campaign/launch-campaign.component';
 import { RecipeRenderComponent } from './Components/HomeSections/recipe-motion/recipe-render.component';
 
 
@@ -122,6 +123,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AnytimeClockComponent,
     RabahniPromoModalComponent,
     RecipeMotionComponent,
+    LaunchCampaignComponent,
     RecipeRenderComponent,
   ],
   imports: [

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable, catchError, map, of, switchMap, throwError } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { ApiService } from 'src/app/services/api.service';
 import { BranchService } from 'src/app/services/branch.service';
@@ -97,9 +98,11 @@ export class FavouritsComponent {
 
   GetProductFavouriteByUserId(usreId: string, branchId: number) {
     this.loading = true;
-    this.apiService.GetProductFavouriteByUserId(usreId, branchId).subscribe({
-      next: (response) => {
-        this.wishlist = Array.isArray(response) ? response : response?.data || [];
+    this.wishlist = [];
+    this.wishlistCountService.loadForBranch(usreId, branchId).subscribe({
+      next: (list) => {
+        if (Number(branchId) !== Number(this.branchId)) return;
+        this.wishlist = list;
         this.wishlistCountService.setCount(this.wishlist.length);
         this.loading = false;
       },
@@ -111,26 +114,59 @@ export class FavouritsComponent {
     });
   }
 
+  removing = new Set<number>();
+
   removeFromFavourite(item: any) {
     const token = localStorage.getItem('token');
     if (!token) {
       this.router.navigate(['/home']);
       return;
     }
+    if (this.removing.has(item.productId)) return;
+    this.removing.add(item.productId);
 
-    this.apiService
-      .removeFromFavourite(item.productId, this.branchId, this.usreId)
+    this.removeInAnyBranch(item.productId, item.branchId ?? this.branchId)
       .subscribe({
         next: (response) => {
-          this.wishlist = Array.isArray(response?.data)
-            ? response.data
-            : Array.isArray(response)
-              ? response
-              : this.wishlist.filter((x) => x.productId !== item.productId);
+          this.removing.delete(item.productId);
+          this.wishlist = this.wishlist.filter((x) => x.productId !== item.productId);
           this.wishlistCountService.setCount(this.wishlist.length);
           this.toastr.success('Product removed from your wishlist.');
         },
+        error: (err) => {
+          this.removing.delete(item.productId);
+          this.toastr.error(err?.error?.message || "Couldn't remove this product. Please try again.");
+          if (err?.status === 404) this.GetProductFavouriteByUserId(this.usreId, this.branchId);
+        },
       });
+  }
+
+  /**
+   * The list shows favourites saved in any branch, but delete only matches the branch the
+   * item was saved in. Try the current branch first, then the others until one has it.
+   */
+  private removeInAnyBranch(productId: number, firstBranch: number): Observable<any> {
+    const first = Number(firstBranch);
+    return this.apiService.getAllBranches().pipe(
+      catchError(() => of([])),
+      map((res: any) => {
+        const list = Array.isArray(res) ? res : res?.data || [];
+        const others = list.map((b: any) => Number(b?.id)).filter((id: number) => id && id !== first);
+        return [first, ...others];
+      }),
+      switchMap((ids: number[]) => this.removeFromBranches(productId, ids))
+    );
+  }
+
+  private removeFromBranches(productId: number, ids: number[]): Observable<any> {
+    const [id, ...rest] = ids;
+    return this.apiService.removeFromFavourite(productId, id, this.usreId).pipe(
+      catchError((err) =>
+        err?.status === 404 && rest.length
+          ? this.removeFromBranches(productId, rest)
+          : throwError(() => err)
+      )
+    );
   }
 
   goToProducts() {

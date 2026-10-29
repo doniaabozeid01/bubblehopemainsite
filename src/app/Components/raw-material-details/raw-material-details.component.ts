@@ -16,7 +16,12 @@ import { ApiService } from 'src/app/services/api.service';
 import { BranchService } from 'src/app/services/branch.service';
 import { CartCountService } from 'src/app/services/cart-count.service';
 import { LanguageService } from 'src/app/services/language.service';
-import { RawCategoriesService, asItemList, asShopProduct } from 'src/app/services/raw-categories.service';
+import {
+  RawCategoriesService,
+  asItemList,
+  asShopProduct,
+  rawCategoryLink,
+} from 'src/app/services/raw-categories.service';
 import { SeoService } from 'src/app/services/seo.service';
 
 type LoadState = 'idle' | 'loading' | 'success' | 'notfound' | 'error';
@@ -215,15 +220,20 @@ export class RawMaterialDetailsComponent implements OnDestroy {
   }
 
   categoryLink(p: any): string {
-    const id = Number(p?.category?.id ?? p?.categoryId);
-    if (id === 20) return '/juice';
-    if (id === 21) return '/tapioca';
-    if (id === 22) return '/popping';
-    return '/rawMaterialProducts';
+    return this.categoryTarget(p).route;
+  }
+
+  categoryQuery(p: any): Record<string, any> | undefined {
+    return this.categoryTarget(p).queryParams;
   }
 
   goBack(p: any): void {
-    this.router.navigate([this.categoryLink(p)]);
+    const target = this.categoryTarget(p);
+    this.router.navigate([target.route], { queryParams: target.queryParams });
+  }
+
+  private categoryTarget(p: any) {
+    return rawCategoryLink(p?.category ?? { id: p?.categoryId });
   }
 
   shareProduct(): void {

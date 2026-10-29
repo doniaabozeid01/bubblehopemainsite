@@ -399,12 +399,17 @@
         <div class="kids-parents__media">
           <div class="parents-media-stack">
             <div class="lounge lounge--primary">
-              <img
+              <video
                 class="lounge__photo"
-                src="/assets/4_V1.jpg"
-                [alt]="'kidsArea.page.parents.loungeAlt' | translate"
-                loading="lazy"
-                decoding="async" />
+                src="assets/brand/kids/kids-reel.webm"
+                poster="assets/brand/kids/kids-reel.webp"
+                [attr.aria-label]="'kidsArea.page.parents.loungeAlt' | translate"
+                [muted]="true"
+                muted
+                autoplay
+                loop
+                playsinline
+                preload="metadata"></video>
             </div>
           </div>
         </div>

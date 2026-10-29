@@ -45,6 +45,7 @@
                   type="button"
                   class="wl-remove wl-remove--mobile"
                   (click)="removeFromFavourite(item)"
+                  [disabled]="removing.has(item.productId)"
                   [attr.aria-label]="'cart.delete' | translate"
                 >
                   <i class="fa-solid fa-xmark" aria-hidden="true"></i>
@@ -73,6 +74,7 @@
                   type="button"
                   class="wl-btn wl-btn--ghost"
                   (click)="removeFromFavourite(item)"
+                  [disabled]="removing.has(item.productId)"
                 >
                   {{ 'cart.delete' | translate }}
                 </button>
@@ -102,6 +104,7 @@
               type="button"
               class="wl-btn wl-btn--ghost"
               (click)="removeFromFavourite(item)"
+              [disabled]="removing.has(item.productId)"
             >
               {{ 'cart.delete' | translate }}
             </button>

@@ -1,4 +1,4 @@
-<header class="bh-navbar" [class.is-scrolled]="scrolled" [class.is-menu-open]="isMenuOpen" [class.is-home]="isHome">
+<header class="bh-navbar" [class.is-scrolled]="scrolled || isFloating" [class.is-menu-open]="isMenuOpen" [class.is-home]="isHome" [class.is-overlay]="isOverlay">
   <div class="bh-shell">
     <div class="bh-inner">
       <a class="bh-brand" routerLink="/" (click)="closeMenu()">
@@ -10,6 +10,7 @@
         <div
           class="nav-mega hide-on-mobile-nav"
           [class.is-closed]="megaClosed"
+          (mouseenter)="onMegaEnter()"
           (mouseleave)="onMegaLeave()"
         >
           <button
@@ -240,6 +241,6 @@
   </div>
 </header>
 
-<div class="bh-navbar-spacer" [class.is-home]="isHome" aria-hidden="true"></div>
+<div class="bh-navbar-spacer" [class.is-home]="isHome" [class.is-overlay]="isOverlay || isFloating" aria-hidden="true"></div>
 
 <div class="bh-overlay" *ngIf="isMenuOpen" (click)="closeMenu()"></div>

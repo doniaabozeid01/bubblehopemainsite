@@ -16,7 +16,7 @@ export const DURATION = 24;
 export const SIZE = 1080;
 export const STEP_COUNT = 7;
 export const STEP = { syrup: 0, pearls: 1, ice: 2, milk: 3, foam: 4, sugar: 5, torch: 6 } as const;
-export const STEP_TARGETS = [30, 60, 4, 200, 50, 10, 10];
+export const STEP_TARGETS = [30, 60, 5, 200, 50, 10, 10];
 
 export const stepStart = (i: number) => (i + 1) * BAR;
 export const FINISH_AT = stepStart(STEP_COUNT);
@@ -209,15 +209,18 @@ interface IceSpec {
 
 const ICE_FALL = 0.32;
 const ICE_MOUTH = { x: CX - 6, y: 220 };
+/* Landing spots are the five cubes in cup-3-ice, bottom row first, so each falling
+   cube settles exactly where its photo counterpart is revealed. */
 const ICE: IceSpec[] = [
-  { x: CX - 48, y: 700, rot: -9, size: 112, dr: 38 },
-  { x: CX + 50, y: 690, rot: 11, size: 108, dr: -44 },
-  { x: CX - 30, y: 580, rot: 14, size: 112, dr: -36 },
-  { x: CX + 34, y: 470, rot: -7, size: 108, dr: 48 },
-].map((c, k) => ({
+  { x: 330, y: 722, rot: -6, size: 146, dr: 38 },
+  { x: 466, y: 722, rot: 5, size: 146, dr: -44 },
+  { x: 322, y: 596, rot: 8, size: 142, dr: -36 },
+  { x: 458, y: 596, rot: -5, size: 142, dr: 48 },
+  { x: 378, y: 476, rot: 3, size: 140, dr: -40 },
+].map((c, k, all) => ({
   ...c,
   impact: stepStart(STEP.ice) + POUR_ON + k * (BEAT / 2),
-  x0: ICE_MOUTH.x + (k - 1.5) * 10,
+  x0: ICE_MOUTH.x + (k - (all.length - 1) / 2) * 10,
   rot0: c.rot + c.dr,
 }));
 
@@ -258,8 +261,12 @@ interface Reveal {
   to: [number, number];
 }
 
-/** How far the photo of stage `step + 1` has been revealed over stage `step`. */
-const revealOf = (step: number, t: number): Reveal | 'none' | 'full' => {
+/** How much of one ice cube's spot in the ice photo is uncovered. */
+const iceLanded = (c: IceSpec, t: number) => expOut(seg(t, c.impact, c.impact + 0.25));
+
+/** How far the photo of stage `step + 1` has been revealed over stage `step`.
+ *  'cubes' means the ice photo shows through one feathered patch per landed cube. */
+const revealOf = (step: number, t: number): Reveal | 'none' | 'full' | 'cubes' => {
   const s = stepStart(step);
   const v = (yFrom: number, yTo: number): Reveal => ({ from: [0, yFrom], to: [0, yTo] });
   switch (step) {
@@ -280,12 +287,10 @@ const revealOf = (step: number, t: number): Reveal | 'none' | 'full' => {
       return v(y, y - 60);
     }
     case STEP.ice: {
-      let p = 0;
-      ICE.forEach((c) => (p += 0.25 * expOut(seg(t, c.impact, c.impact + 0.25))));
+      const p = ICE.reduce((sum, c) => sum + iceLanded(c, t), 0) / ICE.length;
       if (p <= 0) return 'none';
       if (p >= 0.999) return 'full';
-      const y = lerp(800, 380, p);
-      return v(y, y - 80);
+      return 'cubes';
     }
     case STEP.milk: {
       const p = fillP(STEP.milk, t);
@@ -491,12 +496,14 @@ const icePose = (c: IceSpec, t: number): Pose | null => {
 
 const BLUR_K = 0.003;
 const BLUR_MAX = 12;
-const blurOf = (a: Pose | null, b: Pose | null) => {
+/* Clear ice turns into a pale smear under heavy blur; keep it readable while it falls. */
+const ICE_BLUR_MAX = 2.5;
+const blurOf = (a: Pose | null, b: Pose | null, max = BLUR_MAX) => {
   if (!a || !b) return [0, 0];
   const dt = 1 / 240;
   const vx = Math.abs(a.x - b.x) / dt;
   const vy = Math.abs(a.y - b.y) / dt;
-  return [Math.min(BLUR_MAX, vx * BLUR_K), Math.min(BLUR_MAX, vy * BLUR_K)];
+  return [Math.min(max, vx * BLUR_K), Math.min(max, vy * BLUR_K)];
 };
 
 /* ---------- markup ---------- */
@@ -507,9 +514,13 @@ const esc = (s: string) =>
 const FONT_UI = `Nunito, 'Baloo 2', system-ui, sans-serif`;
 const FONT_DISPLAY = `'Baloo 2', Nunito, system-ui, sans-serif`;
 
-const cupOutline =
-  `M ${CX - RIM_HALF} ${RIM_Y} L ${CX - BASE_HALF} ${BASE_Y - 24} Q ${CX - BASE_HALF + 4} ${BASE_Y + 6} ${CX} ${BASE_Y + 8} ` +
-  `Q ${CX + BASE_HALF - 4} ${BASE_Y + 6} ${CX + BASE_HALF} ${BASE_Y - 24} L ${CX + RIM_HALF} ${RIM_Y} Z`;
+const cupPath = (topY: number, topHalf: number) =>
+  `M ${n2(CX - topHalf)} ${topY} L ${CX - BASE_HALF} ${BASE_Y - 24} Q ${CX - BASE_HALF + 4} ${BASE_Y + 6} ${CX} ${BASE_Y + 8} ` +
+  `Q ${CX + BASE_HALF - 4} ${BASE_Y + 6} ${CX + BASE_HALF} ${BASE_Y - 24} L ${n2(CX + topHalf)} ${topY} Z`;
+const cupOutline = cupPath(RIM_Y, RIM_HALF);
+/* Below the rim lip: anything here is seen through the front wall. */
+const BEHIND_WALL_Y = RIM_Y + 16;
+const cupInterior = cupPath(BEHIND_WALL_Y, halfAt(BEHIND_WALL_Y));
 
 export class RecipeScene {
   private readonly uid = `rm${Math.random().toString(36).slice(2, 8)}`;
@@ -517,6 +528,7 @@ export class RecipeScene {
   private pearlEls: SVGElement[] = [];
   private grainEls: SVGElement[] = [];
   private photoEls: SVGElement[] = [];
+  private overlayEls: SVGElement[] = [];
   private lastT = 0;
 
   constructor(
@@ -544,6 +556,7 @@ export class RecipeScene {
     this.pearlEls = [];
     this.grainEls = [];
     this.photoEls = [];
+    this.overlayEls = [];
   }
 
   private build(): void {
@@ -556,6 +569,7 @@ export class RecipeScene {
     this.pearlEls = all('[data-pearl]');
     this.grainEls = all('[data-grain]');
     this.photoEls = all('[data-photo]');
+    this.overlayEls = all('[data-overlay]');
   }
 
   private markup(): string {
@@ -584,22 +598,48 @@ export class RecipeScene {
       `<filter id="${f('toolShadow')}" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="10" dy="22" stdDeviation="14" flood-color="#5b3a22" flood-opacity=".2"/></filter>` +
       `<filter id="${f('sheenBlur')}" x="-100%" y="-10%" width="300%" height="120%"><feGaussianBlur stdDeviation="18 0"/></filter>` +
       `<filter id="${f('print')}" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 -4 0 4 -0.6"/></filter>` +
-      ['tool', 'ice0', 'ice1', 'ice2', 'ice3'].map(blurFilter).join('');
+      /* The cube sprite is a cold blue studio shot; the cubes in the cup photos are clear and warm. */
+      `<filter id="${f('iceTone')}" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0.25"/>` +
+      `<feComponentTransfer><feFuncA type="linear" slope="0.88"/></feComponentTransfer></filter>` +
+      `<clipPath id="${f('cupInner')}"><path d="${cupInterior}"/></clipPath>` +
+      `<mask id="${f('dropsMask')}" maskUnits="userSpaceOnUse" x="0" y="0" width="${SIZE}" height="${SIZE}" style="mask-type:alpha">` +
+      `<use href="#${f('drops')}" xlink:href="#${f('drops')}"/></mask>` +
+      `<filter id="${f('feather')}" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="12"/></filter>` +
+      `<mask id="${f('iceMask')}" maskUnits="userSpaceOnUse" x="0" y="0" width="${SIZE}" height="${SIZE}">` +
+      `<g filter="${url('feather')}">` +
+      ICE.map((c, k) => {
+        const h = c.size / 2 + 6;
+        return `<rect data-k="iceSpot${k}" x="${-h}" y="${-h}" width="${h * 2}" height="${h * 2}" rx="18" fill="#fff" opacity="0" transform="translate(${c.x} ${c.y}) rotate(${c.rot})"/>`;
+      }).join('') +
+      `</g></mask>` +
+      ['tool', ...ICE.map((_, k) => `ice${k}`)].map(blurFilter).join('');
 
     const asset = (name: string) => `${ASSET_DIR}${name}.webp`;
     const img = (name: string, x: number, y: number, w: number, h: number, extra = '') =>
       `<image href="${asset(name)}" xlink:href="${asset(name)}" x="${n2(x)}" y="${n2(y)}" width="${n2(w)}" height="${n2(h)}" preserveAspectRatio="none" ${extra}/>`;
 
     const photos = CUP_PHOTOS.map((name, i) =>
-      img(name, 0, 0, SIZE, SIZE, `data-photo="${i}" style="display:${i === 0 ? '' : 'none'}"`)
+      img(name, 0, 0, SIZE, SIZE, `id="${f(`photo${i}`)}" data-photo="${i}" style="display:${i === 0 ? '' : 'none'}"`)
     ).join('');
+
+    /* Falling pearls, ice and sugar are drawn over a flat photo. Laying the current cup
+       photo back over them (only where they are, only below the rim) puts the syrup stripes
+       and the plastic's tint and haze in front, so they read as inside the cup.
+       Multiply carries the stripes onto light ice; the faint normal pass hazes dark pearls. */
+    const wallPass = (extra: string) =>
+      `<g clip-path="${url('cupInner')}" mask="${url('dropsMask')}" pointer-events="none" ${extra}>` +
+      CUP_PHOTOS.map(
+        (_, i) => `<use data-overlay="${i}" href="#${f(`photo${i}`)}" xlink:href="#${f(`photo${i}`)}" style="display:none"/>`
+      ).join('') +
+      `</g>`;
+    const behindWall = wallPass(`style="mix-blend-mode:multiply"`) + wallPass(`opacity=".3"`);
 
     const pearl = (i: number) =>
       `<g data-pearl="${i}" style="display:none">${img('boba-pearl', -PEARL_R - 1, -PEARL_R - 1, PEARL_R * 2 + 2, PEARL_R * 2 + 2)}</g>`;
 
     const ice = (k: number) => {
       const h = ICE[k].size / 2;
-      return `<g data-k="icew${k}" style="display:none"><g data-k="ice${k}">${img('ice-cube', -h, -h, h * 2, h * 2, 'opacity=".92"')}</g></g>`;
+      return `<g data-k="icew${k}" style="display:none"><g data-k="ice${k}">${img('ice-cube', -h, -h, h * 2, h * 2, `filter="${url('iceTone')}"`)}</g></g>`;
     };
 
     const flame =
@@ -707,9 +747,12 @@ export class RecipeScene {
       `<path data-k="streamH" d="M0 0" pathLength="1" fill="none" stroke="#fff" stroke-linecap="round" opacity="0"/>` +
       Array.from({ length: SPLASH_COUNT }, (_, k) => `<circle data-k="splash${k}" r="0" opacity="0"/>`).join('') +
       `</g>` +
+      `<g id="${f('drops')}">` +
       `<g>${PEARLS.map((_, i) => pearl(i)).join('')}</g>` +
       `<g>${ICE.map((_, k) => ice(k)).join('')}</g>` +
       `<g>${GRAINS.map((g, i) => `<circle data-grain="${i}" r="${n2(g.r)}" fill="${i % 3 ? '#b8672a' : '#e0a258'}" style="display:none"/>`).join('')}</g>` +
+      `</g>` +
+      behindWall +
       `<image href="${LOGO_SRC}" xlink:href="${LOGO_SRC}" x="${CX - 100}" y="470" width="200" height="120" preserveAspectRatio="xMidYMid meet" filter="${url('print')}" opacity=".94"/>` +
       `<g clip-path="${url('cup')}"><rect data-k="sheen" x="-60" y="-560" width="120" height="1120" fill="#fff" opacity="0" filter="${url('sheenBlur')}"/></g>` +
       `</g>` +
@@ -762,7 +805,7 @@ export class RecipeScene {
   private seekPhotos(t: number): void {
     let base = 0;
     let next = -1;
-    let reveal: Reveal | null = null;
+    let reveal: Reveal | 'cubes' | null = null;
     for (let step = 0; step < STEP_COUNT; step++) {
       const r = revealOf(step, t);
       if (r === 'full') {
@@ -775,7 +818,7 @@ export class RecipeScene {
       }
       break;
     }
-    const maskUrl = `url(#${this.uid}-revealMask)`;
+    const maskUrl = `url(#${this.uid}-${reveal === 'cubes' ? 'iceMask' : 'revealMask'})`;
     this.photoEls.forEach((el, i) => {
       const visible = i === base || i === next;
       this.show(el, visible);
@@ -785,7 +828,10 @@ export class RecipeScene {
         el.removeAttribute('mask');
       }
     });
-    if (reveal) {
+    this.overlayEls.forEach((el) => this.show(el, Number(el.getAttribute('data-overlay')) === base));
+    if (reveal === 'cubes') {
+      ICE.forEach((c, k) => this.set(`iceSpot${k}`, 'opacity', n2(iceLanded(c, t))));
+    } else if (reveal) {
       this.set('revealGrad', 'x1', n2(reveal.from[0]));
       this.set('revealGrad', 'y1', n2(reveal.from[1]));
       this.set('revealGrad', 'x2', n2(reveal.to[0]));
@@ -931,7 +977,7 @@ export class RecipeScene {
       if (!on || !pose) return;
       this.set(`icew${k}`, 'opacity', n2(1 - seg(after, 0.05, 0.3)));
       this.set(`ice${k}`, 'transform', `translate(${n2(pose.x)} ${n2(pose.y)}) rotate(${n2(pose.a)})`);
-      this.applyBlur(`icew${k}`, `ice${k}`, blurOf(pose, icePose(c, t - 1 / 240)));
+      this.applyBlur(`icew${k}`, `ice${k}`, blurOf(pose, icePose(c, t - 1 / 240), ICE_BLUR_MAX));
     });
 
     /* sugar grains */

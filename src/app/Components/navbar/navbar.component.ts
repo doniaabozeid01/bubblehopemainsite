@@ -15,10 +15,11 @@ import {
   rawCategoryLink,
 } from 'src/app/services/raw-categories.service';
 
+/** Shown until the API answers; real categories replace them. */
 const RAW_NAV_DEFAULTS = [
-  { id: 21, titleKey: 'navbar.tapioca' },
-  { id: 20, titleKey: 'navbar.juice' },
-  { id: 22, titleKey: 'navbar.popping' },
+  { titleKey: 'navbar.tapioca' },
+  { titleKey: 'navbar.juice' },
+  { titleKey: 'navbar.popping' },
 ];
 
 const RAW_NAV_LIMIT = 4;
@@ -36,6 +37,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isMenuOpen = false;
   scrolled = false;
   isHome = false;
+  /** Transparent bar over a full-bleed dark hero */
+  isOverlay = false;
+  /** Glass pill from the top (no cream band) over a split hero */
+  isFloating = false;
   /** Force-hide Products mega after a click until the mouse leaves */
   megaClosed = false;
   rawNav: RawCategoryLink[] = RAW_NAV_DEFAULTS.map(rawCategoryLink);
@@ -69,7 +74,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.updateHomeFlag();
         this.closeMenu();
-        this.closeMega();
+        (document.activeElement as HTMLElement | null)?.blur?.();
       });
 
     this.authService.currentUser$.subscribe((u) => {
@@ -85,19 +90,21 @@ export class NavbarComponent implements OnInit, OnDestroy {
           this.userId = typeof res === 'string' ? res : res?.userId;
 
           if (this.userId) {
-            const initialBranchId = Number(this.branchService.getCurrentBranch());
-            if (initialBranchId) {
-              this.branchId = initialBranchId;
-              this.cartCountService.refresh(this.branchId, this.userId);
-              this.wishlistCountService.refresh(this.branchId, this.userId);
-            }
-
+            // Tracked apart from branchId: the other currentBranch$ subscribers update branchId
+            // first, which used to make this one think nothing changed and keep stale counts.
+            let countsBranchId = 0;
             this.branchService.currentBranch$.subscribe((branchId) => {
-              if (branchId && branchId !== this.branchId) {
-                this.branchId = branchId;
-                this.cartCountService.refresh(branchId, this.userId);
-                this.wishlistCountService.refresh(branchId, this.userId);
+              const id = Number(branchId);
+              if (!id || id === countsBranchId) return;
+              const switched = countsBranchId !== 0;
+              countsBranchId = id;
+              this.branchId = id;
+              if (switched) {
+                this.cartCountService.setCount(0);
+                this.wishlistCountService.setCount(0);
               }
+              this.cartCountService.refresh(id, this.userId);
+              this.wishlistCountService.refresh(id, this.userId);
             });
           }
         },
@@ -186,6 +193,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.megaClosed = true;
     const active = document.activeElement as HTMLElement | null;
     active?.blur?.();
+  }
+
+  onMegaEnter(): void {
+    this.megaClosed = false;
   }
 
   onMegaLeave(): void {
@@ -284,44 +295,30 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.router.navigate(['/home']);
   }
 
+  /** Switch locally once (every page reacts to currentBranch$), then sync the account on the server. */
   switchBranch(branchId: number) {
-    const token = localStorage.getItem('token');
-    if (token) {
-      this.apiService.GetUserId().subscribe({
-        next: (res) => {
-          // console.log(res);
-          this.userId = res.userId;
-
-          const data = {
-            userId: this.userId,
-            newBranchId: branchId,
-          };
-
-          // console.log(data);
-
-          this.apiService.switchBranch(data).subscribe({
-            next: (response) => {
-              this.toastr.success('Branch Swiched Successfully.');
-
-              // console.log('response : ', response);
-              this.branchService.setBranch(branchId);
-            },
-            error: (err) => {
-              // console.log(err);
-              // console.log('err : ', err);
-              this.toastr.success(err.error.message);
-            },
-          });
-        },
-        error: (err) => console.error('❌ Error getting userId:', err),
-      });
-    } else {
-      localStorage.setItem('br', branchId.toString());
-      this.branchService.setBranch(branchId); // 👈 ضيف دي      // this.router.navigate(['/auth/login'])
-    }
+    const current = Number(this.branchService.getCurrentBranch());
+    if (current === Number(branchId) && this.branchService.hasChosenBranch()) return;
 
     this.branchService.setBranch(branchId);
     this.updateBranchName(branchId);
+
+    if (!localStorage.getItem('token')) return;
+
+    this.apiService.GetUserId().subscribe({
+      next: (res) => {
+        const userId = typeof res === 'string' ? res : res?.userId;
+        if (!userId) return;
+        this.userId = userId;
+
+        this.apiService.switchBranch({ userId, newBranchId: branchId }).subscribe({
+          next: () => this.toastr.success('Branch switched successfully.'),
+          error: (err) =>
+            this.toastr.error(err?.error?.message || 'Failed to switch branch on server.'),
+        });
+      },
+      error: (err) => console.error('❌ Error getting userId:', err),
+    });
   }
 
   GetUserBranch(userId: string) {
@@ -392,6 +389,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private updateHomeFlag(): void {
     const path = this.router.url.split('?')[0];
     this.isHome = path === '/' || path === '/home' || path === '';
+    this.isOverlay = path === '/bubble-events';
+    this.isFloating = path === '/kids-area';
   }
 
   /** Keep mega menu short — first 6 drink categories only. */
@@ -422,7 +421,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   trackByCategoryId = (_: number, cat: any) => cat?.id ?? cat?.name;
-  trackByRawNav = (_: number, item: RawCategoryLink) => item.categoryId ?? item.route;
+  trackByRawNav = (_: number, item: RawCategoryLink) =>
+    Number.isFinite(item.categoryId) ? item.categoryId : item.route;
 
   categoryLabel(cat: any): string {
     if (!cat) return '';

@@ -371,7 +371,7 @@ export class LoginComponent {
             if (res?.token) {
               this.authService.signIn({ fullName: res.fullName, email: res.email });
               this.tokenService.storeEncryptedToken(res.token);
-              this.router.navigate(['/']);
+              this.goToReturnUrl();
               return;
             }
 
@@ -410,6 +410,13 @@ export class LoginComponent {
     }
   }
 
+  /** Back to the page that sent the user here; only same-site paths are followed. */
+  private goToReturnUrl(): void {
+    const target = this.router.parseUrl(this.router.url).queryParams['returnUrl'];
+    const safe = typeof target === 'string' && target.startsWith('/') && !target.startsWith('//');
+    this.router.navigateByUrl(safe && !target.startsWith('/auth') ? target : '/');
+  }
+
   // =========================
   // ✅ OTP VERIFY 
   // =========================
@@ -433,7 +440,7 @@ export class LoginComponent {
           next: (res: any) => {
             if (res?.token) {
               this.tokenService.storeEncryptedToken(res.token);
-              this.router.navigate(['/']);
+              this.goToReturnUrl();
               return;
             }
             this.errorMessage = 'فشل تسجيل الدخول';

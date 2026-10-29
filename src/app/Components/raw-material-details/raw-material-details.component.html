@@ -26,11 +26,11 @@
   <div class="details-page" *ngIf="product as p">
     <nav class="details-breadcrumbs" aria-label="Breadcrumb">
       <div class="details-breadcrumbs__inner">
-        <a class="details-breadcrumbs__link" [routerLink]="categoryLink(p)">
+        <a class="details-breadcrumbs__link" [routerLink]="categoryLink(p)" [queryParams]="categoryQuery(p)">
           {{ 'home.rawMaterialsEyebrow' | translate }}
         </a>
         <i class="bi bi-chevron-right details-breadcrumbs__sep" aria-hidden="true"></i>
-        <a class="details-breadcrumbs__link details-breadcrumbs__category" [routerLink]="categoryLink(p)">
+        <a class="details-breadcrumbs__link details-breadcrumbs__category" [routerLink]="categoryLink(p)" [queryParams]="categoryQuery(p)">
           {{ categoryName(p) }}
         </a>
         <i class="bi bi-chevron-right details-breadcrumbs__sep" aria-hidden="true"></i>

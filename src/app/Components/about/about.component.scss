@@ -91,11 +91,193 @@ $scoop-h: clamp(2rem, 4vw, 2.75rem);
   }
 }
 
+.about-hero__layout {
+  position: relative;
+  z-index: 1;
+  max-width: 1120px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+}
+
 .about-hero__inner {
   position: relative;
   z-index: 1;
-  max-width: 40rem;
-  margin: 0 auto;
+  max-width: 34rem;
+  text-align: start;
+
+  .about-hero__tagline {
+    margin-inline: 0;
+  }
+}
+
+.about-hero__media {
+  --card-h: clamp(320px, 32vw, 410px);
+  position: relative;
+  justify-self: center;
+  width: min(100%, 540px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.about-deck {
+  position: relative;
+  width: 100%;
+  height: var(--card-h);
+  perspective: 1200px;
+  direction: ltr;
+}
+
+.about-deck__card {
+  --o: 0;
+  --a: 0;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 100%;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  border: 4px solid rgba(255, 251, 245, 0.96);
+  background: #1a1007;
+  cursor: pointer;
+  z-index: calc(10 - var(--a));
+  opacity: calc(1 - var(--a) * 0.22);
+  transform:
+    translateX(calc(-50% + var(--o) * 64%))
+    translateZ(calc(var(--a) * -140px))
+    rotateY(calc(var(--o) * -18deg))
+    scale(calc(1 - var(--a) * 0.13));
+  box-shadow: 0 30px 50px -28px rgba(60, 20, 0, 0.75);
+  transition:
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.6s ease,
+    filter 0.6s ease;
+  filter: saturate(calc(1 - var(--a) * 0.15)) brightness(calc(1 - var(--a) * 0.12));
+
+  img,
+  video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  &.is-active {
+    cursor: default;
+    border-color: #fff;
+    box-shadow:
+      0 0 0 6px rgba(255, 251, 245, 0.18),
+      0 40px 70px -30px rgba(60, 20, 0, 0.85);
+  }
+
+  &.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.about-deck__badge {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  display: grid;
+  place-items: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 0.9rem;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.about-deck__dots {
+  display: flex;
+  gap: 6px;
+}
+
+.about-deck__dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 251, 245, 0.45);
+  cursor: pointer;
+  transition: width 0.35s ease, background 0.35s ease;
+
+  &.is-on {
+    width: 22px;
+    background: #fff;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-deck__card {
+    transition: none;
+  }
+}
+
+@media (min-width: 992px) {
+  .about-hero__orb {
+    &--a {
+      width: 120px;
+      height: 120px;
+      top: 8%;
+      inset-inline-start: 44%;
+    }
+
+    &--c {
+      width: 70px;
+      height: 70px;
+      bottom: 22%;
+      inset-inline-start: 40%;
+    }
+  }
+}
+
+@media (max-width: 991.98px) {
+  .about-hero__layout {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .about-hero__inner {
+    text-align: center;
+
+    .about-hero__tagline {
+      margin-inline: auto;
+    }
+  }
+
+  .about-hero__media {
+    --card-h: 340px;
+    width: min(100%, 460px);
+  }
+}
+
+@media (max-width: 575.98px) {
+  .about-hero__media {
+    --card-h: 300px;
+    width: 100%;
+  }
+
+  .about-deck__card {
+    border-width: 3px;
+    border-radius: 1.15rem;
+    transform:
+      translateX(calc(-50% + var(--o) * 52%))
+      translateZ(calc(var(--a) * -140px))
+      rotateY(calc(var(--o) * -18deg))
+      scale(calc(1 - var(--a) * 0.15));
+  }
 }
 
 .about-hero__brand {
@@ -185,6 +367,506 @@ $scoop-h: clamp(2rem, 4vw, 2.75rem);
   font-weight: 500;
   color: $muted;
   line-height: 1.7;
+}
+
+/* ---------- Our story: bento built from the live menu ---------- */
+
+.story-bento {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  grid-template-areas:
+    'hero drinks'
+    'hero branches'
+    'marquee marquee';
+  gap: 0.85rem;
+}
+
+.story-bento__hero {
+  grid-area: hero;
+  position: relative;
+  min-height: clamp(300px, 30vw, 360px);
+  overflow: hidden;
+  border-radius: 1.75rem;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(43, 182, 207, 0.28), transparent 42%),
+    radial-gradient(circle at 85% 88%, rgba(255, 115, 4, 0.3), transparent 45%),
+    linear-gradient(160deg, #fff6ea 0%, #ffe3c4 60%, #ffcf9f 100%);
+  box-shadow: 0 28px 50px -32px rgba(120, 50, 0, 0.45);
+}
+
+.story-bento__glow {
+  position: absolute;
+  left: 50%;
+  bottom: 6%;
+  width: 78%;
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 66%);
+}
+
+/* Tapioca pearls drifting behind the cups */
+.story-bento__pearl {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, #8a5a3c 0%, #3b2214 55%, #1f110a 100%);
+  box-shadow: 0 6px 10px -4px rgba(31, 17, 10, 0.5);
+  animation: story-drift 6s ease-in-out infinite;
+
+  &--a { width: 22px; height: 22px; top: 16%; left: 22%; }
+  &--b { width: 14px; height: 14px; top: 28%; right: 18%; animation-delay: 1.4s; }
+  &--c { width: 18px; height: 18px; top: 9%; right: 36%; animation-delay: 2.6s; animation-duration: 7.5s; }
+}
+
+.story-bento__cup {
+  position: absolute;
+  bottom: 13%;
+  height: 44%;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 18px rgba(80, 35, 0, 0.28));
+  transform: translateX(var(--shift, 0%)) rotate(var(--tilt, 0deg));
+  animation: story-float 5.5s ease-in-out infinite;
+
+  &--center {
+    z-index: 3;
+    left: 50%;
+    bottom: 6%;
+    height: 62%;
+    --tilt: 0deg;
+    --shift: -50%;
+    animation-delay: 0.3s;
+  }
+
+  &--start {
+    z-index: 2;
+    left: -3%;
+    --tilt: -11deg;
+    --shift: 0%;
+    animation-delay: 1.1s;
+  }
+
+  &--end {
+    z-index: 2;
+    right: -3%;
+    --tilt: 11deg;
+    --shift: 0%;
+    animation-delay: 1.9s;
+  }
+}
+
+.story-bento__tag {
+  position: absolute;
+  z-index: 4;
+  top: 0.9rem;
+  inset-inline-start: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.38rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: $ink;
+  font-size: 0.78rem !important;
+  font-weight: 800;
+
+  i {
+    color: $orange;
+  }
+}
+
+.story-bento__stat {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 140px;
+  padding: 1.1rem 1.2rem;
+  overflow: hidden;
+  border-radius: 1.5rem;
+
+  &--drinks {
+    grid-area: drinks;
+    background: linear-gradient(150deg, #ff8a2b 0%, $orange 55%, #e45f00 100%);
+    color: #fff;
+    box-shadow: 0 22px 40px -26px rgba(228, 95, 0, 0.8);
+
+    /* Outlined rings echo the boba pearls */
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.28);
+    }
+
+    &::before {
+      width: 120px;
+      height: 120px;
+      top: -46px;
+      inset-inline-end: -34px;
+    }
+
+    &::after {
+      width: 54px;
+      height: 54px;
+      top: 22px;
+      inset-inline-end: 44px;
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+  }
+
+  &--branches {
+    grid-area: branches;
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    color: $ink;
+    box-shadow: 0 18px 36px -28px rgba(15, 23, 42, 0.4);
+
+    .story-bento__num {
+      color: $teal;
+    }
+  }
+}
+
+.story-bento__num {
+  font-size: clamp(2.2rem, 4vw, 2.9rem) !important;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.story-bento__caption {
+  margin-top: 0.3rem;
+  font-size: 0.9rem !important;
+  font-weight: 700;
+  opacity: 0.92;
+}
+
+.story-bento__branches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.65rem;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    background: rgba(43, 182, 207, 0.12);
+    color: #0e7490;
+    font-size: 0.72rem !important;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  i {
+    font-size: 0.62rem;
+  }
+}
+
+.story-bento__marquee {
+  grid-area: marquee;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+  padding: 0.75rem 0.95rem;
+  border-radius: 1.25rem;
+  background: $ink;
+  color: #fff;
+  text-decoration: none;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    color: #fff;
+    transform: translateY(-2px);
+
+    .story-bento__marquee-track {
+      animation-play-state: paused;
+    }
+  }
+}
+
+.story-bento__marquee-label {
+  flex-shrink: 0;
+  padding-inline-end: 0.85rem;
+  border-inline-end: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 0.85rem !important;
+  font-weight: 700;
+  white-space: nowrap;
+
+  strong {
+    color: #ffb27a;
+    font-size: 1.05rem;
+  }
+}
+
+.story-bento__marquee-window {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.story-bento__marquee-track {
+  display: inline-flex;
+  gap: 0.45rem;
+  width: max-content;
+  animation: story-marquee 32s linear infinite;
+}
+
+.story-bento__chip {
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-size: 0.8rem !important;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@keyframes story-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -10px;
+  }
+}
+
+@keyframes story-drift {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 6px -12px;
+  }
+}
+
+@keyframes story-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-bento__cup,
+  .story-bento__pearl,
+  .story-bento__marquee-track {
+    animation: none;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .story-bento {
+    width: 100%;
+    max-width: 560px;
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .story-bento {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      'hero hero'
+      'drinks branches'
+      'marquee marquee';
+    gap: 0.6rem;
+  }
+
+  .story-bento__hero {
+    min-height: 250px;
+    border-radius: 1.35rem;
+  }
+
+  .story-bento__stat {
+    min-height: 120px;
+    padding: 0.9rem;
+    border-radius: 1.2rem;
+  }
+
+  .story-bento__marquee-label {
+    font-size: 0.78rem !important;
+  }
+}
+
+.about-moments {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0.5rem 1.25rem 3.5rem;
+}
+
+.about-moments__head {
+  max-width: 36rem;
+  margin-bottom: 1.5rem;
+}
+
+.about-moments__title {
+  margin: 0.45rem 0 0;
+  font-size: clamp(1.55rem, 3.2vw, 2.15rem) !important;
+  font-weight: 800;
+  color: $ink;
+  line-height: 1.2;
+}
+
+.about-moments__lead {
+  margin: 0.6rem 0 0;
+  font-size: 1rem !important;
+  font-weight: 500;
+  color: $muted;
+  line-height: 1.6;
+}
+
+.about-moments__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: clamp(170px, 18vw, 220px);
+  grid-template-areas:
+    'craft branch coffee kids'
+    'craft events treats kids';
+  gap: 0.9rem;
+}
+
+.about-moment {
+  position: relative;
+  display: block;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 1.4rem;
+  background: #1a1007;
+  box-shadow: 0 22px 40px -28px rgba(15, 23, 42, 0.45);
+  text-decoration: none;
+  isolation: isolate;
+
+  img,
+  video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent 55%, rgba(12, 6, 2, 0.6) 100%);
+  }
+
+  &:hover img,
+  &:hover video {
+    transform: scale(1.05);
+  }
+
+  &--craft { grid-area: craft; }
+  &--branch { grid-area: branch; }
+  &--coffee { grid-area: coffee; }
+  &--kids { grid-area: kids; }
+  &--events { grid-area: events; }
+  &--treats { grid-area: treats; }
+
+  &--branch img { object-position: center 38%; }
+  &--kids img { object-position: center 40%; }
+}
+
+.about-moment__label {
+  position: absolute;
+  z-index: 2;
+  inset-inline: 0.85rem;
+  bottom: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  width: fit-content;
+  max-width: calc(100% - 1.7rem);
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(255, 251, 245, 0.92);
+  color: $ink;
+  font-size: 0.82rem !important;
+  font-weight: 800;
+  line-height: 1.2;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  i {
+    color: $orange;
+    font-size: 0.75rem;
+  }
+}
+
+a.about-moment:hover .about-moment__label {
+  background: $orange;
+  color: #fff;
+
+  i {
+    color: #fff;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .about-moments {
+    padding: 0.25rem 1.15rem 2.5rem;
+  }
+
+  .about-moments__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 170px;
+    grid-template-areas:
+      'craft branch'
+      'craft coffee'
+      'events kids'
+      'treats kids';
+    gap: 0.7rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .about-moments {
+    padding: 0 1rem 2rem;
+  }
+
+  .about-moments__title {
+    font-size: 1.35rem !important;
+    line-height: 1.25;
+  }
+
+  .about-moments__lead {
+    font-size: 0.9rem !important;
+  }
+
+  .about-moments__grid {
+    grid-auto-rows: 150px;
+    gap: 0.6rem;
+  }
+
+  .about-moment {
+    border-radius: 1.1rem;
+  }
+
+  .about-moment__label {
+    inset-inline: 0.55rem;
+    bottom: 0.55rem;
+    max-width: calc(100% - 1.1rem);
+    padding: 0.32rem 0.6rem;
+    font-size: 0.72rem !important;
+  }
 }
 
 .about-pillars {

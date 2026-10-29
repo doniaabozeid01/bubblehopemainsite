@@ -15,21 +15,25 @@ export class CartCountService {
     localStorage.setItem('cart_count', String(Math.max(0, count)));
   }
 
+  private latestRefresh = 0;
+
   /** refresh من السيرفر */
   refresh(branchId: number, userId: string) {
     if (!branchId || !userId) return;
+    // A reply for a branch the user already left must not overwrite the current count.
+    const request = ++this.latestRefresh;
 
-    // ✅ غيّري اسم الميثود دي حسب API عندك
     this.api.GetCartByUserIdAndBranchId(userId, branchId).subscribe({
       next: (res: any) => {
-        // عدّلي حسب شكل الريسبونس الحقيقي
+        if (request !== this.latestRefresh) return;
         const items = res?.cartItems ?? res?.items ?? res?.cart?.cartItems ?? [];
         const count = items.reduce((sum: number, it: any) => sum + (it?.quantity ?? 1), 0);
         this.setCount(count);
       },
-      error: () => {
-        const cached = Number(localStorage.getItem('cart_count') || 0);
-        this.subject.next(cached);
+      error: (err) => {
+        if (request !== this.latestRefresh) return;
+        // No cart yet in this branch.
+        if (err?.status === 404) this.setCount(0);
       }
     });
   }

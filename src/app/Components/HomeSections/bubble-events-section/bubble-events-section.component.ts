@@ -6,9 +6,7 @@ export interface OrbitGalleryImage {
   fallback: string;
 }
 
-/** Pexels — kids birthdays & wedding celebrations (afrah). */
-const PEX = (id: number) =>
-  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=520&h=680&fit=crop`;
+const ORBIT = (n: number) => `assets/brand/events/orbit-${n}.webp`;
 
 @Component({
   selector: 'app-bubble-events-section',
@@ -16,20 +14,12 @@ const PEX = (id: number) =>
   styleUrls: ['./bubble-events-section.component.scss'],
 })
 export class BubbleEventsSectionComponent {
-  readonly orbitFallback = PEX(799443);
+  readonly orbitFallback = ORBIT(1);
 
-  /** 6 kids birthdays + 3 wedding/afrah celebrations. */
-  readonly orbitImages: OrbitGalleryImage[] = [
-    { src: PEX(7155950), fallback: PEX(7155950) },
-    { src: PEX(7155949), fallback: PEX(7155949) },
-    { src: PEX(799443), fallback: PEX(799443) },
-    { src: PEX(6220553), fallback: PEX(6220553) },
-    { src: PEX(6218441), fallback: PEX(6218441) },
-    { src: PEX(4001710), fallback: PEX(4001710) },
-    { src: PEX(1721833), fallback: PEX(1721833) },
-    { src: PEX(2526105), fallback: PEX(2526105) },
-    { src: PEX(265088), fallback: PEX(265088) },
-  ];
+  readonly orbitImages: OrbitGalleryImage[] = Array.from({ length: 9 }, (_, i) => ({
+    src: ORBIT(i + 1),
+    fallback: ORBIT(1),
+  }));
 
   readonly accentBubbles = [
     { size: 56, x: 8, y: 18, tone: 'orange' },

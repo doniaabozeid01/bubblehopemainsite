@@ -1,8 +1,13 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, catchError, shareReplay, throwError } from 'rxjs';
 import { Address, UserDetails } from '../Components/profile/profile.component';
+
+/* Home sections each ask for the same catalog on load and the API rate-limits (429).
+   Identical reads inside this window share one request; kept short so favourites
+   and stock changes still show up on the next page. */
+const SHARED_GET_MS = 10_000;
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +16,23 @@ export class ApiService {
 
 
   constructor(private http: HttpClient, private router: Router) { }
+
+  private sharedGets = new Map<string, { at: number; request: Observable<any> }>();
+
+  private sharedGet(url: string, params?: HttpParams): Observable<any> {
+    const key = params ? `${url}?${params.toString()}` : url;
+    const hit = this.sharedGets.get(key);
+    if (hit && Date.now() - hit.at < SHARED_GET_MS) return hit.request;
+    const request = this.http.get(url, { params }).pipe(
+      catchError((err) => {
+        this.sharedGets.delete(key);
+        return throwError(() => err);
+      }),
+      shareReplay(1)
+    );
+    this.sharedGets.set(key, { at: Date.now(), request });
+    return request;
+  }
 
 
   baseUrl: string = "https://alhendalcompany-001-site1.stempurl.com";
@@ -28,9 +50,15 @@ export class ApiService {
     let params = new HttpParams().set('branchId', String(branchId));
     if (userId) params = params.set('userId', userId);
     if (groupCategoryId != null) params = params.set('groupCategoryId', String(groupCategoryId));
-    return this.http.get(`${this.baseUrl}/api/Stock/GetProductsForBranch`, { params });
+    return this.sharedGet(`${this.baseUrl}/api/Stock/GetProductsForBranch`, params);
   }
 
+
+  /** Same branch catalog, never shared/cached: used to read the per-branch isFavorite flags. */
+  GetBranchProductsFresh(branchId: number, userId: string): Observable<any> {
+    const params = new HttpParams().set('branchId', String(branchId)).set('userId', userId);
+    return this.http.get(`${this.baseUrl}/api/Stock/GetProductsForBranch`, { params });
+  }
 
   GetAllProductsByCategoryId(
     branchId: number,
@@ -70,8 +98,23 @@ export class ApiService {
   }
 
 
+  private userIdRequest?: { token: string | null; request: Observable<any> };
+
+  /** Every page asks for this; one request per login is enough. */
   GetUserId(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/api/Account/getUserId`);
+    const token = localStorage.getItem('token');
+    if (this.userIdRequest && this.userIdRequest.token === token) {
+      return this.userIdRequest.request;
+    }
+    const request = this.http.get(`${this.baseUrl}/api/Account/getUserId`).pipe(
+      catchError((err) => {
+        if (this.userIdRequest?.request === request) this.userIdRequest = undefined;
+        return throwError(() => err);
+      }),
+      shareReplay(1)
+    );
+    this.userIdRequest = { token, request };
+    return request;
   }
 
 
@@ -142,7 +185,7 @@ export class ApiService {
 
 
   getAllCategories(groupId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/api/Categories/GetAllCategories?categoryGroupId=${groupId}`);
+    return this.sharedGet(`${this.baseUrl}/api/Categories/GetAllCategories?categoryGroupId=${groupId}`);
   }
 
   GetAllCategoriesWithProducts(groupId?: number): Observable<any> {
@@ -211,7 +254,7 @@ export class ApiService {
 
 
   getAllBranches(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/api/Branch/GetAllBranches`);
+    return this.sharedGet(`${this.baseUrl}/api/Branch/GetAllBranches`);
   }
 
 
@@ -243,7 +286,7 @@ export class ApiService {
   GetBestSellerProducts(branchId: number, userId?: string): Observable<any> {
     let params = new HttpParams().set('branchId', String(branchId));
     if (userId) params = params.set('userId', userId);
-    return this.http.get(`${this.baseUrl}/api/Products/GetBestSellerProducts`, { params });
+    return this.sharedGet(`${this.baseUrl}/api/Products/GetBestSellerProducts`, params);
   }
 
 

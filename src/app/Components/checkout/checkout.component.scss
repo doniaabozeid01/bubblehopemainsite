@@ -12,8 +12,11 @@ $card-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
   background: $cream;
 }
 
+/* Footer's top scoop overlaps the page by this much (matches $scoop-h in footer). */
+$footer-scoop-h: clamp(2.5rem, 4.5vw, 3.25rem);
+
 .checkout-page {
-  padding: 0.75rem 0.85rem calc(clamp(2.5rem, 4.5vw, 3.25rem) + env(safe-area-inset-bottom, 0px));
+  padding: 0.75rem 0.85rem calc(#{$footer-scoop-h} + 2rem + env(safe-area-inset-bottom, 0px));
   background: $cream;
   font-size: 16px;
   line-height: 1.45;
@@ -47,7 +50,7 @@ $card-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
   }
 
   @media (min-width: 992px) {
-    padding: 1.5rem 1rem 3rem;
+    padding: 1.5rem 1rem calc(#{$footer-scoop-h} + 3rem);
   }
 }
 

@@ -3,15 +3,16 @@ import { NavigationEnd, Router } from '@angular/router';
 import { Subject, of } from 'rxjs';
 import { catchError, filter, startWith, switchMap, takeUntil } from 'rxjs/operators';
 import { LanguageService } from 'src/app/services/language.service';
-import { RawCategoriesService } from 'src/app/services/raw-categories.service';
+import { RawCategoriesService, rawCategoryLink } from 'src/app/services/raw-categories.service';
 
-/** Official group-2 categories. Each route shows that category's nested products. */
-const ROUTE_SPEC: Record<string, { id: number | null; titleKey: string }> = {
-  juice: { id: 20, titleKey: 'navbar.juice' },
-  tapioca: { id: 21, titleKey: 'navbar.tapioca' },
-  powders: { id: 21, titleKey: 'navbar.powders' },
-  popping: { id: 22, titleKey: 'navbar.popping' },
-  sauce: { id: null, titleKey: 'navbar.sauce' },
+/** Group-2 categories, found by the navbar label the service matches from their name.
+ *  `pageTitleKey` is the heading shown on the page. */
+const ROUTE_SPEC: Record<string, { titleKey: string; pageTitleKey: string }> = {
+  juice: { titleKey: 'navbar.juice', pageTitleKey: 'navbar.juice' },
+  tapioca: { titleKey: 'navbar.tapioca', pageTitleKey: 'navbar.tapioca' },
+  powders: { titleKey: 'navbar.tapioca', pageTitleKey: 'navbar.powders' },
+  popping: { titleKey: 'navbar.popping', pageTitleKey: 'navbar.popping' },
+  sauce: { titleKey: 'navbar.sauce', pageTitleKey: 'navbar.sauce' },
 };
 
 @Component({
@@ -66,9 +67,9 @@ export class RawMaterialCategoriesComponent implements OnInit, OnDestroy {
   }
 
   packKind(product: any): 'bottle' | 'pouch' | 'pearl' {
-    const id = Number(product?.categoryId);
-    if (id === 20) return 'bottle';
-    if (id === 22) return 'pearl';
+    const key = rawCategoryLink(product?.category ?? { id: product?.categoryId }).titleKey;
+    if (key === 'navbar.juice') return 'bottle';
+    if (key === 'navbar.popping') return 'pearl';
     return 'pouch';
   }
 
@@ -98,7 +99,7 @@ export class RawMaterialCategoriesComponent implements OnInit, OnDestroy {
     this.loadState = 'loading';
     this.products = [];
     const spec = ROUTE_SPEC[this.currentPath()];
-    this.pageTitleKey = spec?.titleKey ?? null;
+    this.pageTitleKey = spec?.pageTitleKey ?? null;
 
     return this.rawCategoriesService.getCategories().pipe(
       switchMap((cats) => {
@@ -111,7 +112,7 @@ export class RawMaterialCategoriesComponent implements OnInit, OnDestroy {
 
         this.mode = 'products';
         this.RawMaterialcategories = [];
-        const cat = spec.id != null ? (cats || []).find((c) => Number(c.id) === spec.id) : null;
+        const cat = (cats || []).find((c) => c.titleKey === spec.titleKey);
         this.products = cat?.['products'] || [];
         this.loadState = 'success';
         return of(null);

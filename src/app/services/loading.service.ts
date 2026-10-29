@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, asapScheduler, distinctUntilChanged, observeOn } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -7,7 +7,9 @@ import { BehaviorSubject } from 'rxjs';
 export class LoadingService {
   private pending = 0;
   private _loading$ = new BehaviorSubject<boolean>(false);
-  readonly isLoading$ = this._loading$.asObservable();
+  /* Requests often start while a view is being checked (ngOnInit, async pipes);
+     emitting on the next microtask keeps the preloader binding out of that pass. */
+  readonly isLoading$ = this._loading$.pipe(distinctUntilChanged(), observeOn(asapScheduler));
 
   private readonly minDelay = 400;
   private lastShownAt = 0;
