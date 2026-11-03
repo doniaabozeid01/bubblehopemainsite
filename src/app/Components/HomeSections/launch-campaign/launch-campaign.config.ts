@@ -40,3 +40,8 @@ export const LAUNCH_CAMPAIGN: LaunchCampaignConfig = {
   photoMs: 3500,
   productName: '',
 };
+
+export function isLaunchCampaignVisible(now = Date.now()): boolean {
+  const hideAt = LAUNCH_CAMPAIGN.hideAt ? Date.parse(LAUNCH_CAMPAIGN.hideAt) : Infinity;
+  return LAUNCH_CAMPAIGN.enabled && now < hideAt;
+}

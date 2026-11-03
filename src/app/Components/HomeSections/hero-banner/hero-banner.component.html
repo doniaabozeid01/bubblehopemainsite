@@ -274,12 +274,22 @@
       </div>
     </section>
 
+    <!-- 6) New-product launch — Scoop Cookies -->
+    <section
+      *ngIf="showLaunchSlide"
+      class="launch-slide"
+      [class.is-active]="activeIndex === launchSlideIndex"
+      [attr.aria-hidden]="activeIndex !== launchSlideIndex"
+    >
+      <app-launch-campaign [inHero]="true" [active]="activeIndex === launchSlideIndex"></app-launch-campaign>
+    </section>
+
     <!-- API ads — full-bleed -->
     <a
       class="hero-ad"
       *ngFor="let ad of adSlides; trackBy: trackById; let i = index"
-      [class.is-active]="activeIndex === i + brandSlideCount"
-      [attr.aria-hidden]="activeIndex !== i + brandSlideCount"
+      [class.is-active]="activeIndex === i + adSlideOffset"
+      [attr.aria-hidden]="activeIndex !== i + adSlideOffset"
       [routerLink]="ad.href"
       [attr.aria-label]="ad.imageAlt"
     >

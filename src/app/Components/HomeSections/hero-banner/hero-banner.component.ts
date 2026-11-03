@@ -14,6 +14,7 @@ import { Subscription } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { BranchService } from 'src/app/services/branch.service';
 import { LanguageService } from 'src/app/services/language.service';
+import { isLaunchCampaignVisible } from '../launch-campaign/launch-campaign.config';
 import { AdvertisementDto, HeroAdSlide } from './hero-banner.model';
 
 type HeroCup = { src: string; alt: string; slot: string };
@@ -51,6 +52,9 @@ export class HeroBannerComponent implements OnInit, AfterViewInit, OnDestroy {
    * Set to `true` when you want it visible in the carousel.
    */
   readonly showAppSlide = true;
+
+  /** New-product launch (Scoop Cookies), shown between the brand slides and the API ads. */
+  readonly showLaunchSlide = isLaunchCampaignVisible();
 
   /** Coded HOPE20 / 20% off slide — replaces the flat Discounts API creative. */
   readonly showOfferSlide = true;
@@ -171,7 +175,7 @@ export class HeroBannerComponent implements OnInit, AfterViewInit, OnDestroy {
     playGoogle: 'Google Play',
   };
 
-  /** 0 = chill, 1 = promo, 2 = focus, (3 = app if enabled), then API ads */
+  /** 0 = chill, 1 = promo, 2 = focus, (3 = app, 4 = offer), (launch), then API ads */
   activeIndex = 0;
   adSlides: HeroAdSlide[] = [];
 
@@ -248,8 +252,16 @@ export class HeroBannerComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.isArabic() ? this.offerDrink.labelAr : this.offerDrink.label;
   }
 
+  get launchSlideIndex(): number {
+    return this.brandSlideCount;
+  }
+
+  get adSlideOffset(): number {
+    return this.brandSlideCount + (this.showLaunchSlide ? 1 : 0);
+  }
+
   get slideCount(): number {
-    return this.brandSlideCount + this.adSlides.length;
+    return this.adSlideOffset + this.adSlides.length;
   }
 
   get dotIndexes(): number[] {
@@ -577,8 +589,9 @@ export class HeroBannerComponent implements OnInit, AfterViewInit, OnDestroy {
   private startAutoplay(): void {
     this.stopAutoplay();
     if (this.slideCount < 2) return;
-    // Stay longer on the focus product showcase
-    const ms = this.activeIndex === 2 ? 12000 : 6500;
+    // Stay longer on the focus showcase and the launch deck
+    const isLaunch = this.showLaunchSlide && this.activeIndex === this.launchSlideIndex;
+    const ms = isLaunch ? 16000 : this.activeIndex === 2 ? 12000 : 6500;
     this.autoTimer = setInterval(() => this.next(), ms);
   }
 

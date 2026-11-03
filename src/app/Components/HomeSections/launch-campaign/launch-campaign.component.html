@@ -73,63 +73,65 @@
         </div>
       </div>
 
-      <div class="launch__stage">
-        <div class="launch__video-card" *ngIf="videoSrc">
-          <video
-            #video
-            [src]="videoSrc"
-            [poster]="config.poster || ''"
-            muted
-            [muted]="true"
-            loop
-            playsinline
-            disablepictureinpicture
-            preload="none"
-          ></video>
-          <span class="launch__live-tag">
-            <span class="launch__dot" aria-hidden="true"></span>
-            {{ (live ? 'launchCampaign.badgeLive' : 'launchCampaign.badge') | translate }}
-          </span>
-        </div>
-
-        <svg class="launch__sticker" viewBox="0 0 200 200" aria-hidden="true">
-          <defs>
-            <path id="launchStickerPath" d="M100,100 m-72,0 a72,72 0 1,1 144,0 a72,72 0 1,1 -144,0" />
-          </defs>
-          <circle cx="100" cy="100" r="96" class="launch__sticker-bg" />
-          <g class="launch__sticker-ring">
-            <text>
-              <textPath href="#launchStickerPath" startOffset="0">
-                {{ 'launchCampaign.sticker' | translate }}
-              </textPath>
+      <div class="launch__stage-wrap">
+        <div class="launch__stage">
+          <div class="launch__video-card" *ngIf="videoSrc">
+            <video
+              #video
+              [src]="videoSrc"
+              [poster]="config.poster || ''"
+              muted
+              [muted]="true"
+              loop
+              playsinline
+              disablepictureinpicture
+              preload="none"
+            ></video>
+            <span class="launch__live-tag">
+              <span class="launch__dot" aria-hidden="true"></span>
+              {{ (live ? 'launchCampaign.badgeLive' : 'launchCampaign.badge') | translate }}
+            </span>
+          </div>
+  
+          <svg class="launch__sticker" viewBox="0 0 200 200" aria-hidden="true">
+            <defs>
+              <path id="launchStickerPath" d="M100,100 m-72,0 a72,72 0 1,1 144,0 a72,72 0 1,1 -144,0" />
+            </defs>
+            <circle cx="100" cy="100" r="96" class="launch__sticker-bg" />
+            <g class="launch__sticker-ring">
+              <text>
+                <textPath href="#launchStickerPath" startOffset="0">
+                  {{ 'launchCampaign.sticker' | translate }}
+                </textPath>
+              </text>
+            </g>
+            <text x="100" y="114" text-anchor="middle" class="launch__sticker-core">
+              {{ 'launchCampaign.stickerCore' | translate }}
             </text>
-          </g>
-          <text x="100" y="114" text-anchor="middle" class="launch__sticker-core">
-            {{ 'launchCampaign.stickerCore' | translate }}
-          </text>
-        </svg>
-
-        <button
-          *ngIf="photos.length"
-          type="button"
-          class="launch__deck"
-          (click)="nextPhoto()"
-          [attr.aria-label]="'launchCampaign.next' | translate"
-        >
-          <img
-            *ngFor="let src of photos; let i = index"
-            class="launch__card"
-            [ngClass]="deckClass(i)"
-            [src]="src"
-            [alt]="'launchCampaign.title' | translate"
-            loading="lazy"
-            decoding="async"
-          />
-        </button>
+          </svg>
+  
+          <button
+            *ngIf="photos.length"
+            type="button"
+            class="launch__deck"
+            (click)="nextPhoto()"
+            [attr.aria-label]="'launchCampaign.next' | translate"
+          >
+            <img
+              *ngFor="let src of photos; let i = index"
+              class="launch__card"
+              [ngClass]="deckClass(i)"
+              [src]="src"
+              [alt]="'launchCampaign.title' | translate"
+              loading="lazy"
+              decoding="async"
+            />
+          </button>
+        </div>
       </div>
     </div>
 
-    <div class="launch__ribbons" aria-hidden="true">
+    <div *ngIf="!inHero" class="launch__ribbons" aria-hidden="true">
       <div class="launch__ribbon launch__ribbon--back">
         <div class="launch__track" dir="ltr">
           <ng-container *ngFor="let _ of [0, 1]">
@@ -146,6 +148,6 @@
       </div>
     </div>
 
-    <span class="launch__scoop" aria-hidden="true"></span>
+    <span *ngIf="!inHero" class="launch__scoop" aria-hidden="true"></span>
   </div>
 </section>

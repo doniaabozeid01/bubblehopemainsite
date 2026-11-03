@@ -27,6 +27,7 @@ $scoop-h: clamp(2.5rem, 5vw, 3.5rem);
 .focus,
 .offer,
 .app,
+.launch-slide,
 .hero-ad {
   position: absolute;
   inset: 0;
@@ -1452,6 +1453,7 @@ $scoop-h: clamp(2.5rem, 5vw, 3.5rem);
   .focus,
   .offer,
   .app,
+  .launch-slide,
   .hero-ad {
     transition: none;
   }

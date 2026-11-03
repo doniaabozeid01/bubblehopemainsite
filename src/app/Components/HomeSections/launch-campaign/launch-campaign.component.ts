@@ -2,6 +2,8 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  HostBinding,
+  Input,
   NgZone,
   OnDestroy,
   OnInit,
@@ -12,7 +14,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ApiService } from 'src/app/services/api.service';
 import { BranchService } from 'src/app/services/branch.service';
 import { LanguageService } from 'src/app/services/language.service';
-import { LAUNCH_CAMPAIGN } from './launch-campaign.config';
+import { LAUNCH_CAMPAIGN, isLaunchCampaignVisible } from './launch-campaign.config';
 
 interface CountdownPart {
   key: string;
@@ -28,9 +30,20 @@ const DECK_DEPTH = 3;
   styleUrls: ['./launch-campaign.component.scss'],
 })
 export class LaunchCampaignComponent implements OnInit, OnDestroy {
+  /** Rendered as a slide inside the hero carousel instead of a standalone section. */
+  @HostBinding('class.is-hero')
+  @Input()
+  inHero = false;
+
+  /** In the hero, only the current slide may play its video and deck. */
+  @Input() set active(value: boolean) {
+    if (value === this.isActive) return;
+    this.isActive = value;
+    this.ngZone.runOutsideAngular(() => this.syncMotion());
+  }
+
   readonly config = LAUNCH_CAMPAIGN;
   readonly launchTime = Date.parse(LAUNCH_CAMPAIGN.launchAt);
-  readonly hideTime = LAUNCH_CAMPAIGN.hideAt ? Date.parse(LAUNCH_CAMPAIGN.hideAt) : Infinity;
   readonly videoSrc = pickVideoSource();
   readonly photos = LAUNCH_CAMPAIGN.gallery;
 
@@ -47,6 +60,7 @@ export class LaunchCampaignComponent implements OnInit, OnDestroy {
   private deckTimer?: ReturnType<typeof setTimeout>;
   private observer?: IntersectionObserver;
   private reduceMotion = false;
+  private isActive = true;
   private readonly onVisibility = () => this.ngZone.runOutsideAngular(() => this.syncMotion());
 
   @ViewChild('panel') set panelEl(ref: ElementRef<HTMLElement> | undefined) {
@@ -113,7 +127,7 @@ export class LaunchCampaignComponent implements OnInit, OnDestroy {
   }
 
   get running(): boolean {
-    return this.inView && !this.reduceMotion;
+    return this.isActive && this.inView && !this.reduceMotion;
   }
 
   /** Position of a photo in the deck: 0 is on top, the last one is flying away. */
@@ -205,7 +219,7 @@ export class LaunchCampaignComponent implements OnInit, OnDestroy {
 
   private tick(): void {
     const now = Date.now();
-    this.visible = this.config.enabled && now < this.hideTime;
+    this.visible = isLaunchCampaignVisible(now);
     this.live = now >= this.launchTime;
     if (this.live) {
       this.countdown = [];
