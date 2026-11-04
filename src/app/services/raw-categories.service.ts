@@ -4,9 +4,13 @@ import { catchError, map, shareReplay } from 'rxjs/operators';
 import { ApiService } from './api.service';
 
 const CLOUDINARY_UPLOAD = '/image/upload/';
-/* Strip the studio backdrop, then trim the leftover transparent margin so every
-   product fills its card instead of floating in dead space. */
-const CUTOUT_TRANSFORM = 'e_background_removal/e_trim/c_limit,w_640,f_auto,q_auto/';
+/* Dashboard uploads can be ~40MP, and Cloudinary refuses to transform anything over
+   25MP — so downscale first, then strip the studio backdrop, then trim the leftover
+   transparent margin so every product fills its card. */
+const CUTOUT_TRANSFORM = 'c_limit,w_1400,h_1400/e_background_removal/e_trim/c_limit,w_640,f_auto,q_auto/';
+/* Fallback when the cutout fails: same photo, just resized (originals are ~8MB). */
+const WEB_TRANSFORM = 'c_limit,w_900,h_900,f_auto,q_auto/';
+export const RAW_IMAGE_PLACEHOLDER = 'assets/img/placeholder.png';
 
 export interface RawCategory {
   id: number;
@@ -27,12 +31,35 @@ export interface RawCategory {
  * Dashboard photos are shot on studio backdrops. Cloudinary strips the backdrop
  * on the fly so the products sit cleanly on the page.
  */
+function isTransformableCloudinary(url: string): boolean {
+  return !!url && url.includes('res.cloudinary.com') && url.includes(CLOUDINARY_UPLOAD);
+}
+
 export function toCutoutUrl(url: string): string {
-  if (!url || !url.includes('res.cloudinary.com') || !url.includes(CLOUDINARY_UPLOAD)) {
-    return url;
-  }
+  if (!isTransformableCloudinary(url)) return url;
   if (url.includes('e_background_removal')) return url;
   return url.replace(CLOUDINARY_UPLOAD, CLOUDINARY_UPLOAD + CUTOUT_TRANSFORM);
+}
+
+export function toWebImageUrl(url: string): string {
+  if (!isTransformableCloudinary(url)) return url;
+  if (url.includes('e_background_removal') || url.includes('c_limit')) return url;
+  return url.replace(CLOUDINARY_UPLOAD, CLOUDINARY_UPLOAD + WEB_TRANSFORM);
+}
+
+/** Cutout failed → resized original → placeholder. Never loops. */
+export function handleRawImageError(event: Event, item?: { originalImageUrl?: string }): void {
+  const img = event.target as HTMLImageElement;
+  const stage = img.dataset['fallback'];
+  if (!stage && item?.originalImageUrl && img.src !== item.originalImageUrl) {
+    img.dataset['fallback'] = 'original';
+    img.src = item.originalImageUrl;
+    return;
+  }
+  if (stage !== 'placeholder') {
+    img.dataset['fallback'] = 'placeholder';
+    img.src = RAW_IMAGE_PLACEHOLDER;
+  }
 }
 
 export function asItemList(payload: any): any[] {
@@ -68,7 +95,7 @@ export function asShopProduct(product: any, category?: { id?: number; name?: str
   const stock = Number(product?.stock ?? product?.quantity ?? 0);
   return {
     ...product,
-    originalImageUrl: original,
+    originalImageUrl: original ? toWebImageUrl(original) : '',
     imageUrl: original ? toCutoutUrl(original) : '',
     imagePath: original ? toCutoutUrl(original) : '',
     newPrice: resolveShopPrice(product),
@@ -162,7 +189,7 @@ export class RawCategoriesService {
             titleKey,
             products,
             imageUrl: toCutoutUrl(cat?.imageUrl),
-            originalImageUrl: cat?.imageUrl,
+            originalImageUrl: toWebImageUrl(cat?.imageUrl),
           };
         });
 

@@ -20,6 +20,7 @@ import {
   RawCategoriesService,
   asItemList,
   asShopProduct,
+  handleRawImageError,
   rawCategoryLink,
 } from 'src/app/services/raw-categories.service';
 import { SeoService } from 'src/app/services/seo.service';
@@ -261,7 +262,7 @@ export class RawMaterialDetailsComponent implements OnDestroy {
     return p?.imagePath || p?.imageUrl || p?.images?.[0]?.imagePath || '';
   }
   onImgError(ev: Event) {
-    (ev.target as HTMLImageElement).src = 'assets/img/placeholder.png';
+    handleRawImageError(ev, this.product);
   }
 
   addToCart(data: any) {

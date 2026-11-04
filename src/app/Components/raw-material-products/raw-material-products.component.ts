@@ -16,6 +16,7 @@ import {
   RawCategoriesService,
   asItemList,
   asShopProduct,
+  handleRawImageError,
 } from 'src/app/services/raw-categories.service';
 import { WishlistCountService } from 'src/app/services/wishlist-count.service';
 
@@ -81,6 +82,10 @@ export class RawMaterialProductsComponent implements OnDestroy {
     const tab = this.tabs.find((t) => t.key === this.activeTab);
     if (tab?.titleKey) return this.translate.instant(tab.titleKey);
     return this.isRtl ? tab?.labelAr || tab?.label || '' : tab?.label || '';
+  }
+
+  onImgError(event: Event, product: any): void {
+    handleRawImageError(event, product);
   }
 
   productName(product: any): string {

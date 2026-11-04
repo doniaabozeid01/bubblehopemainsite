@@ -591,7 +591,7 @@ export class HeroBannerComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.slideCount < 2) return;
     // Stay longer on the focus showcase and the launch deck
     const isLaunch = this.showLaunchSlide && this.activeIndex === this.launchSlideIndex;
-    const ms = isLaunch ? 16000 : this.activeIndex === 2 ? 12000 : 6500;
+    const ms = isLaunch ? 24000 : this.activeIndex === 2 ? 12000 : 6500;
     this.autoTimer = setInterval(() => this.next(), ms);
   }
 
