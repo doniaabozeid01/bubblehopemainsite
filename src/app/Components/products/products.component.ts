@@ -8,7 +8,7 @@ import { BranchService } from 'src/app/services/branch.service';
 import { LanguageService } from 'src/app/services/language.service';
 import { SeoService } from 'src/app/services/seo.service';
 import { WishlistCountService } from 'src/app/services/wishlist-count.service';
-import { pickNewProducts } from './new-products.config';
+import { pickNewProducts, pinnedFirst } from './new-products.config';
 
 const NEW_TAB_KEY = 'new';
 
@@ -361,8 +361,8 @@ export class ProductsComponent implements OnDestroy {
         const name = item.categoryName || item.category?.name || `Category ${index + 1}`;
         const nameAr = item.categoryName_ar || item.category?.name_ar || name;
         const id = item.categoryId ?? item.category?.id ?? name;
-        const products = (Array.isArray(item.products) ? item.products : []).map((p: any) =>
-          this.enrichProduct(p)
+        const products = pinnedFirst(
+          (Array.isArray(item.products) ? item.products : []).map((p: any) => this.enrichProduct(p))
         );
         return {
           key: String(id),
@@ -381,7 +381,7 @@ export class ProductsComponent implements OnDestroy {
           key: String(id),
           name,
           nameAr,
-          products: res.map((p: any) => this.enrichProduct(p)),
+          products: pinnedFirst(res.map((p: any) => this.enrichProduct(p))),
         },
       ];
     }
