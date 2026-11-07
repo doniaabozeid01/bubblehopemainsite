@@ -190,6 +190,38 @@
   }
 }
 
+/* "New" tab: orange text and a pulsing dot until it is selected. */
+.menu-tab--new:not(.menu-tab--active) {
+  color: #ff7f00;
+}
+
+.menu-tab__spark {
+  display: inline-block;
+  width: 0.45rem;
+  height: 0.45rem;
+  margin-inline-end: 0.4rem;
+  border-radius: 50%;
+  background: currentColor;
+  vertical-align: 0.1em;
+  animation: menu-tab-spark 1.8s ease-out infinite;
+}
+
+@keyframes menu-tab-spark {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 127, 0, 0.55);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 6px rgba(255, 127, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-tab__spark {
+    animation: none;
+  }
+}
+
 .menu-content {
   flex: 1;
   min-width: 0;

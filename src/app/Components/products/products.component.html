@@ -41,10 +41,14 @@
               *ngFor="let tab of tabs; trackBy: trackByTab"
               [attr.data-key]="tab.key"
               [class.menu-tab--active]="isTabActive(tab.key)"
+              [class.menu-tab--new]="tab.isNew"
               [attr.aria-pressed]="isTabActive(tab.key)"
               (click)="setActiveTab(tab.key)"
             >
-              <span class="menu-tab__label">{{ tabLabel(tab) }}</span>
+              <span class="menu-tab__label">
+                <span class="menu-tab__spark" *ngIf="tab.isNew" aria-hidden="true"></span>
+                {{ tabLabel(tab) }}
+              </span>
               <span class="menu-tab__count" *ngIf="tab.count">{{ tab.count }}</span>
             </button>
           </nav>

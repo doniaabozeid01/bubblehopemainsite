@@ -8,6 +8,9 @@ import { BranchService } from 'src/app/services/branch.service';
 import { LanguageService } from 'src/app/services/language.service';
 import { SeoService } from 'src/app/services/seo.service';
 import { WishlistCountService } from 'src/app/services/wishlist-count.service';
+import { pickNewProducts } from './new-products.config';
+
+const NEW_TAB_KEY = 'new';
 
 export interface ProductGroup {
   key: string;
@@ -38,10 +41,12 @@ export class ProductsComponent implements OnDestroy {
   searchPlaceholder = '';
   routeCategoryId: number | null = null;
 
-  tabs: { key: string; label: string; labelAr: string; count?: number }[] = [
+  tabs: { key: string; label: string; labelAr: string; count?: number; isNew?: boolean }[] = [
     { key: 'all', label: 'All', labelAr: 'الكل' },
   ];
   filteredGroups: ProductGroup[] = [];
+  /** Recently added products: first tab, and the first section of "All" (left out while searching to avoid duplicates). */
+  private newGroup: ProductGroup | null = null;
 
   private branchSub?: Subscription;
   private routeSub?: Subscription;
@@ -243,6 +248,17 @@ export class ProductsComponent implements OnDestroy {
 
   private rebuildTabs(): void {
     this.tabs = [
+      ...(this.newGroup
+        ? [
+            {
+              key: this.newGroup.key,
+              label: 'New',
+              labelAr: 'جديد',
+              count: this.newGroup.products.length,
+              isNew: true,
+            },
+          ]
+        : []),
       {
         key: 'all',
         label: 'All',
@@ -262,8 +278,12 @@ export class ProductsComponent implements OnDestroy {
     const q = this.searchQuery.trim().toLowerCase();
     const source =
       this.activeTab === 'all'
-        ? this.groups
-        : this.groups.filter((g) => g.key === this.activeTab);
+        ? this.newGroup && !q
+          ? [this.newGroup, ...this.groups]
+          : this.groups
+        : this.activeTab === NEW_TAB_KEY
+          ? this.newGroup ? [this.newGroup] : []
+          : this.groups.filter((g) => g.key === this.activeTab);
 
     this.filteredGroups = source
       .map((g) => ({
@@ -316,6 +336,7 @@ export class ProductsComponent implements OnDestroy {
           this.groups = [];
           this.products = [];
           this.filteredGroups = [];
+          this.newGroup = null;
           this.rebuildTabs();
           this.loading = false;
         },
@@ -327,6 +348,7 @@ export class ProductsComponent implements OnDestroy {
       this.groups = [];
       this.products = [];
       this.filteredGroups = [];
+      this.newGroup = null;
       this.rebuildTabs();
       return;
     }
@@ -365,6 +387,10 @@ export class ProductsComponent implements OnDestroy {
     }
 
     this.products = this.groups.flatMap((g) => g.products);
+    const fresh = this.routeCategoryId == null ? pickNewProducts(this.products) : [];
+    this.newGroup = fresh.length
+      ? { key: NEW_TAB_KEY, name: 'New arrivals', nameAr: 'وصل جديد', products: fresh }
+      : null;
     this.rebuildTabs();
 
     if (this.routeCategoryId != null) {
@@ -372,6 +398,7 @@ export class ProductsComponent implements OnDestroy {
       this.activeTab = match ? match.key : 'all';
     } else if (
       this.activeTab !== 'all' &&
+      !(this.activeTab === NEW_TAB_KEY && this.newGroup) &&
       !this.groups.some((g) => g.key === this.activeTab)
     ) {
       this.activeTab = 'all';
