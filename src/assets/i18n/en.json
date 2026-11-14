@@ -530,6 +530,14 @@
         "back": "Go back",
         "share": "Share product",
         "customize": "Customize your drink",
+        "customizeTitles": {
+            "drink": "Customize your drink",
+            "coffee": "Customize your coffee",
+            "icecream": "Build your ice cream",
+            "treat": "Customize your treat",
+            "pastry": "Make it your way",
+            "order": "Customize your order"
+        },
         "basePrice": "Base price",
         "required": "Required",
         "optional": "Optional",

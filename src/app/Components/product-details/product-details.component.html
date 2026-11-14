@@ -105,7 +105,7 @@
             </header>
 
             <section class="details-customize">
-              <h2 class="details-customize__title">{{ 'productDetails.customize' | translate }}</h2>
+              <h2 class="details-customize__title">{{ customizeTitleKey(p) | translate }}</h2>
 
               <div
                 #sizeRef
@@ -268,7 +268,9 @@
                             />
                           </div>
                           <span class="extra-option__check" aria-hidden="true">
-                            <i class="bi bi-check" *ngIf="isSelected(group.groupId, option.id)"></i>
+                            <svg *ngIf="isSelected(group.groupId, option.id)" viewBox="0 0 16 16" focusable="false">
+                              <path d="M3.5 8.4l2.9 2.9 6.1-6.3" />
+                            </svg>
                           </span>
                           <span class="extra-option__name">{{ optionName(option) }}</span>
                         </div>

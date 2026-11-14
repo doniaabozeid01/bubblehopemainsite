@@ -90,6 +90,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
           this.userId = typeof res === 'string' ? res : res?.userId;
 
           if (this.userId) {
+            this.branchService.promptForAccount(this.userId);
+
             // Tracked apart from branchId: the other currentBranch$ subscribers update branchId
             // first, which used to make this one think nothing changed and keep stale counts.
             let countsBranchId = 0;

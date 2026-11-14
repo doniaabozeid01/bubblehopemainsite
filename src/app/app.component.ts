@@ -126,6 +126,7 @@ ngOnInit() {
 
   this.branchService.showModal$.subscribe((isOpen) => {
     this.showBranchModal = isOpen;
+    if (isOpen && !this.branches.length) this.reloadBranches();
   });
 
   this.checkSiteStatus();
@@ -163,6 +164,17 @@ ngOnInit() {
       error: () => {
         this.toastr.error('Failed to identify user for branch switch.');
       },
+    });
+  }
+
+  /** The first load can fail (e.g. rate limit); an open picker with no branches tries again. */
+  private reloadBranches() {
+    this.api.getAllBranches().subscribe({
+      next: (data) => {
+        const list = Array.isArray(data) ? data : data?.data || data?.result || [];
+        this.branches = Array.isArray(list) ? list : [];
+      },
+      error: () => {},
     });
   }
 

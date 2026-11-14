@@ -630,11 +630,34 @@ $breadcrumbs-bg: #fffbf5;
   background: #fff;
   color: #fff;
   flex-shrink: 0;
+  transition: background-color 0.18s ease, border-color 0.18s ease;
+
+  svg {
+    display: block;
+    width: 0.8rem;
+    height: 0.8rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 16;
+    animation: extra-check-draw 0.22s ease-out both;
+  }
 }
 
 .extra-option--active .extra-option__check {
   background: $orange;
   border-color: $orange;
+}
+
+@keyframes extra-check-draw {
+  from { stroke-dashoffset: 16; }
+  to { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .extra-option__check svg { animation: none; }
 }
 
 .extra-option__name {

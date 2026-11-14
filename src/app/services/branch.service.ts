@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
+const ACCOUNTS_KEY = 'br_chosen_accounts';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -21,16 +23,53 @@ currentBranch$ = this.selectedBranchId.asObservable();
   constructor() { }
 
 
+  /** Signed-in account the branch picker was opened for; its pick (or dismiss) is remembered per account. */
+  private promptedUserId: string | null = null;
+
   openModal() { this.showModalSource.next(true); }
-  closeModal() { this.showModalSource.next(false); }
+  closeModal() {
+    this.rememberAccountChoice();
+    this.showModalSource.next(false);
+  }
 
+  /**
+   * The device-wide choice is not enough: a new account made on a device that already picked a
+   * branch must still choose its own, once.
+   */
+  promptForAccount(userId: string) {
+    if (!userId || this.hasAccountChosen(userId)) return;
+    this.promptedUserId = userId;
+    this.openModal();
+  }
 
+  hasAccountChosen(userId: string): boolean {
+    return this.accountsWithBranch().includes(userId);
+  }
 
   setBranch(branchId: number) {
     this.selectedBranchId.next(branchId);
     localStorage.setItem('br', branchId.toString());
     localStorage.setItem('br_chosen', '1');
     this.closeModal();
+  }
+
+  private rememberAccountChoice() {
+    const userId = this.promptedUserId;
+    if (!userId) return;
+    this.promptedUserId = null;
+    const accounts = this.accountsWithBranch();
+    if (!accounts.includes(userId)) {
+      localStorage.setItem(ACCOUNTS_KEY, JSON.stringify([...accounts, userId].slice(-20)));
+    }
+  }
+
+  private accountsWithBranch(): string[] {
+    try {
+      const list = JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || '[]');
+      return Array.isArray(list) ? list.map(String) : [];
+    } catch {
+      return [];
+    }
   }
 
   /** True only after the customer picks a branch. Auto-filled defaults do not count. */

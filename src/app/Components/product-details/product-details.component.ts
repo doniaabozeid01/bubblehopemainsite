@@ -171,6 +171,20 @@ export class ProductDetailsComponent implements AfterViewInit, OnDestroy {
     return /ice\s*cream|icecream|آيس\s*كريم|ايس\s*كريم/i.test(category);
   }
 
+  /** "Customize your drink" reads wrong on a croissant or a scoop; pick wording per category. */
+  customizeTitleKey(product: any): string {
+    const c = `${product?.category?.name || ''} ${product?.category?.name_ar || ''}`.toLowerCase();
+    const key =
+      /powder|مسحوق|bucket|عبوة|bottle|زجاجة/i.test(c) ? 'order'
+      : /ice\s*cream|icecream|آيس\s*كريم|ايس\s*كريم/i.test(c) ? 'icecream'
+      : /croissant|pastr|bakery|كرواسون|معجنات|مخبوزات/i.test(c) ? 'pastry'
+      : /sweet|treat|dessert|waffle|cookie|حلويات|حلو|وافل|كوكيز/i.test(c) ? 'treat'
+      : /coffee|قهوة|latte|لاتيه/i.test(c) ? 'coffee'
+      : c.trim() ? 'drink'
+      : 'order';
+    return `productDetails.customizeTitles.${key}`;
+  }
+
   isMultiGroup(group: any): boolean {
     return group?.selectionType === 1 || this.isFlavorGroup(group);
   }
