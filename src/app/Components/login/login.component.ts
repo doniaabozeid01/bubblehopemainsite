@@ -215,10 +215,12 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 
 import { ApiService } from 'src/app/services/api.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { LanguageService } from 'src/app/services/language.service';
 import { LoadingService } from 'src/app/services/loading.service';
 import { SeoService } from 'src/app/services/seo.service';
 import { TokenService } from 'src/app/services/token.service';
@@ -237,6 +239,7 @@ export class LoginComponent {
 
   loading = false;
   resending = false;
+  showPwd = false;
 
   errorMessage = '';
   successMessage = '';
@@ -259,7 +262,10 @@ export class LoginComponent {
     private tokenService: TokenService,
     private seoService: SeoService,
     private loadings: LoadingService,
-    private phoneAuthService: PhoneAuthService
+    private phoneAuthService: PhoneAuthService,
+    private translate: TranslateService,
+    /** Applies the saved language and page direction when /auth/login is opened directly. */
+    private languageService: LanguageService
   ) {
     this.loginForm = this.fb.group({
       identifier: ['', [Validators.required, this.emailOrPhoneValidator]],
@@ -319,6 +325,15 @@ export class LoginComponent {
     return emailRegex.test((value || '').trim());
   }
 
+  /** Phone sign-in uses an SMS code, so the password field is hidden for it. */
+  get isPhoneEntry(): boolean {
+    return this.isEgyptPhone(this.loginForm.get('identifier')?.value || '');
+  }
+
+  private t(key: string, params?: Record<string, unknown>): string {
+    return this.translate.instant(`auth.log.${key}`, params);
+  }
+
   private isEgyptPhone(value: string): boolean {
     const phoneRegex = /^01[0-2,5]\d{8}$/;
     return phoneRegex.test((value || '').trim());
@@ -343,7 +358,7 @@ export class LoginComponent {
     const password = (this.loginForm.get('password')?.value || '').trim();
 
     if (!identifier) {
-      this.errorMessage = 'من فضلك أدخل البريد أو رقم الهاتف';
+      this.errorMessage = this.t('enterIdentifier');
       this.loginForm.markAllAsTouched();
       return;
     }
@@ -351,7 +366,8 @@ export class LoginComponent {
     // ✅ EMAIL FLOW (backend login)
     if (this.isEmail(identifier)) {
       if (!password) {
-        this.errorMessage = 'كلمة المرور مطلوبة';
+        this.errorMessage = this.t('passwordRequired');
+        this.loginForm.get('password')?.markAsTouched();
         return;
       }
 
@@ -363,7 +379,7 @@ export class LoginComponent {
             // لو محتاج تأكيد ايميل
             if (res?.success === false && res?.needEmailConfirmation) {
               this.needEmailConfirmation = true;
-              this.successMessage = res?.message_ar || res?.message || 'تم إرسال رسالة تأكيد إلى بريدك.';
+              this.successMessage = res?.message_ar || res?.message || this.t('confirmSent');
               return;
             }
 
@@ -375,11 +391,11 @@ export class LoginComponent {
               return;
             }
 
-            this.errorMessage = res?.message_ar || res?.message || 'فشل تسجيل الدخول';
+            this.errorMessage = res?.message_ar || res?.message || this.t('failed');
           },
 
           error: (err) => {
-            this.errorMessage = err?.error?.message_ar || err?.error?.message || 'فشل تسجيل الدخول';
+            this.errorMessage = err?.error?.message_ar || err?.error?.message || this.t('failed');
           }
 
         });
@@ -388,7 +404,7 @@ export class LoginComponent {
 
     // ✅ PHONE FLOW (Firebase OTP)
     if (!this.isEgyptPhone(identifier)) {
-      this.errorMessage = 'من فضلك أدخل رقم هاتف مصري صحيح (010/011/012/015...)';
+      this.errorMessage = this.t('invalidPhone');
       return;
     }
 
@@ -400,11 +416,11 @@ export class LoginComponent {
 
       this.step = 'otp';
       this.otpCode = '';
-      this.successMessage = 'تم إرسال كود التحقق. من فضلك أدخله.';
+      this.successMessage = this.t('otpSent');
 
       this.startOtpTimer(60);
     } catch (e: any) {
-      this.errorMessage = e?.message || 'فشل إرسال كود التحقق';
+      this.errorMessage = e?.message || this.t('otpFailed');
     } finally {
       this.loading = false;
     }
@@ -425,7 +441,7 @@ export class LoginComponent {
     this.successMessage = '';
 
     if (!this.otpCode || this.otpCode.trim().length < 4) {
-      this.errorMessage = 'من فضلك أدخل كود صحيح';
+      this.errorMessage = this.t('invalidCode');
       return;
     }
 
@@ -443,16 +459,16 @@ export class LoginComponent {
               this.goToReturnUrl();
               return;
             }
-            this.errorMessage = 'فشل تسجيل الدخول';
+            this.errorMessage = this.t('failed');
           },
           error: (err) => {
-            this.errorMessage = err?.error?.message_ar || err?.error?.message || 'فشل تسجيل الدخول';
+            this.errorMessage = err?.error?.message_ar || err?.error?.message || this.t('failed');
           }
         });
 
     } catch (e: any) {
       this.loading = false;
-      this.errorMessage = e?.message || 'كود غير صحيح';
+      this.errorMessage = e?.message || this.t('wrongCode');
     }
   }
 
@@ -467,17 +483,17 @@ export class LoginComponent {
 
     // simple cooldown
     if (this.otpTimer > 0) {
-      this.errorMessage = `انتظر ${this.otpTimer} ثانية قبل إعادة الإرسال`;
+      this.errorMessage = this.t('wait', { s: this.otpTimer });
       return;
     }
 
     try {
       this.resending = true;
       await this.phoneAuthService.sendOtp(this.otpPhoneE164);
-      this.successMessage = 'تم إعادة إرسال الكود.';
+      this.successMessage = this.t('resent');
       this.startOtpTimer(60);
     } catch (e: any) {
-      this.errorMessage = e?.message || 'فشل إعادة إرسال الكود';
+      this.errorMessage = e?.message || this.t('resendFailed');
     } finally {
       this.resending = false;
     }
@@ -513,12 +529,12 @@ export class LoginComponent {
     const identifier = (this.loginForm.get('identifier')?.value || '').trim();
 
     if (!identifier) {
-      this.errorMessage = 'من فضلك أدخل بريدك الإلكتروني أولاً';
+      this.errorMessage = this.t('enterEmailFirst');
       return;
     }
 
     if (!this.isEmail(identifier)) {
-      this.errorMessage = 'إعادة إرسال التأكيد تعمل بالإيميل فقط';
+      this.errorMessage = this.t('emailOnly');
       return;
     }
 
@@ -527,10 +543,10 @@ export class LoginComponent {
       .pipe(finalize(() => (this.resending = false)))
       .subscribe({
         next: (res) => {
-          this.successMessage = res?.message_ar || res?.message || 'تم إرسال رسالة التأكيد مرة أخرى.';
+          this.successMessage = res?.message_ar || res?.message || this.t('confirmResent');
         },
         error: (err) => {
-          this.errorMessage = err?.error?.message_ar || err?.error?.message || 'تعذر إرسال رسالة التأكيد.';
+          this.errorMessage = err?.error?.message_ar || err?.error?.message || this.t('confirmFailed');
         }
       });
   }

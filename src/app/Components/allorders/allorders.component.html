@@ -1,113 +1,92 @@
 <div class="parent">
-    <div class="orders-page container ">
+  <div class="orders-page">
 
+    <ng-container *ngIf="isLoggedIn; else notLoggedIn">
 
-        <ng-container *ngIf="isLoggedIn; else notLoggedIn">
+      <h1 class="orders-title" *ngIf="orders?.length > 0">{{ "orders.prevorder" | translate }}</h1>
 
+      <div class="orders-list">
+        <article class="order-card" *ngFor="let order of orders">
 
-            <h1 class="text-center fw-bold my-lg-4 my-3 fs-2 second-color" *ngIf="orders?.length > 0">{{"orders.prevorder" | translate}}</h1>
+          <!-- Order header -->
+          <header class="order-head">
+            <div class="order-meta">
+              <div class="order-no">{{ "orders.OrderNo" | translate }} <span>#{{ order.orderId }}</span></div>
+              <p class="order-date">
+                <i class="fa-regular fa-calendar"></i>
+                {{ order.createdAt | date:'mediumDate' }}
+              </p>
+            </div>
+            <span class="status-badge" [ngClass]="getStatusClass(order.status)">
+              {{ order.status }}
+            </span>
+          </header>
 
-            <!-- ✅ قائمة الطلبات -->
-            <div class="d-flex flex-column gap-4">
-                <!-- عنصر طلب -->
-                <div class="card rounded-4 border-0 " *ngFor="let order of orders">
-                    <div class="card-body">
-                        <!-- رأس الطلب -->
-                        <div class="d-flex justify-content-between align-items-start mb-2 main-color">
-                            <div>
-                                <p class="fw-bold mb-0 pb-0 second-color">{{"orders.OrderNo" | translate}}: {{ order.orderId }}</p>
-                                <small class="fs-5 my-0 py-0 text-black">{{"orders.Date" | translate}} : {{ order.createdAt | date:'shortDate'
-                                    }}</small>
-                            </div>
-                            <span class="badge text-dark px-3 py-2 fs-5" [ngClass]="getStatusClass(order.status)">
-                                {{ order.status }}
-                            </span>
-                        </div>
-                        <hr />
+          <!-- Items -->
+          <div class="order-items">
+            <div class="order-item" *ngFor="let item of order.orderItems">
+              <img [src]="item.imageUrl" alt="product" class="item-img" />
 
-                        <!-- المنتجات داخل الطلب -->
-                        <div class="d-flex flex-column gap-3">
-                            <div *ngFor="let item of order.orderItems"
-                                class="d-flex align-items-center justify-content-between p-2 rounded bg-light main-color">
-                                <div class="d-flex align-items-center gap-3">
-                                    <!-- <img [src]="item.imageUrl" alt="product" class="rounded"
-                  style=" object-fit: cover;" /> -->
-                                    <img [src]="item.imageUrl" alt="product" class="rounded w-20"
-                                        style=" object-fit: cover;" />
-                                    <div class="">
-                                        <p class=" fs-4 mb-0 text-black">{{ (languageService.languageChanged$ | async) === 'ar' ?
-                                            item.productName_ar : item.productName }}</p>
-
-                                        <p class="mb-0 text-dark fs-6">
-                                            {{ (languageService.languageChanged$ | async) === 'ar' ?
-                                            item.additionsTextAr : item.additionsText }}
-                                        </p>
-
-                                        <p class="mb-0 text-black fs-5">{{"orders.count" | translate}}: {{ item.quantity }}
-                                        </p>
-                                        <p class="mb-0 text-black fs-5">
-                                            {{"orders.price" | translate}}: {{ item.unitPrice }} <span>{{
-                                                (languageService.languageChanged$ | async) === 'ar' ? item.currency_ar :
-                                                item.currency }}</span>
-                                        </p>
-                                        <!-- اختياري: عرض الإجمالي للمنتج -->
-                                        <!-- <div class="small fw-bold mt-1">
-                                            الإجمالي: {{ item.price * item.quantity }} EGP
-                                        </div> -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr />
-
-                        <!-- إجمالي الطلب -->
-                        <div class="d-flex justify-content-between align-items-center mt-2 ">
-                            <span class="fw-bold fs-4">{{"orders.totalAmount" | translate}}:</span>
-                            <span class="fw-bold fs-4"> {{ getOrderSubtotal(order) }}
-                                <span>{{(languageService.languageChanged$ | async) === 'ar' ?
-                                    order?.orderItems[0]?.currency_ar : order?.orderItems[0]?.currency }}</span></span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mt-2 " *ngIf="getDeliveryFee(order) > 0">
-                            <span class="fw-bold fs-4 ">{{"orders.deliveryFee" | translate}}:</span>
-                            <span class="fw-bold fs-4"> {{ getDeliveryFee(order) }}
-                                <span>{{(languageService.languageChanged$ | async) === 'ar' ?
-                                    order?.orderItems[0]?.currency_ar : order?.orderItems[0]?.currency }}</span></span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mt-2 second-color">
-                            <span class="fw-bold fs-4">{{"cart.total" | translate}}:</span>
-                            <span class="fw-bold fs-4"> {{ getOrderGrandTotal(order) }}
-                                <span>{{(languageService.languageChanged$ | async) === 'ar' ?
-                                    order?.orderItems[0]?.currency_ar : order?.orderItems[0]?.currency }}</span></span>
-                        </div>
-                    </div>
+              <div class="item-info">
+                <div class="item-name">
+                  {{ (languageService.languageChanged$ | async) === 'ar' ? item.productName_ar : item.productName }}
                 </div>
 
+                <p class="item-extras"
+                  *ngIf="(languageService.languageChanged$ | async) === 'ar' ? item.additionsTextAr : item.additionsText">
+                  {{ (languageService.languageChanged$ | async) === 'ar' ? item.additionsTextAr : item.additionsText }}
+                </p>
+
+                <div class="item-line">
+                  <span class="chip">{{ "orders.count" | translate }}: <b>{{ item.quantity }}</b></span>
+                  <span class="chip chip-price">
+                    {{ "orders.price" | translate }}: <b>{{ item.unitPrice }}
+                      {{ (languageService.languageChanged$ | async) === 'ar' ? item.currency_ar : item.currency }}</b>
+                  </span>
+                </div>
+              </div>
             </div>
+          </div>
 
-            <!-- ⛔️ حالة لا يوجد طلبات -->
-            <div *ngIf="orders?.length === 0" class="text-center main-color py-5">
-                <!-- <i class="fa fa-box-open fa-3x mb-3"></i> -->
-                <h2 class="main-color ">{{'order.slogan' | translate}}</h2>
-                <button class="btn goToProduct fs-4" (click)="goToProducts()">{{'wishlist.ExploreProducts' |
-                    translate}}</button>
+          <!-- Totals -->
+          <footer class="order-totals">
+            <div class="total-row">
+              <span>{{ "orders.totalAmount" | translate }}</span>
+              <span>{{ getOrderSubtotal(order) }}
+                {{ (languageService.languageChanged$ | async) === 'ar' ? order?.orderItems[0]?.currency_ar : order?.orderItems[0]?.currency }}</span>
             </div>
-        </ng-container>
-
-
-        <ng-template #notLoggedIn>
-            <div class="text-center py-5">
-                <h2 class="fw-bold main-color">يرجى تسجيل الدخول لعرض الطلبات</h2>
-                <button class="btn btn-bg-color fs-4 mt-3" (click)="goToLogin()">تسجيل الدخول</button>
+            <div class="total-row" *ngIf="getDeliveryFee(order) > 0">
+              <span>{{ "orders.deliveryFee" | translate }}</span>
+              <span>{{ getDeliveryFee(order) }}
+                {{ (languageService.languageChanged$ | async) === 'ar' ? order?.orderItems[0]?.currency_ar : order?.orderItems[0]?.currency }}</span>
             </div>
-        </ng-template>
-    </div>
-<button
-  class="scroll-to-top main-bg-color"
-  *ngIf="showScrollButton"
-  (click)="scrollToTop()"
->
-<i class="fa-solid fa-arrow-up "></i>
-</button>
+            <div class="total-row grand">
+              <span>{{ "cart.total" | translate }}</span>
+              <span>{{ getOrderGrandTotal(order) }}
+                {{ (languageService.languageChanged$ | async) === 'ar' ? order?.orderItems[0]?.currency_ar : order?.orderItems[0]?.currency }}</span>
+            </div>
+          </footer>
+        </article>
+      </div>
 
+      <!-- No orders -->
+      <div *ngIf="orders?.length === 0" class="empty-state">
+        <h2>{{ 'order.slogan' | translate }}</h2>
+        <button class="btn goToProduct" (click)="goToProducts()">
+          {{ 'wishlist.ExploreProducts' | translate }}
+        </button>
+      </div>
+    </ng-container>
+
+    <ng-template #notLoggedIn>
+      <div class="empty-state">
+        <h2>يرجى تسجيل الدخول لعرض الطلبات</h2>
+        <button class="btn goToProduct" (click)="goToLogin()">تسجيل الدخول</button>
+      </div>
+    </ng-template>
+  </div>
+
+  <button class="scroll-to-top main-bg-color" *ngIf="showScrollButton" (click)="scrollToTop()">
+    <i class="fa-solid fa-arrow-up"></i>
+  </button>
 </div>

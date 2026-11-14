@@ -94,11 +94,14 @@
               <p class="details-header__description" *ngIf="productDescription(p)">
                 {{ productDescription(p) }}
               </p>
-              <div class="details-header__price">
+              <div class="details-header__price" *ngIf="!isUnavailable; else unavailableTag">
                 <span class="details-header__price-value">{{ basePrice }}</span>
                 <span class="details-header__price-currency">{{ currencyLabel(p) }}</span>
                 <span class="details-header__price-label">{{ 'productDetails.basePrice' | translate }}</span>
               </div>
+              <ng-template #unavailableTag>
+                <span class="details-header__unavailable">{{ 'outOfStock' | translate }}</span>
+              </ng-template>
             </header>
 
             <section class="details-customize">
@@ -401,8 +404,13 @@
                 </div>
               </div>
 
-              <button type="button" class="details-checkout__btn" (click)="addToCart(p)">
-                {{ 'cart.addToCart' | translate }}
+              <button
+                type="button"
+                class="details-checkout__btn"
+                [disabled]="isUnavailable"
+                (click)="addToCart(p)"
+              >
+                {{ (isUnavailable ? 'outOfStock' : 'cart.addToCart') | translate }}
               </button>
             </div>
             </div>

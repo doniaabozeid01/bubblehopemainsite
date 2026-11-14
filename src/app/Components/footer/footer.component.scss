@@ -138,41 +138,57 @@ $scoop-h: clamp(2.5rem, 4.5vw, 3.25rem);
 @media (max-width: 768px) {
   .footer-wave {
     background: $footer-orange;
-    padding-bottom: 44px;
+    padding-bottom: 28px;
   }
 
   .footer-inner {
     padding: 1.25rem 20px 0;
   }
 
+  // two compact columns instead of one very long stack
   .footer-grid {
-    grid-template-columns: 1fr;
-    gap: 28px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px 16px;
     text-align: center;
   }
 
   .footer-col {
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+  }
+
+  .footer-right {
+    grid-column: auto;
+    justify-self: stretch;
+    gap: 12px;
   }
 
   .footer-title {
-    font-size: 19px !important;
-    margin-bottom: 6px;
+    font-size: 15px !important;
+    margin-bottom: 4px;
+    letter-spacing: 0.03em;
   }
 
   .footer-link {
     margin-inline: auto;
-    font-size: 16px !important;
-    line-height: 1.6;
+    font-size: 14px !important;
+    line-height: 1.5;
+  }
+
+  .footer-logo {
+    width: min(140px, 100%);
+  }
+
+  .footer-social {
+    gap: 8px;
   }
 
   .social-btn {
-    width: 46px;
-    height: 46px;
+    width: 38px;
+    height: 38px;
 
     i {
-      font-size: 20px;
+      font-size: 17px;
     }
   }
 }

@@ -14,6 +14,15 @@ app-page-transition {
   flex-direction: column;
 }
 
+// Space between the last section of a page and the footer scoop.
+// (The footer scoop pulls up into the page, so this is more than it looks.)
+app-page-transition.footer-gap {
+  padding-bottom: clamp(3.5rem, 7vw, 6rem);
+}
+
+// The gap's background colour is set from main-layout.component.ts: it copies
+// the colour the page ends with, so no band of a different colour shows.
+
 app-footer {
   flex: 0 0 auto;
 }

@@ -161,6 +161,9 @@ export class CheckoutComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading cart', err);
+        this.cartId = 0 as any;
+        this.cartItems = [];
+        this.totalamount = 0;
       }
     });
   }
@@ -333,14 +336,27 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
+    if (!this.cartId || !this.branchId) {
+      this.toastr.error(
+        this.translate.currentLang === 'ar'
+          ? 'تعذر تحميل السلة، من فضلك أعد تحميل الصفحة'
+          : 'Could not load your cart, please refresh the page'
+      );
+      return;
+    }
+
     this.loading = true;
 
+    // The cart is per user + branch, so tell the server exactly which one to order.
     const request = {
       addressId: this.isSelfPickup ? null : this.orderForm.value.addressId,
       paymentMethodId: this.orderForm.value.paymentMethodId,
       code: this.orderForm.value.code,
       source: 1,
       fulfillmentType: this.orderForm.value.fulfillmentType,
+      branchId: this.branchId,
+      cartId: this.cartId,
+      userId: this.userId,
     };
     // console.log(request);
     

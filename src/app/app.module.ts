@@ -19,6 +19,7 @@ import { ProductDetailsComponent } from './Components/product-details/product-de
 import { ProductsComponent } from './Components/products/products.component';
 import { RawMaterialProductsComponent } from './Components/raw-material-products/raw-material-products.component';
 import { RegisterComponent } from './Components/register/register.component';
+import { BhSelectComponent } from './Components/bh-select/bh-select.component';
 import { ResetPasswordComponent } from './Components/reset-password/reset-password.component';
 import { AuthLayoutComponent } from './Components/Layouts/auth-layout/auth-layout.component';
 import { MainLayoutComponent } from './Components/Layouts/main-layout/main-layout.component';
@@ -88,6 +89,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ProductsComponent,
     RawMaterialProductsComponent,
     RegisterComponent,
+    BhSelectComponent,
     ResetPasswordComponent,
     AuthLayoutComponent,
     MainLayoutComponent,

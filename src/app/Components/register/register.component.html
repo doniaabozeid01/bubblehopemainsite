@@ -2,227 +2,252 @@
 <div class="auth-shell">
   <!-- LEFT: Form -->
   <div class="auth-left">
-    <div class="auth-box ">
+    <div class="auth-box">
 
-      <div class="brand">
-        <div class="brand-text">
-          <h1 class="title">{{ 'auth.register' | translate }}</h1>
-          <p class="sub">Create your account. Please enter your details.</p>
-        </div>
-      </div>
+      <header class="brand">
+        <a routerLink="/" class="brand__home">
+          <img class="brand__logo" src="assets/Group 73.png" alt="Bubble Hope" />
+        </a>
+        <h1 class="title">{{ 'auth.CreateNewAccount' | translate }}</h1>
+        <p class="sub">{{ 'auth.reg.subtitle' | translate }}</p>
+      </header>
 
       <!-- Success -->
-      <div *ngIf="successMessage" class="alert alert-success text-center mb-3" role="alert" aria-live="polite">
-        {{ successMessage }}
+      <div *ngIf="successMessage" class="notice notice--success" role="alert" aria-live="polite">
+        <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+        <span>{{ successMessage }}</span>
       </div>
 
       <!-- Error -->
-      <div *ngIf="errorMessage" class="alert alert-danger text-center mb-3" role="alert" aria-live="assertive">
-        {{ errorMessage }}
+      <div *ngIf="errorMessage" class="notice notice--error" role="alert" aria-live="assertive">
+        <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
+        <span>{{ errorMessage }}</span>
       </div>
 
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="form" novalidate>
 
-        <!-- Full name -->
-        <div class="field">
-          <label class="label" for="fullName">{{ 'auth.FullName' | translate }}</label>
-          <input id="fullName" type="text" class="input" formControlName="fullName" placeholder="Enter your name" />
-          <div *ngIf="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.invalid" class="error">
-            Full name is required
-          </div>
-        </div>
+        <!-- ===== Your details ===== -->
+        <section class="form-section">
+          <h2 class="form-section__title">
+            <span class="form-section__icon"><i class="bi bi-person" aria-hidden="true"></i></span>
+            {{ 'auth.reg.sectionDetails' | translate }}
+          </h2>
 
-        <!-- Email -->
-        <div class="field">
-          <label class="label" for="email">{{ 'auth.email' | translate }}</label>
-          <input id="email" type="email" class="input" formControlName="email" placeholder="example@email.com" />
-          <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.errors as errors" class="error"
-            aria-live="polite">
-            <div *ngIf="errors['gmailOnly']">Only Gmail accounts are allowed</div>
-            <div *ngIf="errors['required']">Email is required</div>
-            <div *ngIf="errors['email']">Invalid email format</div>
-          </div>
-        </div>
-
-        <!-- Phone -->
-        <div class="field">
-          <label class="label" for="phoneNumber">Phone Number</label>
-          <input id="phoneNumber" type="tel" class="input" formControlName="phoneNumber" placeholder="01..." />
-          <div *ngIf="registerForm.get('phoneNumber')?.touched && registerForm.get('phoneNumber')?.invalid"
-            class="error">
-            Phone number is required
-          </div>
-        </div>
-
-        <!-- Address Group -->
-        <div formGroupName="address">
-
-          <!-- Country -->
           <div class="field">
-            <label class="label" for="countryId">Country</label>
-            <select id="countryId" class="input select" formControlName="countryId">
-              <option [ngValue]="null" disabled selected>
-                {{ loadingCountries ? 'Loading...' : 'Select country' }}
-              </option>
-              <option *ngFor="let c of countries" [ngValue]="c.id">
-                {{ c.name ?? c.country_name ?? c.country_name_ar ?? c.nameAr }}
-              </option>
-            </select>
-            <div *ngIf="addressFG.get('countryId')?.touched && addressFG.get('countryId')?.invalid" class="error">
-              Country is required
+            <label class="label" for="fullName">{{ 'auth.FullName' | translate }}</label>
+            <input id="fullName" type="text" class="input" formControlName="fullName" autocomplete="name"
+              [placeholder]="'auth.reg.namePlaceholder' | translate" />
+            <p *ngIf="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.invalid" class="error">
+              {{ 'auth.required' | translate }}
+            </p>
+          </div>
+
+          <div class="grid">
+            <div class="field">
+              <label class="label" for="email">{{ 'auth.email' | translate }}</label>
+              <input id="email" type="email" class="input input--ltr" formControlName="email" autocomplete="email"
+                placeholder="example@gmail.com" />
+              <ng-container *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.errors as errors">
+                <p *ngIf="errors['required']" class="error">{{ 'auth.required' | translate }}</p>
+                <p *ngIf="!errors['required'] && errors['email']" class="error">{{ 'auth.Invalidemail' | translate }}</p>
+                <p *ngIf="!errors['required'] && !errors['email'] && errors['gmailOnly']" class="error">
+                  {{ 'auth.gmailOnly' | translate }}
+                </p>
+              </ng-container>
+            </div>
+
+            <div class="field">
+              <label class="label" for="phoneNumber">{{ 'auth.reg.phone' | translate }}</label>
+              <input id="phoneNumber" type="tel" class="input input--ltr" formControlName="phoneNumber"
+                autocomplete="tel" inputmode="tel" placeholder="01XXXXXXXXX" />
+              <p *ngIf="registerForm.get('phoneNumber')?.touched && registerForm.get('phoneNumber')?.invalid"
+                class="error">
+                {{ 'auth.required' | translate }}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== Delivery address ===== -->
+        <section class="form-section" formGroupName="address">
+          <h2 class="form-section__title">
+            <span class="form-section__icon"><i class="bi bi-geo-alt" aria-hidden="true"></i></span>
+            {{ 'auth.reg.sectionAddress' | translate }}
+          </h2>
+
+          <p class="region-chip" *ngIf="autoRegionLabel">
+            <i class="bi bi-pin-map" aria-hidden="true"></i>
+            <span>{{ 'auth.reg.deliveringIn' | translate }}</span>
+            <strong>{{ autoRegionLabel }}</strong>
+          </p>
+
+          <div class="grid">
+            <div class="field" *ngIf="showCountryField">
+              <label class="label" for="countryId">{{ 'auth.reg.country' | translate }}</label>
+              <app-bh-select
+                [emptyText]="'auth.reg.noOptions' | translate"
+                inputId="countryId" formControlName="countryId" [options]="countryOptions"
+                [loading]="loadingCountries"
+                [placeholder]="(loadingCountries ? 'auth.reg.loading' : 'auth.reg.chooseCountry') | translate"
+                [invalid]="!!(addressFG.get('countryId')?.touched && addressFG.get('countryId')?.invalid)">
+              </app-bh-select>
+              <p *ngIf="addressFG.get('countryId')?.touched && addressFG.get('countryId')?.invalid" class="error">
+                {{ 'auth.required' | translate }}
+              </p>
+            </div>
+
+            <div class="field" *ngIf="showGovernorateField">
+              <label class="label" for="governorateId">{{ 'auth.reg.governorate' | translate }}</label>
+              <app-bh-select
+                [emptyText]="'auth.reg.noOptions' | translate"
+                inputId="governorateId" formControlName="governorateId" [options]="governorateOptions"
+                [loading]="loadingGovernorates"
+                [placeholder]="(loadingGovernorates ? 'auth.reg.loading' : 'auth.reg.chooseGovernorate') | translate"
+                [invalid]="!!(addressFG.get('governorateId')?.touched && addressFG.get('governorateId')?.invalid)">
+              </app-bh-select>
+              <p *ngIf="addressFG.get('governorateId')?.touched && addressFG.get('governorateId')?.invalid"
+                class="error">
+                {{ 'auth.required' | translate }}
+              </p>
+            </div>
+
+            <div class="field">
+              <label class="label" for="cityId">{{ 'auth.reg.city' | translate }}</label>
+              <app-bh-select
+                [emptyText]="'auth.reg.noOptions' | translate"
+                inputId="cityId" formControlName="cityId" [options]="cityOptions"
+                [loading]="loadingCities"
+                [placeholder]="(loadingCities ? 'auth.reg.loading' : 'auth.reg.chooseCity') | translate"
+                [invalid]="!!(addressFG.get('cityId')?.touched && addressFG.get('cityId')?.invalid)">
+              </app-bh-select>
+              <p *ngIf="addressFG.get('cityId')?.touched && addressFG.get('cityId')?.invalid" class="error">
+                {{ 'auth.required' | translate }}
+              </p>
+            </div>
+
+            <div class="field">
+              <label class="label" for="districtId">{{ 'auth.reg.district' | translate }}</label>
+              <app-bh-select
+                [emptyText]="'auth.reg.noOptions' | translate"
+                inputId="districtId" [formControl]="districtChoice" [options]="districtOptions"
+                [loading]="loadingDistricts"
+                [placeholder]="(loadingDistricts ? 'auth.reg.loading' : 'auth.reg.chooseDistrict') | translate"
+                [invalid]="!!(districtChoice.touched && districtChoice.invalid)">
+              </app-bh-select>
+              <p *ngIf="districtChoice.touched && districtChoice.invalid" class="error">
+                {{ 'auth.required' | translate }}
+              </p>
             </div>
           </div>
 
-          <!-- Governorate -->
-          <div class="field">
-            <label class="label" for="governorateId">Governorate</label>
-            <select id="governorateId" class="input select" formControlName="governorateId"
-              [disabled]="addressFG.get('governorateId')?.disabled || loadingGovernorates">
-              <option [ngValue]="null" disabled selected>
-                {{ loadingGovernorates ? 'Loading...' : 'Select governorate' }}
-              </option>
-              <option *ngFor="let g of governorates" [ngValue]="g.id">
-                {{ g.name ?? g.governorate_name ?? g.governorate_name_ar ?? g.nameAr }}
-              </option>
-            </select>
-            <div *ngIf="addressFG.get('governorateId')?.touched && addressFG.get('governorateId')?.invalid"
-              class="error">
-              Governorate is required
+          <button type="button" class="details-toggle" (click)="showAddressDetails = !showAddressDetails"
+            [attr.aria-expanded]="showAddressDetails" aria-controls="addressDetails">
+            <i class="bi" [ngClass]="showAddressDetails ? 'bi-dash-circle' : 'bi-plus-circle'" aria-hidden="true"></i>
+            {{ (showAddressDetails ? 'auth.reg.hideDetails' : 'auth.reg.addDetails') | translate }}
+          </button>
+
+          <div class="grid details" id="addressDetails" *ngIf="showAddressDetails">
+            <div class="field">
+              <label class="label" for="street">
+                {{ 'auth.reg.street' | translate }}
+                <span class="label__hint">{{ 'auth.reg.optional' | translate }}</span>
+              </label>
+              <input id="street" type="text" class="input" formControlName="street" autocomplete="address-line1"
+                [placeholder]="'auth.reg.streetPlaceholder' | translate" />
+            </div>
+
+            <div class="field">
+              <label class="label" for="buildingNumber">
+                {{ 'auth.reg.building' | translate }}
+                <span class="label__hint">{{ 'auth.reg.optional' | translate }}</span>
+              </label>
+              <input id="buildingNumber" type="text" class="input" formControlName="buildingNumber"
+                [placeholder]="'auth.reg.buildingPlaceholder' | translate" />
+            </div>
+
+            <div class="field">
+              <label class="label" for="floor">
+                {{ 'auth.reg.floor' | translate }}
+                <span class="label__hint">{{ 'auth.reg.optional' | translate }}</span>
+              </label>
+              <input id="floor" type="text" class="input" formControlName="floor" />
+            </div>
+
+            <div class="field">
+              <label class="label" for="apartment">
+                {{ 'auth.reg.apartment' | translate }}
+                <span class="label__hint">{{ 'auth.reg.optional' | translate }}</span>
+              </label>
+              <input id="apartment" type="text" class="input" formControlName="apartment" />
+            </div>
+
+            <div class="field grid__full">
+              <label class="label" for="landmark">
+                {{ 'auth.reg.landmark' | translate }}
+                <span class="label__hint">{{ 'auth.reg.optional' | translate }}</span>
+              </label>
+              <input id="landmark" type="text" class="input" formControlName="landmark"
+                [placeholder]="'auth.reg.landmarkPlaceholder' | translate" />
             </div>
           </div>
+        </section>
 
-          <!-- City -->
+        <!-- ===== Password ===== -->
+        <section class="form-section">
+          <h2 class="form-section__title">
+            <span class="form-section__icon"><i class="bi bi-lock" aria-hidden="true"></i></span>
+            {{ 'auth.reg.sectionPassword' | translate }}
+          </h2>
+
           <div class="field">
-            <label class="label" for="cityId">City</label>
-            <select id="cityId" class="input select" formControlName="cityId"
-              [disabled]="addressFG.get('cityId')?.disabled || loadingCities">
-              <option [ngValue]="null" disabled selected>
-                {{ loadingCities ? 'Loading...' : 'Select city' }}
-              </option>
-              <option *ngFor="let city of cities" [ngValue]="city.id">
-                {{ city.name ?? city.city_name ?? city.city_name_ar ?? city.nameAr }}
-              </option>
-            </select>
-            <div *ngIf="addressFG.get('cityId')?.touched && addressFG.get('cityId')?.invalid" class="error">
-              City is required
+            <label class="label" for="password">{{ 'auth.Password' | translate }}</label>
+            <div class="pwd-wrap">
+              <input id="password" [type]="showPwd ? 'text' : 'password'" class="input input--ltr input--pwd"
+                formControlName="password" autocomplete="new-password" placeholder="••••••••"
+                aria-describedby="pwdHelp" />
+              <button type="button" class="pwd-toggle" (click)="showPwd = !showPwd"
+                [attr.aria-label]="'auth.reg.showPassword' | translate">
+                <i class="fa-regular" [ngClass]="showPwd ? 'fa-eye-slash' : 'fa-eye'" aria-hidden="true"></i>
+              </button>
             </div>
+
+            <p *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" class="error">
+              {{ 'auth.reg.passwordPolicy' | translate }}
+            </p>
+
+            <ul id="pwdHelp" class="pwd-help" aria-live="polite">
+              <li [class.ok]="rule_hasMinLength">{{ 'auth.reg.ruleLength' | translate }}</li>
+              <li [class.ok]="rule_hasDigit">{{ 'auth.reg.ruleDigit' | translate }}</li>
+              <li [class.ok]="rule_hasLower">{{ 'auth.reg.ruleLower' | translate }}</li>
+              <li [class.ok]="rule_hasUpper">{{ 'auth.reg.ruleUpper' | translate }}</li>
+              <li [class.ok]="rule_hasNonAlnum">{{ 'auth.reg.ruleSymbol' | translate }}</li>
+            </ul>
           </div>
+        </section>
 
-          <!-- District -->
-          <div class="field">
-            <label class="label" for="districtId">District</label>
-            <select id="districtId" class="input select" formControlName="districtId"
-              [disabled]="addressFG.get('districtId')?.disabled || loadingDistricts">
-              <option [ngValue]="null" disabled selected>
-                {{ loadingDistricts ? 'Loading...' : 'Select district' }}
-              </option>
-              <option *ngFor="let d of districts" [ngValue]="d.id">
-                {{ d.name ?? d.district_name ?? d.district_name_ar ?? d.nameAr }}
-              </option>
-            </select>
-            <div *ngIf="addressFG.get('districtId')?.touched && addressFG.get('districtId')?.invalid" class="error">
-              District is required
-            </div>
-          </div>
-
-          <!-- Street -->
-          <div class="field">
-            <label class="label" for="street">Street</label>
-            <input id="street" type="text" class="input" formControlName="street" placeholder="Street name" />
-            <div *ngIf="addressFG.get('street')?.touched && addressFG.get('street')?.invalid" class="error">
-              Street is required
-            </div>
-          </div>
-
-          <!-- Building Number -->
-          <div class="field">
-            <label class="label" for="buildingNumber">Building Number</label>
-            <input id="buildingNumber" type="text" class="input" formControlName="buildingNumber"
-              placeholder="e.g. 12B" />
-            <div *ngIf="addressFG.get('buildingNumber')?.touched && addressFG.get('buildingNumber')?.invalid"
-              class="error">
-              Building number is required
-            </div>
-          </div>
-
-          <!-- Floor -->
-          <div class="field">
-            <label class="label" for="floor">Floor</label>
-            <input id="floor" type="text" class="input" formControlName="floor" placeholder="Optional" />
-          </div>
-
-          <!-- Apartment -->
-          <div class="field">
-            <label class="label" for="apartment">Apartment</label>
-            <input id="apartment" type="text" class="input" formControlName="apartment" placeholder="Optional" />
-          </div>
-
-          <!-- Landmark -->
-          <div class="field">
-            <label class="label" for="landmark">Landmark</label>
-            <input id="landmark" type="text" class="input" formControlName="landmark" placeholder="Optional" />
-          </div>
-
-
-
-        </div>
-
-        <!-- Password -->
-        <div class="field mb-0 ">
-          <label class="label" for="password">{{ 'auth.Password' | translate }}</label>
-
-          <div class="pwd-wrap">
-            <input id="password" [type]="showPwd ? 'text' : 'password'" class="input pe-5" formControlName="password"
-              placeholder="********" aria-describedby="pwdHelp" />
-            <button type="button" class="pwd-toggle" (click)="showPwd = !showPwd"
-              aria-label="Toggle password visibility">
-              <span *ngIf="!showPwd"><i class="fa-regular fa-eye"></i></span>
-              <span *ngIf="showPwd"><i class="fa-regular fa-eye-slash"></i></span>
-            </button>
-          </div>
-
-          <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid"
-            class="error mt-2">
-            Password doesn't meet the policy below
-          </div>
-
-          <ul id="pwdHelp" class="pwd-help" aria-live="polite">
-            <li [class.ok]="rule_hasMinLength">• At least 8 characters</li>
-            <li [class.ok]="rule_hasDigit">• At least one number (0–9)</li>
-            <li [class.ok]="rule_hasLower">• At least one lowercase letter (a–z)</li>
-            <li [class.ok]="rule_hasUpper">• At least one uppercase letter (A–Z)</li>
-            <li [class.ok]="rule_hasNonAlnum">• At least one symbol (! @ # $ % …)</li>
-          </ul>
-        </div>
-
-        <button class="btn btn-bg-color w-100 py-1 fs-5 mt-3" type="submit"
-          [disabled]="registerForm.invalid || loading">
+        <button class="submit" type="submit" [disabled]="loading">
           <ng-container *ngIf="!loading; else loadingTpl">
             {{ 'auth.register' | translate }}
+            <i class="bi bi-arrow-right submit__arrow" aria-hidden="true"></i>
           </ng-container>
           <ng-template #loadingTpl>
-            <app-brand-loader size="sm" label="Registering..."></app-brand-loader>
+            <app-brand-loader size="sm" [label]="'auth.reg.submitting' | translate"></app-brand-loader>
           </ng-template>
         </button>
-
-
       </form>
 
-
-
-
-      <div class="divider"><span>or</span></div>
+      <div class="divider"><span>{{ 'auth.reg.or' | translate }}</span></div>
 
       <div class="bottom">
         <span>{{ 'auth.Alreadyhaveanaccount' | translate }}</span>
-        <a routerLink="/auth/login" class="link strong pb-0">{{ 'auth.login' | translate }}</a>
+        <a routerLink="/auth/login" class="link-strong">{{ 'auth.login' | translate }}</a>
       </div>
 
     </div>
   </div>
 
   <div class="auth-right" aria-hidden="true">
-    <video class="bg-video" class="bg-video" #bgVideo autoplay muted loop playsinline preload="auto">
+    <video class="bg-video" #bgVideo autoplay muted loop playsinline preload="auto">
       <source src="assets/videos/bubble.mp4" type="video/mp4" />
     </video>
 

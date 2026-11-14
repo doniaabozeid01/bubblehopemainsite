@@ -42,6 +42,20 @@ html {
   height: 100%;
 }
 
+/* Hide the page scrollbar everywhere (scrolling itself keeps working) */
+html,
+body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 body {
   min-height: 100dvh;
 }
@@ -392,6 +406,23 @@ label {
   label {
 
     font-size: 30px;
+  }
+}
+
+/* Toasts: keep the original font and position, just a bit more compact on phones */
+@media (max-width: 768px) {
+  .toast-container .ngx-toastr {
+    width: auto !important;
+    max-width: calc(100vw - 24px);
+    padding: 12px 14px 12px 48px !important;
+    background-position: 14px center !important;
+    background-size: 20px !important;
+  }
+
+  .toast-container .ngx-toastr .toast-message,
+  .toast-container .ngx-toastr .toast-title {
+    font-size: 15px !important;
+    line-height: 1.4;
   }
 }
 

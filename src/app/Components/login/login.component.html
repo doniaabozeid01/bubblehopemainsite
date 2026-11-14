@@ -1,194 +1,128 @@
-<!-- <div class="auth-shell">
-    <div class="auth-left">
-        <div class="auth-box">
-
-            <div class="brand">
-                <div class="brand-text ">
-                    <h1 class="title">{{ 'auth.login' | translate }}</h1>
-                    <p class="sub">Welcome back. Please enter your details.</p>
-                </div>
-            </div>
-
-            <div *ngIf="successMessage" class="alert alert-success text-center mb-3">
-                {{ successMessage }}
-            </div>
-
-            <div *ngIf="errorMessage" class="alert alert-danger text-center mb-3">
-                {{ errorMessage }}
-            </div>
-
-            <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="form">
-                <div class="field">
-                    <label class="label">{{ 'auth.email' | translate }}</label>
-                    <input type="email" class="input" formControlName="email" placeholder="example@email.com" />
-                    <div *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid" class="error">
-                        Invalid email address
-                    </div>
-                </div>
-
-
-                <div class="field mb-0">
-                    <label class="label">{{ 'auth.Password' | translate }}</label>
-                    <input type="password" class="input" formControlName="password" placeholder="********" />
-                    <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="error">
-                        Password is required
-                    </div>
-                </div>
-
-
-                <div class="row ">
-                    <a routerLink="/auth/forgetpassword" class="link">
-                        {{ 'auth.forgetpassword' | translate }}
-                    </a>
-                </div>
-
-
-                <button class="btn btn-bg-color w-100 py-1 fs-5" type="submit" [disabled]="loading">
-                    <ng-container *ngIf="!loading; else loadingTpl">
-                        {{ 'auth.login' | translate }}
-                    </ng-container>
-                    <ng-template #loadingTpl>
-                        <app-brand-loader size="sm" label="Logging..."></app-brand-loader>
-                    </ng-template>
-                </button>
-
-                <div class="divider"><span>or</span></div>
-
-                <div class="bottom">
-                    <span>{{ 'auth.Donthaveanaccount' | translate }}</span>
-                    <a routerLink="/auth/register" class="link strong pb-0 ">{{ 'auth.CreateAccount' | translate }}</a>
-                </div>
-            </form>
-
-        </div>
-    </div>
-
-    <div class="auth-right" aria-hidden="true">
-        <video class="bg-video"   class="bg-video"
-            #bgVideo
-  autoplay
-  muted
-  loop
-  playsinline
-  preload="auto">
-            <source src="assets/videos/bubble.mp4" type="video/mp4" />
-        </video>
-
-        <div class="img-layer"></div>
-    </div>
-
-</div> -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <div class="auth-shell">
   <!-- LEFT: Form -->
-  <div class="auth-left">
+  <div class="auth-left auth-left--center">
+    <div class="auth-box auth-box--narrow">
 
-    <!-- <h2 class="">Bubble Hope</h2> -->
-    <div class="auth-box ">
-
-      <!-- ✅ Firebase reCAPTCHA container (لازم يكون موجود دايمًا) -->
+      <!-- Firebase reCAPTCHA container: must stay in the DOM -->
       <div id="recaptcha-container"></div>
 
-
-      <div class="brand">
-        <div class="brand-text">
-          <h1 class="title">{{ 'auth.login' | translate }}</h1>
-          <p class="sub">Welcome back. Please enter your details.</p>
-        </div>
-      </div>
+      <header class="brand">
+        <a routerLink="/" class="brand__home">
+          <img class="brand__logo" src="assets/Group 73.png" alt="Bubble Hope" />
+        </a>
+        <h1 class="title">{{ (step === 'otp' ? 'auth.log.otpTitle' : 'auth.log.title') | translate }}</h1>
+        <p class="sub" *ngIf="step === 'login'">{{ 'auth.log.subtitle' | translate }}</p>
+        <p class="sub" *ngIf="step === 'otp'">
+          {{ 'auth.log.otpSentTo' | translate }} <bdi class="sub__phone">{{ otpPhoneE164 }}</bdi>
+        </p>
+      </header>
 
       <!-- Success -->
-      <div *ngIf="successMessage" class="alert alert-success text-center mb-3">
-        {{ successMessage }}
+      <div *ngIf="successMessage" class="notice notice--success" role="alert" aria-live="polite">
+        <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+        <span>{{ successMessage }}</span>
       </div>
 
       <!-- Error -->
-      <div *ngIf="errorMessage" class="alert alert-danger text-center mb-3">
-        {{ errorMessage }}
+      <div *ngIf="errorMessage" class="notice notice--error" role="alert" aria-live="assertive">
+        <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
+        <span>{{ errorMessage }}</span>
       </div>
 
-      <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="form">
-
-        <!-- ✅ Email or Phone -->
+      <!-- Step 1: email + password, or phone -->
+      <form *ngIf="step === 'login'" [formGroup]="loginForm" (ngSubmit)="onLogin()" class="form" novalidate>
         <div class="field">
-          <label class="label">{{ 'auth.emailOrPhone' | translate }}</label>
+          <label class="label" for="identifier">{{ 'auth.emailOrPhone' | translate }}</label>
+          <input id="identifier" type="text" class="input input--ltr" formControlName="identifier"
+            autocomplete="username" [placeholder]="'auth.log.identifierPlaceholder' | translate" />
+          <p *ngIf="loginForm.get('identifier')?.touched && loginForm.get('identifier')?.invalid" class="error">
+            {{ 'auth.log.identifierError' | translate }}
+          </p>
+          <p *ngIf="isPhoneEntry" class="hint">
+            <i class="bi bi-chat-dots" aria-hidden="true"></i>
+            {{ 'auth.log.phoneHint' | translate }}
+          </p>
+        </div>
 
-          <input type="text" class="input" formControlName="identifier"
-            placeholder="example@email.com or 010XXXXXXXX" />
-
-          <div *ngIf="loginForm.get('identifier')?.touched && loginForm.get('identifier')?.invalid" class="error">
-            Enter a valid email or phone number
+        <div class="field" *ngIf="!isPhoneEntry">
+          <label class="label" for="password">{{ 'auth.Password' | translate }}</label>
+          <div class="pwd-wrap">
+            <input id="password" [type]="showPwd ? 'text' : 'password'" class="input input--ltr input--pwd"
+              formControlName="password" autocomplete="current-password" placeholder="••••••••" />
+            <button type="button" class="pwd-toggle" (click)="showPwd = !showPwd"
+              [attr.aria-label]="'auth.reg.showPassword' | translate">
+              <i class="fa-regular" [ngClass]="showPwd ? 'fa-eye-slash' : 'fa-eye'" aria-hidden="true"></i>
+            </button>
           </div>
+          <p *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="error">
+            {{ 'auth.log.passwordRequired' | translate }}
+          </p>
         </div>
 
-        <!-- Password -->
-        <div class="field mb-0">
-          <label class="label">{{ 'auth.Password' | translate }}</label>
-
-          <input type="password" class="input" formControlName="password" placeholder="********" />
-
-          <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="error">
-            Password is required
-          </div>
+        <div class="forgot" *ngIf="!isPhoneEntry">
+          <a routerLink="/auth/forgetpassword" class="link-soft">{{ 'auth.forgetpassword' | translate }}</a>
         </div>
 
-        <div class="row">
-          <a routerLink="/auth/forgetpassword" class="link">
-            {{ 'auth.forgetpassword' | translate }}
-          </a>
-        </div>
-
-        <button class="btn btn-bg-color w-100 py-1 fs-5" type="submit" [disabled]="loading">
+        <button class="submit" type="submit" [disabled]="loading">
           <ng-container *ngIf="!loading; else loadingTpl">
-            {{ 'auth.login' | translate }}
+            {{ (isPhoneEntry ? 'auth.log.sendCode' : 'auth.login') | translate }}
+            <i class="bi bi-arrow-right submit__arrow" aria-hidden="true"></i>
           </ng-container>
-          <ng-template #loadingTpl>
-            <app-brand-loader size="sm" label="Logging..."></app-brand-loader>
-          </ng-template>
         </button>
 
-        <!-- ✅ Resend confirmation (optional UI) -->
-        <button *ngIf="needEmailConfirmation" type="button" class="btn btn-outline-secondary w-100 mt-2"
-          (click)="resendConfirmation()" [disabled]="resending">
-          <ng-container *ngIf="!resending; else resendLoadingTpl">Resend confirmation email</ng-container>
-          <ng-template #resendLoadingTpl>
-            <app-brand-loader size="sm" label="Resending..."></app-brand-loader>
-          </ng-template>
+        <button *ngIf="needEmailConfirmation" type="button" class="ghost" (click)="resendConfirmation()"
+          [disabled]="resending">
+          <ng-container *ngIf="!resending; else resendingTpl">
+            <i class="bi bi-envelope" aria-hidden="true"></i>
+            {{ 'auth.log.resendConfirmation' | translate }}
+          </ng-container>
+        </button>
+      </form>
+
+      <!-- Step 2: SMS code -->
+      <form *ngIf="step === 'otp'" (ngSubmit)="verifyOtpAndLogin()" class="form" novalidate>
+        <div class="field">
+          <label class="label" for="otpCode">{{ 'auth.log.otpLabel' | translate }}</label>
+          <input id="otpCode" name="otpCode" type="text" class="input input--otp" [(ngModel)]="otpCode"
+            inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••" />
+        </div>
+
+        <button class="submit" type="submit" [disabled]="loading">
+          <ng-container *ngIf="!loading; else loadingTpl">
+            {{ 'auth.log.verify' | translate }}
+            <i class="bi bi-arrow-right submit__arrow" aria-hidden="true"></i>
+          </ng-container>
         </button>
 
-        <div class="divider"><span>or</span></div>
+        <div class="otp-actions">
+          <button type="button" class="link-soft" (click)="changePhone()">
+            <i class="bi bi-pencil" aria-hidden="true"></i>
+            {{ 'auth.log.changePhone' | translate }}
+          </button>
+          <button type="button" class="link-soft" (click)="resendOtp()" [disabled]="otpTimer > 0 || resending">
+            <ng-container *ngIf="otpTimer > 0; else resendLabel">
+              {{ 'auth.log.resendIn' | translate: { s: otpTimer } }}
+            </ng-container>
+            <ng-template #resendLabel>{{ 'auth.log.resend' | translate }}</ng-template>
+          </button>
+        </div>
+      </form>
+
+      <ng-template #loadingTpl>
+        <app-brand-loader size="sm" [label]="'auth.log.signingIn' | translate"></app-brand-loader>
+      </ng-template>
+      <ng-template #resendingTpl>
+        <app-brand-loader size="sm" [label]="'auth.log.sending' | translate"></app-brand-loader>
+      </ng-template>
+
+      <ng-container *ngIf="step === 'login'">
+        <div class="divider"><span>{{ 'auth.reg.or' | translate }}</span></div>
 
         <div class="bottom">
           <span>{{ 'auth.Donthaveanaccount' | translate }}</span>
-          <a routerLink="/auth/register" class="link strong pb-0">
-            {{ 'auth.CreateAccount' | translate }}
-          </a>
+          <a routerLink="/auth/register" class="link-strong">{{ 'auth.CreateAccount' | translate }}</a>
         </div>
-      </form>
+      </ng-container>
 
     </div>
   </div>

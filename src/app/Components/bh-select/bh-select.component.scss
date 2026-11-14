@@ -1,0 +1,194 @@
+$orange: #f47524;
+$navy: #243a63;
+$muted: #64748b;
+$line: rgba(36, 58, 99, 0.12);
+$danger: #d6342c;
+$font: var(--font-app, 'Nunito', system-ui, sans-serif);
+
+:host {
+  position: relative;
+  display: block;
+}
+
+/* Global styles size every span at 20px+; keep the text at the control size. */
+span {
+  font-size: inherit !important;
+}
+
+.bh-select__trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  box-sizing: border-box;
+  width: 100%;
+  height: 3rem;
+  padding: 0 0.95rem;
+  border-radius: 0.95rem;
+  border: 1.5px solid $line;
+  background: #fff;
+  font-family: $font;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: $navy;
+  text-align: start;
+  cursor: pointer;
+  outline: none;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
+
+  &:hover:not(:disabled) {
+    border-color: rgba($orange, 0.45);
+  }
+
+  &:focus-visible,
+  &.is-open {
+    border-color: $orange;
+    box-shadow: 0 0 0 4px rgba($orange, 0.16);
+  }
+
+  &.is-invalid:not(.is-open) {
+    border-color: rgba($danger, 0.6);
+  }
+
+  &.is-placeholder .bh-select__value {
+    color: rgba($muted, 0.75);
+    font-weight: 500;
+  }
+
+  &:disabled {
+    background: #f6f3ef;
+    color: rgba($muted, 0.8);
+    cursor: not-allowed;
+  }
+}
+
+.bh-select__value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bh-select__chevron {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  color: $orange;
+  transition: transform 0.22s ease;
+
+  .is-open & {
+    transform: rotate(180deg);
+  }
+
+  :disabled & {
+    color: rgba($muted, 0.5);
+  }
+}
+
+.bh-select__spinner {
+  flex-shrink: 0;
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: 50%;
+  border: 2px solid rgba($orange, 0.25);
+  border-top-color: $orange;
+  animation: bh-select-spin 0.7s linear infinite;
+}
+
+.bh-select__panel {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  inset-inline: 0;
+  z-index: 30;
+  max-height: 15rem;
+  margin: 0;
+  padding: 0.35rem;
+  overflow-y: auto;
+  list-style: none;
+  border-radius: 1rem;
+  border: 1px solid rgba($orange, 0.16);
+  background: #fff;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.05),
+    0 22px 44px -18px rgba($navy, 0.35);
+  transform-origin: top center;
+  animation: bh-select-in 0.16s ease-out;
+  scrollbar-width: thin;
+  scrollbar-color: rgba($orange, 0.35) transparent;
+}
+
+.bh-select__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.62rem 0.8rem;
+  border-radius: 0.7rem;
+  font-family: $font;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: $navy;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+
+  & + & {
+    margin-top: 0.1rem;
+  }
+
+  &.is-active {
+    background: #fff4e8;
+    color: $orange;
+  }
+
+  &.is-selected {
+    font-weight: 800;
+    color: $orange;
+  }
+}
+
+.bh-select__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bh-select__check {
+  flex-shrink: 0;
+  font-size: 1rem;
+  color: $orange;
+}
+
+.bh-select__empty {
+  padding: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  color: $muted;
+}
+
+@keyframes bh-select-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+@keyframes bh-select-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bh-select__panel {
+    animation: none;
+  }
+
+  .bh-select__chevron {
+    transition: none;
+  }
+}

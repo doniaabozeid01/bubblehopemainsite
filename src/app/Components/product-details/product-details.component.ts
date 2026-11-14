@@ -509,6 +509,7 @@ export class ProductDetailsComponent implements AfterViewInit, OnDestroy {
   }
 
   addToCart(product: any): void {
+    if (this.isUnavailable) return;
     if (!this.requireLogin()) return;
 
     const hasVariants =
@@ -876,6 +877,11 @@ export class ProductDetailsComponent implements AfterViewInit, OnDestroy {
 
   get basePrice(): number {
     return Number(this.product?.newPrice ?? this.product?.oldPrice ?? 0);
+  }
+
+  /** Out of stock in this branch: no price to show and nothing to add. */
+  get isUnavailable(): boolean {
+    return this.product != null && Number(this.product.stock ?? 1) <= 0;
   }
 
   get finalPrice(): number {

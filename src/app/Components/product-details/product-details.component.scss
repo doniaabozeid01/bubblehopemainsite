@@ -330,6 +330,18 @@ $breadcrumbs-bg: #fffbf5;
   color: $muted-light;
 }
 
+.details-header__unavailable {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  background: #f1f5f9;
+  font-family: var(--font-brand);
+  font-size: 0.9rem !important;
+  font-weight: 700;
+  color: #64748b;
+}
+
 .details-customize__title {
   margin: 0 0 1.25rem;
   font-family: var(--font-brand);
@@ -937,6 +949,13 @@ $breadcrumbs-bg: #fffbf5;
 
   &:active {
     transform: translateY(1px);
+  }
+
+  &:disabled {
+    background: #cbd5e1 !important;
+    box-shadow: none !important;
+    cursor: not-allowed;
+    transform: none;
   }
 }
 

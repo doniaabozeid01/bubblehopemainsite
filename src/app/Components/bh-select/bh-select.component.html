@@ -1,0 +1,40 @@
+<button
+  type="button"
+  class="bh-select__trigger"
+  [id]="inputId || null"
+  [class.is-open]="open"
+  [class.is-placeholder]="selectedIndex < 0"
+  [class.is-invalid]="invalid"
+  [disabled]="disabled"
+  role="combobox"
+  aria-haspopup="listbox"
+  [attr.aria-expanded]="open"
+  [attr.aria-controls]="listId"
+  [attr.aria-activedescendant]="open && activeIndex >= 0 ? optionId(activeIndex) : null"
+  (click)="toggle()"
+  (keydown)="onKeydown($event)"
+  (blur)="onBlur()"
+>
+  <span class="bh-select__value">{{ selectedLabel || placeholder }}</span>
+  <span *ngIf="loading" class="bh-select__spinner" aria-hidden="true"></span>
+  <i *ngIf="!loading" class="bi bi-chevron-down bh-select__chevron" aria-hidden="true"></i>
+</button>
+
+<ul *ngIf="open" class="bh-select__panel" role="listbox" [id]="listId">
+  <li
+    *ngFor="let option of options; let i = index"
+    class="bh-select__option"
+    role="option"
+    [id]="optionId(i)"
+    [class.is-active]="i === activeIndex"
+    [class.is-selected]="i === selectedIndex"
+    [attr.aria-selected]="i === selectedIndex"
+    (mousedown)="$event.preventDefault()"
+    (mouseenter)="activeIndex = i"
+    (click)="choose(i)"
+  >
+    <span class="bh-select__label">{{ option.label }}</span>
+    <i *ngIf="i === selectedIndex" class="bi bi-check2 bh-select__check" aria-hidden="true"></i>
+  </li>
+  <li *ngIf="!options.length" class="bh-select__empty">{{ emptyText }}</li>
+</ul>
