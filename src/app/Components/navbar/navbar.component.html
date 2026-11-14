@@ -115,18 +115,22 @@
               <a class="menu-action" routerLink="/profile" (click)="closeMenu()">
                 <i class="bi bi-person"></i> {{ 'navbar.profile' | translate }}
               </a>
-              <button type="button" class="menu-action menu-action--logout" (click)="logout(); closeMenu()">
-                <i class="bi bi-box-arrow-right"></i> {{ 'navbar.logout' | translate }}
-              </button>
-              <button type="button" class="menu-action" (click)="changeLanguage(); closeMenu()">
-                <i class="fa-solid fa-globe"></i> {{ 'navbar.language' | translate }}
-              </button>
+              <a class="menu-action menu-action--orders" routerLink="/allorders" (click)="closeMenu()">
+                <i class="bi bi-receipt"></i> {{ 'navbar.orders' | translate }}
+                <span class="orders-pill" *ngIf="activeOrdersCount > 0">{{ activeOrdersCount }}</span>
+              </a>
               <button type="button" class="menu-action" routerLink="/wishlist" (click)="closeMenu()">
                 <i
                   class="bi"
                   [ngClass]="wishlistCount > 0 ? 'bi-heart-fill menu-heart--active' : 'bi-heart'"
                 ></i>
                 {{ 'navbar.fafvorites' | translate }}
+              </button>
+              <button type="button" class="menu-action" (click)="changeLanguage(); closeMenu()">
+                <i class="fa-solid fa-globe"></i> {{ 'navbar.language' | translate }}
+              </button>
+              <button type="button" class="menu-action menu-action--logout menu-action--wide" (click)="logout(); closeMenu()">
+                <i class="bi bi-box-arrow-right"></i> {{ 'navbar.logout' | translate }}
               </button>
             </div>
 
@@ -164,12 +168,27 @@
             aria-label="Account"
           >
             <i class="bi bi-person"></i>
+            <!-- orders in progress: pulsing dot so the customer keeps an eye on them -->
+            <span
+              class="badge badge--orders"
+              *ngIf="isLoggedIn && activeOrdersCount > 0"
+              [attr.title]="'orders.current' | translate"
+            >{{ activeOrdersCount }}</span>
           </button>
-          <ul class="dropdown-menu dropdown-menu-end account-menu">
+          <ul
+            class="dropdown-menu dropdown-menu-end account-menu"
+            [attr.dir]="(languageService.languageChanged$ | async) === 'ar' ? 'rtl' : 'ltr'"
+          >
             <ng-container *ngIf="isLoggedIn; else guestMenu">
               <li class="account-hello">{{ 'navbar.hello' | translate }}, {{ firstName }}</li>
               <li>
                 <a class="dropdown-item" routerLink="/profile">{{ 'navbar.profile' | translate }}</a>
+              </li>
+              <li>
+                <a class="dropdown-item dropdown-item--orders" routerLink="/allorders">
+                  {{ 'navbar.orders' | translate }}
+                  <span class="orders-pill" *ngIf="activeOrdersCount > 0">{{ activeOrdersCount }}</span>
+                </a>
               </li>
               <li>
                 <a class="dropdown-item" routerLink="/change-password">{{
@@ -235,6 +254,8 @@
           [attr.aria-label]="isMenuOpen ? 'Close menu' : 'Open menu'"
         >
           <span></span><span></span><span></span>
+          <!-- phones: the account icon is hidden, so flag active orders on the hamburger -->
+          <i class="menu-btn__dot" *ngIf="isLoggedIn && activeOrdersCount > 0" aria-hidden="true"></i>
         </button>
       </div>
     </div>

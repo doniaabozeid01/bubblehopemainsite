@@ -42,6 +42,159 @@ $font: var(--font-app, 'Nunito', system-ui, sans-serif);
   gap: 1.25rem;
 }
 
+/* ---------- Sections (current / previous) ---------- */
+.orders-section + .orders-section {
+  margin-top: 2.25rem;
+}
+
+.section-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0 0 1rem !important;
+  font-size: 1.15rem !important;
+  font-weight: 800 !important;
+  line-height: 1.3 !important;
+  color: $ink !important;
+}
+
+.section-count {
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.45rem;
+  border-radius: 999px;
+  background: $brand;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 800;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &--muted {
+    background: #e7e9ee;
+    color: #4b5160;
+  }
+}
+
+.section-hint {
+  margin-inline-start: auto;
+  font-size: 0.75rem !important;
+  font-weight: 600;
+  color: $muted;
+}
+
+.live-dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: #16a34a;
+  box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.55);
+  animation: live-pulse 1.8s ease-out infinite;
+}
+
+@keyframes live-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.55); }
+  70% { box-shadow: 0 0 0 8px rgba(22, 163, 74, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-dot { animation: none; }
+}
+
+/* Orders still in progress stand out from the finished ones */
+.order-card--active {
+  border-color: rgba($brand, 0.55);
+  box-shadow: 0 10px 30px rgba($brand, 0.16);
+}
+
+/* ---------- Progress tracker ---------- */
+.tracker {
+  list-style: none;
+  margin: 0;
+  padding: 1rem 0 0.35rem;
+  display: flex;
+  align-items: flex-start;
+}
+
+.tracker__step {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  text-align: center;
+
+  // line towards the previous step (logical, so it flips in RTL)
+  &:not(:first-child)::before {
+    content: '';
+    position: absolute;
+    top: 0.7rem;
+    inset-inline-end: 50%;
+    width: 100%;
+    height: 3px;
+    border-radius: 3px;
+    background: #ece6dd;
+    z-index: 0;
+  }
+
+  &.is-done::before,
+  &.is-current::before {
+    background: $brand;
+  }
+}
+
+.tracker__dot {
+  position: relative;
+  z-index: 1;
+  width: 1.45rem;
+  height: 1.45rem;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid #ece6dd;
+  color: #fff;
+  font-size: 0.65rem;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+
+  i {
+    font-size: 0.6rem !important;
+  }
+}
+
+.tracker__step.is-done .tracker__dot {
+  background: $brand;
+  border-color: $brand;
+}
+
+.tracker__step.is-current .tracker__dot {
+  border-color: $brand;
+  background: #fff;
+  box-shadow: 0 0 0 5px rgba($brand, 0.18);
+}
+
+.tracker__label {
+  font-size: 0.78rem !important;
+  font-weight: 700;
+  color: $muted;
+  line-height: 1.25;
+}
+
+.tracker__step.is-done .tracker__label,
+.tracker__step.is-current .tracker__label {
+  color: $ink;
+}
+
+.tracker__step.is-current .tracker__label {
+  color: $brand;
+}
+
 // styles.scss sets global font sizes on span (20px) and p (25px);
 // make our text follow the sizes defined by its own class instead.
 .total-row span,
@@ -110,6 +263,56 @@ $font: var(--font-app, 'Nunito', system-ui, sans-serif);
   &.bg-success { background: #dff5e4 !important; color: #1f7a38 !important; }
   &.bg-danger { background: #fde1e1 !important; color: #b42323 !important; }
   &.bg-secondary { background: #eef0f3 !important; color: #4b5160 !important; }
+}
+
+.order-branch {
+  margin: 0.55rem 0 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: fit-content;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #fff1e6, #ffe3cf);
+  border: 1px solid rgba(244, 117, 36, 0.3);
+  color: darken($brand, 14%);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  line-height: 1.2;
+  box-shadow: 0 2px 8px rgba(244, 117, 36, 0.12);
+
+  i {
+    color: $brand;
+    font-size: 0.8em;
+  }
+}
+
+/* ---------- Branch filter ---------- */
+.branch-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 1.25rem;
+}
+
+.branch-chip {
+  border: 1px solid $line;
+  background: #fff;
+  color: $ink;
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+  &:hover { border-color: $brand; }
+
+  &.is-active {
+    background: $brand;
+    border-color: $brand;
+    color: #fff;
+  }
 }
 
 /* ---------- Items ---------- */
@@ -286,6 +489,19 @@ $font: var(--font-app, 'Nunito', system-ui, sans-serif);
   .order-card {
     padding: 0.9rem;
     border-radius: 16px;
+  }
+
+  .section-title {
+    font-size: 1rem !important;
+  }
+
+  .section-hint {
+    flex-basis: 100%;
+    margin-inline-start: 0;
+  }
+
+  .tracker__label {
+    font-size: 11px !important;
   }
 
   .order-head {

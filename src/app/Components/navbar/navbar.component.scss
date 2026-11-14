@@ -862,6 +862,11 @@ $nav-laptop-max: 1379.98px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0.5rem;
+
+    // odd number of actions: let the last one (Logout) span the full row
+    .menu-action--wide {
+      grid-column: 1 / -1;
+    }
   }
 
   .menu-action {
@@ -1003,6 +1008,75 @@ $nav-laptop-max: 1379.98px;
   justify-content: center;
 }
 
+/* Orders in progress — green so it reads differently from the orange cart count, and it pulses */
+.badge--orders {
+  background: #16a34a;
+  box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.55);
+  animation: orders-pulse 1.8s ease-out infinite;
+}
+
+.menu-btn__dot {
+  position: absolute;
+  top: 0.35rem;
+  inset-inline-end: 0.35rem;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  background: #16a34a;
+  border: 2px solid #fff;
+  box-sizing: content-box;
+  animation: orders-pulse 1.8s ease-out infinite;
+}
+
+.orders-pill {
+  margin-inline-start: auto;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: #16a34a;
+  color: #fff;
+  font-family: 'Nunito', system-ui, sans-serif !important;
+  font-size: 0.72rem !important;
+  font-weight: 800;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dropdown-item--orders {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+
+  // Account dropdown: keep the count right next to the label (not pushed to the far edge)
+  .orders-pill {
+    margin-inline-start: 0;
+    flex-shrink: 0;
+  }
+}
+
+@keyframes orders-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(22, 163, 74, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .badge--orders,
+  .menu-btn__dot {
+    animation: none;
+  }
+}
+
 .branch-switcher-nav {
   display: none;
   align-items: center;
@@ -1055,13 +1129,16 @@ $nav-laptop-max: 1379.98px;
   backdrop-filter: blur(12px);
   box-shadow: 0 16px 40px -20px rgba(15, 23, 42, 0.35);
 
+  // every row starts on the same side (right in Arabic, left in English)
   .account-hello {
     padding: 0.45rem 1rem;
     font-size: 0.75rem;
     color: #64748b;
+    text-align: start;
   }
 
   .dropdown-item {
+    text-align: start;
     color: $ink !important;
     font-size: 0.9rem !important;
     font-weight: 600 !important;
@@ -1085,6 +1162,7 @@ $nav-laptop-max: 1379.98px;
 
 .menu-btn {
   display: none;
+  position: relative;
   width: 2.5rem;
   height: 2.5rem;
   border: 0;

@@ -412,6 +412,26 @@
     },
     "orders": {
         "prevorder": "طلباتي السابقة",
+        "title": "طلباتي",
+        "current": "طلباتي الحالية",
+        "previous": "طلباتي السابقة",
+        "live": "بيتحدث تلقائيًا",
+        "allBranches": "كل الفروع",
+        "updated": "طلب #{{id}} بقى: {{status}}",
+        "status": {
+            "pending": "في الانتظار",
+            "confirmed": "تم التأكيد",
+            "shipped": "في الطريق",
+            "delivered": "تم التوصيل",
+            "canceled": "ملغي",
+            "cancelled": "ملغي"
+        },
+        "step": {
+            "pending": "استلمنا الطلب",
+            "confirmed": "بنجهزه",
+            "shipped": "في الطريق",
+            "delivered": "وصل"
+        },
         "OrderNo": "رقم الطلب",
         "Date": "التاريخ",
         "price": "السعر",

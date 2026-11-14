@@ -3,71 +3,45 @@
 
     <ng-container *ngIf="isLoggedIn; else notLoggedIn">
 
-      <h1 class="orders-title" *ngIf="orders?.length > 0">{{ "orders.prevorder" | translate }}</h1>
+      <h1 class="orders-title" *ngIf="orders?.length > 0">{{ "orders.title" | translate }}</h1>
 
-      <div class="orders-list">
-        <article class="order-card" *ngFor="let order of orders">
-
-          <!-- Order header -->
-          <header class="order-head">
-            <div class="order-meta">
-              <div class="order-no">{{ "orders.OrderNo" | translate }} <span>#{{ order.orderId }}</span></div>
-              <p class="order-date">
-                <i class="fa-regular fa-calendar"></i>
-                {{ order.createdAt | date:'mediumDate' }}
-              </p>
-            </div>
-            <span class="status-badge" [ngClass]="getStatusClass(order.status)">
-              {{ order.status }}
-            </span>
-          </header>
-
-          <!-- Items -->
-          <div class="order-items">
-            <div class="order-item" *ngFor="let item of order.orderItems">
-              <img [src]="item.imageUrl" alt="product" class="item-img" />
-
-              <div class="item-info">
-                <div class="item-name">
-                  {{ (languageService.languageChanged$ | async) === 'ar' ? item.productName_ar : item.productName }}
-                </div>
-
-                <p class="item-extras"
-                  *ngIf="(languageService.languageChanged$ | async) === 'ar' ? item.additionsTextAr : item.additionsText">
-                  {{ (languageService.languageChanged$ | async) === 'ar' ? item.additionsTextAr : item.additionsText }}
-                </p>
-
-                <div class="item-line">
-                  <span class="chip">{{ "orders.count" | translate }}: <b>{{ item.quantity }}</b></span>
-                  <span class="chip chip-price">
-                    {{ "orders.price" | translate }}: <b>{{ item.unitPrice }}
-                      {{ (languageService.languageChanged$ | async) === 'ar' ? item.currency_ar : item.currency }}</b>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Totals -->
-          <footer class="order-totals">
-            <div class="total-row">
-              <span>{{ "orders.totalAmount" | translate }}</span>
-              <span>{{ getOrderSubtotal(order) }}
-                {{ (languageService.languageChanged$ | async) === 'ar' ? order?.orderItems[0]?.currency_ar : order?.orderItems[0]?.currency }}</span>
-            </div>
-            <div class="total-row" *ngIf="getDeliveryFee(order) > 0">
-              <span>{{ "orders.deliveryFee" | translate }}</span>
-              <span>{{ getDeliveryFee(order) }}
-                {{ (languageService.languageChanged$ | async) === 'ar' ? order?.orderItems[0]?.currency_ar : order?.orderItems[0]?.currency }}</span>
-            </div>
-            <div class="total-row grand">
-              <span>{{ "cart.total" | translate }}</span>
-              <span>{{ getOrderGrandTotal(order) }}
-                {{ (languageService.languageChanged$ | async) === 'ar' ? order?.orderItems[0]?.currency_ar : order?.orderItems[0]?.currency }}</span>
-            </div>
-          </footer>
-        </article>
+      <!-- Branch filter (only when orders come from more than one branch) -->
+      <div class="branch-filter" *ngIf="branchFilters.length > 1" role="tablist">
+        <button type="button" class="branch-chip" [class.is-active]="selectedBranchId === null"
+          (click)="selectBranch(null)">{{ "orders.allBranches" | translate }}</button>
+        <button type="button" class="branch-chip" *ngFor="let f of branchFilters; trackBy: trackByBranch"
+          [class.is-active]="selectedBranchId === f.id" (click)="selectBranch(f.id)">{{ f.label }}</button>
       </div>
+
+      <!-- ===================== Current (in progress) ===================== -->
+      <section class="orders-section" *ngIf="activeOrders.length > 0">
+        <h2 class="section-title section-title--live">
+          <span class="live-dot" aria-hidden="true"></span>
+          {{ "orders.current" | translate }}
+          <span class="section-count">{{ activeOrders.length }}</span>
+          <small class="section-hint">{{ "orders.live" | translate }}</small>
+        </h2>
+
+        <div class="orders-list">
+          <ng-container *ngFor="let order of activeOrders; trackBy: trackByOrder">
+            <ng-container *ngTemplateOutlet="orderCard; context: { $implicit: order, active: true }"></ng-container>
+          </ng-container>
+        </div>
+      </section>
+
+      <!-- ===================== Previous ===================== -->
+      <section class="orders-section" *ngIf="pastOrders.length > 0">
+        <h2 class="section-title">
+          {{ "orders.previous" | translate }}
+          <span class="section-count section-count--muted">{{ pastOrders.length }}</span>
+        </h2>
+
+        <div class="orders-list">
+          <ng-container *ngFor="let order of pastOrders; trackBy: trackByOrder">
+            <ng-container *ngTemplateOutlet="orderCard; context: { $implicit: order, active: false }"></ng-container>
+          </ng-container>
+        </div>
+      </section>
 
       <!-- No orders -->
       <div *ngIf="orders?.length === 0" class="empty-state">
@@ -90,3 +64,86 @@
     <i class="fa-solid fa-arrow-up"></i>
   </button>
 </div>
+
+<!-- One order card, used by both sections -->
+<ng-template #orderCard let-order let-active="active">
+  <article class="order-card" [class.order-card--active]="active">
+
+    <!-- Order header -->
+    <header class="order-head">
+      <div class="order-meta">
+        <div class="order-no">{{ "orders.OrderNo" | translate }} <span>#{{ order.orderId }}</span></div>
+        <p class="order-date">
+          <i class="fa-regular fa-calendar"></i>
+          {{ order.createdAt | date:'mediumDate' }}
+        </p>
+        <p class="order-branch" *ngIf="branchLabel(order) as branch">
+          <i class="fa-solid fa-location-dot"></i>
+          {{ branch }}
+        </p>
+      </div>
+      <span class="status-badge" [ngClass]="getStatusClass(order.status)">
+        <ng-container *ngIf="statusKey(order.status) as key; else rawStatus">{{ key | translate }}</ng-container>
+        <ng-template #rawStatus>{{ order.status }}</ng-template>
+      </span>
+    </header>
+
+    <!-- Progress tracker (only while the order is in progress) -->
+    <ol class="tracker" *ngIf="active && stepIndex(order.status) >= 0" aria-label="Order progress">
+      <li
+        class="tracker__step"
+        *ngFor="let step of steps; let i = index"
+        [class.is-done]="i < stepIndex(order.status)"
+        [class.is-current]="i === stepIndex(order.status)"
+      >
+        <span class="tracker__dot"><i class="fa-solid fa-check" *ngIf="i < stepIndex(order.status)"></i></span>
+        <span class="tracker__label">{{ 'orders.step.' + step | translate }}</span>
+      </li>
+    </ol>
+
+    <!-- Items -->
+    <div class="order-items">
+      <div class="order-item" *ngFor="let item of order.orderItems">
+        <img [src]="item.imageUrl" alt="product" class="item-img" />
+
+        <div class="item-info">
+          <div class="item-name">
+            {{ (languageService.languageChanged$ | async) === 'ar' ? item.productName_ar : item.productName }}
+          </div>
+
+          <p class="item-extras"
+            *ngIf="(languageService.languageChanged$ | async) === 'ar' ? item.additionsTextAr : item.additionsText">
+            {{ (languageService.languageChanged$ | async) === 'ar' ? item.additionsTextAr : item.additionsText }}
+          </p>
+
+          <div class="item-line">
+            <span class="chip">{{ "orders.count" | translate }}: <b>{{ item.quantity }}</b></span>
+            <span class="chip chip-price">
+              {{ "orders.price" | translate }}: <b>{{ item.unitPrice }}
+                {{ (languageService.languageChanged$ | async) === 'ar' ? item.currency_ar : item.currency }}</b>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Totals -->
+    <footer class="order-totals">
+      <div class="total-row">
+        <span>{{ "orders.totalAmount" | translate }}</span>
+        <span>{{ getOrderSubtotal(order) }}
+          {{ (languageService.languageChanged$ | async) === 'ar' ? order?.orderItems[0]?.currency_ar : order?.orderItems[0]?.currency }}</span>
+      </div>
+      <div class="total-row" *ngIf="getDeliveryFee(order) > 0">
+        <span>{{ "orders.deliveryFee" | translate }}</span>
+        <span>{{ getDeliveryFee(order) }}
+          {{ (languageService.languageChanged$ | async) === 'ar' ? order?.orderItems[0]?.currency_ar : order?.orderItems[0]?.currency }}</span>
+      </div>
+      <div class="total-row grand">
+        <span>{{ "cart.total" | translate }}</span>
+        <span>{{ getOrderGrandTotal(order) }}
+          {{ (languageService.languageChanged$ | async) === 'ar' ? order?.orderItems[0]?.currency_ar : order?.orderItems[0]?.currency }}</span>
+      </div>
+    </footer>
+  </article>
+</ng-template>

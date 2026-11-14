@@ -7,6 +7,7 @@ import { ApiService } from 'src/app/services/api.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { BranchService } from 'src/app/services/branch.service';
 import { CartCountService } from 'src/app/services/cart-count.service';
+import { ActiveOrdersService } from 'src/app/services/active-orders.service';
 import { WishlistCountService } from 'src/app/services/wishlist-count.service';
 import { LanguageService } from 'src/app/services/language.service';
 import {
@@ -49,10 +50,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
   branchId: number | null = null;
   cartCount = 0;
   wishlistCount = 0;
+  /** Orders still in progress (pending / confirmed / on the way). */
+  activeOrdersCount = 0;
 
   private routerSub?: Subscription;
 
   constructor(
+    private activeOrdersService: ActiveOrdersService,
     private cartCountService: CartCountService,
     private wishlistCountService: WishlistCountService,
     private authService: AuthService,
@@ -75,6 +79,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.updateHomeFlag();
         this.closeMenu();
         (document.activeElement as HTMLElement | null)?.blur?.();
+        // e.g. right after checkout: pick up the new order without waiting for the next poll
+        if (this.userId) this.activeOrdersService.refresh();
       });
 
     this.authService.currentUser$.subscribe((u) => {
@@ -82,6 +88,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     });
     this.cartCountService.cartCount$.subscribe((c) => (this.cartCount = c));
     this.wishlistCountService.wishlistCount$.subscribe((c) => (this.wishlistCount = c));
+    this.activeOrdersService.count$.subscribe((c) => (this.activeOrdersCount = c));
 
     const token = localStorage.getItem('token');
     if (token) {
@@ -90,6 +97,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
           this.userId = typeof res === 'string' ? res : res?.userId;
 
           if (this.userId) {
+            this.activeOrdersService.start(this.userId);
             this.branchService.promptForAccount(this.userId);
 
             // Tracked apart from branchId: the other currentBranch$ subscribers update branchId
@@ -294,6 +302,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.authService.logout();
     this.cartCountService.setCount(0);
     this.wishlistCountService.clear();
+    this.activeOrdersService.stop();
+    this.userId = '';
     this.router.navigate(['/home']);
   }
 

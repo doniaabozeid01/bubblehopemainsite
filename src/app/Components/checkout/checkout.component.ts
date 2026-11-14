@@ -6,6 +6,9 @@ import { BranchService } from 'src/app/services/branch.service';
 import { LanguageService } from 'src/app/services/language.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { CartCountService } from 'src/app/services/cart-count.service';
 
 @Component({
   selector: 'app-checkout',
@@ -46,7 +49,8 @@ export class CheckoutComponent implements OnInit {
     public languageService: LanguageService,
     public branchService: BranchService,
     private toastr: ToastrService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private cartCountService: CartCountService
   ) { }
 
 //   ngOnInit(): void {
@@ -358,14 +362,26 @@ export class CheckoutComponent implements OnInit {
       cartId: this.cartId,
       userId: this.userId,
     };
-    // console.log(request);
-    
+    console.log('[checkout] CreateOrderPaymob request', request);
+
 
     this.api.CreateOrderPaymob(request).subscribe({
       next: (res) => {
-        // console.log(res);
-        
+        console.log('[checkout] CreateOrderPaymob response', res);
+
         this.loading = false;
+
+        // The server can answer 200 with success:false (e.g. outside delivery range).
+        // That means NO order was created: tell the customer and keep the cart.
+        if (res?.success === false) {
+          const isAr = this.translate.currentLang === 'ar';
+          this.toastr.error(
+            (isAr ? res.messageAr : res.message) ||
+            res.messageAr || res.message ||
+            (isAr ? 'تعذر إنشاء الطلب' : 'Could not place the order')
+          );
+          return;
+        }
 
         if (res?.checkoutUrl) {
           window.location.href = res.checkoutUrl;
@@ -377,16 +393,56 @@ export class CheckoutComponent implements OnInit {
           : 'Order placed successfully';
 
         this.toastr.success(successMsg);
-        this.router.navigate(['/allorders']);
+
+        // The order is placed: empty the cart so it doesn't keep showing the
+        // same items (or get ordered twice). Errors are ignored on purpose —
+        // the server may already have cleared it.
+        const cartId = this.cartId;
+        const leftoverIds: number[] = (this.cartItems || []).map((i: any) => i.id).filter(Boolean);
+        this.cartItems = [];
+        this.totalamount = 0;
+        this.cartCountService.clear();
+        this.emptyServerCart(cartId, leftoverIds, () => this.router.navigate(['/allorders']));
       },
       error: (err) => {
         this.loading = false;
         // console.log(err);
         
+        const isAr = this.translate.currentLang === 'ar';
+        const body = err?.error;
         this.toastr.error(
-          err.error?.message || 'Something went wrong'
+          (isAr ? body?.messageAr : body?.message) ||
+          body?.messageAr || body?.message ||
+          (isAr ? 'حدث خطأ، حاول مرة أخرى' : 'Something went wrong')
         );
       }
+    });
+  }
+
+  /**
+   * Empties the cart on the server after an order was placed.
+   * 1) ClearCart(cartId); 2) if that fails, delete the items one by one;
+   * 3) if the server already emptied it, nothing is left to do.
+   * Failures are logged (not shown) — the order itself already succeeded.
+   */
+  private emptyServerCart(cartId: number, itemIds: number[], done: () => void): void {
+    const deleteOneByOne = () => {
+      if (!itemIds.length) { done(); return; }
+      forkJoin(
+        itemIds.map((id) =>
+          this.api.DeleteCartItem(id).pipe(catchError(() => of(null)))
+        )
+      ).subscribe({ next: () => done(), error: () => done() });
+    };
+
+    if (!cartId) { deleteOneByOne(); return; }
+
+    this.api.ClearCart(cartId).subscribe({
+      next: () => done(),
+      error: (err) => {
+        console.warn('ClearCart failed, deleting items one by one', err);
+        deleteOneByOne();
+      },
     });
   }
 

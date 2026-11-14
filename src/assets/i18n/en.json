@@ -412,6 +412,26 @@
     },
     "orders": {
         "prevorder": "My Previous Orders",
+        "title": "My Orders",
+        "current": "Current Orders",
+        "previous": "Previous Orders",
+        "live": "Updates automatically",
+        "allBranches": "All branches",
+        "updated": "Order #{{id}} is now: {{status}}",
+        "status": {
+            "pending": "Pending",
+            "confirmed": "Confirmed",
+            "shipped": "On the way",
+            "delivered": "Delivered",
+            "canceled": "Canceled",
+            "cancelled": "Canceled"
+        },
+        "step": {
+            "pending": "Received",
+            "confirmed": "Preparing",
+            "shipped": "On the way",
+            "delivered": "Delivered"
+        },
         "OrderNo": "Order No.",
         "Date": "Date",
         "price": "Price",
