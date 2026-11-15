@@ -69,7 +69,19 @@
           </a>
         </div>
 
-        <div class="nav-raw nav-more has-products" *ngIf="moreRawNav.length">
+        <!-- Mobile: keep leftover categories as flat links (no empty "More" gap) -->
+        <a
+          *ngFor="let item of moreRawNav; trackBy: trackByRawNav"
+          class="show-on-mobile-nav"
+          [routerLink]="item.route"
+          [queryParams]="item.queryParams"
+          routerLinkActive="active"
+          (click)="closeMenu()"
+        >
+          {{ item.titleKey ? (item.titleKey | translate) : rawNavName(item) }}
+        </a>
+
+        <div class="nav-raw nav-more has-products hide-on-mobile-nav" *ngIf="moreRawNav.length">
           <a role="button" tabindex="0" [class.active]="isMoreActive" aria-haspopup="true">
             {{ 'navbar.more' | translate }}
             <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
@@ -104,54 +116,63 @@
 
             <button
               type="button"
-              class="menu-action"
+              class="menu-action menu-action--branch"
               (click)="openBranchSelector(); closeMenu()"
             >
-              <i class="fa-solid fa-location-dot"></i>
-              {{ selectedBranchName || ('cart.chooseBranch' | translate) }}
+              <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+              <span class="menu-action__label">{{ selectedBranchName || ('cart.chooseBranch' | translate) }}</span>
             </button>
 
             <div class="mobile-action-grid" *ngIf="isLoggedIn; else guestMobile">
               <a class="menu-action" routerLink="/profile" (click)="closeMenu()">
-                <i class="bi bi-person"></i> {{ 'navbar.profile' | translate }}
+                <i class="bi bi-person" aria-hidden="true"></i>
+                <span class="menu-action__label">{{ 'navbar.profile' | translate }}</span>
               </a>
               <a class="menu-action menu-action--orders" routerLink="/allorders" (click)="closeMenu()">
-                <i class="bi bi-receipt"></i> {{ 'navbar.orders' | translate }}
+                <i class="bi bi-receipt" aria-hidden="true"></i>
+                <span class="menu-action__label">{{ 'navbar.orders' | translate }}</span>
                 <span class="orders-pill" *ngIf="activeOrdersCount > 0">{{ activeOrdersCount }}</span>
               </a>
-              <button type="button" class="menu-action" routerLink="/wishlist" (click)="closeMenu()">
+              <a class="menu-action" routerLink="/wishlist" (click)="closeMenu()">
                 <i
                   class="bi"
+                  aria-hidden="true"
                   [ngClass]="wishlistCount > 0 ? 'bi-heart-fill menu-heart--active' : 'bi-heart'"
                 ></i>
-                {{ 'navbar.fafvorites' | translate }}
-              </button>
+                <span class="menu-action__label">{{ 'navbar.fafvorites' | translate }}</span>
+              </a>
               <button type="button" class="menu-action" (click)="changeLanguage(); closeMenu()">
-                <i class="fa-solid fa-globe"></i> {{ 'navbar.language' | translate }}
+                <i class="fa-solid fa-globe" aria-hidden="true"></i>
+                <span class="menu-action__label">{{ 'navbar.language' | translate }}</span>
               </button>
               <button type="button" class="menu-action menu-action--logout menu-action--wide" (click)="logout(); closeMenu()">
-                <i class="bi bi-box-arrow-right"></i> {{ 'navbar.logout' | translate }}
+                <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+                <span class="menu-action__label">{{ 'navbar.logout' | translate }}</span>
               </button>
             </div>
 
             <ng-template #guestMobile>
               <div class="mobile-action-grid">
                 <a class="menu-action menu-action--primary" routerLink="/auth/login" (click)="closeMenu()">
-                  <i class="bi bi-box-arrow-in-right"></i> {{ 'navbar.login' | translate }}
+                  <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
+                  <span class="menu-action__label">{{ 'navbar.login' | translate }}</span>
                 </a>
                 <a class="menu-action menu-action--ghost" routerLink="/auth/register" (click)="closeMenu()">
-                  <i class="bi bi-person-plus"></i> {{ 'navbar.register' | translate }}
+                  <i class="bi bi-person-plus" aria-hidden="true"></i>
+                  <span class="menu-action__label">{{ 'navbar.register' | translate }}</span>
                 </a>
                 <button type="button" class="menu-action" (click)="changeLanguage(); closeMenu()">
-                  <i class="fa-solid fa-globe"></i> {{ 'navbar.language' | translate }}
+                  <i class="fa-solid fa-globe" aria-hidden="true"></i>
+                  <span class="menu-action__label">{{ 'navbar.language' | translate }}</span>
                 </button>
-                <button type="button" class="menu-action" routerLink="/wishlist" (click)="closeMenu()">
+                <a class="menu-action" routerLink="/wishlist" (click)="closeMenu()">
                   <i
                     class="bi"
+                    aria-hidden="true"
                     [ngClass]="wishlistCount > 0 ? 'bi-heart-fill menu-heart--active' : 'bi-heart'"
                   ></i>
-                  {{ 'navbar.fafvorites' | translate }}
-                </button>
+                  <span class="menu-action__label">{{ 'navbar.fafvorites' | translate }}</span>
+                </a>
               </div>
             </ng-template>
           </div>

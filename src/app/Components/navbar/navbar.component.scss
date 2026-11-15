@@ -249,11 +249,11 @@ $nav-laptop-max: 1379.98px;
     display: none;
     flex-direction: column;
     align-items: stretch;
-    gap: 0.15rem;
-    padding: 0.7rem 0.65rem 0.85rem;
+    gap: 0.1rem;
+    padding: 0.6rem 0.7rem 0.8rem;
     overflow-x: hidden;
     overflow-y: auto;
-    max-height: min(78dvh, 640px);
+    max-height: min(72dvh, 580px);
     border-radius: 1.5rem;
     border: 1px solid rgba(255, 127, 0, 0.12);
     background: $cream;
@@ -835,62 +835,85 @@ $nav-laptop-max: 1379.98px;
 .mobile-only-menu {
   display: none;
   width: 100%;
-  padding: 0.15rem 0 0.05rem;
+  padding: 0.1rem 0 0;
 
   .menu-divider {
     height: 1px;
     background: rgba(255, 127, 0, 0.16);
-    margin: 0.55rem 0.35rem 0.75rem;
+    margin: 0.45rem 0.35rem 0.65rem;
   }
 
   .welcome-text {
     color: $ink-muted;
     font-family: 'Nunito', system-ui, sans-serif !important;
     font-size: 0.82rem !important;
-    margin: 0 0 0.65rem;
-    padding-inline-start: 0.55rem;
+    margin: 0 0 0.5rem;
+    padding-inline-start: 0.45rem;
     font-weight: 700;
     line-height: 1.3;
   }
 
   .mobile-account-section > .menu-action {
     width: 100%;
-    margin-bottom: 0.65rem;
+    margin-bottom: 0.45rem;
   }
 
   .mobile-action-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
+    gap: 0.45rem;
 
-    // odd number of actions: let the last one (Logout) span the full row
     .menu-action--wide {
       grid-column: 1 / -1;
     }
   }
 
   .menu-action {
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.4rem;
+    gap: 0.35rem;
+    width: 100%;
+    min-width: 0;
+    height: 2.75rem;
     border: 1px solid rgba(255, 127, 0, 0.12);
     border-radius: 999px;
-    padding: 0.72rem 0.5rem;
+    padding: 0 0.65rem;
     background: #fff6ea;
     color: $ink !important;
     font-family: 'Nunito', system-ui, sans-serif !important;
     font-size: 0.82rem !important;
-    line-height: 1.2;
+    line-height: 1;
     font-weight: 800;
     text-decoration: none;
     cursor: pointer;
     text-shadow: none;
 
     i {
+      flex-shrink: 0;
       font-size: 0.95rem !important;
       line-height: 1;
       color: $orange;
+    }
+
+    /* styles.scss forces span { font-size: 20px } — override so label matches the button */
+    .menu-action__label {
+      flex: 0 1 auto;
+      font-size: inherit !important;
+      font-weight: inherit;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    .orders-pill {
+      position: static;
+      margin: 0;
+      flex-shrink: 0;
+      min-width: 1.15rem;
+      height: 1.15rem;
+      padding: 0 0.3rem;
+      font-size: 0.68rem !important;
     }
 
     .menu-heart--active {

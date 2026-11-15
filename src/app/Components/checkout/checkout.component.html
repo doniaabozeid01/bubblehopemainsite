@@ -96,6 +96,35 @@
             >
               {{ 'delivery.selectAddress' | translate }}
             </p>
+
+            <!-- Share the exact spot straight from the device -->
+            <div class="location-share">
+              <button
+                type="button"
+                class="location-btn"
+                *ngIf="!location"
+                [disabled]="locating"
+                (click)="shareLocation()"
+              >
+                <i class="fa-solid" [ngClass]="locating ? 'fa-spinner fa-spin' : 'fa-location-crosshairs'" aria-hidden="true"></i>
+                <span>{{ (locating ? 'delivery.locating' : 'delivery.shareLocation') | translate }}</span>
+              </button>
+
+              <div class="location-chip" *ngIf="location">
+                <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                <span class="location-chip__text">
+                  {{ 'delivery.locationShared' | translate }}
+                  <a [href]="locationMapUrl" target="_blank" rel="noopener">{{ 'delivery.viewOnMap' | translate }}</a>
+                </span>
+                <button type="button" class="location-chip__remove" (click)="clearLocation()"
+                  [attr.aria-label]="'delivery.removeLocation' | translate">
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+              </div>
+
+              <p class="field-hint" *ngIf="!location && !locationError">{{ 'delivery.locationHint' | translate }}</p>
+              <p class="field-error" *ngIf="locationError">{{ locationError }}</p>
+            </div>
           </section>
 
           <!-- Payment -->

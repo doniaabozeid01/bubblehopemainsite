@@ -42,6 +42,11 @@ export class CheckoutComponent implements OnInit {
   discountError: string | null = null;
   applydiscount = false;
 
+  /** The customer's current position, shared from the device (optional). */
+  location: { latitude: number; longitude: number; accuracy: number } | null = null;
+  locating = false;
+  locationError = '';
+
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
@@ -361,6 +366,15 @@ export class CheckoutComponent implements OnInit {
       branchId: this.branchId,
       cartId: this.cartId,
       userId: this.userId,
+      // Optional: exact spot shared from the device (home delivery only).
+      // The backend does not read these yet; it is safe to send them meanwhile.
+      ...(!this.isSelfPickup && this.location
+        ? {
+            latitude: this.location.latitude,
+            longitude: this.location.longitude,
+            locationAccuracy: this.location.accuracy,
+          }
+        : {}),
     };
     console.log('[checkout] CreateOrderPaymob request', request);
 
@@ -422,6 +436,54 @@ export class CheckoutComponent implements OnInit {
         );
       }
     });
+  }
+
+  // =============================
+  // Share current location
+  // =============================
+
+  /** Asks the browser for the customer's position and attaches it to the order. */
+  shareLocation(): void {
+    if (this.locating) return;
+    this.locationError = '';
+
+    if (!('geolocation' in navigator)) {
+      this.locationError = this.translate.instant('delivery.locationUnsupported');
+      return;
+    }
+
+    this.locating = true;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        this.locating = false;
+        this.location = {
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+          accuracy: Math.round(pos.coords.accuracy || 0),
+        };
+      },
+      (err) => {
+        this.locating = false;
+        const key =
+          err.code === 1 ? 'delivery.locationDenied'
+          : err.code === 3 ? 'delivery.locationTimeout'
+          : 'delivery.locationUnavailable';
+        this.locationError = this.translate.instant(key);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
+  }
+
+  clearLocation(): void {
+    this.location = null;
+    this.locationError = '';
+  }
+
+  /** Google Maps link for the shared position (lets the customer double-check it). */
+  get locationMapUrl(): string {
+    return this.location
+      ? `https://www.google.com/maps?q=${this.location.latitude},${this.location.longitude}`
+      : '';
   }
 
   /** Makes the account's saved branch on the server equal to `branchId`. Never blocks the order. */

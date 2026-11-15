@@ -473,6 +473,16 @@
         "add": "Add"
     },
     "delivery": {
+        "shareLocation": "Send my current location",
+        "locating": "Getting your location...",
+        "locationShared": "Your location is attached to the order.",
+        "viewOnMap": "View on map",
+        "removeLocation": "Remove location",
+        "locationHint": "Helps the driver find you faster.",
+        "locationDenied": "Location access was blocked. Allow it in your browser settings and try again.",
+        "locationUnavailable": "We couldn't detect your location. Turn on GPS and try again.",
+        "locationTimeout": "Getting your location took too long. Please try again.",
+        "locationUnsupported": "Your browser doesn't support sharing location.",
         "deliveryInformation": "Delivery Information",
         "fullName": "Full Name",
         "phone": "Phone Number",
