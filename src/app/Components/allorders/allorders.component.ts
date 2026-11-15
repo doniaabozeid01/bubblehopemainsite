@@ -27,6 +27,9 @@ const STATUS_ALIASES: Record<string, string> = {
 const KNOWN_STATUSES = ['pending', 'confirmed', 'shipped', 'delivered', 'canceled'];
 
 /** How often the page re-checks the server for status changes. */
+/** Finished orders shown per page in "Previous". */
+const PAST_PAGE = 5;
+
 const LIVE_REFRESH_MS = 4000;
 /** Slower check when nothing is in progress (e.g. to notice a brand-new order). */
 const IDLE_EVERY_N_TICKS = 8;
@@ -47,6 +50,14 @@ export class AllordersComponent implements OnInit, OnDestroy {
   private branches: any[] = [];
   selectedBranchId: number | null = null;
   branchFilters: { id: number; label: string }[] = [];
+
+  /** How many finished orders are shown before "show more". */
+  pastShown = PAST_PAGE;
+  /** Finished orders the customer opened. */
+  private expanded = new Set<number>();
+
+  /** True when the orders request failed (not the same as "no orders"). */
+  loadError = false;
 
   isLoggedIn: boolean = true;
   showScrollButton = false;
@@ -135,13 +146,26 @@ export class AllordersComponent implements OnInit, OnDestroy {
   private loadOrders(): void {
     this.api.getOrdersByUserId(this.userId).subscribe({
       next: (response) => {
+        this.loadError = false;
         this.setOrders(Array.isArray(response) ? response : []);
       },
-      error: () => {
-        // Keep what is already on screen if a background refresh fails.
-        if (this.orders === undefined) this.setOrders([]);
+      error: (err) => {
+        // 404 just means "no orders yet". Any other failure must NOT look like an
+        // empty history, otherwise the customer thinks the order is lost.
+        if (err?.status === 404) {
+          this.loadError = false;
+          this.setOrders([]);
+        } else if (this.orders === undefined) {
+          this.loadError = true;
+        }
+        // Otherwise keep what is already on screen if a background refresh fails.
       }
     });
+  }
+
+  retry(): void {
+    this.loadError = false;
+    this.loadOrders();
   }
 
   /** Newest first, split into "in progress" and "finished". */
@@ -202,7 +226,48 @@ export class AllordersComponent implements OnInit, OnDestroy {
 
   selectBranch(id: number | null): void {
     this.selectedBranchId = id;
+    this.pastShown = PAST_PAGE;
     this.applyFilter();
+  }
+
+  // ---- long lists: finished orders are collapsed and paged ----
+
+  /** Finished orders currently rendered (the rest sit behind "show more"). */
+  get visiblePast(): any[] {
+    return this.pastOrders.slice(0, this.pastShown);
+  }
+
+  get pastHidden(): number {
+    return Math.max(0, this.pastOrders.length - this.pastShown);
+  }
+
+  showMorePast(): void {
+    this.pastShown += PAST_PAGE;
+  }
+
+  /** Orders in progress are always open; finished ones open on tap. */
+  isOpen(order: any, active: boolean): boolean {
+    return active || this.expanded.has(order?.orderId);
+  }
+
+  toggle(order: any): void {
+    const id = order?.orderId;
+    if (this.expanded.has(id)) this.expanded.delete(id);
+    else this.expanded.add(id);
+  }
+
+  /** "Latte x2 +1 more" style one-liner for a collapsed order. */
+  itemsSummary(order: any): string {
+    const items: any[] = order?.orderItems || [];
+    if (!items.length) return '';
+    const ar = this.translate.currentLang === 'ar';
+    const first = items[0];
+    const name = (ar ? first.productName_ar : first.productName) || first.productName || '';
+    const qty = Number(first.quantity) > 1 ? ` ×${first.quantity}` : '';
+    const more = items.length - 1;
+    return more > 0
+      ? `${name}${qty} ${this.translate.instant('orders.moreItems', { n: more })}`
+      : `${name}${qty}`;
   }
 
   trackByBranch = (_: number, f: { id: number }) => f.id;

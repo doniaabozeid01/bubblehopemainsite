@@ -2,13 +2,8 @@ import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
-import {
-  EGYPT_CITIES,
-  EGYPT_DISTRICTS,
-  EGYPT_GOVERNORATES,
-  labelOf,
-  mergeById,
-} from 'src/app/utils/egypt-locations';
+import { KNOWN_AREAS, KnownArea } from 'src/app/Components/register/known-areas';
+import { labelOf } from 'src/app/utils/egypt-locations';
 
 export interface Address {
   id: number;
@@ -33,6 +28,16 @@ export interface UserDetails {
 
 type SelectKey = 'country' | 'governorate' | 'city' | 'district' | null;
 
+/** Synthetic district ids for known areas (same list as register) until dashboard has them. */
+const KNOWN_AREA_ID_BASE = 900000;
+const normalizeName = (s: unknown) => String(s ?? '').replace(/\s+/g, ' ').trim();
+
+function belongingTo(list: any[], parentKey: string, parentId: number): any[] {
+  return (Array.isArray(list) ? list : []).filter(
+    (item) => item?.[parentKey] == null || Number(item[parentKey]) === Number(parentId)
+  );
+}
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -45,7 +50,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
   countries: any[] = [];
   governorates: any[] = [];
   cities: any[] = [];
+  /** API districts only — known areas are merged into `districts` for the menu. */
+  private apiDistricts: any[] = [];
   districts: any[] = [];
+  private areaById = new Map<number, KnownArea>();
 
   editing = false;
   showAddAddress = false;
@@ -79,6 +87,34 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   get isAr(): boolean {
     return document.documentElement.dir === 'rtl';
+  }
+
+  /** Single country (Egypt) is fixed — hide the dropdown like register. */
+  get showCountryField(): boolean {
+    return this.countries.length > 1;
+  }
+
+  /** Single governorate (Giza) is fixed — hide the dropdown like register. */
+  get showGovernorateField(): boolean {
+    if (this.showCountryField) return true;
+    return this.governorates.length > 1;
+  }
+
+  /** "Giza, Egypt" chip for the levels picked automatically. */
+  get autoRegionLabel(): string {
+    const parts: string[] = [];
+    if (!this.showGovernorateField && this.governorates[0]) {
+      parts.push(this.locLabel(this.governorates[0]));
+    }
+    if (!this.showCountryField && this.countries[0]) {
+      const c = this.countries[0];
+      parts.push(
+        this.isAr
+          ? c.country_name_ar || c.country_name
+          : c.country_name || c.country_name_ar
+      );
+    }
+    return parts.join(this.isAr ? '، ' : ', ');
   }
 
   initials(name: string | null | undefined): string {
@@ -156,11 +192,22 @@ export class ProfileComponent implements OnInit, OnDestroy {
         if (!this.countries.length) {
           this.countries = [{ id: 1, country_name: 'Egypt', country_name_ar: 'مصر' }];
         }
+        this.autoPick('countryId', this.countries);
       },
       error: () => {
         this.countries = [{ id: 1, country_name: 'Egypt', country_name_ar: 'مصر' }];
+        this.autoPick('countryId', this.countries);
       },
     });
+  }
+
+  /** A list with a single choice needs no click. */
+  private autoPick(controlName: string, list: any[]): void {
+    const control = this.addressForm.get(controlName);
+    if (!control || list.length !== 1) return;
+    const current = Number(control.value) || 0;
+    if (current) return;
+    control.setValue(list[0].id);
   }
 
   resolveUserAndLoad() {
@@ -191,7 +238,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
       );
       this.governorates = [];
       this.cities = [];
+      this.apiDistricts = [];
       this.districts = [];
+      this.areaById.clear();
       if (!countryId) return;
       this.loadGovernorates(countryId);
     });
@@ -199,31 +248,33 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.addressForm.get('governorateId')!.valueChanges.subscribe((governorateId) => {
       this.addressForm.patchValue({ cityId: 0, districtId: 0 }, { emitEvent: false });
       this.cities = [];
+      this.apiDistricts = [];
       this.districts = [];
+      this.areaById.clear();
       if (!governorateId) return;
       this.loadCities(governorateId);
     });
 
     this.addressForm.get('cityId')!.valueChanges.subscribe((cityId) => {
       this.addressForm.patchValue({ districtId: 0 }, { emitEvent: false });
+      this.apiDistricts = [];
       this.districts = [];
+      this.areaById.clear();
       if (!cityId) return;
       this.loadDistricts(cityId);
     });
   }
 
   private loadGovernorates(countryId: number) {
-    const fallback = EGYPT_GOVERNORATES.map((g) => ({
-      id: g.id,
-      governorate_name: g.name,
-      governorate_name_ar: g.nameAr,
-      countryId,
-    }));
-
-    if (countryId !== 1) {
-      this.governorates = this.sortLocs(fallback, 'governorate_name', 'governorate_name_ar');
-      return;
-    }
+    // Delivery is fixed to Giza — keep API list (usually one) so the field hides like register.
+    const gizaFallback = [
+      {
+        id: 1,
+        governorate_name: 'Giza',
+        governorate_name_ar: 'الجيزة',
+        countryId,
+      },
+    ];
 
     this.addrService.getGovernoratesByCountryId(countryId).subscribe({
       next: (res) => {
@@ -232,10 +283,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
           governorate_name: g.governorate_name || g.name,
           governorate_name_ar: g.governorate_name_ar || g.nameAr,
         }));
-        this.governorates = this.sortLocs(mergeById(api, fallback), 'governorate_name', 'governorate_name_ar');
+        this.governorates = this.sortLocs(
+          api.length ? api : gizaFallback,
+          'governorate_name',
+          'governorate_name_ar'
+        );
+        this.autoPick('governorateId', this.governorates);
       },
       error: () => {
-        this.governorates = this.sortLocs(fallback, 'governorate_name', 'governorate_name_ar');
+        this.governorates = gizaFallback;
+        this.autoPick('governorateId', this.governorates);
       },
     });
   }
@@ -249,51 +306,69 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   private loadCities(governorateId: number) {
-    const fallback = EGYPT_CITIES.filter((c) => c.governorateId === governorateId).map((c) => ({
-      id: c.id,
-      city_name: c.name,
-      city_name_ar: c.nameAr,
-      governorateId,
-    }));
-
     this.addrService.getCitiesByGovernorateId(governorateId).subscribe({
       next: (res) => {
-        const api = (Array.isArray(res) ? res : []).map((c: any) => ({
+        const raw = Array.isArray(res) ? res : (res as any)?.data ?? [];
+        this.cities = belongingTo(raw, 'governorateId', governorateId).map((c: any) => ({
           ...c,
           city_name: c.city_name || c.name,
           city_name_ar: c.city_name_ar || c.nameAr,
         }));
-        this.cities = mergeById(api, fallback);
-        if (!this.cities.length) this.cities = fallback;
+        this.autoPick('cityId', this.cities);
       },
       error: () => {
-        this.cities = fallback;
+        this.cities = [];
       },
     });
   }
 
   private loadDistricts(cityId: number) {
-    const fallback = EGYPT_DISTRICTS.filter((d) => d.cityId === cityId).map((d) => ({
-      id: d.id,
-      district_name: d.name,
-      district_name_ar: d.nameAr,
-      cityId,
-    }));
-
     this.addrService.getDistrictsByCityId(cityId).subscribe({
       next: (res) => {
-        const api = (Array.isArray(res) ? res : []).map((d: any) => ({
+        const raw = Array.isArray(res) ? res : (res as any)?.data ?? [];
+        this.apiDistricts = belongingTo(raw, 'cityId', cityId).map((d: any) => ({
           ...d,
           district_name: d.district_name || d.name,
           district_name_ar: d.district_name_ar || d.nameAr,
         }));
-        this.districts = mergeById(api, fallback);
-        if (!this.districts.length) this.districts = fallback;
+        this.rebuildDistrictMenu(cityId);
       },
       error: () => {
-        this.districts = fallback;
+        this.apiDistricts = [];
+        this.rebuildDistrictMenu(cityId);
       },
     });
+  }
+
+  /** Same district menu as register: API districts + well-known areas not yet in the dashboard. */
+  private rebuildDistrictMenu(cityId: number): void {
+    this.areaById.clear();
+    const existing = new Set(
+      this.apiDistricts.flatMap((d) => [
+        normalizeName(d.district_name_ar),
+        normalizeName(d.district_name).toLowerCase(),
+      ])
+    );
+
+    const known = (KNOWN_AREAS[cityId] ?? [])
+      .filter(
+        (a) =>
+          !existing.has(normalizeName(a.name_ar)) &&
+          !existing.has(normalizeName(a.name).toLowerCase())
+      )
+      .map((a, i) => {
+        const id = KNOWN_AREA_ID_BASE + i;
+        this.areaById.set(id, a);
+        return {
+          id,
+          district_name: a.name,
+          district_name_ar: a.name_ar,
+          cityId,
+          _knownArea: true,
+        };
+      });
+
+    this.districts = [...this.apiDistricts, ...known];
   }
 
   load() {
@@ -346,6 +421,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
   openAddAddress() {
     this.showAddAddress = true;
     this.openSelect = null;
+    this.apiDistricts = [];
+    this.districts = [];
+    this.areaById.clear();
     document.body.classList.add('profile-modal-open');
     this.addressForm.reset({
       street: '',
@@ -366,6 +444,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
   closeAddAddress() {
     this.showAddAddress = false;
     this.openSelect = null;
+    this.apiDistricts = [];
+    this.districts = [];
+    this.areaById.clear();
     document.body.classList.remove('profile-modal-open');
     this.addressForm.reset({
       street: '',
@@ -386,34 +467,26 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     this.actionLoading = true;
     const v = this.addressForm.getRawValue();
+    const knownArea = this.areaById.get(v.districtId) ?? null;
 
-    const gov = this.governorates.find((g) => g.id === v.governorateId);
-    const city = this.cities.find((c) => c.id === v.cityId);
-    const district = this.districts.find((d) => d.id === v.districtId);
-
-    // API currently seeds only Giza + a few cities. Map fallback ids to safe FKs
-    // while preserving the chosen place names in landmark/street.
-    const usesFallback =
-      v.governorateId >= 1000 || v.cityId >= 1000 || v.districtId >= 1000;
-
-    const placeBits = [
-      this.locLabel(district),
-      this.locLabel(city),
-      this.locLabel(gov),
-    ].filter(Boolean);
+    // Known areas are not dashboard districts yet — ride on the city's first real district
+    // and keep the place name in landmark (same as register).
+    const districtId = knownArea
+      ? this.apiDistricts[0]?.id ?? 1
+      : v.districtId;
 
     const payload = {
       countryId: 1,
-      governorateId: usesFallback ? 1 : v.governorateId,
-      cityId: usesFallback ? 1 : v.cityId,
-      districtId: usesFallback ? 1 : v.districtId,
+      governorateId: v.governorateId,
+      cityId: v.cityId,
+      districtId,
       street: v.street ?? '',
       buildingNumber: v.buildingNumber ?? '',
       floor: v.floor ?? '',
       apartment: v.apartment ?? '',
-      landmark: [v.landmark, usesFallback ? placeBits.join(' · ') : '']
-        .filter(Boolean)
-        .join(' | '),
+      landmark: knownArea
+        ? [knownArea.name_ar, v.landmark].filter(Boolean).join(' - ')
+        : v.landmark ?? '',
       isDefault: v.isDefault ?? false,
     };
 

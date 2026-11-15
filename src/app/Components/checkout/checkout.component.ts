@@ -6,8 +6,8 @@ import { BranchService } from 'src/app/services/branch.service';
 import { LanguageService } from 'src/app/services/language.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, forkJoin, of } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 import { CartCountService } from 'src/app/services/cart-count.service';
 
 @Component({
@@ -365,7 +365,12 @@ export class CheckoutComponent implements OnInit {
     console.log('[checkout] CreateOrderPaymob request', request);
 
 
-    this.api.CreateOrderPaymob(request).subscribe({
+    // The server keeps its own "current branch" per account and looks the cart up with it.
+    // If it differs from the branch picked on this device (e.g. fresh login), the order
+    // fails with "Cart Not Found" even though the cart is on screen. Align them first.
+    this.syncServerBranch(request.branchId!).pipe(
+      switchMap(() => this.api.CreateOrderPaymob(request))
+    ).subscribe({
       next: (res) => {
         console.log('[checkout] CreateOrderPaymob response', res);
 
@@ -417,6 +422,22 @@ export class CheckoutComponent implements OnInit {
         );
       }
     });
+  }
+
+  /** Makes the account's saved branch on the server equal to `branchId`. Never blocks the order. */
+  private syncServerBranch(branchId: number): Observable<unknown> {
+    if (!this.userId) return of(null);
+    return this.api.GetUserBranch(this.userId).pipe(
+      switchMap((saved: any) =>
+        Number(saved?.id) === Number(branchId)
+          ? of(null)
+          : this.api.switchBranch({ userId: this.userId, newBranchId: branchId })
+      ),
+      catchError((err) => {
+        console.warn('[checkout] could not sync the account branch', err);
+        return of(null);
+      })
+    );
   }
 
   /**

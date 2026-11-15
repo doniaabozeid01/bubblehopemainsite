@@ -179,10 +179,17 @@
       </header>
 
       <div class="modal-body">
+        <p class="region-chip" *ngIf="autoRegionLabel">
+          <i class="bi bi-pin-map" aria-hidden="true"></i>
+          <span>{{ 'auth.reg.deliveringIn' | translate }}</span>
+          <strong>{{ autoRegionLabel }}</strong>
+        </p>
+
         <div class="address-fields">
-          <!-- Country -->
+          <!-- Country (hidden when only Egypt) -->
           <div
             class="nice-select field-span-2"
+            *ngIf="showCountryField"
             [class.open]="openSelect === 'country'"
             [class.has-value]="addressForm.value.countryId"
           >
@@ -215,9 +222,10 @@
             </ul>
           </div>
 
-          <!-- Governorate -->
+          <!-- Governorate (hidden when only Giza) -->
           <div
             class="nice-select"
+            *ngIf="showGovernorateField"
             [class.open]="openSelect === 'governorate'"
             [class.has-value]="addressForm.value.governorateId"
             [class.disabled]="governorates.length === 0"
@@ -259,6 +267,7 @@
           <!-- City -->
           <div
             class="nice-select"
+            [class.field-span-2]="!showGovernorateField"
             [class.open]="openSelect === 'city'"
             [class.has-value]="addressForm.value.cityId"
             [class.disabled]="cities.length === 0"

@@ -416,6 +416,10 @@
         "current": "Current Orders",
         "previous": "Previous Orders",
         "live": "Updates automatically",
+        "loadError": "We couldn't load your orders right now. Your orders are safe.",
+        "retry": "Try again",
+        "showMore": "Show more ({{count}})",
+        "moreItems": "+{{n}} more",
         "allBranches": "All branches",
         "updated": "Order #{{id}} is now: {{status}}",
         "status": {

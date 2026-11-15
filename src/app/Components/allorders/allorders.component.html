@@ -37,13 +37,21 @@
         </h2>
 
         <div class="orders-list">
-          <ng-container *ngFor="let order of pastOrders; trackBy: trackByOrder">
+          <ng-container *ngFor="let order of visiblePast; trackBy: trackByOrder">
             <ng-container *ngTemplateOutlet="orderCard; context: { $implicit: order, active: false }"></ng-container>
           </ng-container>
         </div>
+
+        <button type="button" class="show-more" *ngIf="pastHidden > 0" (click)="showMorePast()">
+          {{ "orders.showMore" | translate: { count: pastHidden } }}
+        </button>
       </section>
 
-      <!-- No orders -->
+      <!-- Orders could not be loaded -->
+      <div *ngIf="loadError" class="empty-state">
+        <h2>{{ 'orders.loadError' | translate }}</h2>
+        <button class="btn goToProduct" (click)="retry()">{{ 'orders.retry' | translate }}</button>
+      </div>
       <div *ngIf="orders?.length === 0" class="empty-state">
         <h2>{{ 'order.slogan' | translate }}</h2>
         <button class="btn goToProduct" (click)="goToProducts()">
@@ -67,10 +75,15 @@
 
 <!-- One order card, used by both sections -->
 <ng-template #orderCard let-order let-active="active">
-  <article class="order-card" [class.order-card--active]="active">
+  <article class="order-card" [class.order-card--active]="active"
+    [class.order-card--collapsed]="!isOpen(order, active)">
 
-    <!-- Order header -->
-    <header class="order-head">
+    <!-- Order header (tap to open/close finished orders) -->
+    <header class="order-head" [class.order-head--toggle]="!active"
+      (click)="!active && toggle(order)"
+      [attr.role]="!active ? 'button' : null" [attr.tabindex]="!active ? 0 : null"
+      [attr.aria-expanded]="!active ? isOpen(order, active) : null"
+      (keydown.enter)="!active && toggle(order)">
       <div class="order-meta">
         <div class="order-no">{{ "orders.OrderNo" | translate }} <span>#{{ order.orderId }}</span></div>
         <p class="order-date">
@@ -82,11 +95,22 @@
           {{ branch }}
         </p>
       </div>
-      <span class="status-badge" [ngClass]="getStatusClass(order.status)">
-        <ng-container *ngIf="statusKey(order.status) as key; else rawStatus">{{ key | translate }}</ng-container>
-        <ng-template #rawStatus>{{ order.status }}</ng-template>
-      </span>
+      <div class="order-head__end">
+        <span class="status-badge" [ngClass]="getStatusClass(order.status)">
+          <ng-container *ngIf="statusKey(order.status) as key; else rawStatus">{{ key | translate }}</ng-container>
+          <ng-template #rawStatus>{{ order.status }}</ng-template>
+        </span>
+        <i class="fa-solid fa-chevron-down order-chevron" *ngIf="!active"
+          [class.is-open]="isOpen(order, active)" aria-hidden="true"></i>
+      </div>
     </header>
+
+    <!-- One-line summary while a finished order is collapsed -->
+    <div class="order-summary" *ngIf="!isOpen(order, active)">
+      <span class="order-summary__items">{{ itemsSummary(order) }}</span>
+      <span class="order-summary__total">{{ getOrderGrandTotal(order) }}
+        {{ (languageService.languageChanged$ | async) === 'ar' ? order?.orderItems[0]?.currency_ar : order?.orderItems[0]?.currency }}</span>
+    </div>
 
     <!-- Progress tracker (only while the order is in progress) -->
     <ol class="tracker" *ngIf="active && stepIndex(order.status) >= 0" aria-label="Order progress">
@@ -102,7 +126,7 @@
     </ol>
 
     <!-- Items -->
-    <div class="order-items">
+    <div class="order-items" *ngIf="isOpen(order, active)">
       <div class="order-item" *ngFor="let item of order.orderItems">
         <img [src]="item.imageUrl" alt="product" class="item-img" />
 
@@ -128,7 +152,7 @@
     </div>
 
     <!-- Totals -->
-    <footer class="order-totals">
+    <footer class="order-totals" *ngIf="isOpen(order, active)">
       <div class="total-row">
         <span>{{ "orders.totalAmount" | translate }}</span>
         <span>{{ getOrderSubtotal(order) }}

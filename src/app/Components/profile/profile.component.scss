@@ -643,6 +643,37 @@
   letter-spacing: -0.2px;
 }
 
+.region-chip {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0 0 0.85rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(255, 106, 42, 0.1);
+  color: #c24e12;
+
+  i {
+    font-size: 0.85rem;
+  }
+
+  span,
+  strong {
+    font-size: 0.8rem !important;
+    line-height: 1.3;
+  }
+
+  span {
+    font-weight: 600;
+  }
+
+  strong {
+    font-weight: 800;
+    color: var(--text);
+  }
+}
+
 .address-fields {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));

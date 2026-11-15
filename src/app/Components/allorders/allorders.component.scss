@@ -265,6 +265,91 @@ $font: var(--font-app, 'Nunito', system-ui, sans-serif);
   &.bg-secondary { background: #eef0f3 !important; color: #4b5160 !important; }
 }
 
+.order-head__end {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+/* Finished orders: tap the header to open / close */
+.order-head--toggle {
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 12px;
+
+  &:focus-visible {
+    outline: 2px solid $brand;
+    outline-offset: 4px;
+  }
+}
+
+.order-chevron {
+  font-size: 0.8rem;
+  color: $muted;
+  transition: transform 0.2s ease;
+
+  &.is-open { transform: rotate(180deg); }
+}
+
+/* Collapsed finished order = a compact row */
+.order-card--collapsed {
+  padding: 0.95rem 1.2rem;
+
+  .order-head {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+}
+
+.order-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-top: 0.7rem;
+  padding-top: 0.7rem;
+  border-top: 1px dashed $line;
+  font-size: 0.9rem;
+  color: $ink;
+}
+
+.order-summary__items {
+  min-width: 0;
+  font-size: inherit;
+  color: $muted;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.order-summary__total {
+  flex-shrink: 0;
+  font-size: inherit;
+  font-weight: 800;
+  color: $brand;
+}
+
+.show-more {
+  display: block;
+  margin: 1rem auto 0;
+  padding: 0.6rem 1.6rem;
+  border: 1px solid $brand;
+  border-radius: 999px;
+  background: #fff;
+  color: $brand;
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background: $brand;
+    color: #fff;
+  }
+}
+
 .order-branch {
   margin: 0.55rem 0 0;
   display: flex;
