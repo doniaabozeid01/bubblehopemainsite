@@ -5,6 +5,7 @@ import { BranchService } from './services/branch.service';
 import { Observable } from 'rxjs';
 import { ApiService } from './services/api.service';
 import { ToastrService } from 'ngx-toastr';
+import { PushNotificationService } from './services/push-notification.service';
 
 @Component({
   selector: 'app-root',
@@ -96,13 +97,17 @@ export class AppComponent implements OnInit {
     private loadingService: LoadingService,
     private api: ApiService,
     private branchService: BranchService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private pushNotifications: PushNotificationService
   ) {
     translate.setDefaultLang('en');
     this.isLoading$ = loadingService.isLoading$;
   }
 
 ngOnInit() {
+  // Saved session: register this browser for account notifications (pickup / driver).
+  this.pushNotifications.syncAccountDevice();
+
   this.api.getAllBranches().subscribe({
     next: (data) => {
       const list = Array.isArray(data) ? data : data?.data || data?.result || [];

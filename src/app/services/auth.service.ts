@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { PushNotificationService } from './push-notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class AuthService {
   // baseUrl: string = "https://localhost:5001";
 
 
-  constructor(private httpClient: HttpClient) { 
+  constructor(private httpClient: HttpClient, private injector: Injector) {
         this.loadUserFromStorage(); // مهم: استدعاء هنا عشان يشتغل بعد كل refresh
 
   }
@@ -88,6 +89,8 @@ export class AuthService {
 
 
    logout() {
+    // Unlink this browser while the auth token is still available for the request.
+    this.injector.get(PushNotificationService).unregisterCurrentDevice();
     this.userSource.next(null);
     localStorage.removeItem('user');
     localStorage.removeItem('token');
