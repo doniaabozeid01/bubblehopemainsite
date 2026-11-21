@@ -8,6 +8,7 @@ export const environment = {
     storageBucket: "bubblehope-53b8f.appspot.com",
     messagingSenderId: "537902604580",
     appId: "1:537902604580:web:6052b8e7425c567c4613b1",
+    vapidKey: "BAtYyIQaqf88w9FFBleLqmGLi4IE3D6crdE3n82XN4Khf_Zq8GooUKtE9mZxfoNNy8xagtTFcyVo9bM4ZqP8204",
   },
 
   apiBaseUrl: "https://alhendalcompany-001-site1.stempurl.com"

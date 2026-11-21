@@ -1,5 +1,6 @@
 import * as CryptoJS from 'crypto-js';
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
+import { PushNotificationService } from './push-notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,9 +9,12 @@ export class TokenService {
 
   private secretKey = 'your-32-character-secret-key'; // خليها ثابتة بس متشاركيهاش برا
 
+  constructor(private injector: Injector) {}
+
   storeEncryptedToken(token: string) {
     const encrypted = CryptoJS.AES.encrypt(token, this.secretKey).toString();
     localStorage.setItem('token', encrypted);
+    this.injector.get(PushNotificationService).syncAccountDevice();
   }
 
   getDecryptedToken(): string | null {

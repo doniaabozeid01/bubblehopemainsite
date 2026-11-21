@@ -14,7 +14,7 @@ export class LoadingInterceptor implements HttpInterceptor {
 constructor(private loading: LoadingService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const ignore = req.url.includes('/assets/');
+    const ignore = req.url.includes('/assets/') || req.url.includes('/api/notifications/');
     if (ignore) return next.handle(req);
 
     // Count per subscription so retried requests start and stop the spinner in pairs.

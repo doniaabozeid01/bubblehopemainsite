@@ -5,8 +5,8 @@ import { BranchService } from './services/branch.service';
 import { Observable } from 'rxjs';
 import { ApiService } from './services/api.service';
 import { ToastrService } from 'ngx-toastr';
-import { SessionService } from './services/session.service';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { SessionService } from './services/session.service';
 
 @Component({
   selector: 'app-root',
@@ -99,9 +99,9 @@ export class AppComponent implements OnInit {
     private api: ApiService,
     private branchService: BranchService,
     private toastr: ToastrService,
-    private session: SessionService,
-    private router: Router
-  ) {
+    private router: Router,
+    private session: SessionService
+   ) {
     translate.setDefaultLang('en');
     this.isLoading$ = loadingService.isLoading$;
   }
@@ -139,8 +139,6 @@ export class AppComponent implements OnInit {
 
 ngOnInit() {
   this.watchScroll();
-
-  // Signs the customer out (and asks for a new login) as soon as the token expires.
   this.session.watch();
 
   this.api.getAllBranches().subscribe({
