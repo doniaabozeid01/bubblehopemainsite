@@ -5,6 +5,8 @@ import { BranchService } from './services/branch.service';
 import { Observable } from 'rxjs';
 import { ApiService } from './services/api.service';
 import { ToastrService } from 'ngx-toastr';
+import { SessionService } from './services/session.service';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -96,13 +98,51 @@ export class AppComponent implements OnInit {
     private loadingService: LoadingService,
     private api: ApiService,
     private branchService: BranchService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private session: SessionService,
+    private router: Router
   ) {
     translate.setDefaultLang('en');
     this.isLoading$ = loadingService.isLoading$;
   }
 
+  // ---- Every page opens at its top ----
+  private lastPath: string | null = null;
+  private backOrForward = false;
+
+  private watchScroll(): void {
+    this.router.events.subscribe((e) => {
+      if (e instanceof NavigationStart) {
+        this.backOrForward = e.navigationTrigger === 'popstate';
+      } else if (e instanceof NavigationEnd) {
+        const path = e.urlAfterRedirects.split('?')[0].split('#')[0];
+        const isNewPage = this.lastPath !== null && path !== this.lastPath;
+        this.lastPath = path;
+
+        // New page via a link/button: start at the top. Back/forward keeps the browser's own
+        // position, a #fragment link keeps its target, and same-page query changes stay put.
+        if (isNewPage && !this.backOrForward && !e.urlAfterRedirects.includes('#')) {
+          this.scrollToTop();
+        }
+      }
+    });
+  }
+
+  private scrollToTop(): void {
+    const jump = () =>
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    jump();
+    // Pages grow after they render (data, images, animations); keep it at the top meanwhile.
+    requestAnimationFrame(jump);
+    setTimeout(jump, 120);
+  }
+
 ngOnInit() {
+  this.watchScroll();
+
+  // Signs the customer out (and asks for a new login) as soon as the token expires.
+  this.session.watch();
+
   this.api.getAllBranches().subscribe({
     next: (data) => {
       const list = Array.isArray(data) ? data : data?.data || data?.result || [];

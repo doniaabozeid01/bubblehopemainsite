@@ -1,19 +1,22 @@
 import { Injectable, Injector, inject } from '@angular/core';
 import { HttpErrorResponse, HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
-import { Router } from '@angular/router';
 import { Observable, catchError, retry, throwError, timer } from 'rxjs';
 import { TokenService } from '../services/token.service';
-import { AuthService } from '../services/auth.service';
-import { CartCountService } from '../services/cart-count.service';
-import { WishlistCountService } from '../services/wishlist-count.service';
+import { SessionService } from '../services/session.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   private tokenService = inject(TokenService);
-  // AuthService needs HttpClient, which needs this interceptor: resolve it lazily.
+  // SessionService -> AuthService needs HttpClient, which needs this interceptor: resolve it lazily.
   private injector = inject(Injector);
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    // A token whose expiry has passed is useless: end the session now (the customer is asked
+    // to log in again) and send this request as a guest instead of failing with a 401 later.
+    if (this.tokenService.isExpired()) {
+      this.injector.get(SessionService).endSession(false);
+    }
+
     const raw = this.tokenService.getDecryptedToken() ?? '';
     const hasValidToken = !!raw && raw !== 'null' && raw !== 'undefined' && raw.trim() !== '';
 
@@ -26,7 +29,10 @@ export class AuthInterceptor implements HttpInterceptor {
     });
     return this.withRateLimitRetry(authReq, next.handle(authReq)).pipe(
       catchError((err: unknown) => {
-        if (err instanceof HttpErrorResponse && err.status === 401) this.endSession();
+        // The server rejected the stored token (expired, or issued by another backend).
+        if (err instanceof HttpErrorResponse && err.status === 401) {
+          this.injector.get(SessionService).endSession(true);
+        }
         return throwError(() => err);
       })
     );
@@ -51,19 +57,5 @@ export class AuthInterceptor implements HttpInterceptor {
         },
       })
     );
-  }
-
-  /** The server rejected the stored token (expired, or issued by another backend). */
-  private endSession(): void {
-    if (!this.tokenService.getDecryptedToken()) return;
-    this.injector.get(AuthService).logout();
-    this.tokenService.removeToken();
-    this.injector.get(CartCountService).setCount(0);
-    this.injector.get(WishlistCountService).clear();
-
-    const router = this.injector.get(Router);
-    const current = router.url;
-    if (current.startsWith('/auth')) return;
-    router.navigate(['/auth/login'], { queryParams: { returnUrl: current } });
   }
 }

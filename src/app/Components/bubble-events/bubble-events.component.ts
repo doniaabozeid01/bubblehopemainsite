@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   HostListener,
+  NgZone,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -193,7 +194,6 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
   readonly cateringHighlightKeys = ['bobaBar', 'waffle', 'branded', 'staff'];
 
   readonly heroSlides: HeroSlide[] = [
-    { src: BRAND('hero-birthday-group.webp'), slideKey: '0' },
     { src: BRAND('hero-palace-flowers.webp'), slideKey: '1' },
     { src: BRAND('hero-drinks-roses.webp'), slideKey: '2' },
     { src: BRAND('hero-reem-flowers.webp'), slideKey: '3' },
@@ -288,8 +288,16 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
     private seoService: SeoService,
     private toastr: ToastrService,
     private translate: TranslateService,
-    public languageService: LanguageService
+    public languageService: LanguageService,
+    private zone: NgZone,
+    private host: ElementRef<HTMLElement>
   ) {}
+
+  // Animation frames must not trigger Angular change detection: GSAP and ScrollTrigger tick on
+  // every frame, and running them inside the zone re-checked the whole page 60 times a second.
+  private quickBubblesX?: (value: number) => void;
+  private quickBubblesY?: (value: number) => void;
+  private progressBar: HTMLElement | null = null;
 
   ngOnInit(): void {
     this.updateSeo();
@@ -307,6 +315,13 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return;
     }
+
+    this.zone.runOutsideAngular(() => this.initAnimations());
+  }
+
+  private initAnimations(): void {
+    this.progressBar = this.host.nativeElement.querySelector('.events-showcase__progress-bar');
+    this.host.nativeElement.addEventListener('mousemove', this.onMouseMove, { passive: true });
 
     this.gsapCtx = gsap.context(() => {
       gsap.from('.events-hero__badge', {
@@ -357,25 +372,35 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
           start: 'top top',
           end: 'bottom top',
           scrub: 1.2,
+          // Gentle parallax: the photo drifts slower than the page and zooms a touch.
+          // (It used to shrink into a rounded card, which exposed the dark page behind it.)
           animation: gsap.to(bg, {
-            scale: 0.72,
-            borderRadius: 32,
-            opacity: 0.85,
-            y: 40,
+            yPercent: 14,
+            scale: 1.08,
             ease: 'none',
           }),
         });
         this.scrollTriggers.push(bgSt);
       }
 
+      // The "scroll to explore" hint has done its job after the first bit of scrolling.
+      if (hero) {
+        gsap.to('.events-hero__scroll', {
+          opacity: 0,
+          ease: 'none',
+          immediateRender: false,
+          scrollTrigger: { trigger: hero, start: 'top top', end: '+=180', scrub: true },
+        });
+      }
+
       if (!isCompact && hero && content) {
         const contentSt = ScrollTrigger.create({
           trigger: hero,
           start: 'top top',
-          end: 'bottom top',
+          end: '65% top',
           scrub: 1,
           animation: gsap.to(content, {
-            y: '-20%',
+            y: '-14%',
             opacity: 0,
             ease: 'none',
           }),
@@ -398,11 +423,23 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
       });
 
       this.updateGalleryHeroHeight();
+      // The autoplay changes template state, so its slide timer lives inside the zone.
       requestAnimationFrame(() => {
-        this.initGalleryAutoplay(!isCompact);
+        this.zone.run(() => this.initGalleryAutoplay(!isCompact));
         ScrollTrigger.refresh();
       });
       this.initBgBubbles();
+
+      if (this.heroBubblesLayer?.nativeElement) {
+        this.quickBubblesX = gsap.quickTo(this.heroBubblesLayer.nativeElement, 'x', {
+          duration: 1.2,
+          ease: 'power2.out',
+        });
+        this.quickBubblesY = gsap.quickTo(this.heroBubblesLayer.nativeElement, 'y', {
+          duration: 1.2,
+          ease: 'power2.out',
+        });
+      }
     });
   }
 
@@ -420,6 +457,7 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.scrollTriggers = [];
     this.bubbleTweens.forEach((t) => t.kill());
     this.clearGalleryAutoplay();
+    this.host.nativeElement.removeEventListener('mousemove', this.onMouseMove);
   }
 
   @HostListener('window:resize')
@@ -502,17 +540,21 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private initGalleryAutoplay(enabled = true): void {
     this.clearGalleryAutoplay();
-    this.galleryProgress = 0;
+    this.setGalleryProgress(0);
 
     if (!enabled || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return;
     }
 
+    // The progress bar is moved straight in the DOM (compositor-only transform) and outside the
+    // zone: ticking it 10x a second through change detection re-checked this whole page.
     const progressStep = 100 / (this.gallerySlideDuration / 100);
-    this.galleryProgressTimer = setInterval(() => {
-      if (this.galleryAutoplayPaused) return;
-      this.galleryProgress = Math.min(100, this.galleryProgress + progressStep);
-    }, 100);
+    this.zone.runOutsideAngular(() => {
+      this.galleryProgressTimer = setInterval(() => {
+        if (this.galleryAutoplayPaused) return;
+        this.setGalleryProgress(Math.min(100, this.galleryProgress + progressStep));
+      }, 100);
+    });
 
     this.galleryAutoplayTimer = setInterval(() => {
       if (this.galleryAutoplayPaused) return;
@@ -521,7 +563,12 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private restartGalleryAutoplay(): void {
-    this.galleryProgress = 0;
+    this.setGalleryProgress(0);
+  }
+
+  private setGalleryProgress(value: number): void {
+    this.galleryProgress = value;
+    if (this.progressBar) this.progressBar.style.transform = `scaleX(${value / 100})`;
   }
 
   private clearGalleryAutoplay(): void {
@@ -567,23 +614,14 @@ export class BubbleEventsComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  @HostListener('mousemove', ['$event'])
-  onMouseMove(event: MouseEvent): void {
-    if (window.matchMedia('(max-width: 768px)').matches) return;
+  /** Registered outside Angular (see initAnimations): a mouse move must not re-check the page. */
+  private onMouseMove = (event: MouseEvent): void => {
+    if (!this.quickBubblesX || !this.quickBubblesY) return;
+    if (window.innerWidth <= 768) return;
 
-    const nx = (event.clientX / window.innerWidth - 0.5) * 24;
-    const ny = (event.clientY / window.innerHeight - 0.5) * 14;
-
-    if (this.heroBubblesLayer?.nativeElement) {
-      gsap.to(this.heroBubblesLayer.nativeElement, {
-        x: nx,
-        y: ny,
-        duration: 1.2,
-        ease: 'power2.out',
-      });
-    }
-
-  }
+    this.quickBubblesX((event.clientX / window.innerWidth - 0.5) * 24);
+    this.quickBubblesY((event.clientY / window.innerHeight - 0.5) * 14);
+  };
 
   openLightbox(item: EventGalleryItem): void {
     this.activeGalleryItem = item;

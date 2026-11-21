@@ -472,6 +472,9 @@
         "makeAddressDefault": "Make this address default",
         "add": "Add"
     },
+    "session": {
+        "expired": "Your session has expired. Please log in again."
+    },
     "delivery": {
         "shareLocation": "Send my current location",
         "locating": "Getting your location...",

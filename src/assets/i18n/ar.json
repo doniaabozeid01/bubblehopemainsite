@@ -472,6 +472,9 @@
         "makeAddressDefault": "اجعل هذا العنوان افتراضيًا",
         "add": "إضافة"
     },
+    "session": {
+        "expired": "انتهت جلستك. سجّل دخول من جديد."
+    },
     "delivery": {
         "shareLocation": "ابعت موقعي الحالي",
         "locating": "جاري تحديد موقعك...",
