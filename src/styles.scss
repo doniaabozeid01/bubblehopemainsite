@@ -409,27 +409,140 @@ label {
   }
 }
 
-/* Toasts: keep the original font and position, just a bit more compact on phones */
-@media (max-width: 768px) {
-  .toast-container .ngx-toastr {
-    width: auto !important;
-    max-width: calc(100vw - 24px);
-    padding: 12px 14px 12px 48px !important;
-    background-position: 14px center !important;
-    background-size: 20px !important;
+/* ---------- Toasts: minimal white bar, small icon, thin colour edge ---------- */
+// "body" raises specificity so these win over ngx-toastr's own stylesheet.
+body .toast-container {
+  --toast-ink: #1e293b;
+
+  // Sit below the floating navbar instead of covering it.
+  &.toast-top-center {
+    top: 100px;
+    left: 0;
+    right: 0;
+    width: 100%;
   }
 
-  .toast-container .ngx-toastr .toast-message,
-  .toast-container .ngx-toastr .toast-title {
-    font-size: 15px !important;
-    line-height: 1.4;
+  .ngx-toastr {
+    --toast-accent: #ff7f00;
+    --toast-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 15h-2v-6h2v6Zm0-8h-2V7h2v2Z'/%3E%3C/svg%3E");
+
+    position: relative;
+    box-sizing: border-box;
+    width: fit-content !important;
+    min-width: 0;
+    max-width: min(420px, calc(100vw - 24px));
+    margin: 0 auto 8px;
+    padding-block: 9px !important;
+    padding-inline: 56px 22px !important;
+    min-height: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #fff !important;
+    background-image: none !important;
+    color: var(--toast-ink) !important;
+    border: 1px solid #f0e9e0;
+    border-radius: 18px;
+    box-shadow:
+      0 12px 30px -12px color-mix(in srgb, var(--toast-accent) 45%, transparent),
+      0 2px 6px -2px rgba(30, 41, 59, 0.1);
+    overflow: hidden;
+    opacity: 1;
+    text-align: start;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    // Solid rounded-square badge in the accent colour
+    &::before {
+      content: '';
+      position: absolute;
+      inset-inline-start: 9px;
+      top: 50%;
+      width: 34px;
+      height: 34px;
+      transform: translateY(-50%);
+      border-radius: 12px;
+      background: var(--toast-accent);
+    }
+
+    // White icon on the badge
+    &::after {
+      content: '';
+      position: absolute;
+      inset-inline-start: 19px;
+      top: 50%;
+      width: 14px;
+      height: 14px;
+      transform: translateY(-50%);
+      background-color: #fff;
+      -webkit-mask: var(--toast-icon) center / contain no-repeat;
+      mask: var(--toast-icon) center / contain no-repeat;
+    }
+
+    .toast-title {
+      margin-bottom: 1px;
+      font-size: 13px !important;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--toast-ink);
+    }
+
+    .toast-message {
+      font-size: 14px !important;
+      font-weight: 600;
+      line-height: 1.5;
+      color: var(--toast-ink);
+      word-break: break-word;
+    }
+
+    // Kept minimal: no timer line
+    .toast-progress {
+      display: none;
+    }
+
+    .toast-close-button {
+      position: absolute;
+      inset-inline-end: 10px;
+      top: 6px;
+      color: rgba(30, 41, 59, 0.4);
+      text-shadow: none;
+      opacity: 1;
+    }
+  }
+
+  .toast-success {
+    --toast-accent: #ff7f00;
+    --toast-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M9.55 18.2 3.8 12.45l1.9-1.9 3.85 3.85 8.75-8.75 1.9 1.9-10.65 10.65Z'/%3E%3C/svg%3E");
+  }
+
+  .toast-error {
+    --toast-accent: #e5384f;
+    --toast-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='m18.3 7.1-1.4-1.4L12 10.6 7.1 5.7 5.7 7.1l4.9 4.9-4.9 4.9 1.4 1.4 4.9-4.9 4.9 4.9 1.4-1.4-4.9-4.9 4.9-4.9Z'/%3E%3C/svg%3E");
+  }
+
+  .toast-warning {
+    --toast-accent: #e69500;
+    --toast-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M1 21 12 2l11 19H1Zm12-3v-2h-2v2h2Zm0-4v-4h-2v4h2Z'/%3E%3C/svg%3E");
+  }
+
+  .toast-info {
+    --toast-accent: #2bb6cf;
   }
 }
 
-.toast-success {
-  background-color: #F47524 !important;
-  /* أخضر مخصص */
-  color: white !important;
+@media (max-width: 768px) {
+  body .toast-container {
+    &.toast-top-center {
+      top: 82px;
+    }
+
+    .ngx-toastr {
+      min-width: 0;
+      padding-inline: 54px 16px !important;
+    }
+  }
 }
 
 // @font-face {

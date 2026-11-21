@@ -26,6 +26,7 @@ import { MainLayoutComponent } from './Components/Layouts/main-layout/main-layou
 import { HomeComponent } from './Components/home/home.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { AppToastComponent } from './Components/app-toast/app-toast.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { AuthInterceptor } from './Interceptors/auth.interceptor';
 import { AdvertiseCarouselComponent } from './Components/HomeSections/advertise-carousel/advertise-carousel.component';
@@ -144,8 +145,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     }),
     BrowserAnimationsModule,
     ToastrModule.forRoot({
-      positionClass: 'toast-top-right',
-      timeOut: 3000,
+      positionClass: 'toast-top-center',
+      timeOut: 3500,
+      progressBar: true,
+      toastComponent: AppToastComponent,
       preventDuplicates: true,
     }),
   ],
