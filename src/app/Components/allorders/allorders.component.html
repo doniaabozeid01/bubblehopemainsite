@@ -98,7 +98,7 @@
       <div class="order-head__end">
         <span class="status-badge" [ngClass]="getStatusClass(order.status)">
           <ng-container *ngIf="statusKey(order.status) as key; else rawStatus">{{ key | translate }}</ng-container>
-          <ng-template #rawStatus>{{ order.status }}</ng-template>
+          <ng-template #rawStatus>{{ statusText(order.status) }}</ng-template>
         </span>
         <i class="fa-solid fa-chevron-down order-chevron" *ngIf="!active"
           [class.is-open]="isOpen(order, active)" aria-hidden="true"></i>

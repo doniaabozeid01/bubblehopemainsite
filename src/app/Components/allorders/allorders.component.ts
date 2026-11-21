@@ -24,7 +24,19 @@ const STATUS_ALIASES: Record<string, string> = {
   cancelled: 'canceled',
 };
 
-const KNOWN_STATUSES = ['pending', 'confirmed', 'shipped', 'delivered', 'canceled'];
+const KNOWN_STATUSES = [
+  'pending',
+  'confirmed',
+  'readyforpickup',
+  'shipped',
+  'delivered',
+  'canceled',
+];
+
+/** Statuses with their own label that sit on an existing tracker step. */
+const TRACKER_STEP_FOR: Record<string, string> = {
+  readyforpickup: 'confirmed',
+};
 
 /** How often the page re-checks the server for status changes. */
 /** Finished orders shown per page in "Previous". */
@@ -276,7 +288,16 @@ export class AllordersComponent implements OnInit, OnDestroy {
 
   private normStatus(status: string | null | undefined): string {
     const s = String(status ?? '').trim().toLowerCase();
-    return STATUS_ALIASES[s] ?? s;
+    const compact = s.replace(/[\s_-]+/g, '');
+    return STATUS_ALIASES[s] ?? STATUS_ALIASES[compact] ?? compact;
+  }
+
+  /** Readable fallback for statuses we have no translation for ("SomeNewStatus" -> "Some New Status"). */
+  statusText(status: string | null | undefined): string {
+    return String(status ?? '')
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/[_-]+/g, ' ')
+      .trim();
   }
 
   /** Translation key for known statuses, or null to show the raw text. */
@@ -287,13 +308,15 @@ export class AllordersComponent implements OnInit, OnDestroy {
 
   /** Position in the progress tracker, or -1 when the status is not part of it. */
   stepIndex(status: string | null | undefined): number {
-    return (STEPS as readonly string[]).indexOf(this.normStatus(status));
+    const s = this.normStatus(status);
+    return (STEPS as readonly string[]).indexOf(TRACKER_STEP_FOR[s] ?? s);
   }
   getStatusClass(status: string): string {
     switch (this.normStatus(status)) {
       case 'pending':
         return 'bg-warning text-dark';      // أصفر
       case 'confirmed':
+      case 'readyforpickup':
         return 'bg-info text-white';        // أزرق فاتح
       case 'shipped':
         return 'bg-primary text-white';     // أزرق غامق

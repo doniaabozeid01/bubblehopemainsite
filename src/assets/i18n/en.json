@@ -425,6 +425,7 @@
         "status": {
             "pending": "Pending",
             "confirmed": "Confirmed",
+            "readyforpickup": "Ready for pickup",
             "shipped": "On the way",
             "delivered": "Delivered",
             "canceled": "Canceled",

@@ -425,6 +425,7 @@
         "status": {
             "pending": "في الانتظار",
             "confirmed": "تم التأكيد",
+            "readyforpickup": "جاهز للاستلام",
             "shipped": "في الطريق",
             "delivered": "تم التوصيل",
             "canceled": "ملغي",
