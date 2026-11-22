@@ -162,10 +162,15 @@ export class MainCategoriesComponent implements OnInit, OnDestroy {
     }
   }
 
-  /** The white card stays hidden until its own photo has painted. */
+  /** Swap the cup stand-in for the real category photo once it has painted. */
   markPhoto(cat: { photoReady?: boolean }): void {
     if (cat.photoReady) return;
     cat.photoReady = true;
+  }
+
+  /** Keep the cup stand-in when the category file fails. */
+  dropPhoto(cat: { photoFailed?: boolean }): void {
+    cat.photoFailed = true;
   }
 
   /** Cached photos can finish before the (load) listener exists. */

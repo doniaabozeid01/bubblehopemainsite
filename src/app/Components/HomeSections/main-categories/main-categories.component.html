@@ -41,14 +41,23 @@
           >
             <div class="bev-card__media">
               <img
+                src="assets/img/category-placeholder.png"
+                alt=""
+                class="bev-card__img bev-card__img--hold"
+                draggable="false"
+                aria-hidden="true"
+              />
+              <img
+                *ngIf="cat.imageUrl && !cat.photoFailed"
                 [src]="cat.imageUrl"
                 [alt]="(languageService.languageChanged$ | async) === 'ar' ? cat.name_ar : cat.name"
-                class="bev-card__img"
+                class="bev-card__img bev-card__img--photo"
+                [class.is-ready]="cat.photoReady"
                 draggable="false"
                 decoding="async"
                 [attr.fetchpriority]="i < 4 ? 'high' : 'low'"
                 (load)="markPhoto(cat)"
-                (error)="markPhoto(cat)"
+                (error)="dropPhoto(cat)"
               />
             </div>
 

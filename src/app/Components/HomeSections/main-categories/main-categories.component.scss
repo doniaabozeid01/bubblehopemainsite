@@ -71,12 +71,7 @@ $orange: #ff7304;
   padding-top: 230px;
   overflow: visible;
   cursor: pointer;
-  opacity: 0;
   --accent: #ff7304;
-
-  &.is-ready {
-    opacity: 1;
-  }
 
   &:hover .bev-card__panel {
     transform: translateY(-3px);
@@ -114,7 +109,25 @@ $orange: #ff7304;
   object-position: center bottom;
   -webkit-user-drag: none;
   user-select: none;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.bev-card__img--hold {
+  opacity: 1;
+}
+
+.bev-card.is-ready .bev-card__img--hold {
+  opacity: 0;
+}
+
+.bev-card__img--photo {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+
+  &.is-ready {
+    opacity: 1;
+  }
 }
 
 /* White panel holds blob + text; clips only the ornament */
