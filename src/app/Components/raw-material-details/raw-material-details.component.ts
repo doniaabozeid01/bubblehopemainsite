@@ -113,7 +113,7 @@ export class RawMaterialDetailsComponent implements OnDestroy {
                       return of(null);
                     })
                   )
-                  .subscribe((fav) => (this.product.isFavourite = !!fav));
+                  .subscribe((fav) => (this.product.isFavourite = !!fav?.id));
               }
             });
           } else {

@@ -507,7 +507,7 @@ export class ProductDetailsComponent implements AfterViewInit, OnDestroy {
             )
             .pipe(catchError(() => of(null)))
             .subscribe((res) => {
-              this.product.isFavourite = !!res;
+              this.product.isFavourite = !!res?.id;
             });
         } else {
           this.product.isFavourite = false;
