@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, catchError, map, of, switchMap, throwError } from 'rxjs';
+import { Observable, Subscription, catchError, map, of, switchMap, throwError } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { ApiService } from 'src/app/services/api.service';
 import { BranchService } from 'src/app/services/branch.service';
@@ -13,13 +13,15 @@ import { WishlistCountService } from 'src/app/services/wishlist-count.service';
   templateUrl: './favourits.component.html',
   styleUrls: ['./favourits.component.scss'],
 })
-export class FavouritsComponent {
+export class FavouritsComponent implements OnDestroy {
   wishlist: any[] = [];
   usreId!: string;
   cartId!: number;
   branchId!: any;
   loading = true;
   trackById = (_: number, x: any) => x.id ?? x.productId;
+  private branchSub?: Subscription;
+  private destroyed = false;
 
   constructor(
     private apiService: ApiService,
@@ -43,6 +45,7 @@ export class FavouritsComponent {
 
     this.apiService.GetUserId().subscribe({
       next: (response) => {
+        if (this.destroyed) return;
         this.usreId = response.userId;
         this.seoService.updateTitleAndDescription(
           `Wishlist | Bubble Hope`,
@@ -59,7 +62,7 @@ export class FavouritsComponent {
           this.loading = false;
         }
 
-        this.branchService.currentBranch$.subscribe((branchId) => {
+        this.branchSub = this.branchService.currentBranch$.subscribe((branchId) => {
           if (branchId && branchId !== this.branchId) {
             this.branchId = branchId;
             this.GetProductFavouriteByUserId(this.usreId, branchId);
@@ -71,6 +74,11 @@ export class FavouritsComponent {
         this.router.navigate(['/home']);
       },
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed = true;
+    this.branchSub?.unsubscribe();
   }
 
   productName(item: any): string {

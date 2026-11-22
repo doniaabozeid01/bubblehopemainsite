@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, of } from 'rxjs';
+import { Subscription, catchError, of } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { BranchService } from 'src/app/services/branch.service';
 import { CartCountService } from 'src/app/services/cart-count.service';
@@ -76,6 +76,7 @@ export class ProductDetailsComponent implements AfterViewInit, OnDestroy {
   private returnCategoryId: number | null = null;
   private returnTab: 'offers' | 'best' | null = null;
   private galleryStickyFrame = 0;
+  private branchSub?: Subscription;
 
   constructor(
     private cartCountService: CartCountService,
@@ -262,6 +263,7 @@ export class ProductDetailsComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.branchSub?.unsubscribe();
     cancelAnimationFrame(this.galleryStickyFrame);
     this.resetGallerySticky();
     this.resetCheckoutDock();
@@ -443,7 +445,7 @@ export class ProductDetailsComponent implements AfterViewInit, OnDestroy {
       });
     }
 
-    this.branchService.currentBranch$.subscribe((bid) => {
+    this.branchSub = this.branchService.currentBranch$.subscribe((bid) => {
       this.branchId = bid;
 
       if (this.branchId == null) {

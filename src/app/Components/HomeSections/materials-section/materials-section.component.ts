@@ -13,6 +13,7 @@ import { CarouselComponent, OwlOptions } from 'ngx-owl-carousel-o';
 import { ApiService } from '../../../services/api.service';
 import { BranchService } from '../../../services/branch.service';
 import { LanguageService } from '../../../services/language.service';
+import { Subscription } from 'rxjs';
 
 export interface MaterialPillar {
   num: string;
@@ -97,6 +98,8 @@ export class MaterialsSectionComponent implements OnInit, AfterViewInit, OnDestr
   private targetProgress = 0;
   private displayProgress = 0;
   private langSub?: { unsubscribe: () => void };
+  private branchSub?: Subscription;
+  private loadedBranchId = 0;
   private snapping = false;
 
   constructor(
@@ -155,10 +158,11 @@ export class MaterialsSectionComponent implements OnInit, AfterViewInit, OnDestr
       this.cdr.markForCheck();
     });
 
-    const branchId = this.branchService.getCurrentBranch() ?? 2;
-    this.loadPillars(branchId);
-    this.branchService.currentBranch$.subscribe((id) => {
-      if (id) this.loadPillars(id);
+    this.branchSub = this.branchService.currentBranch$.subscribe((id) => {
+      const next = Number(id) || Number(this.branchService.getCurrentBranch()) || 2;
+      if (!next || next === this.loadedBranchId) return;
+      this.loadedBranchId = next;
+      this.loadPillars(next);
     });
   }
 
@@ -190,6 +194,7 @@ export class MaterialsSectionComponent implements OnInit, AfterViewInit, OnDestr
     this.stopLerp();
     if (this.snapTimer) clearTimeout(this.snapTimer);
     this.langSub?.unsubscribe();
+    this.branchSub?.unsubscribe();
   }
 
   private syncMobileRtl(): void {

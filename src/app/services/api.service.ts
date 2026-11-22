@@ -54,10 +54,10 @@ export class ApiService {
   }
 
 
-  /** Same branch catalog, never shared/cached: used to read the per-branch isFavorite flags. */
+  /** Branch catalog with isFavorite per product. Not cached, so a fresh login is not stale. */
   GetBranchProductsFresh(branchId: number, userId: string): Observable<any> {
     const params = new HttpParams().set('branchId', String(branchId)).set('userId', userId);
-    return this.http.get(`${this.baseUrl}/api/Stock/GetProductsForBranch`, { params });
+    return this.http.get(`${this.baseUrl}/api/Stock/GetProducts`, { params });
   }
 
   GetAllProductsByCategoryId(

@@ -49,6 +49,7 @@ export class ProductsComponent implements OnDestroy {
   private newGroup: ProductGroup | null = null;
 
   private branchSub?: Subscription;
+  private destroyed = false;
   private routeSub?: Subscription;
   private langSub?: Subscription;
   private searchTimer?: ReturnType<typeof setTimeout>;
@@ -124,10 +125,14 @@ export class ProductsComponent implements OnDestroy {
     if (token) {
       this.apiService.GetUserId().subscribe({
         next: (response) => {
+          if (this.destroyed) return;
           this.userId = response.userId;
           this.bindBranchAndRoute();
         },
-        error: () => this.bindBranchAndRoute(),
+        error: () => {
+          if (this.destroyed) return;
+          this.bindBranchAndRoute();
+        },
       });
     } else {
       this.bindBranchAndRoute();
@@ -135,6 +140,7 @@ export class ProductsComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroyed = true;
     this.branchSub?.unsubscribe();
     this.routeSub?.unsubscribe();
     this.langSub?.unsubscribe();
@@ -311,6 +317,7 @@ export class ProductsComponent implements OnDestroy {
   }
 
   private enrichProduct(p: any): any {
+    p.isFavorite = !!(p?.isFavorite || p?.isFavourite);
     const n = Number(p?.newPrice ?? p?.oldPrice ?? 0);
     let badge: string | null = null;
     if (p.stock > 0) {
@@ -326,7 +333,10 @@ export class ProductsComponent implements OnDestroy {
   loadProducts(branchId: number): void {
     this.loading = true;
     this.apiService
-      .GetAllProducts(Number(branchId), this.userId, this.groupCategoryId)
+      .GetAllProductsByCategoryId(Number(branchId), {
+        userId: this.userId || undefined,
+        groupCategoryId: this.groupCategoryId,
+      })
       .subscribe({
         next: (res) => {
           this.normalizeProducts(res);
@@ -372,18 +382,25 @@ export class ProductsComponent implements OnDestroy {
         };
       });
     } else {
-      const cat = res[0]?.category;
-      const name = cat?.name || res[0]?.categoryName || 'Menu';
-      const nameAr = cat?.name_ar || res[0]?.categoryName_ar || name;
-      const id = cat?.id ?? this.routeCategoryId ?? name;
-      this.groups = [
-        {
-          key: String(id),
-          name,
-          nameAr,
-          products: pinnedFirst(res.map((p: any) => this.enrichProduct(p))),
-        },
-      ];
+      const buckets = new Map<string, ProductGroup>();
+      for (const raw of res) {
+        const p = this.enrichProduct(raw);
+        const cat = p.category;
+        const name = p.categoryName || cat?.name || 'Menu';
+        const nameAr = p.categoryName_ar || p.categoryNameAr || cat?.name_ar || name;
+        const id = p.categoryId ?? cat?.id ?? this.routeCategoryId ?? name;
+        const key = String(id);
+        const bucket = buckets.get(key);
+        if (bucket) {
+          bucket.products.push(p);
+        } else {
+          buckets.set(key, { key, name, nameAr, products: [p] });
+        }
+      }
+      this.groups = Array.from(buckets.values()).map((g) => ({
+        ...g,
+        products: pinnedFirst(g.products),
+      }));
     }
 
     this.products = this.groups.flatMap((g) => g.products);

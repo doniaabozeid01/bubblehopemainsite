@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
@@ -6,7 +6,7 @@ import { BranchService } from 'src/app/services/branch.service';
 import { LanguageService } from 'src/app/services/language.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, forkJoin, of } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { CartCountService } from 'src/app/services/cart-count.service';
 
@@ -15,7 +15,7 @@ import { CartCountService } from 'src/app/services/cart-count.service';
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss']
 })
-export class CheckoutComponent implements OnInit {
+export class CheckoutComponent implements OnInit, OnDestroy {
 
   readonly FulfillmentType = {
     Delivery: 1,
@@ -37,6 +37,8 @@ export class CheckoutComponent implements OnInit {
 
   addresses: any[] = [];
   paymentMethods: any[] = [];
+  private branchSub?: Subscription;
+  private destroyed = false;
 
   discountRatio = 0;
   discountError: string | null = null;
@@ -104,6 +106,7 @@ export class CheckoutComponent implements OnInit {
     this.loadBranches();
 
     this.api.GetUserId().subscribe(res => {
+      if (this.destroyed) return;
       this.userId = res.userId;
       this.loadAddresses();
 
@@ -123,7 +126,7 @@ export class CheckoutComponent implements OnInit {
         });
       }
 
-      this.branchService.currentBranch$.subscribe((newBranchId) => {
+      this.branchSub = this.branchService.currentBranch$.subscribe((newBranchId) => {
         if (!newBranchId || !this.userId) return;
         if (newBranchId === this.branchId) return;
 
@@ -133,6 +136,11 @@ export class CheckoutComponent implements OnInit {
       });
     });
 }
+
+  ngOnDestroy(): void {
+    this.destroyed = true;
+    this.branchSub?.unsubscribe();
+  }
 
   loadBranches() {
     this.api.getAllBranches().subscribe({
@@ -413,15 +421,11 @@ export class CheckoutComponent implements OnInit {
 
         this.toastr.success(successMsg);
 
-        // The order is placed: empty the cart so it doesn't keep showing the
-        // same items (or get ordered twice). Errors are ignored on purpose —
-        // the server may already have cleared it.
-        const cartId = this.cartId;
-        const leftoverIds: number[] = (this.cartItems || []).map((i: any) => i.id).filter(Boolean);
+        // CreateOrderPaymob already empties the cart. Only reset the screen and the badge.
         this.cartItems = [];
         this.totalamount = 0;
         this.cartCountService.clear();
-        this.emptyServerCart(cartId, leftoverIds, () => this.router.navigate(['/allorders']));
+        this.router.navigate(['/allorders']);
       },
       error: (err) => {
         this.loading = false;
@@ -500,33 +504,6 @@ export class CheckoutComponent implements OnInit {
         return of(null);
       })
     );
-  }
-
-  /**
-   * Empties the cart on the server after an order was placed.
-   * 1) ClearCart(cartId); 2) if that fails, delete the items one by one;
-   * 3) if the server already emptied it, nothing is left to do.
-   * Failures are logged (not shown) — the order itself already succeeded.
-   */
-  private emptyServerCart(cartId: number, itemIds: number[], done: () => void): void {
-    const deleteOneByOne = () => {
-      if (!itemIds.length) { done(); return; }
-      forkJoin(
-        itemIds.map((id) =>
-          this.api.DeleteCartItem(id).pipe(catchError(() => of(null)))
-        )
-      ).subscribe({ next: () => done(), error: () => done() });
-    };
-
-    if (!cartId) { deleteOneByOne(); return; }
-
-    this.api.ClearCart(cartId).subscribe({
-      next: () => done(),
-      error: (err) => {
-        console.warn('ClearCart failed, deleting items one by one', err);
-        deleteOneByOne();
-      },
-    });
   }
 
   // =============================

@@ -1,4 +1,5 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ApiService } from 'src/app/services/api.service';
@@ -11,7 +12,7 @@ import { SeoService } from 'src/app/services/seo.service';
   templateUrl: './advertisement-products.component.html',
   styleUrls: ['./advertisement-products.component.scss']
 })
-export class AdvertisementProductsComponent {
+export class AdvertisementProductsComponent implements OnDestroy {
 
 
   constructor(private apiService: ApiService, private route: ActivatedRoute, private router: Router, private branchService: BranchService, private toastr: ToastrService, public languageService: LanguageService, private seoService: SeoService) { }
@@ -21,6 +22,8 @@ export class AdvertisementProductsComponent {
   userId!: string;
   branchId!: number;
   advertisementId: number = 0;
+  private branchSub?: Subscription;
+  private destroyed = false;
 
   ngOnInit() {
 
@@ -37,6 +40,7 @@ export class AdvertisementProductsComponent {
     if (token) {
       this.apiService.GetUserId().subscribe({
         next: (response) => {
+          if (this.destroyed) return;
           this.userId = response.userId;
           const initialBranchId = Number(this.branchService.getCurrentBranch());
           if (initialBranchId) {
@@ -44,7 +48,7 @@ export class AdvertisementProductsComponent {
             this.loadProducts(this.advertisementId, initialBranchId, this.userId);
           }
 
-          this.branchService.currentBranch$.subscribe(branchId => {
+          this.branchSub = this.branchService.currentBranch$.subscribe(branchId => {
             if (branchId && branchId !== this.branchId) {
               this.branchId = branchId;
               this.loadProducts(this.advertisementId, branchId, this.userId);
@@ -52,14 +56,15 @@ export class AdvertisementProductsComponent {
           });
         },
 
-        error: (err) => {
+        error: () => {
+          if (this.destroyed) return;
           const initialBranchId = Number(this.branchService.getCurrentBranch());
           if (initialBranchId) {
             this.branchId = initialBranchId;
             this.loadProducts(this.advertisementId, initialBranchId, this.userId);
           }
 
-          this.branchService.currentBranch$.subscribe(branchId => {
+          this.branchSub = this.branchService.currentBranch$.subscribe(branchId => {
             if (branchId && branchId !== this.branchId) {
               this.branchId = branchId;
               this.loadProducts(this.advertisementId, branchId, this.userId);
@@ -76,7 +81,7 @@ export class AdvertisementProductsComponent {
         this.loadProducts(this.advertisementId, initialBranchId, this.userId);
       }
 
-      this.branchService.currentBranch$.subscribe(branchId => {
+      this.branchSub = this.branchService.currentBranch$.subscribe(branchId => {
         if (branchId && branchId !== this.branchId) {
           this.branchId = branchId;
           this.loadProducts(this.advertisementId, branchId, this.userId);
@@ -85,6 +90,11 @@ export class AdvertisementProductsComponent {
     }
 
 
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed = true;
+    this.branchSub?.unsubscribe();
   }
 
 

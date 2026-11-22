@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
@@ -14,7 +15,7 @@ import { SeoService } from 'src/app/services/seo.service';
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
 })
-export class CartComponent {
+export class CartComponent implements OnDestroy {
   trackById = (_: number, x: any) => x.id;
 
   isRtl = document.documentElement.dir === 'rtl';
@@ -23,6 +24,8 @@ export class CartComponent {
   branchId!: any;
   branches: any[] = [];
   deliveryFee: number = 0;
+  private branchSub?: Subscription;
+  private destroyed = false;
 
   constructor(
     private http: HttpClient,
@@ -43,7 +46,7 @@ export class CartComponent {
     });
     this.loadBranches();
 
-    this.branchService.currentBranch$.subscribe((branchId) => {
+    this.branchSub = this.branchService.currentBranch$.subscribe((branchId) => {
       const id = Number(branchId);
       if (!id || id === Number(this.branchId)) return;
       this.branchId = id;
@@ -55,6 +58,7 @@ export class CartComponent {
     if (token) {
       this.apiService.GetUserId().subscribe({
         next: (res) => {
+          if (this.destroyed) return;
           this.userId = typeof res === 'string' ? res : res?.userId;
           const initialBranchId = Number(this.branchService.getCurrentBranch());
           if (this.userId && initialBranchId) {
@@ -75,19 +79,11 @@ export class CartComponent {
     } else {
       this.route.navigate(['/home']);
     }
+  }
 
-    // const initialBranchId = Number(this.branchService.getCurrentBranch());
-    // if (initialBranchId) {
-    //   this.branchId = initialBranchId;
-    //   this.getCart();
-    // }
-
-    // this.branchService.currentBranch$.subscribe(branchId => {
-    //   if (branchId && branchId !== this.branchId) {
-    //     this.branchId = branchId;
-    //     this.getCart();
-    //   }
-    // });
+  ngOnDestroy(): void {
+    this.destroyed = true;
+    this.branchSub?.unsubscribe();
   }
 
   loadBranches() {

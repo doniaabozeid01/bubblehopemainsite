@@ -15,8 +15,13 @@ function favouriteIdsInCatalog(res: any): Set<number> | null {
   const products: any[] = groups.flatMap((g: any) =>
     Array.isArray(g?.products) ? g.products : [g]
   );
-  if (!products.some((p) => p && 'isFavorite' in p)) return null;
-  return new Set(products.filter((p) => p?.isFavorite).map((p) => Number(p.id ?? p.productId)));
+  const flagged = products.filter((p) => p && ('isFavorite' in p || 'isFavourite' in p));
+  if (!flagged.length) return null;
+  return new Set(
+    flagged
+      .filter((p) => p.isFavorite || p.isFavourite)
+      .map((p) => Number(p.id ?? p.productId))
+  );
 }
 
 @Injectable({ providedIn: 'root' })
@@ -33,8 +38,8 @@ export class WishlistCountService {
   }
 
   /**
-   * Favourites saved in this branch only. The favourites endpoint ignores branchId, but the
-   * branch catalog marks isFavorite per branch, so the catalog decides what belongs here.
+   * Favourites saved in this branch only. GetProducts marks isFavorite for this user
+   * and branch, so the catalog decides what belongs here.
    */
   loadForBranch(userId: string, branchId: number): Observable<any[]> {
     return forkJoin({

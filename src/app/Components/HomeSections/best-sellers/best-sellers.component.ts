@@ -1,4 +1,5 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { CarouselComponent, OwlOptions } from 'ngx-owl-carousel-o';
 import { ToastrService } from 'ngx-toastr';
@@ -12,7 +13,7 @@ import { WishlistCountService } from 'src/app/services/wishlist-count.service';
   templateUrl: './best-sellers.component.html',
   styleUrls: ['./best-sellers.component.scss'],
 })
-export class BestSellersComponent {
+export class BestSellersComponent implements OnDestroy {
   @ViewChild('bestCarousel', { static: false }) bestCarousel!: CarouselComponent;
 
   isRTL = false;
@@ -21,6 +22,8 @@ export class BestSellersComponent {
   cartId!: number;
   userId!: string;
   branchId!: any;
+  private branchSub?: Subscription;
+  private destroyed = false;
 
   private readonly badgeKeys = [
     'home.bestSellersBadgeFan',
@@ -59,7 +62,8 @@ export class BestSellersComponent {
   ngOnInit() {
     const token = localStorage.getItem('token');
     const watchBranch = () => {
-      this.branchService.currentBranch$.subscribe((branchId) => {
+      if (this.destroyed) return;
+      this.branchSub = this.branchService.currentBranch$.subscribe((branchId) => {
         if (!branchId || Number(branchId) === Number(this.branchId)) return;
         this.branchId = branchId;
         this.GetBestSellerProducts(branchId, this.userId);
@@ -69,6 +73,7 @@ export class BestSellersComponent {
     if (token) {
       this.api.GetUserId().subscribe({
         next: (response) => {
+          if (this.destroyed) return;
           this.userId = response.userId;
           watchBranch();
         },
@@ -82,6 +87,11 @@ export class BestSellersComponent {
       this.isRTL = lang === 'ar';
       this.bestOptions = { ...this.bestOptions, rtl: this.isRTL };
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed = true;
+    this.branchSub?.unsubscribe();
   }
 
   badgeKey(index: number): string {

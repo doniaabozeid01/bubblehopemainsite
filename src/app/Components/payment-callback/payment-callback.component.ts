@@ -84,9 +84,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { ApiService } from 'src/app/services/api.service';
 import { ActivatedRoute } from '@angular/router';
-import { BranchService } from 'src/app/services/branch.service';
 import { CartCountService } from 'src/app/services/cart-count.service';
 
 interface OrderDto { paymentStatus: 0 | 1; }
@@ -101,34 +99,15 @@ export class PaymentCallbackComponent implements OnInit {
   private readonly CART_BACKUP_KEY = 'cart_backup';
 
   constructor(
-    private api: ApiService,
     private router: Router,
     private toastr: ToastrService,
     private route: ActivatedRoute,
-    private branchService: BranchService,
     private cartCountService: CartCountService
   ) { }
 
-  /** Payment succeeded: the order exists, so empty the cart (best effort). */
+  /** Payment succeeded: checkout already emptied the cart. Reset the badge. */
   private clearPaidCart(): void {
-    const branchId = this.branchService.getCurrentBranch();
     this.cartCountService.clear();
-    if (!branchId) return;
-
-    this.api.GetUserId().subscribe({
-      next: (u: any) => {
-        if (!u?.userId) return;
-        this.api.GetCartByUserIdAndBranchId(u.userId, branchId).subscribe({
-          next: (cart: any) => {
-            if (cart?.id && cart?.cartItems?.length) {
-              this.api.ClearCart(cart.id).subscribe({ error: () => { } });
-            }
-          },
-          error: () => { },
-        });
-      },
-      error: () => { },
-    });
   }
 
   ngOnInit(): void {

@@ -53,7 +53,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   /** Orders still in progress (pending / confirmed / on the way). */
   activeOrdersCount = 0;
 
-  private routerSub?: Subscription;
+  private subs = new Subscription();
 
   constructor(
     private activeOrdersService: ActiveOrdersService,
@@ -73,26 +73,28 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.scrolled = window.scrollY > 24;
     this.updateHomeFlag();
 
-    this.routerSub = this.router.events
-      .pipe(filter((e) => e instanceof NavigationEnd))
-      .subscribe(() => {
-        this.updateHomeFlag();
-        this.closeMenu();
-        (document.activeElement as HTMLElement | null)?.blur?.();
-        // e.g. right after checkout: pick up the new order without waiting for the next poll
-        if (this.userId) this.activeOrdersService.refresh();
-      });
+    this.subs.add(
+      this.router.events
+        .pipe(filter((e) => e instanceof NavigationEnd))
+        .subscribe(() => {
+          this.updateHomeFlag();
+          this.closeMenu();
+          (document.activeElement as HTMLElement | null)?.blur?.();
+          // e.g. right after checkout: pick up the new order without waiting for the next poll
+          if (this.userId) this.activeOrdersService.refresh();
+        })
+    );
 
-    this.authService.currentUser$.subscribe((u) => {
+    this.subs.add(this.authService.currentUser$.subscribe((u) => {
       this.user = u;
-    });
-    this.cartCountService.cartCount$.subscribe((c) => (this.cartCount = c));
-    this.wishlistCountService.wishlistCount$.subscribe((c) => (this.wishlistCount = c));
-    this.activeOrdersService.count$.subscribe((c) => (this.activeOrdersCount = c));
+    }));
+    this.subs.add(this.cartCountService.cartCount$.subscribe((c) => (this.cartCount = c)));
+    this.subs.add(this.wishlistCountService.wishlistCount$.subscribe((c) => (this.wishlistCount = c)));
+    this.subs.add(this.activeOrdersService.count$.subscribe((c) => (this.activeOrdersCount = c)));
 
     const token = localStorage.getItem('token');
     if (token) {
-      this.apiService.GetUserId().subscribe({
+      this.subs.add(this.apiService.GetUserId().subscribe({
         next: (res) => {
           this.userId = typeof res === 'string' ? res : res?.userId;
 
@@ -103,7 +105,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
             // Tracked apart from branchId: the other currentBranch$ subscribers update branchId
             // first, which used to make this one think nothing changed and keep stale counts.
             let countsBranchId = 0;
-            this.branchService.currentBranch$.subscribe((branchId) => {
+            this.subs.add(this.branchService.currentBranch$.subscribe((branchId) => {
               const id = Number(branchId);
               if (!id || id === countsBranchId) return;
               const switched = countsBranchId !== 0;
@@ -115,7 +117,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
               }
               this.cartCountService.refresh(id, this.userId);
               this.wishlistCountService.refresh(id, this.userId);
-            });
+            }));
           }
         },
         error: (err) => {
@@ -123,26 +125,26 @@ export class NavbarComponent implements OnInit, OnDestroy {
           this.cartCountService.setCount(0);
           this.wishlistCountService.clear();
         },
-      });
+      }));
     } else {
       this.wishlistCountService.clear();
     }
 
-    this.branchService.currentBranch$.subscribe((branchId) => {
+    this.subs.add(this.branchService.currentBranch$.subscribe((branchId) => {
       if (branchId) {
         this.branchId = branchId;
       }
-    });
+    }));
 
-    this.rawCategories.getCategories().subscribe({
+    this.subs.add(this.rawCategories.getCategories().subscribe({
       next: (cats) => {
         if (!cats?.length) return;
         this.rawNav = cats.map(rawCategoryLink);
       },
       error: () => {},
-    });
+    }));
 
-    this.apiService.getAllCategories(this.apiService.drinks).subscribe({
+    this.subs.add(this.apiService.getAllCategories(this.apiService.drinks).subscribe({
       next: (data) => {
         this.categories = Array.isArray(data)
           ? data
@@ -152,9 +154,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
         console.error('Error loading categories:', err);
         this.categories = [];
       },
-    });
+    }));
 
-    this.apiService.getAllBranches().subscribe({
+    this.subs.add(this.apiService.getAllBranches().subscribe({
       next: (data) => {
         const list = Array.isArray(data) ? data : data?.data || data?.result || [];
         this.branches = Array.isArray(list) ? list : [];
@@ -164,21 +166,21 @@ export class NavbarComponent implements OnInit, OnDestroy {
       error: (err) => {
         console.error('Error loading branches:', err);
       },
-    });
+    }));
 
-    this.branchService.currentBranch$.subscribe((id) => {
+    this.subs.add(this.branchService.currentBranch$.subscribe((id) => {
       if (!id) return;
       this.branchId = id;
       this.updateBranchName(id);
-    });
+    }));
 
-    this.languageService.languageChanged$.subscribe(() => {
+    this.subs.add(this.languageService.languageChanged$.subscribe(() => {
       if (this.branchId) this.updateBranchName(this.branchId);
-    });
+    }));
   }
 
   ngOnDestroy(): void {
-    this.routerSub?.unsubscribe();
+    this.subs.unsubscribe();
     document.body.style.overflow = '';
   }
 
