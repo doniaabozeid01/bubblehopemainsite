@@ -25,7 +25,7 @@ export class FooterComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.sub = this.rawCategories.getCategories().subscribe({
+    this.sub = this.rawCategories.getLinks().subscribe({
       next: (cats) => {
         this.categories = (cats || []).slice(0, FOOTER_CATEGORY_LIMIT).map(rawCategoryLink);
       },

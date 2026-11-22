@@ -292,6 +292,7 @@ export class RawMaterialDetailsComponent implements OnDestroy {
     this.api.addToCart(dataToAdded).subscribe({
       next: () => {
         this.toastr.success("Great choice! It's now in your cart.");
+        this.cartCountService.noteCart(this.usreId, this.branchId);
         this.cartCountService.refresh(this.branchId, this.usreId);
       },
       error: (err) => this.toastr.error(err?.error?.message || 'Failed to add to cart')

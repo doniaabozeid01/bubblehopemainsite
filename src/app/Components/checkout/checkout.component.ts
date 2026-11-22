@@ -169,15 +169,29 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
 
   getCartId(userId: string, branchId: number) {
+    if (!this.cartCountService.hasCart(userId, branchId)) {
+      this.cartId = 0 as any;
+      this.cartItems = [];
+      this.totalamount = 0;
+      return;
+    }
+
     this.api.GetCartByUserIdAndBranchId(userId, branchId).subscribe({
       next: (res) => {
         // console.log(res);
         this.cartId = res.id;
         this.cartItems = res.cartItems;
         this.totalamount = res.totalAmount;
+        const count = (res.cartItems || []).reduce(
+          (sum: number, it: any) => sum + Number(it?.quantity ?? 1),
+          0
+        );
+        if (count > 0) this.cartCountService.noteCart(userId, branchId);
+        else this.cartCountService.forgetCart(userId, branchId);
       },
       error: (err) => {
-        console.error('Error loading cart', err);
+        if (err?.status === 404) this.cartCountService.forgetCart(userId, branchId);
+        else console.error('Error loading cart', err);
         this.cartId = 0 as any;
         this.cartItems = [];
         this.totalamount = 0;

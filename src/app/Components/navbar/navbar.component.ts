@@ -136,7 +136,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       }
     }));
 
-    this.subs.add(this.rawCategories.getCategories().subscribe({
+    this.subs.add(this.rawCategories.getLinks().subscribe({
       next: (cats) => {
         if (!cats?.length) return;
         this.rawNav = cats.map(rawCategoryLink);
@@ -302,7 +302,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   logout() {
     this.authService.logout();
-    this.cartCountService.setCount(0);
+    this.cartCountService.clear();
     this.wishlistCountService.clear();
     this.activeOrdersService.stop();
     this.userId = '';

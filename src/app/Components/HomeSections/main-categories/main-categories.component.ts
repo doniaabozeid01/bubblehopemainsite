@@ -8,11 +8,10 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { CarouselComponent, OwlOptions, SlidesOutputData } from 'ngx-owl-carousel-o';
-import { forkJoin, of, Subscription } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
-import { BranchService } from 'src/app/services/branch.service';
 import { LanguageService } from 'src/app/services/language.service';
+import { toWebImageUrl } from 'src/app/services/raw-categories.service';
 
 @Component({
   selector: 'app-main-categories',
@@ -27,14 +26,13 @@ export class MainCategoriesComponent implements OnInit, OnDestroy {
   private ptrStart?: { x: number; y: number };
   private moved = false;
   private readonly dragThreshold = 10;
-  private branchSub?: Subscription;
   private langSub?: Subscription;
   private pageTimer?: ReturnType<typeof setInterval>;
   private readonly pageIntervalMs = 4200;
   private readonly mobileDotWindow = 5;
 
   catOptions: OwlOptions = {
-    loop: true,
+    loop: false,
     dots: false, // custom dots below — windowed on mobile
     nav: false,
     autoplay: false,
@@ -73,25 +71,19 @@ export class MainCategoriesComponent implements OnInit, OnDestroy {
   constructor(
     private api: ApiService,
     private router: Router,
-    private branchService: BranchService,
     public languageService: LanguageService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.syncRtl();
-    const branchId = this.branchService.getCurrentBranch() ?? 2;
-    this.loadCategories(branchId);
-    this.branchSub = this.branchService.currentBranch$.subscribe((id) => {
-      if (id) this.loadCategories(id);
-    });
+    this.loadCategories();
     this.langSub = this.languageService.languageChanged$.subscribe(() => {
       this.syncRtl();
     });
   }
 
   ngOnDestroy(): void {
-    this.branchSub?.unsubscribe();
     this.langSub?.unsubscribe();
     this.stopPageAutoplay();
   }
@@ -140,30 +132,60 @@ export class MainCategoriesComponent implements OnInit, OnDestroy {
     this.catOptions = { ...this.catOptions, rtl: isAr };
   }
 
-  private loadCategories(branchId: number): void {
+  private loadCategories(): void {
     this.stopPageAutoplay();
-    forkJoin({
-      categories: this.api.getAllCategories(this.api.drinks),
-      products: this.api.GetAllProducts(branchId).pipe(catchError(() => of([]))),
-    }).subscribe({
-      next: ({ categories, products }) => {
-        const productImageByCategory = this.mapProductImagesByCategory(products, branchId);
-
+    this.api.getAllCategories(this.api.drinks).subscribe({
+      next: (categories) => {
         this.categories = (Array.isArray(categories) ? categories : []).map(
           (c: any, index: number) => ({
             ...c,
-            imageUrl:
-              // productImageByCategory.get(Number(c.id)) ||
-              // productImageByCategory.get(String(c.name || '').trim().toLowerCase()) ||
-              c.imageUrl,
+            imageUrl: c.imageUrl ? toWebImageUrl(c.imageUrl) : c.imageUrl,
             bgColor: this.accentColors[index % this.accentColors.length],
           })
         );
+        this.preloadImages(this.categories);
         this.activePage = 0;
         this.cdr.detectChanges();
+        setTimeout(() => this.revealCached());
         setTimeout(() => this.startPageAutoplay(), 120);
       },
     });
+  }
+
+  /** Start every file now; the next pages are warm before the user swipes. */
+  private preloadImages(cats: { imageUrl?: string }[]): void {
+    for (const cat of cats) {
+      if (!cat.imageUrl) continue;
+      const img = new Image();
+      img.decoding = 'async';
+      img.src = cat.imageUrl;
+    }
+  }
+
+  /** The white card stays hidden until its own photo has painted. */
+  markPhoto(cat: { photoReady?: boolean }): void {
+    if (cat.photoReady) return;
+    cat.photoReady = true;
+  }
+
+  /** Cached photos can finish before the (load) listener exists. */
+  private revealCached(): void {
+    const ready = new Set(
+      Array.from(document.querySelectorAll('.bev-card__img'))
+        .filter((node) => {
+          const img = node as HTMLImageElement;
+          return img.complete && img.naturalWidth > 0;
+        })
+        .map((node) => (node as HTMLImageElement).currentSrc)
+    );
+    let changed = false;
+    for (const cat of this.categories) {
+      if (!cat.photoReady && cat.imageUrl && ready.has(cat.imageUrl)) {
+        cat.photoReady = true;
+        changed = true;
+      }
+    }
+    if (changed) this.cdr.detectChanges();
   }
 
   private startPageAutoplay(): void {
@@ -214,38 +236,6 @@ export class MainCategoriesComponent implements OnInit, OnDestroy {
 
   slideId(cat: any): string {
     return `cat-${cat.id}`;
-  }
-
-  private mapProductImagesByCategory(
-    payload: any,
-    branchId: number
-  ): Map<string | number, string> {
-    const map = new Map<string | number, string>();
-    const groups = Array.isArray(payload) ? payload : [];
-    const pickIndex = branchId === 2 ? 0 : branchId === 3 ? 1 : branchId === 5 ? 2 : 1;
-
-    for (const group of groups) {
-      const withImage = (Array.isArray(group?.products) ? group.products : []).filter(
-        (p: any) => !!p?.imagePath
-      );
-      if (!withImage.length) continue;
-
-      const pick =
-        withImage[pickIndex] ||
-        withImage[withImage.length - 1] ||
-        withImage[0];
-      const image = pick.imagePath;
-
-      const catId = Number(group?.categoryId);
-      if (catId) map.set(catId, image);
-
-      const catName = String(group?.categoryName || '')
-        .trim()
-        .toLowerCase();
-      if (catName) map.set(catName, image);
-    }
-
-    return map;
   }
 
   goToProducts(id: number) {

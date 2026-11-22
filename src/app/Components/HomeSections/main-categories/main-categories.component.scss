@@ -71,7 +71,12 @@ $orange: #ff7304;
   padding-top: 230px;
   overflow: visible;
   cursor: pointer;
+  opacity: 0;
   --accent: #ff7304;
+
+  &.is-ready {
+    opacity: 1;
+  }
 
   &:hover .bev-card__panel {
     transform: translateY(-3px);

@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ApiService } from 'src/app/services/api.service';
 import { BranchService } from 'src/app/services/branch.service';
 import { LanguageService } from 'src/app/services/language.service';
+import { CartCountService } from 'src/app/services/cart-count.service';
 import { WishlistCountService } from 'src/app/services/wishlist-count.service';
 
 @Component({
@@ -56,6 +57,7 @@ export class BestSellersComponent implements OnDestroy {
     private toastr: ToastrService,
     public languageService: LanguageService,
     private branchService: BranchService,
+    private cartCountService: CartCountService,
     private wishlistCountService: WishlistCountService
   ) {}
 
@@ -161,6 +163,8 @@ export class BestSellersComponent implements OnDestroy {
     this.api.addToCart(dataToAdded).subscribe({
       next: () => {
         this.toastr.success("Great choice! It's now in your cart.");
+        this.cartCountService.noteCart(this.userId, this.branchId);
+        this.cartCountService.refresh(this.branchId, this.userId);
       },
       error: () => {},
     });

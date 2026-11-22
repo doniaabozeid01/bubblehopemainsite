@@ -566,6 +566,7 @@ export class ProductDetailsComponent implements AfterViewInit, OnDestroy {
 
     this.api.addToCart(payload).subscribe({
       next: () => {
+        this.cartCountService.noteCart(this.usreId, this.branchId);
         this.cartCountService.refresh(this.branchId, this.usreId);
         this.toastr.success("Great choice! It's now in your cart.");
       },

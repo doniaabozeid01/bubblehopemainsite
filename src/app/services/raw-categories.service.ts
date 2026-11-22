@@ -157,8 +157,35 @@ export function rawCategoryLink(cat: any): RawCategoryLink {
 @Injectable({ providedIn: 'root' })
 export class RawCategoriesService {
   private categories$?: Observable<RawCategory[]>;
+  private links$?: Observable<any[]>;
 
   constructor(private api: ApiService) {}
+
+  /**
+   * Category names and routes only. The navbar and footer never render products,
+   * so they must not download GetAllCategoriesWithProducts.
+   */
+  getLinks(): Observable<any[]> {
+    this.links$ ??= this.api.getAllCategories(this.api.rawMaterials).pipe(
+      map((res) => asItemList(res)),
+      map((list: any[]) => {
+        const claimed = new Set<string>();
+        const fromApi = list.map((cat) => {
+          let titleKey = rawCategoryTitleKey(cat);
+          if (titleKey && claimed.has(titleKey)) titleKey = null;
+          if (titleKey) claimed.add(titleKey);
+          return { ...cat, titleKey };
+        });
+        return this.sortCategories(fromApi);
+      }),
+      catchError(() => {
+        this.links$ = undefined;
+        return of([]);
+      }),
+      shareReplay(1)
+    );
+    return this.links$;
+  }
 
   /** Group-2 categories with the products nested inside each one. */
   getCategories(): Observable<RawCategory[]> {
@@ -167,7 +194,7 @@ export class RawCategoriesService {
   }
 
   private fetchCategories(): Observable<RawCategory[]> {
-    return this.api.GetAllCategoriesWithProducts().pipe(
+    return this.api.GetAllCategoriesWithProducts(this.api.rawMaterials).pipe(
       map((res) => asItemList(res)),
       map((list: any[]) => {
         const cats = list.filter((cat) => Number(cat?.categoryGroupId) === 2);
@@ -203,8 +230,8 @@ export class RawCategoriesService {
     );
   }
 
-  private sortCategories(cats: RawCategory[]): RawCategory[] {
-    const rank = (cat: RawCategory) => {
+  private sortCategories<T extends { titleKey?: string | null }>(cats: T[]): T[] {
+    const rank = (cat: T) => {
       const i = cat.titleKey ? RAW_CATEGORY_ORDER.indexOf(cat.titleKey) : -1;
       return i === -1 ? RAW_CATEGORY_ORDER.length : i;
     };

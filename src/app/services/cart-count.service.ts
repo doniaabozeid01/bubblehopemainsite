@@ -17,9 +17,33 @@ export class CartCountService {
 
   private latestRefresh = 0;
 
-  /** refresh من السيرفر */
+  /** Remember a cart that already exists, so later pages can ask for it. */
+  noteCart(userId: string, branchId: number) {
+    if (!userId || !branchId) return;
+    localStorage.setItem(this.key(userId, branchId), '1');
+  }
+
+  hasCart(userId: string, branchId: number): boolean {
+    return !!userId && !!branchId && localStorage.getItem(this.key(userId, branchId)) === '1';
+  }
+
+  forgetCart(userId: string, branchId: number) {
+    if (!userId || !branchId) return;
+    localStorage.removeItem(this.key(userId, branchId));
+  }
+
+  /**
+   * Asks for the cart only after one has been created.
+   * GetCartByUserId answers 404 when this user has no cart, and the browser
+   * prints that 404 (with the user id) even though the count is just zero.
+   */
   refresh(branchId: number, userId: string) {
     if (!branchId || !userId) return;
+    if (localStorage.getItem(this.key(userId, branchId)) !== '1') {
+      this.setCount(0);
+      return;
+    }
+
     // A reply for a branch the user already left must not overwrite the current count.
     const request = ++this.latestRefresh;
 
@@ -32,13 +56,25 @@ export class CartCountService {
       },
       error: (err) => {
         if (request !== this.latestRefresh) return;
-        // No cart yet in this branch.
-        if (err?.status === 404) this.setCount(0);
+        if (err?.status === 404) {
+          this.forgetCart(userId, branchId);
+          this.setCount(0);
+        }
       }
     });
   }
 
   clear() {
+    const drop: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key?.startsWith('cart_open:')) drop.push(key);
+    }
+    drop.forEach((key) => localStorage.removeItem(key));
     this.setCount(0);
+  }
+
+  private key(userId: string, branchId: number) {
+    return `cart_open:${userId}:${Number(branchId)}`;
   }
 }

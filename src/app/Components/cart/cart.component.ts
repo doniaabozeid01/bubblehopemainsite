@@ -135,6 +135,12 @@ export class CartComponent implements OnDestroy {
     // console.log('hello');
 
     this.cart = null;
+    // No cart has been created in this branch, so the API would answer 404.
+    if (!this.cartCountService.hasCart(userId, branchId)) {
+      this.cartCountService.setCount(0);
+      return;
+    }
+
     this.apiService.GetCartByUserIdAndBranchId(userId, branchId).subscribe({
       next: (res: any) => {
         if (Number(branchId) !== Number(this.branchId)) return;
@@ -155,14 +161,17 @@ export class CartComponent implements OnDestroy {
           0
         );
 
-        // ✅ 3) خزّنيه في السيرفس (هيظهر في الـ Navbar + يفضل بعد reload)
+        // An empty cart should not be asked for again.
+        if (count > 0) this.cartCountService.noteCart(userId, branchId);
+        else this.cartCountService.forgetCart(userId, branchId);
         this.cartCountService.setCount(count);
       },
       error: (err) => {
         if (Number(branchId) !== Number(this.branchId)) return;
         this.cart = null;
-        this.cartCountService.setCount(0); // ✅
-        console.error('❌ Error fetching cart:', err);
+        if (err?.status === 404) this.cartCountService.forgetCart(userId, branchId);
+        this.cartCountService.setCount(0);
+        if (err?.status !== 404) console.error('❌ Error fetching cart:', err);
       },
     });
   }
@@ -252,6 +261,7 @@ export class CartComponent implements OnDestroy {
     0
   );
   this.cartCountService.setCount(newCount);
+  if (!newCount) this.cartCountService.forgetCart(this.userId, this.branchId);
 
   this.apiService.DeleteCartItem(id).subscribe({
     next: () => {
@@ -270,6 +280,7 @@ export class CartComponent implements OnDestroy {
         0
       );
       this.cartCountService.setCount(prevCount);
+      if (prevCount > 0) this.cartCountService.noteCart(this.userId, this.branchId);
 
       console.error('❌ Error deleting item:', err);
       this.toastr.error('Failed to remove item');

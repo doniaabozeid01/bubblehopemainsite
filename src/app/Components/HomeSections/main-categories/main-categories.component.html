@@ -24,12 +24,13 @@
     >
       <ng-template
         carouselSlide
-        *ngFor="let cat of categories; trackBy: trackById"
+        *ngFor="let cat of categories; let i = index; trackBy: trackById"
         [id]="slideId(cat)"
       >
         <div class="bev-slide">
           <article
             class="bev-card"
+            [class.is-ready]="cat.photoReady"
             [style.--accent]="cat.bgColor"
             (pointerdown)="onPtrDown($event)"
             (pointermove)="onPtrMove($event)"
@@ -44,6 +45,10 @@
                 [alt]="(languageService.languageChanged$ | async) === 'ar' ? cat.name_ar : cat.name"
                 class="bev-card__img"
                 draggable="false"
+                decoding="async"
+                [attr.fetchpriority]="i < 4 ? 'high' : 'low'"
+                (load)="markPhoto(cat)"
+                (error)="markPhoto(cat)"
               />
             </div>
 
